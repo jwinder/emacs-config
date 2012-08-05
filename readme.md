@@ -1,6 +1,8 @@
 # my .emacs.d
 
-Things I had to do prior to ./configure:
-* apt-get install gnome-core-devel build-essential
+Inappropriately closely inspired by [rubbish](https://github.com/rubbish/rubbish-emacs-setup).
+
 * apt-get install libXpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev
 * apt-get install libncurses-dev
+* apt-get install texinfo
+* for ruby (rinari), gem install rake & make ginstall work
