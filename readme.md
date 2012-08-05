@@ -6,3 +6,5 @@ Inappropriately closely inspired by [rubbish](https://github.com/rubbish/rubbish
 * apt-get install libncurses-dev
 * apt-get install texinfo
 * for ruby, gem install rake
+* [emacs 24.1](http://www.gnu.org/software/emacs/), ./configure, make, sudo make install
+* run emacs
