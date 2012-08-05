@@ -5,4 +5,4 @@ Inappropriately closely inspired by [rubbish](https://github.com/rubbish/rubbish
 * apt-get install libXpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev
 * apt-get install libncurses-dev
 * apt-get install texinfo
-* for ruby (rinari), gem install rake & make ginstall work
+* for ruby, gem install rake
