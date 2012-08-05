@@ -10,10 +10,16 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 
-(defvar mine-normal-font "Monaco 11" "*The main font")
-(defvar mine-big-font "Monaco 20" "*The fon mainly used in pairing and presentation modes")
+(defvar mine-small-font "Monaco 11" "*The small font")
+(defvar mine-normal-font "Monaco 13" "*The main font")
+(defvar mine-big-font "Monaco 20" "*The big font")
 
 ;; display settings
+(defun mine-use-small-font ()
+  (interactive)
+  (set-frame-parameter (selected-frame) 'font mine-small-font)
+  (add-to-list 'default-frame-alist (cons 'font mine-small-font)))
+
 (defun mine-use-normal-font ()
   (interactive)
   (set-frame-parameter (selected-frame) 'font mine-normal-font)

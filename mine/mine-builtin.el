@@ -138,7 +138,7 @@
 (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 
 (setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "chromium-browser")
+      browse-url-generic-program "google-chrome")
 
 ;; Protobuf files are like c
 (add-to-list 'auto-mode-alist '("Vagrantfile" . ruby-mode))
@@ -147,5 +147,22 @@
 
 ;; auto revert logs by tail
 ;; (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-tail-mode))
+
+;; custom battery info
+(setq display-time-format "(%I:%M%p %A %B %d %Y)")
+
+(setq battery-mode-line-format " (%p%% %B)")
+(setq battery-echo-area-format "Battery: %p%% %B")
+(setq battery-update-interval 10)
+
+;; rcirc junk
+(setq rcirc-default-nick "dotnull")
+(setq rcirc-default-user-name "dot_null")
+(setq rcirc-default-full-name "Dot Null")
+(setq rcirc-server-alist
+      '(("irc.freenode.net" :channels ("#linux" "#akka" "#zsh" "#emacs" "#git" "#hadoop" "#haskell" "#hbase" "#math" "#perl" "#ruby" "#scala" "#scalaz" "#vim" "#xmonad" "#clojure"))))
+(add-hook 'window-configuration-change-hook
+          '(lambda ()
+             (setq rcirc-fill-column (- (window-width) 2))))
 
 (provide 'mine-builtin)

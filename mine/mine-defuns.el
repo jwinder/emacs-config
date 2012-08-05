@@ -23,6 +23,12 @@
   (previous-line)
   (indent-for-tab-command))
 
+(defun newline-and-indent-open-line-and-indent ()
+  (interactive)
+  "Newlines, indents, then opens a line and indents"
+  (newline-and-indent)
+  (open-line-and-indent))
+
 (defun indent-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))

@@ -6,6 +6,9 @@
 (global-set-key [remap list-buffers] 'bs-show)
 (global-set-key (kbd "C-c y") 'bury-buffer)
 
+;; shells
+(global-set-key (kbd "C-c m") 'eshell) ;; todo; multishell?
+
 ;; frame/window
 (global-set-key (kbd "C-x 7") 'swap-windows)
 (global-set-key (kbd "C-x 9") 'toggle-window-split)
@@ -18,6 +21,7 @@
 (global-set-key [remap find-tag] 'ido-find-tag)
 (global-set-key (kbd "C-x C-i") 'ido-imenu)
 
+(global-set-key (kbd "C-c C-n") 'rename-file-and-buffer)
 (global-set-key (kbd "C-c k") 'delete-this-buffer-and-file)
 
 ;; Text Editting
@@ -25,6 +29,7 @@
 (global-set-key [remap move-beginning-of-line] 'beginning-of-line-or-back-to-indention)
 (global-set-key [remap newline] 'newline-and-indent)
 (global-set-key [remap open-line] 'open-line-and-indent)
+(global-set-key (kbd "C-j") 'newline-and-indent-open-line-and-indent)
 (global-set-key [remap kill-line] 'kill-to-end-or-join)
 (global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "M-g") 'goto-line)

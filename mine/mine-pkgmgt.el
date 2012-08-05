@@ -78,13 +78,14 @@
          ;; misc
          smex
          full-ack
-         undo-tree
+         ;;undo-tree
          wrap-region
          expand-region
          switch-window
          scratch
          magit
          yasnippet)
+         ;;color-theme)
        (mapcar 'el-get-source-name el-get-sources)))
 
 (el-get 'sync mine-pkgs-to-install)
