@@ -165,4 +165,7 @@
           '(lambda ()
              (setq rcirc-fill-column (- (window-width) 2))))
 
+;; viewing gists in browse-url after gisting
+(setq gist-view-gist t)
+
 (provide 'mine-builtin)

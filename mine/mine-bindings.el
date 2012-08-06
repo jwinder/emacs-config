@@ -8,7 +8,7 @@
 (global-set-key (kbd "C-x p b") 'pop-to-buffer)
 
 ;; shells
-(global-set-key (kbd "C-c m") 'eshell) ;; todo; multishell?
+(global-set-key (kbd "C-c m") 'eshell)
 
 ;; frame/window
 (global-set-key (kbd "C-x 7") 'swap-windows)
@@ -47,7 +47,10 @@
 
 (global-set-key (kbd "C-x M-`") 'previous-error)
 
-; annoying suspend
+;; annoying suspend
 (global-unset-key (kbd "C-z"))
+
+;; gist stuff
+(global-set-key (kbd "C-c g") 'gist-buffer)
 
 (provide 'mine-bindings)
