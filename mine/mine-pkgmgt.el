@@ -78,7 +78,7 @@
          ;; misc
          smex
          full-ack
-         ;;undo-tree
+         undo-tree
          wrap-region
          expand-region
          switch-window
