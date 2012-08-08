@@ -37,8 +37,8 @@
 
 (defun mine-use-transparency ()
   (interactive)
-  (set-frame-parameter (selected-frame) 'alpha '(90 80))
-  (add-to-list 'default-frame-alist '(alpha 90 80)))
+  (set-frame-parameter (selected-frame) 'alpha '(75 60))
+  (add-to-list 'default-frame-alist '(alpha 75 60)))
 
 (defun mine-use-no-transparency ()
   (interactive)
@@ -59,11 +59,11 @@
 (defun mine-normal-display ()
   (interactive)
   (mine-use-normal-font)
-  (mine-use-no-transparency))
+  (mine-use-transparency))
 
 (defun mine-pair-display ()
   (interactive)
   (mine-use-big-font)
-  (mine-use-no-transparency))
+  (mine-use-transparency))
 
 (provide 'mine-pretty)

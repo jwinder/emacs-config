@@ -25,3 +25,4 @@
 (toggle-case-fold-search)
 
 (server-start)
+(put 'dired-find-alternate-file 'disabled nil)

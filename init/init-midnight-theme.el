@@ -1,0 +1,1 @@
+(load-theme 'midnight t)
