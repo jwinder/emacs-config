@@ -37,8 +37,8 @@
 
 (defun mine-use-transparency ()
   (interactive)
-  (set-frame-parameter (selected-frame) 'alpha '(75 60))
-  (add-to-list 'default-frame-alist '(alpha 75 60)))
+  (set-frame-parameter (selected-frame) 'alpha '(80 60))
+  (add-to-list 'default-frame-alist '(alpha 80 60)))
 
 (defun mine-use-no-transparency ()
   (interactive)
