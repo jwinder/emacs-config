@@ -164,7 +164,6 @@
 
 ;;(add-to-list 'rcirc-server-alist '(("irc.freenode.net" :channels ("##linux" "#akka" "#zsh" "#emacs" "#git" "#hadoop" "#haskell" "#hbase" "##math" "#perl" "#ruby" "#scala" "#scalaz" "#vim" "#xmonad" "#clojure"))))
 
-
 (add-hook 'window-configuration-change-hook
           '(lambda ()
              (setq rcirc-fill-column (- (window-width) 2))))

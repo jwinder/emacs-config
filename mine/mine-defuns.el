@@ -238,4 +238,14 @@ frames with exactly two windows."
                            (progn (setq old-fullscreen current-value)
                                   'fullboth)))))
 
+(defun mine-irc-login ()
+  (interactive)
+  (rcirc nil)
+  (mine-bitlbee-identify))
+
+(defun mine-bitlbee-identify ()
+  (interactive)
+  (rcirc-send-privmsg
+   (rcirc-buffer-process "*localhost*") "&bitlbee" "identify dotnull"))
+
 (provide 'mine-defuns)
