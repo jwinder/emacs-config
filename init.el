@@ -27,3 +27,5 @@
 
 (server-start)
 (put 'dired-find-alternate-file 'disabled nil)
+
+(irc nil)

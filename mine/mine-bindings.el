@@ -1,6 +1,6 @@
 ;; move help
-(define-key key-translation-map [?\C-h] [?\C-?])
-(global-set-key (kbd "C-M-?") 'help-command)
+;;(define-key key-translation-map [?\C-h] [?\C-?])
+;;(global-set-key (kbd "C-M-?") 'help-command)
 
 ;; buffers
 (global-set-key [remap list-buffers] 'bs-show)
