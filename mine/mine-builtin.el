@@ -159,7 +159,6 @@
 (setq rcirc-default-nick "dotnull")
 (setq rcirc-default-user-name "dot_null")
 (setq rcirc-default-full-name "Dot Null")
-(setq rcirc-read-only-flat nil)
 
 (setq rcirc-server-alist '(("localhost") ("irc.freenode.net")))
 
