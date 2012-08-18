@@ -47,6 +47,10 @@
 
 (global-set-key (kbd "C-x M-`") 'previous-error)
 
+;; ack searching
+(global-set-key (kbd "C-c a f") 'ack)
+(global-set-key (kbd "C-c a g") 'ack-again)
+
 ;; annoying suspend
 (global-unset-key (kbd "C-z"))
 
