@@ -28,4 +28,4 @@
 (server-start)
 (put 'dired-find-alternate-file 'disabled nil)
 
-(mine-irc-login)
+;; (mine-irc-login)
