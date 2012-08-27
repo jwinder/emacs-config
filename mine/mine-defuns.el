@@ -238,6 +238,10 @@ frames with exactly two windows."
                            (progn (setq old-fullscreen current-value)
                                   'fullboth)))))
 
+(defun clear-buffer ()
+  (interactive)
+  (delete-region (point-min) (point-max)))
+
 (defun mine-irc-login ()
   (interactive)
   (rcirc nil)

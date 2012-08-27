@@ -54,7 +54,4 @@
 ;; annoying suspend
 (global-unset-key (kbd "C-z"))
 
-;; gist stuff
-(global-set-key (kbd "C-c g") 'gist-buffer)
-
 (provide 'mine-bindings)
