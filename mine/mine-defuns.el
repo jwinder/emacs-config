@@ -217,6 +217,30 @@ frames with exactly two windows."
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
 
+(defun hbase-shell-ssh-tunnel (host &optional ssh-username)
+  (let ((shell-name (format "*hbase shell %s*" host)))
+    (delete-other-windows)
+    (eshell)
+    (rename-buffer shell-name)
+    (insert (format "ssh -t %s \"/usr/bin/hbase shell\""
+                    (if ssh-username
+                        (format "%s@%s" ssh-username host)
+                      host)))
+    (eshell-send-input)
+    (shell-name)))
+
+;; (defun mine-hbase (host &optional ssh-username root-hbase-script-dir)
+;;   (let* ((hbase-text-buffer (find-file (concat root-hbase-script-dir host ".hbase")))
+;;          (hbase-shell-buffer (hbase-shell-ssh-tunnel host ssh-username)))
+;;     (split-window)
+;;     (switch-to-buffer hbase-text-buffer nil t)
+;;     (switch-to-other-buffer)
+;;     (switch-to-buffer hbase-shell-buffer nil t )))
+
+;; (defun hbase-vagrant ()
+;;   (interactive)
+;;   (mine-hbase "hbase.vagrant" "vagrant" "~/banno/hbase-shell/"))
+
 (defun ido-recentf-open ()
   "Use `ido-completing-read` to \\[find-file] a recent file"
   (interactive)
