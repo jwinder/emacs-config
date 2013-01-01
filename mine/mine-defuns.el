@@ -252,4 +252,8 @@ frames with exactly two windows."
   (rcirc-send-privmsg
    (rcirc-buffer-process "*localhost*") "&bitlbee" "identify dotnull"))
 
+(defun pingg ()
+  (interactive)
+  (ping "google.com"))
+
 (provide 'mine-defuns)

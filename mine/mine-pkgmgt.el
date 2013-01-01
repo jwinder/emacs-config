@@ -76,7 +76,13 @@
                               :description "Few useful commands for opening/saving protected files on a linux operating system."
                               :type github
                               :pkgname "jwinder/sudo-file.el"
-                              :features sudo-file)))
+                              :features sudo-file)
+                       (:name mark-multiple
+                              :website "https://github.com/magnars/mark-multiple.el"
+                              :description "Mark multiple."
+                              :type github
+                              :pkgname "magnars/mark-multiple.el"
+                              :features mark-multiple)))
 
 (setq mine-pkgs-to-install
       (append

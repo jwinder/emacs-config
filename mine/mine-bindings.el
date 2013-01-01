@@ -6,6 +6,7 @@
 (global-set-key [remap list-buffers] 'bs-show)
 (global-set-key (kbd "C-c y") 'bury-buffer)
 (global-set-key (kbd "C-x p b") 'pop-to-buffer)
+(global-set-key (kbd "C-x p f") 'find-file-other-window)
 
 ;; shells
 (global-set-key (kbd "C-c m") 'eshell)

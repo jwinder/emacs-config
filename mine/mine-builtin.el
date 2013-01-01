@@ -155,20 +155,14 @@
 (setq battery-echo-area-format "Battery: %p%% %B")
 (setq battery-update-interval 10)
 
-;; rcirc junk
-(setq rcirc-default-nick "dotnull")
-(setq rcirc-default-user-name "dot_null")
-(setq rcirc-default-full-name "Dot Null")
-
-(setq rcirc-server-alist '(("localhost") ("irc.freenode.net")))
-
-;;(add-to-list 'rcirc-server-alist '(("irc.freenode.net" :channels ("##linux" "#akka" "#zsh" "#emacs" "#git" "#hadoop" "#haskell" "#hbase" "##math" "#perl" "#ruby" "#scala" "#scalaz" "#vim" "#xmonad" "#clojure"))))
-
 (add-hook 'window-configuration-change-hook
           '(lambda ()
              (setq rcirc-fill-column (- (window-width) 2))))
 
 ;; viewing gists in browse-url after gisting
 (setq gist-view-gist t)
+
+;; pop-to-buffer to split horizontally rather than vertically
+(setq split-width-threshold nil)
 
 (provide 'mine-builtin)

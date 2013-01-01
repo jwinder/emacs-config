@@ -8,6 +8,7 @@
 (require 'mine-desktop)
 (require 'mine-pretty)
 (require 'mine-pkgmgt)
+(require 'mine-connections)
 
 ;; load files under custom/*.el
 (let ((custom-files (directory-files "~/.emacs.d/custom/" t "\.el$")))
@@ -24,8 +25,10 @@
 (column-number-mode)
 (toggle-case-fold-search)
 (mine-use-transparency) ;; needed for separate emacs clients starting up transparent
+(rcirc-track-minor-mode)
 
 (server-start)
 (put 'dired-find-alternate-file 'disabled nil)
 
-;; (mine-irc-login)
+;;(mine-irc-login)
+(put 'ido-exit-minibuffer 'disabled nil)

@@ -5,3 +5,4 @@
                              (c-subword-mode t)))
 
 (add-to-list 'auto-mode-alist '("\\.sbt\\'" . scala-mode))
+(add-to-list 'auto-mode-alist '("\\.jade\\'" . scala-mode))
