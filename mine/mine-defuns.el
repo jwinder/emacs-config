@@ -220,14 +220,16 @@ frames with exactly two windows."
 (defun hbase-shell-ssh-tunnel (host &optional ssh-username)
   (let ((shell-name (format "*hbase shell %s*" host)))
     (delete-other-windows)
-    (eshell)
-    (rename-buffer shell-name)
-    (insert (format "ssh -t %s \"/usr/bin/hbase shell\""
-                    (if ssh-username
-                        (format "%s@%s" ssh-username host)
-                      host)))
-    (eshell-send-input)
-    (shell-name)))
+    (if (eq nil (get-buffer shell-name))
+        (progn
+          (eshell)
+          (rename-buffer shell-name)
+          (insert (format "ssh -t %s \"/usr/bin/hbase shell\""
+                          (if ssh-username
+                              (format "%s@%s" ssh-username host)
+                            host)))
+          (eshell-send-input))
+      (switch-to-buffer shell-name))))
 
 ;; (defun mine-hbase (host &optional ssh-username root-hbase-script-dir)
 ;;   (let* ((hbase-text-buffer (find-file (concat root-hbase-script-dir host ".hbase")))
