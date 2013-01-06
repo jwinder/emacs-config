@@ -38,6 +38,7 @@
                               :pkgname "defunkt/gist.el"
                               :depends github
                               :features gist)
+
                        (:name zen-and-art-theme
                               :description "A port of the zen-and-art color theme using the new deftheme format."
                               :type elpa
@@ -65,6 +66,10 @@
                               :type github
                               :pkgname "rubbish/sbt.el"
                               :prepare (add-hook 'scala-mode-hook 'turn-on-sbt-mode))
+                       (:name scala-mode2
+                              :website "https://github.com/hvesalai/scala-mode2"
+                              :type github
+                              :pkgname "hvesalai/scala-mode2")
                        (:name json-validate
                               :website "https://github.com/jwinder/json-validate.el"
                               :description "Few useful commands for validating a buffer of json for correctness."
@@ -77,12 +82,12 @@
                               :type github
                               :pkgname "jwinder/sudo-file.el"
                               :features sudo-file)
-                       (:name mark-multiple
-                              :website "https://github.com/magnars/mark-multiple.el"
-                              :description "Mark multiple."
+                       (:name powerline
+                              :website "https://github.com/milkypostman/powerline"
+                              :description "emacs powerline"
                               :type github
-                              :pkgname "magnars/mark-multiple.el"
-                              :features mark-multiple)))
+                              :pkgname "milkypostman/powerline"
+                              :features powerline)))
 
 (setq mine-pkgs-to-install
       (append
@@ -91,7 +96,7 @@
          paredit
 
          ;; scala
-         scala-mode
+         ;; scala-mode
          ;; ensime
 
          ;; ruby
@@ -109,7 +114,8 @@
          switch-window
          scratch
          magit
-         yasnippet)
+         yasnippet
+         mark-multiple)
        (mapcar 'el-get-source-name el-get-sources)))
 
 (el-get 'sync mine-pkgs-to-install)

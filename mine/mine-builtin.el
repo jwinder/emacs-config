@@ -165,4 +165,9 @@
 ;; pop-to-buffer to split horizontally rather than vertically
 (setq split-width-threshold nil)
 
+;; rcirc things
+(add-hook 'rcirc-mode-hook 'turn-on-flyspell)
+(add-hook 'rcirc-mode-hook (lambda () (rcirc-track-minor-mode t)))
+(setq rcirc-notify-message "%s: %s")
+
 (provide 'mine-builtin)

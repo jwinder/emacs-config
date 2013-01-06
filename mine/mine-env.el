@@ -1,3 +1,9 @@
+(setenv "PATH" (concat (getenv "HOME") "/bin" ":"
+                       "/usr/local/bin" ":"
+                       "/usr/bin" ":"
+                       "/bin" ":"
+                       "/sbin" ":"))
+
 (setenv "EDITOR" "emacsclient")
 (setenv "JAVA_OPTS" "-Xmx512m")
 (setenv "ANDROID_SDK_HOME" "$HOME/android-sdk-linux")

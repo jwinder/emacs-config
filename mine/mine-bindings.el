@@ -32,6 +32,7 @@
 (global-set-key [remap newline] 'newline-and-indent)
 (global-set-key [remap open-line] 'open-line-and-indent)
 (global-set-key (kbd "C-j") 'newline-and-indent-open-line-and-indent)
+(global-set-key (kbd "C-M-j") 'join-line)
 (global-set-key [remap kill-line] 'kill-to-end-or-join)
 (global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "M-g") 'goto-line)

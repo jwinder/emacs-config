@@ -217,19 +217,27 @@ frames with exactly two windows."
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
 
+;; return t if a new buffer is created, nil if it already exists
+(defun get-eshell-create (shell-name)
+  (delete-other-windows)
+  (if (eq nil (get-buffer shell-name))
+      (progn
+        (eshell)
+        (rename-buffer shell-name)
+        t)
+    (progn
+      (switch-to-buffer shell-name)
+      nil)))
+
 (defun hbase-shell-ssh-tunnel (host &optional ssh-username)
   (let ((shell-name (format "*hbase shell %s*" host)))
-    (delete-other-windows)
-    (if (eq nil (get-buffer shell-name))
+    (if (get-eshell-create shell-name)
         (progn
-          (eshell)
-          (rename-buffer shell-name)
           (insert (format "ssh -t %s \"/usr/bin/hbase shell\""
                           (if ssh-username
                               (format "%s@%s" ssh-username host)
                             host)))
-          (eshell-send-input))
-      (switch-to-buffer shell-name))))
+          (eshell-send-input)))))
 
 ;; (defun mine-hbase (host &optional ssh-username root-hbase-script-dir)
 ;;   (let* ((hbase-text-buffer (find-file (concat root-hbase-script-dir host ".hbase")))
