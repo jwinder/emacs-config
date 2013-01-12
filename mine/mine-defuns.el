@@ -217,6 +217,7 @@ frames with exactly two windows."
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
 
+;; bug: move cursor to command line here
 (defun get-eshell-create (shell-name &optional initial-command)
   (if (eq nil (get-buffer shell-name))
       (progn
@@ -226,6 +227,7 @@ frames with exactly two windows."
               (insert initial-command)
               (eshell-send-input))))
     (switch-to-buffer shell-name))
+  (end-of-buffer)
   (rename-buffer shell-name))
 
 (defun hbase-shell-ssh-tunnel (host &optional ssh-username)
