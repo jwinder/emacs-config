@@ -237,18 +237,6 @@ frames with exactly two windows."
                                                     (format "%s@%s" ssh-username host)
                                                   host))))
 
-;; (defun mine-hbase (host &optional ssh-username root-hbase-script-dir)
-;;   (let* ((hbase-text-buffer (find-file (concat root-hbase-script-dir host ".hbase")))
-;;          (hbase-shell-buffer (hbase-shell-ssh-tunnel host ssh-username)))
-;;     (split-window)
-;;     (switch-to-buffer hbase-text-buffer nil t)
-;;     (switch-to-other-buffer)
-;;     (switch-to-buffer hbase-shell-buffer nil t )))
-
-;; (defun hbase-vagrant ()
-;;   (interactive)
-;;   (mine-hbase "hbase.vagrant" "vagrant" "~/banno/hbase-shell/"))
-
 (defun ido-recentf-open ()
   "Use `ido-completing-read` to \\[find-file] a recent file"
   (interactive)
@@ -287,5 +275,43 @@ frames with exactly two windows."
 (defun pingg ()
   (interactive)
   (ping "google.com"))
+
+(defun elisp-shell ()
+  (interactive)
+  (ielm))
+
+(defun trello-capture (card-name)
+  (interactive "sCard Name: ")
+  (let ((request (format "%s/lists/%s/cards?key=%s&token=%s&name=%s"
+                         trello-api-url
+                         trello-capture-list-id
+                         trello-application-key
+                         trello-oauth-token
+                         (url-hexify-string (if (> (length card-name) 2000)
+                                                (concat (substring card-name 0 1997) "...")
+                                              card-name)))))
+    (http-do "POST" request nil "" (format "POST %s" request))))
+
+(defun trello-capture-region ()
+  (interactive)
+  (trello-capture (buffer-substring (mark) (point))))
+
+(defun capture (text)
+  (interactive "sCapture: ")
+  (trello-capture text))
+
+(defun capture-region ()
+  (interactive)
+  (trello-capture-region))
+
+(require 'url)
+(defun http-do (method url headers entity raw)
+  (let* ((url-request-method method)
+         (url-request-extra-headers headers)
+         (url-request-data entity))
+    (url-retrieve url 'http-handle-response)))
+
+(defun http-handle-response (status)
+  (message "Captured successfully."))
 
 (provide 'mine-defuns)

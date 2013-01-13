@@ -56,4 +56,7 @@
 ;; annoying suspend
 (global-unset-key (kbd "C-z"))
 
+;; ace jump mode
+(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+
 (provide 'mine-bindings)
