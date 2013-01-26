@@ -1,7 +1,7 @@
 (add-to-list 'load-path "~/.emacs.d/mine")
 
 (require 'mine-env)
-(require 'mine-builtin) ;; split up
+(require 'mine-builtin)
 (require 'mine-defuns)
 (require 'mine-advice)
 (require 'mine-bindings)

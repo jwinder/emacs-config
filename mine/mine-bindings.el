@@ -13,6 +13,7 @@
 
 ;; frame/window
 (global-set-key (kbd "C-x 7") 'swap-windows)
+(global-set-key (kbd "C-x 8") 'toggle-window-split)
 (global-set-key (kbd "C-x 9") 'toggle-window-split)
 (global-set-key (kbd "C-M-9") 'winner-undo)
 (global-set-key (kbd "C-M-0") 'winner-redo)
@@ -55,6 +56,9 @@
 
 ;; annoying suspend
 (global-unset-key (kbd "C-z"))
+
+;; compose new mail binding
+(global-unset-key (kbd "C-x m"))
 
 ;; ace jump mode
 (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
