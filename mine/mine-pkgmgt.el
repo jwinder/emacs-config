@@ -92,7 +92,14 @@
                               :description "emacs powerline"
                               :type github
                               :pkgname "milkypostman/powerline"
-                              :features powerline)))
+                              :features powerline)
+                       (:name jade-mode
+                              :website "https://github.com/brianc/jade-mode"
+                              :description "jade template mode"
+                              :type github
+                              :pkgname "brianc/jade-mode"
+                              :features jade-mode
+                              :prepare (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode)))))
 
 (setq mine-pkgs-to-install
       (append
