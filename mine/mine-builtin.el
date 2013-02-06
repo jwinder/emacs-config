@@ -25,6 +25,10 @@
 
 (winner-mode t)
 
+;; Remote file editing
+(require 'tramp)
+(setq tramp-default-method "scp")
+
 ;; Setup Environmental Variables
 (setq default-major-mode 'text-mode)
 (setq inhibit-startup-message t)
@@ -124,6 +128,9 @@
 
 ;; Misc Aliases
 (defalias 'qrr 'query-replace-regexp)
+(defalias 'scala 'scala-run-scala)
+(defalias 'elisp-shell 'ielm)
+(defalias 'colors 'list-colors-display)
 
 ;; Midnight mode to clean up old buffers
 (require 'midnight)
