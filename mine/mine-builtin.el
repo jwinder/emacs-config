@@ -27,7 +27,8 @@
 
 ;; Remote file editing
 (require 'tramp)
-(setq tramp-default-method "scp")
+;;(setq tramp-default-method "scp") ;; slower than ssh
+(setq tramp-default-method "ssh")
 
 ;; Setup Environmental Variables
 (setq default-major-mode 'text-mode)
@@ -89,9 +90,6 @@
             (define-key dired-mode-map (kbd "M-RET") 'dired-external-open)))
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-
-;; Tramp Optimizations
-(setq tramp-default-method "ssh")
 
 ;; Use soft tabs
 (setq-default indent-tabs-mode nil)

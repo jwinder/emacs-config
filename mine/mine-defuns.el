@@ -217,18 +217,27 @@ frames with exactly two windows."
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
 
-;; bug: move cursor to command line here
 (defun get-eshell-create (shell-name &optional initial-command)
   (if (eq nil (get-buffer shell-name))
       (progn
         (eshell shell-name)
+        (rename-buffer shell-name)
         (if initial-command
             (progn
               (insert initial-command)
               (eshell-send-input))))
     (switch-to-buffer shell-name))
-  (end-of-buffer)
-  (rename-buffer shell-name))
+  (end-of-buffer))
+
+;; (require 'comint)
+;; (defcustom ssh-executable "ssh" "Where is ssh?")
+;; (defun hbase-shell-ssh-tunnel (host &optional ssh-username)
+;;   (let* ((buffer-name (format "*hbase shell %s*" host))
+;;          (buffer (get-buffer-create buffer-name))
+;;          (ssh-login (if ssh-username (format "%s@%s" ssh-username host) (host)))
+;;          (args (list "-t" ssh-login "/usr/bin/hbase shell")))
+;;     (apply 'make-comint-in-buffer buffer-name buffer ssh-executable nil args)
+;;     (switch-to-buffer buffer)))
 
 (defun hbase-shell-ssh-tunnel (host &optional ssh-username)
   (get-eshell-create
@@ -276,33 +285,28 @@ frames with exactly two windows."
   (interactive)
   (ping "google.com"))
 
-(defun elisp-shell ()
-  (interactive)
-  (ielm))
+(defun capture (text)
+  (interactive "sCapture: ")
+  (trello-post-card text trello-capture-list-id))
 
-(defun trello-capture (card-name)
-  (interactive "sCard Name: ")
+(defun capture-region ()
+  (interactive)
+  (trello-post-card (buffer-substring (mark) (point)) trello-capture-list-id))
+
+(defun idea (idea)
+  (interactive "sIdea: ")
+  (trello-post-card idea trello-idea-list-id))
+
+(defun trello-post-card (card-name trello-list-id)
   (let ((request (format "%s/lists/%s/cards?key=%s&token=%s&name=%s"
                          trello-api-url
-                         trello-capture-list-id
+                         trello-list-id
                          trello-application-key
                          trello-oauth-token
                          (url-hexify-string (if (> (length card-name) 2000)
                                                 (concat (substring card-name 0 1997) "...")
                                               card-name)))))
     (http-do "POST" request nil "" (format "POST %s" request))))
-
-(defun trello-capture-region ()
-  (interactive)
-  (trello-capture (buffer-substring (mark) (point))))
-
-(defun capture (text)
-  (interactive "sCapture: ")
-  (trello-capture text))
-
-(defun capture-region ()
-  (interactive)
-  (trello-capture-region))
 
 (require 'url)
 (defun http-do (method url headers entity raw)
