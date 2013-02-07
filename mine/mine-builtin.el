@@ -19,16 +19,14 @@
   uniquify-buffer-name-style 'post-forward
   uniquify-separator ":")
 
+;; tramp remote sudo
+(set-default 'tramp-default-proxies-alist (quote ((".*" "\\`root\\'" "/ssh:%h:"))))
+
 (require 'recentf)
 (recentf-mode t)
 (setq recentf-max-saved-items 50)
 
 (winner-mode t)
-
-;; Remote file editing
-(require 'tramp)
-;;(setq tramp-default-method "scp") ;; slower than ssh
-(setq tramp-default-method "ssh")
 
 ;; Setup Environmental Variables
 (setq default-major-mode 'text-mode)

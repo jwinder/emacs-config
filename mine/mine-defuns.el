@@ -285,6 +285,10 @@ frames with exactly two windows."
   (interactive)
   (ping "google.com"))
 
+(defun sudo ()
+  (interactive)
+  (find-file "/sudo:root@localhost:/"))
+
 (defun capture (text)
   (interactive "sCapture: ")
   (trello-post-card text trello-capture-list-id))
