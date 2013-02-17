@@ -57,6 +57,10 @@
 (if (functionp 'scroll-bar-mode)
     (scroll-bar-mode -1))
 
+(defun mine-set-transparency (value)
+  (interactive "nTransparency Value 0 (fully transparent) - 100 (no transparency): ")
+  (set-frame-parameter (selected-frame) 'alpha value))
+
 (defun mine-normal-display ()
   (interactive)
   (mine-use-normal-font)

@@ -13,6 +13,9 @@
       ido-max-prospects 10
       ido-show-dot-for-dired nil)
 
+;; using cookies in w3m
+(setq w3m-use-cookies t)
+
 ;; use uniquify
 (require 'uniquify)
 (setq
@@ -127,6 +130,9 @@
 (defalias 'scala 'scala-run-scala)
 (defalias 'elisp-shell 'ielm)
 (defalias 'colors 'list-colors-display)
+(defalias 'buffers 'bs-show)
+(defalias 'git 'magit-status)
+(defalias 'web 'w3m)
 
 ;; Midnight mode to clean up old buffers
 (require 'midnight)

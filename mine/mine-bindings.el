@@ -60,7 +60,7 @@
 ;; compose new mail binding
 (global-unset-key (kbd "C-x m"))
 
-;; ace jump mode
-(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+;; sudo-find-file
+(global-set-key [(control x) (control r)] 'find-file-root)
 
 (provide 'mine-bindings)
