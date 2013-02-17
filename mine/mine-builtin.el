@@ -160,7 +160,7 @@
 ;; custom battery info
 (setq display-time-format "(%I:%M%p %A %B %d %Y)")
 
-(setq battery-mode-line-format " (%p%% %B)")
+(setq battery-mode-line-format " (%p%%  %B)")
 (setq battery-echo-area-format "Battery: %p%% %B")
 (setq battery-update-interval 10)
 
