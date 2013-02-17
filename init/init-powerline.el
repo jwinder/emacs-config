@@ -1,3 +1,4 @@
+(set-face-background 'mode-line "#483d8b")
 (set-face-background 'powerline-active1 "#191970")
 (set-face-background 'powerline-active2 "#1a1a1a")
 (set-face-background 'powerline-inactive1 "#333333")
