@@ -112,7 +112,7 @@
          ;; ensime
 
          ;; ruby
-         rinari
+         ;; rinari
 
          ;; markdown
          markdown-mode
