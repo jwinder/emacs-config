@@ -367,4 +367,11 @@ frames with exactly two windows."
       "css/" (file-name-sans-extension (file-name-nondirectory buffer-file-name)) ".css") nil nil))
   (delete-other-windows))
 
+(defun scratch-text ()
+  "Get or create a text-mode scratch buffer."
+  (interactive)
+  (let ((scratch-buffer (get-buffer-create "*scratch*")))
+    (switch-to-buffer scratch-buffer)
+    (text-mode)))
+
 (provide 'mine-defuns)
