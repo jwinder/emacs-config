@@ -30,6 +30,12 @@
   (set-frame-parameter (selected-frame) 'font mine-big-font)
   (add-to-list 'default-frame-alist (cons 'font mine-big-font)))
 
+(defun mine-set-font-size (size)
+  (interactive "sSize: ")
+  (let ((font (concat "Monaco " size)))
+    (set-frame-parameter (selected-frame) 'font font)
+    (add-to-list 'default-frame-alist (cons 'font font))))
+
 (defun mine-toggle-fullscreen ()
   (interactive)
   (if (frame-parameter (selected-frame) 'fullscreen)
