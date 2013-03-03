@@ -271,16 +271,6 @@ frames with exactly two windows."
   (interactive)
   (delete-region (point-min) (point-max)))
 
-(defun mine-irc-login ()
-  (interactive)
-  (rcirc nil)
-  (mine-bitlbee-identify))
-
-(defun mine-bitlbee-identify ()
-  (interactive)
-  (rcirc-send-privmsg
-   (rcirc-buffer-process "*localhost*") "&bitlbee" "identify dotnull"))
-
 (defun pingg ()
   (interactive)
   (ping "google.com"))
@@ -288,33 +278,6 @@ frames with exactly two windows."
 (defun sudo ()
   (interactive)
   (find-file "/sudo:root@localhost:/"))
-
-(defun capture (text)
-  (interactive "sCapture: ")
-  (trello-post-card text trello-capture-list-id))
-
-(defun capture-region ()
-  (interactive)
-  (trello-post-card (buffer-substring (mark) (point)) trello-capture-list-id))
-
-(defun song (song)
-  (interactive "sSong: ")
-  (trello-post-card song trello-song-list-id))
-
-(defun idea (idea)
-  (interactive "sIdea: ")
-  (trello-post-card idea trello-idea-list-id))
-
-(defun trello-post-card (card-name trello-list-id)
-  (let ((request (format "%s/lists/%s/cards?key=%s&token=%s&name=%s"
-                         trello-api-url
-                         trello-list-id
-                         trello-application-key
-                         trello-oauth-token
-                         (url-hexify-string (if (> (length card-name) 2000)
-                                                (concat (substring card-name 0 1997) "...")
-                                              card-name)))))
-    (http-do "POST" request nil "" (format "POST %s" request))))
 
 (require 'url)
 (defun http-do (method url headers entity raw)
