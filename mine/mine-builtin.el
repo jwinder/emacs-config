@@ -92,6 +92,15 @@
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
+;; Create non-existent directories containing a new file before saving
+(add-hook 'before-save-hook
+          (lambda ()
+            (when buffer-file-name
+              (let ((dir (file-name-directory buffer-file-name)))
+                (when (and (not (file-exists-p dir))
+                           (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
+                  (make-directory dir t))))))
+
 ;; Use soft tabs
 (setq-default indent-tabs-mode nil)
 
