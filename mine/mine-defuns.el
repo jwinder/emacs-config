@@ -181,7 +181,7 @@ frames with exactly two windows."
           (if this-win-2nd (other-window 1))))))
 
 ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
-(defun rename-file-and-buffer (new-name)
+(defun rename-file-and-buffer-safe (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
   (interactive "sNew name: ")
   (let ((name (buffer-name))
@@ -194,6 +194,19 @@ frames with exactly two windows."
           (rename-file name new-name 1)
           (rename-buffer new-name)
           (set-visited-file-name new-name)
+          (set-buffer-modified-p nil))))))
+
+(defun rename-file-and-buffer (new-name)
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((filename (buffer-file-name)))
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" name)
+      (let ((new-filename (concat (file-name-directory filename) new-name)))
+        (progn
+          (rename-file filename new-filename 1)
+          (rename-buffer new-name 'unique)
+          (set-visited-file-name new-filename)
           (set-buffer-modified-p nil))))))
 
 (defun mine-sql (product sql-user sql-password sql-server sql-database root-sql-script-dir)
@@ -336,5 +349,20 @@ frames with exactly two windows."
   (let ((scratch-buffer (get-buffer-create "*scratch*")))
     (switch-to-buffer scratch-buffer)
     (text-mode)))
+
+(defun google ()
+  "Google the selected region if any, display a query prompt otherwise."
+  (interactive)
+  (browse-url
+   (concat
+    "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
+    (url-hexify-string (if mark-active
+         (buffer-substring (region-beginning) (region-end))
+       (read-string "Google: "))))))
+
+(defun flip-table ()
+  "Flip a table"
+  (interactive)
+  (insert "（╯°□°）╯︵ ┻━┻"))
 
 (provide 'mine-defuns)
