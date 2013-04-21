@@ -8,6 +8,7 @@
 (require 'mine-desktop)
 (require 'mine-pretty)
 (require 'mine-pkgmgt)
+(require 'mine-eshell)
 
 ;; load files under custom/*.el
 (setq mine-custom-dir "~/.emacs.d/custom/")

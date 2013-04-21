@@ -9,7 +9,7 @@
 (global-set-key (kbd "C-x p f") 'find-file-other-window)
 
 ;; shells
-(global-set-key (kbd "C-c m") 'eshell)
+(global-set-key (kbd "C-c m") 'mine-eshell-create)
 
 ;; frame/window
 (global-set-key (kbd "C-x 7") 'swap-windows)

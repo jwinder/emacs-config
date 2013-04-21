@@ -233,7 +233,7 @@ frames with exactly two windows."
 (defun get-eshell-create (shell-name &optional initial-command)
   (if (eq nil (get-buffer shell-name))
       (progn
-        (eshell shell-name)
+        (mine-eshell-create)
         (rename-buffer shell-name)
         (if initial-command
             (progn
