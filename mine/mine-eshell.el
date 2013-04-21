@@ -58,7 +58,7 @@
 (add-hook 'eshell-directory-change-hook 'mine-eshell-rename-buffer-pwd)
 
 (setq eshell-highlight-prompt t)
-(custom-set-faces '(eshell-prompt ((t (:foreground "#6495ed" :bold t)))))
+(custom-set-faces '(eshell-prompt ((t (:foreground "#87cefa" :bold t)))))
 
 ;; Plan 9 9term
 (require 'em-smart)
