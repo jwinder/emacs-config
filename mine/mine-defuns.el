@@ -365,7 +365,7 @@ With prefix ARG, go to the next low priority buffer with activity."
   (interactive "P")
   (rcirc-next-active-buffer arg)
   (unless (eq major-mode 'rcirc-mode)
-    (bury-rcirc-buffers)))
+    (mine-rcirc-bury-buffers)))
 
 (defun mine-rcirc-shut-up ()
   (interactive)
