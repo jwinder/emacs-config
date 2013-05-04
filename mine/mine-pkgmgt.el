@@ -99,7 +99,12 @@
                               :type github
                               :pkgname "brianc/jade-mode"
                               :features jade-mode
-                              :prepare (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode)))))
+                              :prepare (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode)))
+                       (:name pomodoro
+                              :website "https://github.com/rubbish/pomodoro.el"
+                              :description "Run pomodoros"
+                              :type github
+                              :pkgname "rubbish/pomodoro.el")))
 
 (setq mine-pkgs-to-install
       (append

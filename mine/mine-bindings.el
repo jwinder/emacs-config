@@ -63,4 +63,7 @@
 ;; sudo-find-file
 (global-set-key (kbd "C-x C-r") 'find-file-root)
 
+;; irc
+(global-set-key [remap rcirc-next-active-buffer] 'mine-rcirc-next-active-buffer-bury-rcirc-buffers)
+
 (provide 'mine-bindings)
