@@ -61,6 +61,6 @@
 (global-unset-key (kbd "C-x m"))
 
 ;; sudo-find-file
-(global-set-key [(control x) (control r)] 'find-file-root)
+(global-set-key (kbd "C-x C-r") 'find-file-root)
 
 (provide 'mine-bindings)
