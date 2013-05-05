@@ -188,8 +188,18 @@
 (setq split-width-threshold nil)
 
 ;; rcirc things
+(custom-set-faces
+ '(rcirc-my-nick ((t (:foreground "#00ffff"))))
+ '(rcirc-other-nick ((t (:foreground "#43cd80"))))
+ '(rcirc-server ((t (:foreground "#a2b5cd"))))
+ '(rcirc-server-prefix ((t (:foreground "#00bfff"))))
+ '(rcirc-timestamp ((t (:foreground "#7d7d7d"))))
+ '(rcirc-nick-in-message ((t (:foreground "#00ffff"))))
+ '(rcirc-prompt ((t (:foreground "#00bfff")))))
+
 (add-hook 'rcirc-mode-hook 'turn-on-flyspell)
 (add-hook 'rcirc-mode-hook (lambda () (rcirc-track-minor-mode t)))
+
 (setq rcirc-notify-message "%s: %s")
 
 (provide 'mine-builtin)
