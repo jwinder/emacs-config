@@ -172,6 +172,8 @@
 
 ;; custom battery info
 (setq display-time-format "(%I:%M%p %A %B %d %Y)")
+(setq display-time-mail-file -1)
+(setq display-time-default-load-average nil)
 
 (setq battery-mode-line-format " (%p%%  %B)")
 (setq battery-echo-area-format "Battery: %p%% %B")
@@ -190,7 +192,7 @@
 ;; rcirc things
 (custom-set-faces
  '(rcirc-my-nick ((t (:foreground "#00ffff"))))
- '(rcirc-other-nick ((t (:foreground "#43cd80"))))
+ '(rcirc-other-nick ((t (:foreground "#90ee90"))))
  '(rcirc-server ((t (:foreground "#a2b5cd"))))
  '(rcirc-server-prefix ((t (:foreground "#00bfff"))))
  '(rcirc-timestamp ((t (:foreground "#7d7d7d"))))
@@ -198,7 +200,7 @@
  '(rcirc-prompt ((t (:foreground "#00bfff")))))
 
 (add-hook 'rcirc-mode-hook 'turn-on-flyspell)
-(add-hook 'rcirc-mode-hook (lambda () (rcirc-track-minor-mode t)))
+ (add-hook 'rcirc-mode-hook (lambda () (rcirc-track-minor-mode t)))
 
 (setq rcirc-notify-message "%s: %s")
 
