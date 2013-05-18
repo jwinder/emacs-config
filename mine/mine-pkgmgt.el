@@ -109,6 +109,7 @@
 (setq mine-pkgs-to-install
       (append
        '(;; lisp
+         diminish
          dash
          highlight-parentheses
          paredit

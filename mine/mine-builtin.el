@@ -171,11 +171,11 @@
 ;; (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-tail-mode))
 
 ;; custom battery info
-(setq display-time-format "(%I:%M%p %A %B %d %Y)")
+(setq display-time-format "(%I:%M%p %A %B %d %Y) ")
 (setq display-time-mail-file -1)
 (setq display-time-default-load-average nil)
 
-(setq battery-mode-line-format " (%p%%  %B)")
+(setq battery-mode-line-format "(0.%p %B) ")
 (setq battery-echo-area-format "Battery: %p%% %B")
 (setq battery-update-interval 10)
 
@@ -200,8 +200,11 @@
  '(rcirc-prompt ((t (:foreground "#00bfff")))))
 
 (add-hook 'rcirc-mode-hook 'turn-on-flyspell)
- (add-hook 'rcirc-mode-hook (lambda () (rcirc-track-minor-mode t)))
+(add-hook 'rcirc-mode-hook (lambda () (rcirc-track-minor-mode t)))
 
-(setq rcirc-notify-message "%s: %s")
+(setq rcirc-notify-message "%s: %s"
+      rcirc-buffer-maximum-lines 2000)
+
+(toggle-case-fold-search)
 
 (provide 'mine-builtin)

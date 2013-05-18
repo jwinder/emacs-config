@@ -5,8 +5,6 @@
 ;; buffers
 (global-set-key [remap list-buffers] 'bs-show)
 (global-set-key (kbd "C-c y") 'bury-buffer)
-(global-set-key (kbd "C-x p b") 'pop-to-buffer)
-(global-set-key (kbd "C-x p f") 'find-file-other-window)
 
 ;; shells
 (global-set-key (kbd "C-c m") 'mine-eshell-create)
@@ -20,8 +18,12 @@
 
 ;; file navigation
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
-(global-set-key [remap ido-find-file-read-only] 'ido-recentf-open)
-(global-set-key [remap find-tag] 'ido-find-tag)
+(global-set-key (kbd "C-x p f") 'ido-find-file-other-window)
+(global-set-key (kbd "C-x M-b") 'pop-to-buffer)
+(global-set-key (kbd "C-x p b") 'pop-to-buffer)
+(global-set-key (kbd "C-x M-r") 'ido-recentf-open)
+;;(global-set-key [remap ido-find-file-read-only] 'ido-recentf-open)
+;;(global-set-key [remap find-tag] 'ido-find-tag)
 (global-set-key (kbd "C-x C-i") 'ido-imenu)
 
 (global-set-key (kbd "C-c n") 'rename-file-and-buffer)
