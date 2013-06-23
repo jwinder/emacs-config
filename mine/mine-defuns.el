@@ -391,15 +391,18 @@ With prefix ARG, go to the next low priority buffer with activity."
   (interactive)
   (shell-command "curl ifconfig.me/all"))
 
-(defun flip-table ()
-  "Flip a table"
-  (interactive)
-  (insert "（╯°□°）╯︵ ┻━┻"))
-
 (defun trim-string (string)
   "Remove white spaces in beginning and ending of STRING.
 White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string))
   )
+
+(defun uuid ()
+  "Generates a new uuid."
+  (interactive)
+  (let* ((uuid (trim-string (shell-command-to-string "uuidgen"))))
+    (message "New uuid appened to kill ring: %s" uuid)
+    (kill-new uuid)
+    ))
 
 (provide 'mine-defuns)
