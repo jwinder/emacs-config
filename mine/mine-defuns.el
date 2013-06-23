@@ -405,4 +405,9 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
     (kill-new uuid)
     ))
 
+(defun uuid-insert ()
+  "Generates and inserts a new uuid."
+  (interactive)
+  (insert (trim-string (shell-command-to-string "uuidgen"))))
+
 (provide 'mine-defuns)
