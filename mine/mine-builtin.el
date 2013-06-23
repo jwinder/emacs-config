@@ -175,7 +175,7 @@
 (setq display-time-mail-file -1)
 (setq display-time-default-load-average nil)
 
-(setq battery-mode-line-format "(0.%p %B) ")
+(setq battery-mode-line-format "(%p %B) ")
 (setq battery-echo-area-format "Battery: %p%% %B")
 (setq battery-update-interval 10)
 

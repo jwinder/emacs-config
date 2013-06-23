@@ -382,6 +382,15 @@ With prefix ARG, go to the next low priority buffer with activity."
          (buffer-substring (region-beginning) (region-end))
        (read-string "Google: "))))))
 
+(defun ifconfig.me ()
+  "Curls ifconfig.me for external IP"
+  (interactive)
+  (shell-command "curl ifconfig.me"))
+
+(defun ifconfig.me/all ()
+  (interactive)
+  (shell-command "curl ifconfig.me/all"))
+
 (defun flip-table ()
   "Flip a table"
   (interactive)
