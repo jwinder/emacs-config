@@ -396,4 +396,10 @@ With prefix ARG, go to the next low priority buffer with activity."
   (interactive)
   (insert "（╯°□°）╯︵ ┻━┻"))
 
+(defun trim-string (string)
+  "Remove white spaces in beginning and ending of STRING.
+White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
+  (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string))
+  )
+
 (provide 'mine-defuns)
