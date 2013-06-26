@@ -338,9 +338,9 @@ frames with exactly two windows."
   "Compile LESS to CSS"
   (interactive)
   (if (string-match "\.less$" (buffer-file-name))
-    (async-shell-command (concat "lessc " (buffer-file-name) " > "
-      (file-name-directory (directory-file-name (file-name-directory buffer-file-name)))
-      "css/" (file-name-sans-extension (file-name-nondirectory buffer-file-name)) ".css") nil nil))
+      (async-shell-command (concat "lessc " (buffer-file-name) " > "
+                                   (file-name-directory (directory-file-name (file-name-directory buffer-file-name)))
+                                   "css/" (file-name-sans-extension (file-name-nondirectory buffer-file-name)) ".css") nil nil))
   (delete-other-windows))
 
 (defun scratch-text ()
@@ -379,8 +379,12 @@ With prefix ARG, go to the next low priority buffer with activity."
    (concat
     "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
     (url-hexify-string (if mark-active
-         (buffer-substring (region-beginning) (region-end))
-       (read-string "Google: "))))))
+                           (buffer-substring (region-beginning) (region-end))
+                         (read-string "Google: "))))))
+
+(defun rubbish-emacs-setup ()
+  (interactive)
+  (browse-url "https://github.com/rubbish/rubbish-emacs-setup"))
 
 (defun ifconfig.me ()
   "Curls ifconfig.me for external IP"
@@ -391,11 +395,14 @@ With prefix ARG, go to the next low priority buffer with activity."
   (interactive)
   (shell-command "curl ifconfig.me/all"))
 
+(defun ssh-copy-id (username host)
+  (interactive "sUsername: \nsHost: ")
+  (shell-command (format "ssh-copy-id %s@%s" username host)))
+
 (defun trim-string (string)
   "Remove white spaces in beginning and ending of STRING.
 White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
-  (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string))
-  )
+  (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string)))
 
 (defun uuid ()
   "Generates a new uuid."

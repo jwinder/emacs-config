@@ -48,6 +48,10 @@
 (setq bs-configurations
       '(("all" nil nil nil nil nil)
         ("files" nil nil nil bs-visits-non-file bs-sort-buffer-interns-are-last)
+        ("rcirc" nil nil nil
+         (lambda (buf)
+           (with-current-buffer buf
+             (not (eq major-mode 'rcirc-mode)))) nil)
         ("dired" nil nil nil
          (lambda (buf)
            (with-current-buffer buf
@@ -60,10 +64,10 @@
          (lambda (buf)
            (with-current-buffer buf
              (not (eq major-mode 'magit-mode)))) nil)
-        ("ensime" nil nil nil
+        ("sbt" nil nil nil
          (lambda (buf)
            (with-current-buffer buf
-             (not (string-prefix-p "*inferior-ensime" (buffer-name buf))))) nil)
+             (not (string-prefix-p "*sbt:" (buffer-name buf))))) nil)
         ("sql" nil nil nil
          (lambda (buf)
            (with-current-buffer buf
@@ -122,7 +126,6 @@
   (make-variable-buffer-local 'mine-leave-whitespace)
   (setq mine-delete-trailing-whitespace nil))
 (add-hook 'before-save-hook '(lambda () (if mine-delete-trailing-whitespace (delete-trailing-whitespace))))
-
 
 ;; auto indentation of yanked/pasted text
 (setq major-modes-to-auto-indent-yanked-text '(emacs-lisp-mode
@@ -190,6 +193,29 @@
 (setq split-width-threshold nil)
 
 ;; rcirc things
+
+;; (defun mine-rcirc-message (message)
+;;   (interactive "i")
+;;   (rcirc-cmd-msg message))
+
+;; (defun-rcirc-command msg (message)
+;;   "Send private MESSAGE to TARGET."
+;;   (interactive "i")
+;;   (if (null message)
+;;       (progn
+;;         (setq target (completing-read "Message nick: "
+;;                                       (with-rcirc-server-buffer
+;; 					rcirc-nick-table)))
+;;         (when (> (length target) 0)
+;;           (setq message (read-string (format "Message %s: " target)))
+;;           (when (> (length message) 0)
+;;             (rcirc-send-message process target message))))
+;;     (if (not (string-match "\\([^ ]+\\) \\(.+\\)" message))
+;;         (message "Not enough args, or something.")
+;;       (setq target (match-string 1 message)
+;;             message (match-string 2 message))
+;;       (rcirc-send-message process target message))))
+
 (custom-set-faces
  '(rcirc-my-nick ((t (:foreground "#00ffff"))))
  '(rcirc-other-nick ((t (:foreground "#90ee90"))))

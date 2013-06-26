@@ -134,7 +134,8 @@
          scratch
          magit
          yasnippet
-         mark-multiple)
+         mark-multiple
+         browse-kill-ring)
        (mapcar 'el-get-source-name el-get-sources)))
 
 (el-get 'sync mine-pkgs-to-install)

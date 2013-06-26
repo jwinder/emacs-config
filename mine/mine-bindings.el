@@ -29,6 +29,8 @@
 (global-set-key (kbd "C-c n") 'rename-file-and-buffer)
 (global-set-key (kbd "C-c k") 'delete-this-buffer-and-file)
 
+(global-set-key (kbd "C-x C-r") 'find-file-root)
+
 ;; Text Editting
 (global-set-key (kbd "C-x C-k") 'kill-region)
 (global-set-key [remap move-beginning-of-line] 'beginning-of-line-or-back-to-indention)
@@ -43,6 +45,15 @@
 ;; (global-set-key [remap dabbrev-expand] 'hippie-expand)
 (global-set-key (kbd "C-x a r") 'align-regexp)
 (global-set-key (kbd "C-M-h") 'backward-kill-word)
+
+(global-set-key (kbd "C-M-y") 'browse-kill-ring)
+
+(global-set-key (kbd "C-x r t") 'inline-string-rectangle)
+
+(global-set-key (kbd "C-<") 'mark-previous-like-this)
+(global-set-key (kbd "C->") 'mark-next-like-this)
+(global-set-key (kbd "C-M-m") 'mark-more-like-this)
+(global-set-key (kbd "C-*") 'mark-all-like-this)
 
 ;; Use regex searches
 (global-set-key [remap isearch-forward] 'isearch-forward-regexp)
@@ -61,9 +72,6 @@
 
 ;; compose new mail binding
 (global-unset-key (kbd "C-x m"))
-
-;; sudo-find-file
-(global-set-key (kbd "C-x C-r") 'find-file-root)
 
 ;; irc
 (global-set-key [remap rcirc-next-active-buffer] 'mine-rcirc-next-active-buffer-bury-rcirc-buffers)

@@ -5,6 +5,8 @@
 (setq desktop-dirname "~/.emacs.d")
 (setq desktop-base-file-name "emacs-desktop")
 
+;; (setq tramp-verbose 6) ;; tramp debug buffer
+
 (add-to-list 'desktop-modes-not-to-save 'dired-mode)
 (add-to-list 'desktop-modes-not-to-save 'Info-mode)
 (add-to-list 'desktop-modes-not-to-save 'comint-mode)
