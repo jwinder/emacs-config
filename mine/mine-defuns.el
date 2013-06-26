@@ -16,6 +16,16 @@
 	)
     (kill-line)))
 
+(defun kill-to-end-of-line-yank-newline ()
+  (interactive)
+  (let ((beg (line-beginning-position)) (end (line-end-position)) (name (buffer-name)) (col (current-column)))
+    (end-of-line)
+    (newline)
+    (beginning-of-line)
+    (insert-buffer-substring name beg end)
+    (move-to-column col t)
+    (unless (eolp) (kill-sexp))))
+
 (defun open-line-and-indent ()
   (interactive)
   "Opens a line and and indents"
