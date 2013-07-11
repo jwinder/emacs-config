@@ -149,6 +149,7 @@
 (defalias 'buffers 'bs-show)
 (defalias 'git 'magit-status)
 (defalias 'web 'w3m)
+(defalias 'ps 'proced)
 
 ;; Midnight mode to clean up old buffers
 (require 'midnight)

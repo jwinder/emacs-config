@@ -124,6 +124,10 @@
          ;; markdown
          markdown-mode
 
+         ;; clojure
+         clojure-mode
+         nrepl
+
          ;; misc
          smex
          full-ack

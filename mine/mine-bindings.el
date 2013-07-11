@@ -2,6 +2,9 @@
 ;;(define-key key-translation-map [?\C-h] [?\C-?])
 ;;(global-set-key (kbd "C-M-?") 'help-command)
 
+;; processes
+(global-set-key (kbd "C-x p p") 'proced)
+
 ;; buffers
 (global-set-key [remap list-buffers] 'bs-show)
 (global-set-key (kbd "C-c y") 'bury-buffer)
