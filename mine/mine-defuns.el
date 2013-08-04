@@ -387,6 +387,7 @@ With prefix ARG, go to the next low priority buffer with activity."
   (let* ((directory (locate-dominating-file default-directory "Gemfile")))
     (if directory
         (progn
+          (cd directory)
           (get-eshell-create (format "*bundle <%s>*" directory))
           (insert "bundle exec " cmd)
           (eshell-send-input))
@@ -400,9 +401,13 @@ With prefix ARG, go to the next low priority buffer with activity."
   (interactive)
   (bundle-exec-cmd "kitchen converge"))
 
-(defun rspec ()
+(defun bundle-rspec ()
   (interactive)
   (bundle-exec-cmd "rspec"))
+
+(defun bundle-guard ()
+  (interactive)
+  (bundle-exec-cmd "guard"))
 
 (defun google ()
   "Google the selected region if any, display a query prompt otherwise."
