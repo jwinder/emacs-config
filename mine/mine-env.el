@@ -1,8 +1,17 @@
-(setenv "PATH" (concat (getenv "HOME") "/bin" ":"
-                       "/usr/local/bin" ":"
-                       "/usr/bin" ":"
-                       "/bin" ":"
-                       "/sbin" ":"))
+;; todo; set proper ruby env
+
+;; Don't manually set PATH, let it be inherited from the system environment.
+
+;; (setenv "PATH" (concat (getenv "HOME") "/bin" ":"
+;;                        "/usr/local/bin" ":"
+;;                        "/usr/bin" ":"
+;;                        "/bin" ":"
+;;                        "/sbin" ":"
+;;                        ))
+;; (getenv "HOME") "/.rvm/gems/ruby-1.9.3-p429/bin" ":"
+                       ;; (getenv "HOME") "/.rvm/gems/ruby-1.9.3-p429@global/bin" ":"
+                       ;; (getenv "HOME") "/.rvm/bin" ":"
+
 
 (setenv "EDITOR" "emacsclient")
 (setenv "JAVA_OPTS" "-Xmx512m")

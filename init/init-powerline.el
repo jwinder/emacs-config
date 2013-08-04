@@ -1,16 +1,21 @@
-(set-face-background 'mode-line "#483d8b")
-(set-face-foreground 'mode-line "#dcdcdc")
-(set-face-background 'powerline-active1 "#191970")
-(set-face-foreground 'powerline-active1 "#dcdcdc")
-(set-face-background 'powerline-active2 "#1a1a1a")
-(set-face-foreground 'powerline-active2 "#dcdcdc")
+(defun set-mode-bar-colors ()
+  (interactive)
+  (set-face-background 'mode-line "#483d8b")
+  (set-face-foreground 'mode-line "#dcdcdc")
+  (set-face-background 'powerline-active1 "#191970")
+  (set-face-foreground 'powerline-active1 "#dcdcdc")
+  (set-face-background 'powerline-active2 "#1a1a1a")
+  (set-face-foreground 'powerline-active2 "#dcdcdc")
 
-(set-face-background 'mode-line-inactive "#1a1a1a")
-(set-face-foreground 'mode-line-inactive "#000000")
-(set-face-background 'powerline-inactive1 "#333333")
-(set-face-foreground 'powerline-inactive1 "#000000")
-(set-face-background 'powerline-inactive2 "#1a1a1a")
-(set-face-foreground 'powerline-inactive2 "#000000")
+  (set-face-background 'mode-line-inactive "#1a1a1a")
+  (set-face-foreground 'mode-line-inactive "#000000")
+  (set-face-background 'powerline-inactive1 "#333333")
+  (set-face-foreground 'powerline-inactive1 "#000000")
+  (set-face-background 'powerline-inactive2 "#1a1a1a")
+  (set-face-foreground 'powerline-inactive2 "#000000")
+  )
+
+(set-mode-bar-colors)
 
 (setq-default mode-line-format
       '("%e"

@@ -382,6 +382,28 @@ With prefix ARG, go to the next low priority buffer with activity."
   (rcirc-track-minor-mode -1)
   (remq 'rcirc-activity-string global-mode-string))
 
+(defun bundle-exec-cmd (cmd)
+  (interactive "sbundle exec ")
+  (let* ((directory (locate-dominating-file default-directory "Gemfile")))
+    (if directory
+        (progn
+          (get-eshell-create (format "*bundle <%s>" directory))
+          (insert "bundle exec " cmd)
+          (eshell-send-input))
+      (message "Cannot find project root containing Gemfile."))))
+
+(defun kitchen-list ()
+  (interactive)
+  (bundle-exec-cmd "kitchen list"))
+
+(defun kitchen-converge ()
+  (interactive)
+  (bundle-exec-cmd "kitchen converge"))
+
+(defun rspec ()
+  (interactive)
+  (bundle-exec-cmd "rspec"))
+
 (defun google ()
   "Google the selected region if any, display a query prompt otherwise."
   (interactive)

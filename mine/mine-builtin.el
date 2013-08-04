@@ -166,6 +166,14 @@
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "google-chrome")
 
+;; Backups
+(setq version-control nil)
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+(setq create-lockfiles nil)
+
 ;; Protobuf files are like c
 (add-to-list 'auto-mode-alist '("Vagrantfile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
@@ -233,5 +241,7 @@
       rcirc-buffer-maximum-lines 2000)
 
 (toggle-case-fold-search)
+
+(defalias 'inf-ruby-keys 'inf-ruby-setup-keybindings) ;; fix for inf-ruby changes
 
 (provide 'mine-builtin)
