@@ -13,6 +13,12 @@
       ido-max-prospects 10
       ido-show-dot-for-dired nil)
 
+;; inf-ruby-key renamed, this should not be needed
+(defun inf-ruby-setup-keybindings ()
+  (interactive)
+  (require 'inf-ruby)
+  (inf-ruby-keys))
+
 ;; using cookies in w3m
 (setq w3m-use-cookies t)
 
@@ -241,7 +247,5 @@
       rcirc-buffer-maximum-lines 2000)
 
 (toggle-case-fold-search)
-
-(defalias 'inf-ruby-keys 'inf-ruby-setup-keybindings) ;; fix for inf-ruby changes
 
 (provide 'mine-builtin)
