@@ -387,7 +387,7 @@ With prefix ARG, go to the next low priority buffer with activity."
   (let* ((directory (locate-dominating-file default-directory "Gemfile")))
     (if directory
         (progn
-          (get-eshell-create (format "*bundle <%s>" directory))
+          (get-eshell-create (format "*bundle <%s>*" directory))
           (insert "bundle exec " cmd)
           (eshell-send-input))
       (message "Cannot find project root containing Gemfile."))))
