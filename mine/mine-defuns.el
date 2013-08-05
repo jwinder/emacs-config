@@ -424,6 +424,10 @@ With prefix ARG, go to the next low priority buffer with activity."
   (interactive)
   (bundle-cmd "install"))
 
+(defun bundle-install-pick-gemfile (gemfile)
+  (interactive "FGemfile: ")
+  (bundle-cmd (concat "install --gemfile=" (car (last (split-string gemfile "/"))))))
+
 (defun bundle-rspec ()
   (interactive)
   (bundle-cmd "exec rspec"))
