@@ -310,7 +310,10 @@ frames with exactly two windows."
     (url-retrieve url 'http-handle-response)))
 
 (defun http-handle-response (status)
-  (message "Captured successfully."))
+  ;;(switch-to-buffer (current-buffer))
+  ;;(message status)
+  (message "Captured successfully.")
+  )
 
 ;; using tramp to find/open a file as sudo
 (defvar find-file-root-prefix (if (featurep 'xemacs) "/[sudo/root@localhost]" "/sudo:root@localhost:" )
@@ -382,28 +385,28 @@ With prefix ARG, go to the next low priority buffer with activity."
   (rcirc-track-minor-mode -1)
   (remq 'rcirc-activity-string global-mode-string))
 
-(defun bundle-exec-cmd (cmd)
-  (interactive "sbundle exec ")
-  (let* ((directory (locate-dominating-file default-directory "Gemfile")))
-    (if directory
-        (progn
-          (cd directory)
-          (get-eshell-create (format "*bundle <%s>*" directory))
-          (insert "bundle exec " cmd)
-          (eshell-send-input))
-      (message "Cannot find project root containing Gemfile."))))
+;; (defun bundle-cmd-shell (cmd)
+;;   (interactive "sbundle ")
+;;   (let* ((directory (locate-dominating-file default-directory "Gemfile")))
+;;     (if directory
+;;         (progn
+;;           (cd directory)
+;;           (get-eshell-create (format "*bundle <%s>*" directory))
+;;           (insert "bundle " cmd)
+;;           (eshell-send-input))
+;;       (message "Cannot find project root containing Gemfile."))))
 
-(defun bundle-exec-cmd-inferior (cmd)
-  (interactive "sbundle exec ")
+(defun bundle-cmd (cmd)
+  (interactive "sbundle ")
   (require 'comint)
   (let* ((directory (locate-dominating-file default-directory "Gemfile"))
-         (name (format "bundle exec %s <%s>" cmd directory))
+         (name (format "bundle %s <%s>" cmd directory))
          (buffer-name (format "*%s*" name))
          (buffer (get-buffer-create buffer-name)))
     (if directory
         (progn
           (cd directory)
-          (apply 'make-comint-in-buffer name buffer "bundle" nil (list "exec" cmd))
+          (apply 'make-comint-in-buffer name buffer "bundle" nil (split-string cmd))
           (switch-to-buffer buffer)
           )
       (message "Cannot find project root containing Gemfile."))
@@ -411,19 +414,23 @@ With prefix ARG, go to the next low priority buffer with activity."
 
 (defun kitchen-list ()
   (interactive)
-  (bundle-exec-cmd "kitchen list"))
+  (bundle-cmd "exec kitchen list"))
 
 (defun kitchen-converge ()
   (interactive)
-  (bundle-exec-cmd "kitchen converge"))
+  (bundle-cmd "exec kitchen converge"))
+
+(defun bundle-install ()
+  (interactive)
+  (bundle-cmd "install"))
 
 (defun bundle-rspec ()
   (interactive)
-  (bundle-exec-cmd "rspec"))
+  (bundle-cmd "exec rspec"))
 
 (defun bundle-guard ()
   (interactive)
-  (bundle-exec-cmd-inferior "guard"))
+  (bundle-cmd "exec guard"))
 
 (defun google ()
   "Google the selected region if any, display a query prompt otherwise."
@@ -439,10 +446,14 @@ With prefix ARG, go to the next low priority buffer with activity."
   (interactive)
   (browse-url "https://github.com/rubbish/rubbish-emacs-setup"))
 
+;; todo; change http-do to handle GET responses & use that for these, not curl
 (defun ifconfig.me ()
   "Curls ifconfig.me for external IP"
   (interactive)
-  (shell-command "curl ifconfig.me"))
+  ;;(http-do "GET" "http://ifconfig.me/ip" nil "" "not needed")
+  ;;(kill-new (shell-command-to-string "curl ifconfig.me/ip"))
+  (shell-command "curl ifconfig.me")
+  )
 
 (defun ifconfig.me/all ()
   (interactive)
@@ -453,6 +464,7 @@ With prefix ARG, go to the next low priority buffer with activity."
   (shell-command (format "ssh-copy-id %s@%s" username host)))
 
 (defun trim-string (string)
+  (interactive "sString: ")
   "Remove white spaces in beginning and ending of STRING.
 White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string)))
