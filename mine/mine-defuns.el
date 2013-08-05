@@ -393,6 +393,22 @@ With prefix ARG, go to the next low priority buffer with activity."
           (eshell-send-input))
       (message "Cannot find project root containing Gemfile."))))
 
+(defun bundle-exec-cmd-inferior (cmd)
+  (interactive "sbundle exec ")
+  (require 'comint)
+  (let* ((directory (locate-dominating-file default-directory "Gemfile"))
+         (name (format "bundle exec %s <%s>" cmd directory))
+         (buffer-name (format "*%s*" name))
+         (buffer (get-buffer-create buffer-name)))
+    (if directory
+        (progn
+          (cd directory)
+          (apply 'make-comint-in-buffer name buffer "bundle" nil (list "exec" cmd))
+          (switch-to-buffer buffer)
+          )
+      (message "Cannot find project root containing Gemfile."))
+    ))
+
 (defun kitchen-list ()
   (interactive)
   (bundle-exec-cmd "kitchen list"))
@@ -407,7 +423,7 @@ With prefix ARG, go to the next low priority buffer with activity."
 
 (defun bundle-guard ()
   (interactive)
-  (bundle-exec-cmd "guard"))
+  (bundle-exec-cmd-inferior "guard"))
 
 (defun google ()
   "Google the selected region if any, display a query prompt otherwise."
