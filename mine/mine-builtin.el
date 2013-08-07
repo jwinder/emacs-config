@@ -157,6 +157,11 @@
 (defalias 'web 'w3m)
 (defalias 'ps 'proced)
 
+;; dired things
+(add-hook 'dired-mode-hook '(lambda ()
+                              (local-set-key (kbd "C-x R") 'wdired-change-to-wdired-mode)))
+(defalias 'wdired 'wdired-change-to-wdired-mode)
+
 ;; Midnight mode to clean up old buffers
 (require 'midnight)
 

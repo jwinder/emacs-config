@@ -262,6 +262,8 @@ frames with exactly two windows."
 ;;     (apply 'make-comint-in-buffer buffer-name buffer ssh-executable nil args)
 ;;     (switch-to-buffer buffer)))
 
+;; todo; change this to use comint-mode, not eshell
+
 (defun hbase-shell-ssh-tunnel (host &optional ssh-username)
   (get-eshell-create
    (format "*hbase shell %s*" host)
