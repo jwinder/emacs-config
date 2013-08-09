@@ -1,3 +1,5 @@
+(setq max-lisp-eval-depth 10000) ;; scary stuff
+
 ;; ido-mode
 (require 'ido)
 (ido-mode t)
@@ -159,7 +161,7 @@
 
 ;; dired things
 (add-hook 'dired-mode-hook '(lambda ()
-                              (local-set-key (kbd "C-x R") 'wdired-change-to-wdired-mode)))
+                              (local-set-key (kbd "C-c R") 'wdired-change-to-wdired-mode)))
 (defalias 'wdired 'wdired-change-to-wdired-mode)
 
 ;; Midnight mode to clean up old buffers

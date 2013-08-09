@@ -398,11 +398,11 @@ With prefix ARG, go to the next low priority buffer with activity."
 ;;           (eshell-send-input))
 ;;       (message "Cannot find project root containing Gemfile."))))
 
-(defun bundle-cmd (cmd)
+(defun bundle (cmd)
   (interactive "sbundle ")
   (require 'comint)
   (let* ((directory (locate-dominating-file default-directory "Gemfile"))
-         (name (format "bundle %s <%s>" cmd directory))
+         (name (format "bundle <%s>" directory))
          (buffer-name (format "*%s*" name))
          (buffer (get-buffer-create buffer-name)))
     (if directory
@@ -414,29 +414,35 @@ With prefix ARG, go to the next low priority buffer with activity."
       (message "Cannot find project root containing Gemfile."))
     ))
 
+;; todo; use kitchen list to be able to interactively choose which vm to start with a converge
+
 (defun kitchen-list ()
   (interactive)
-  (bundle-cmd "exec kitchen list"))
+  (bundle "exec kitchen list"))
 
 (defun kitchen-converge ()
   (interactive)
-  (bundle-cmd "exec kitchen converge"))
+  (bundle "exec kitchen converge"))
+
+(defun kitchen-destroy ()
+  (interactive)
+  (bundle "exec kitchen destroy"))
 
 (defun bundle-install ()
   (interactive)
-  (bundle-cmd "install"))
+  (bundle "install"))
 
 (defun bundle-install-pick-gemfile (gemfile)
   (interactive "FGemfile: ")
-  (bundle-cmd (concat "install --gemfile=" (car (last (split-string gemfile "/"))))))
+  (bundle (concat "install --gemfile=" (car (last (split-string gemfile "/"))))))
 
 (defun bundle-rspec ()
   (interactive)
-  (bundle-cmd "exec rspec"))
+  (bundle "exec rspec"))
 
 (defun bundle-guard ()
   (interactive)
-  (bundle-cmd "exec guard"))
+  (bundle "exec guard"))
 
 (defun google ()
   "Google the selected region if any, display a query prompt otherwise."
