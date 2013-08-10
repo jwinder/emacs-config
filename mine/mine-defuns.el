@@ -414,19 +414,25 @@ With prefix ARG, go to the next low priority buffer with activity."
       (message "Cannot find project root containing Gemfile."))
     ))
 
-;; todo; use kitchen list to be able to interactively choose which vm to start with a converge
+(defun bundle-exec (cmd)
+  (interactive "sbundle exec ")
+  (bundle (concat "exec " cmd)))
+
+(defun kitchen (cmd)
+  (interactive "sbundle exec kitchen ")
+  (bundle-exec (concat "kitchen " cmd)))
 
 (defun kitchen-list ()
   (interactive)
-  (bundle "exec kitchen list"))
+  (kitchen "list"))
 
 (defun kitchen-converge ()
   (interactive)
-  (bundle "exec kitchen converge"))
+  (kitchen "converge"))
 
 (defun kitchen-destroy ()
   (interactive)
-  (bundle "exec kitchen destroy"))
+  (kitchen "destroy"))
 
 (defun bundle-install ()
   (interactive)
@@ -438,11 +444,11 @@ With prefix ARG, go to the next low priority buffer with activity."
 
 (defun bundle-rspec ()
   (interactive)
-  (bundle "exec rspec"))
+  (bundle-exec "rspec"))
 
 (defun bundle-guard ()
   (interactive)
-  (bundle "exec guard"))
+  (bundle-exec "guard"))
 
 (defun google ()
   "Google the selected region if any, display a query prompt otherwise."
