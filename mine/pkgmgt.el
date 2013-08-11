@@ -8,13 +8,7 @@
 
 (setq el-get-user-package-directory "~/.emacs.d/init")
 
-(setq el-get-sources '((:name enclose
-                              :description "Enclose cursor within punctuation pairs"
-                              :type elpa
-                              :autoloads nil
-                              :prepare (progn
-                                         (autoload 'enclose-global-mode "enclose" nil t)
-                                         (autoload 'enclose-mode "enclose" nil t)))
+(setq el-get-sources '(
                        (:name zen-and-art-theme
                               :description "A port of the zen-and-art color theme using the new deftheme format."
                               :type elpa
@@ -28,6 +22,7 @@
                               :pkgname "jwinder/midnight-theme.el"
                               :post-init (progn
                                            (add-to-list 'custom-theme-load-path default-directory)))
+
                        (:name restclient
                               :website "https://github.com/pashky/restclient.el"
                               :description "HTTP REST client tool for emacs"
@@ -36,6 +31,7 @@
                               :prepare (progn
                                          (autoload 'restclient-mode "restclient" nil t)
                                          (add-to-list 'auto-mode-alist '("\\.http\\'" . restclient-mode))))
+
                        (:name sbt
                               :website "https://github.com/rubbish/sbt.el"
                               :description "support for running sbt in inferior mode."
@@ -46,6 +42,7 @@
                               :website "https://github.com/hvesalai/scala-mode2"
                               :type github
                               :pkgname "hvesalai/scala-mode2")
+
                        (:name json-validate
                               :website "https://github.com/jwinder/json-validate.el"
                               :description "Few useful commands for validating a buffer of json for correctness."
@@ -58,12 +55,14 @@
                               :type github
                               :pkgname "jwinder/sudo-file.el"
                               :features sudo-file)
+
                        (:name powerline
                               :website "https://github.com/milkypostman/powerline"
                               :description "emacs powerline"
                               :type github
                               :pkgname "milkypostman/powerline"
                               :features powerline)
+
                        (:name jade-mode
                               :website "https://github.com/brianc/jade-mode"
                               :description "jade template mode"
@@ -71,37 +70,40 @@
                               :pkgname "brianc/jade-mode"
                               :features jade-mode
                               :prepare (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode)))
+
                        (:name pomodoro
                               :website "https://github.com/rubbish/pomodoro.el"
                               :description "Run pomodoros"
                               :type github
-                              :pkgname "rubbish/pomodoro.el")))
+                              :pkgname "rubbish/pomodoro.el")
+                       ))
 
 (setq mine-pkgs-to-install
       (append
-       '(;; lisp
+       '(;;; lisp
          diminish
          dash
          highlight-parentheses
          paredit
 
-         ;; scala
+         ;;; scala
          ;; scala-mode
          ;; ensime
 
-         ;; ruby
+         ;;; ruby
          ;; rinari
 
          rvm
 
-         ;; markdown
+         ;;; markdown
          markdown-mode
 
          ;; clojure
          clojure-mode
          nrepl
 
-         ;; misc
+         ;;; misc
+         enclose
          smex
          full-ack
          undo-tree
@@ -113,7 +115,7 @@
          yasnippet
          mark-multiple
          browse-kill-ring
-         gist
+         ;; gist
          )
        (mapcar 'el-get-source-name el-get-sources)))
 
@@ -125,5 +127,3 @@
                          ("melpa" . "http://melpa.milkbox.net/packages/")
                          ("tromey" . "http://tromey.com/elpa/")))
 (package-initialize)
-
-(provide 'mine-pkgmgt)

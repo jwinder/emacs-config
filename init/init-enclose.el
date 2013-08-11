@@ -1,4 +1,4 @@
-;; ('enclose-global-mode t)
+(require 'enclose)
 
-(enclose-global-mode)
-(remhash "'" enclose-table)
+;; (remhash "'" enclose-table)
+(enclose-global-mode t)

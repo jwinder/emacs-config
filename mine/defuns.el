@@ -422,6 +422,10 @@ With prefix ARG, go to the next low priority buffer with activity."
   (interactive "sbundle exec kitchen ")
   (bundle-exec (concat "kitchen " cmd)))
 
+(defun kitchen-test ()
+  (interactive)
+  (kitchen "test"))
+
 (defun kitchen-list ()
   (interactive)
   (kitchen "list"))
@@ -518,5 +522,3 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 (defun mine-decrement-decimal (&optional arg)
   (interactive "p*")
   (my-increment-number-decimal (if arg (- arg) -1)))
-
-(provide 'mine-defuns)

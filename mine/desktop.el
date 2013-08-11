@@ -39,5 +39,3 @@ Also returns nil if pid is nil."
   (when (not (emacs-process-p ad-return-value))
     (setq ad-return-value nil)))
 ;;; desktop-override-stale-locks.el ends here
-
-(provide 'mine-desktop)
