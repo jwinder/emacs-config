@@ -252,17 +252,29 @@ frames with exactly two windows."
     (switch-to-buffer shell-name))
   (end-of-buffer))
 
-(defun hbase-shell (host &optional ssh-username)
+(defun hbase-remote-cmd (command host &optional ssh-username)
   (require 'comint)
-  (let* ((name (format "hbase shell %s" host))
+  (let* ((name (format "hbase %s %s" command host))
          (buffer-name (format "*%s*" name))
          (buffer (get-buffer-create buffer-name))
          (login (if ssh-username
                     (concat ssh-username "@" host)
                   host))
-         (tunnel-args (list "-t" login "/usr/bin/hbase shell")))
+         (tunnel-args (list "-t" login (concat "/usr/bin/hbase " command))))
     (apply 'make-comint-in-buffer name buffer "ssh" nil tunnel-args)
     (switch-to-buffer buffer)))
+
+(defun hadoop-remote-cmd (command host &optional ssh-username)
+  (require 'comint)
+  (let* ((name (format "hadoop %s %s" command host))
+          (buffer-name (format "*%s*" name))
+          (buffer (get-buffer-create buffer-name))
+          (login (if ssh-username
+                     (concat ssh-username "@" host)
+                   host))
+          (tunnel-args (list "-t" login (concat "/usr/bin/hadoop " command))))
+       (apply 'make-comint-in-buffer name buffer "ssh" nil tunnel-args)
+       (switch-to-buffer buffer)))
 
 (defun ido-recentf-open ()
   "Use `ido-completing-read` to \\[find-file] a recent file"
@@ -379,17 +391,6 @@ With prefix ARG, go to the next low priority buffer with activity."
   (interactive)
   (rcirc-track-minor-mode -1)
   (remq 'rcirc-activity-string global-mode-string))
-
-;; (defun bundle-cmd-shell (cmd)
-;;   (interactive "sbundle ")
-;;   (let* ((directory (locate-dominating-file default-directory "Gemfile")))
-;;     (if directory
-;;         (progn
-;;           (cd directory)
-;;           (get-eshell-create (format "*bundle <%s>*" directory))
-;;           (insert "bundle " cmd)
-;;           (eshell-send-input))
-;;       (message "Cannot find project root containing Gemfile."))))
 
 (defun bundle (cmd)
   (interactive "sbundle ")
