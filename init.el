@@ -1,10 +1,8 @@
-;; load files under mine/*.el
 (setq mine-dir "~/.emacs.d/mine/")
 (if (file-exists-p mine-dir)
  (let ((custom-files (directory-files mine-dir t "\.el$")))
   (mapcar 'load-file custom-files)))
 
-;; load files under custom/*.el
 (setq mine-custom-dir "~/.emacs.d/custom/")
 (if (file-exists-p mine-custom-dir)
  (let ((custom-files (directory-files mine-custom-dir t "\.el$")))

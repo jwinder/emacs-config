@@ -49,12 +49,6 @@
                               :type github
                               :pkgname "jwinder/json-validate.el"
                               :features json-validate)
-                       (:name sudo-file
-                              :website "https://github.com/jwinder/sudo-file.el"
-                              :description "Few useful commands for opening/saving protected files on a linux operating system."
-                              :type github
-                              :pkgname "jwinder/sudo-file.el"
-                              :features sudo-file)
 
                        (:name powerline
                               :website "https://github.com/milkypostman/powerline"
