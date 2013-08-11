@@ -254,3 +254,5 @@
       rcirc-buffer-maximum-lines 2000)
 
 (toggle-case-fold-search)
+
+(provide 'mine-builtin)

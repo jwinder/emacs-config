@@ -69,3 +69,5 @@
   (interactive)
   (let ((dir (or dir default-directory)))
     (dired dir)))
+
+(provide 'mine-eshell)

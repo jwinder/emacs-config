@@ -81,3 +81,5 @@
 (display-battery-mode)
 (column-number-mode)
 (mine-use-transparency) ;; needed for separate emacs clients starting up transparent
+
+(provide 'mine-pretty)

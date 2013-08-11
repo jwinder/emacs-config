@@ -1,7 +1,14 @@
-(setq mine-dir "~/.emacs.d/mine/")
-(if (file-exists-p mine-dir)
- (let ((custom-files (directory-files mine-dir t "\.el$")))
-  (mapcar 'load-file custom-files)))
+(add-to-list 'load-path "~/.emacs.d/mine")
+
+(require 'mine-env)
+(require 'mine-builtin)
+(require 'mine-defuns)
+(require 'mine-advice)
+(require 'mine-bindings)
+(require 'mine-desktop)
+(require 'mine-pretty)
+(require 'mine-pkgmgt)
+(require 'mine-eshell)
 
 (setq mine-custom-dir "~/.emacs.d/custom/")
 (if (file-exists-p mine-custom-dir)
