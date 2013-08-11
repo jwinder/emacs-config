@@ -252,24 +252,17 @@ frames with exactly two windows."
     (switch-to-buffer shell-name))
   (end-of-buffer))
 
-;; (require 'comint)
-;; (defcustom ssh-executable "ssh" "Where is ssh?")
-;; (defun hbase-shell-ssh-tunnel (host &optional ssh-username)
-;;   (let* ((buffer-name (format "*hbase shell %s*" host))
-;;          (buffer (get-buffer-create buffer-name))
-;;          (ssh-login (if ssh-username (format "%s@%s" ssh-username host) (host)))
-;;          (args (list "-t" ssh-login "/usr/bin/hbase shell")))
-;;     (apply 'make-comint-in-buffer buffer-name buffer ssh-executable nil args)
-;;     (switch-to-buffer buffer)))
-
-;; todo; change this to use comint-mode, not eshell
-
-(defun hbase-shell-ssh-tunnel (host &optional ssh-username)
-  (get-eshell-create
-   (format "*hbase shell %s*" host)
-   (format "ssh -t %s \"/usr/bin/hbase shell\"" (if ssh-username
-                                                    (format "%s@%s" ssh-username host)
-                                                  host))))
+(defun hbase-shell (host &optional ssh-username)
+  (require 'comint)
+  (let* ((name (format "hbase shell %s" host))
+         (buffer-name (format "*%s*" name))
+         (buffer (get-buffer-create buffer-name))
+         (login (if ssh-username
+                    (concat ssh-username "@" host)
+                  host))
+         (tunnel-args (list "-t" login "/usr/bin/hbase shell")))
+    (apply 'make-comint-in-buffer name buffer "ssh" nil tunnel-args)
+    (switch-to-buffer buffer)))
 
 (defun ido-recentf-open ()
   "Use `ido-completing-read` to \\[find-file] a recent file"
