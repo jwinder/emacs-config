@@ -1,8 +1,3 @@
-(defun whoami ()
-  (interactive)
-  "Returns who I am."
-  (getenv "USER"))
-
 (defun beginning-of-line-or-back-to-indention ()
   (interactive)
   "This goes to back to indention or if already there beginning of line"
@@ -261,7 +256,7 @@ frames with exactly two windows."
   (interactive)
   (let* ((host (read-string "Host: "))
          (command (read-string "Command: "))
-         (ssh-username (read-string "Username: " (whoami))))
+         (ssh-username (read-string "Username: " (getenv "USER"))))
     (ssh-tunnel-cmd host command ssh-username)
     ))
 
