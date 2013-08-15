@@ -1,3 +1,3 @@
 (require 'enclose)
 (remhash "'" enclose-table)
-(enclose-mode)
+(enclose-global-mode t)
