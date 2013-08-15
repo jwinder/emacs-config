@@ -25,8 +25,8 @@
 (global-set-key (kbd "C-x M-b") 'pop-to-buffer)
 (global-set-key (kbd "C-x p b") 'pop-to-buffer)
 (global-set-key (kbd "C-x M-r") 'ido-recentf-open)
-;;(global-set-key [remap ido-find-file-read-only] 'ido-recentf-open)
-;;(global-set-key [remap find-tag] 'ido-find-tag)
+;; (global-set-key [remap ido-find-file-read-only] 'ido-recentf-open)
+;; (global-set-key [remap find-tag] 'ido-find-tag)
 (global-set-key (kbd "C-x C-i") 'ido-imenu)
 
 (global-set-key (kbd "C-c n") 'rename-file-and-buffer)
