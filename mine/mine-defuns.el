@@ -252,29 +252,25 @@ frames with exactly two windows."
     (switch-to-buffer shell-name))
   (end-of-buffer))
 
-(defun hbase-remote-cmd (command host &optional ssh-username)
+(defun ssh-tunnel ()
+  (interactive)
+  (let* ((host (read-string "Host: "))
+         (command (read-string "Command: "))
+         (ssh-username (read-string "Username: " (getenv "USER"))))
+    (ssh-tunnel-cmd host command ssh-username)
+    ))
+
+(defun ssh-tunnel-cmd (host command &optional ssh-username)
   (require 'comint)
-  (let* ((name (format "hbase %s %s" command host))
-         (buffer-name (format "*%s*" name))
+  (let* ((process-name (format "%s <%s>" command host))
+         (buffer-name (format "*%s*" process-name))
          (buffer (get-buffer-create buffer-name))
          (login (if ssh-username
                     (concat ssh-username "@" host)
                   host))
-         (tunnel-args (list "-t" login (concat "/usr/bin/hbase " command))))
-    (apply 'make-comint-in-buffer name buffer "ssh" nil tunnel-args)
+         (tunnel-args (list "-t" login command)))
+    (apply 'make-comint-in-buffer process-name buffer "ssh" nil tunnel-args)
     (switch-to-buffer buffer)))
-
-(defun hadoop-remote-cmd (command host &optional ssh-username)
-  (require 'comint)
-  (let* ((name (format "hadoop %s %s" command host))
-          (buffer-name (format "*%s*" name))
-          (buffer (get-buffer-create buffer-name))
-          (login (if ssh-username
-                     (concat ssh-username "@" host)
-                   host))
-          (tunnel-args (list "-t" login (concat "/usr/bin/hadoop " command))))
-       (apply 'make-comint-in-buffer name buffer "ssh" nil tunnel-args)
-       (switch-to-buffer buffer)))
 
 (defun ido-recentf-open ()
   "Use `ido-completing-read` to \\[find-file] a recent file"
