@@ -1,0 +1,5 @@
+alias d dired $1
+alias ff find-file $1
+alias e find-file $1
+alias vi find-file $1
+alias less find-file $1
