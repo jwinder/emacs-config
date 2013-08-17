@@ -359,10 +359,17 @@ frames with exactly two windows."
                                    "css/" (file-name-sans-extension (file-name-nondirectory buffer-file-name)) ".css") nil nil))
   (delete-other-windows))
 
+(defun scratch-lisp ()
+  "Get or create a lisp-interaction-mode scratch buffer."
+  (interactive)
+  (let ((scratch-buffer (get-buffer-create "*scratch*")))
+    (switch-to-buffer scratch-buffer)
+    (lisp-interaction-mode)))
+
 (defun scratch-text ()
   "Get or create a text-mode scratch buffer."
   (interactive)
-  (let ((scratch-buffer (get-buffer-create "*scratch*")))
+  (let ((scratch-buffer (get-buffer-create "*text*")))
     (switch-to-buffer scratch-buffer)
     (text-mode)))
 
