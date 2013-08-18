@@ -514,6 +514,6 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 
 (defun mine-decrement-decimal (&optional arg)
   (interactive "p*")
-  (my-increment-number-decimal (if arg (- arg) -1)))
+  (mine-increment-decimal (if arg (- arg) -1)))
 
 (provide 'mine-defuns)

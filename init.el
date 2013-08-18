@@ -9,6 +9,7 @@
 (require 'mine-pretty)
 (require 'mine-pkgmgt)
 (require 'mine-eshell)
+(require 'mine-org)
 
 (setq mine-custom-dir "~/.emacs.d/custom/")
 (if (file-exists-p mine-custom-dir)

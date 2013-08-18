@@ -158,6 +158,7 @@
 (defalias 'git 'magit-status)
 (defalias 'web 'w3m)
 (defalias 'ps 'proced)
+(defalias 'find-anything 'apropos)
 
 ;; dired things
 (add-hook 'dired-mode-hook '(lambda ()

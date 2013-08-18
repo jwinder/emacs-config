@@ -70,6 +70,12 @@
                               :type github
                               :pkgname "rubbish/pomodoro.el")
 
+                       (:name org
+                              :website "http://orgmode.org/"
+                              :description "Org-mode is for keeping notes, maintaining ToDo lists, doing project planning, and authoring with a fast and effective plain-text system."
+                              :type elpa
+                              :repo ("org" . "http://orgmode.org/elpa/"))
+
                        ))
 
 (setq mine-pkgs-to-install
@@ -93,8 +99,8 @@
          markdown-mode
 
          ;; clojure
-         clojure-mode
-         nrepl
+         ;;clojure-mode
+         ;;nrepl
 
          ;; misc
          smex
