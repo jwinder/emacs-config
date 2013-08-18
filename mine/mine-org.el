@@ -33,6 +33,22 @@
   (org-return t)
   (insert "1. [ ] "))
 
+(defun org-get-weekly-clock-report (week)
+  (end-of-line)
+  (org-return t)
+  (insert (format "#+BEGIN: clocktable :block %s :step day" week))
+  (org-return t)
+  (insert "#+END:")
+  (org-clock-report))
+
+(defun org-clock-report-last-week ()
+  (interactive)
+  (org-get-weekly-clock-report "lastweek"))
+
+(defun org-clock-report-this-week ()
+  (interactive)
+  (org-get-weekly-clock-report "thisweek"))
+
 (setq org-completion-use-ido t)
 
 (setq org-todo-keywords
