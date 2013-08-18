@@ -13,6 +13,7 @@
 
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
+
 (global-set-key (kbd "C-c C-x 1") 'org-ordered-list-start)
 (global-set-key (kbd "C-c C-x l") 'org-checklist-start)
 
@@ -31,6 +32,23 @@
   (end-of-line)
   (org-return t)
   (insert "1. [ ] "))
+
+(setq org-completion-use-ido t)
+
+(setq org-todo-keywords
+       '((type "CAPTURED" "BACKLOG" "BLOCKED" "TODO" "|" "DONE" "DELEGATED")))
+
+;; TODO change the location to dropbox or somewhere
+(setq org-default-notes-file "~/.notes")
+(setq org-capture-templates '(
+                              ("c" "" entry (file+headline "~/.notes/captured.org" "Captured")
+                               "* CAPTURED %?\n  %i")
+                              ("a c" "" entry (file+headline "~/.notes/captured.org" "All Captured")
+                               "* CAPTURED %?\n  %i\n  %a")
+                              ))
+
+(define-key global-map (kbd "C-c c") (lambda () (interactive) (org-capture nil "c"))) ;; capture just text
+(define-key global-map (kbd "C-c a c") (lambda () (interactive) (org-capture nil "a c"))) ;; capture text + org-link
 
 (custom-set-faces
  '(outline-1 ((t (:foreground "#D6B163" :bold t))))
