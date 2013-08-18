@@ -99,8 +99,8 @@
          markdown-mode
 
          ;; clojure
-         ;;clojure-mode
-         ;;nrepl
+         clojure-mode
+         nrepl
 
          ;; misc
          smex

@@ -1,20 +1,24 @@
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
+;; bindings references: http://orgmode.org/orgcard.txt
+
 (setq org-speed-commands-user
       '(
         ("P" . org-shiftmetaup) ;; move item up
         ("N" . org-shiftmetadown) ;; move item down
         ("h" . org-speed-command-help)
-        ("!" . org-ordered-list-start)
-        ("x" . org-checklist-start)
         ))
 
 (setq org-use-speed-commands t)
 
 (global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c a a") 'org-agenda)
 (global-set-key (kbd "C-c C-x 1") 'org-ordered-list-start)
 (global-set-key (kbd "C-c C-x l") 'org-checklist-start)
+
+(global-set-key [remap org-meta-return] 'org-insert-subheading) ;; M-RET to indent another subheading level
+(global-set-key [remap org-insert-todo-heading-respect-content] 'org-ordered-list-start) ;; C-S-RET starts an ordered list
+(global-set-key [remap org-insert-todo-heading] 'org-checklist-start) ;; M-S-RET starts an ordered checklist
 
 (defun org-ordered-list-start ()
   (interactive)
