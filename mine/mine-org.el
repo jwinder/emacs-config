@@ -50,6 +50,13 @@
 (define-key global-map (kbd "C-c c") (lambda () (interactive) (org-capture nil "c"))) ;; capture just text
 (define-key global-map (kbd "C-c a c") (lambda () (interactive) (org-capture nil "a c"))) ;; capture text + org-link
 
+(require 'org-install)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((sh . t)
+   (ruby . t)
+   ))
+
 (custom-set-faces
  '(outline-1 ((t (:foreground "#D6B163" :bold t))))
  '(outline-2 ((t (:foreground "#A5F26E" :bold t))))
