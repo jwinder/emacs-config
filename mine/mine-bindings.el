@@ -30,7 +30,7 @@
 (global-set-key (kbd "C-x C-i") 'ido-imenu)
 
 (global-set-key (kbd "C-c n") 'rename-file-and-buffer)
-(global-set-key (kbd "C-c k") 'delete-this-buffer-and-file)
+;; (global-set-key (kbd "C-c k") 'delete-this-buffer-and-file)
 
 (global-set-key (kbd "C-x C-r") 'find-file-root)
 
