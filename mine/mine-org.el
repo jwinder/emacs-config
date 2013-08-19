@@ -10,16 +10,27 @@
         ))
 
 (setq org-use-speed-commands t)
+(setq org-completion-use-ido t)
 
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
 
-(global-set-key (kbd "C-c C-x 1") 'org-ordered-list-start)
-(global-set-key (kbd "C-c C-x l") 'org-checklist-start)
+(defvar org-automatic-todos t
+  "Automatically tagging TODO on headings & subheadings.")
 
-(global-set-key [remap org-meta-return] 'org-insert-subheading) ;; M-RET to indent another subheading level
-(global-set-key [remap org-insert-todo-heading-respect-content] 'org-ordered-list-start) ;; C-S-RET starts an ordered list
-(global-set-key [remap org-insert-todo-heading] 'org-checklist-start) ;; M-S-RET starts an ordered checklist
+(defun org-turn-on-automatic-todos ()
+  (interactive)
+  (setq org-automatic-todos t))
+
+(defun org-turn-off-automatic-todos ()
+  (interactive)
+  (setq org-automatic-todos nil))
+
+(setq org-insert-heading-hook (lambda () (if org-automatic-todos (insert "TODO "))))
+
+(global-set-key [remap org-meta-return] 'org-insert-subheading) ;; M-RET creating a subheading
+(global-set-key [remap org-insert-todo-heading-respect-content] 'org-ordered-list-start) ;; C-S-RET starting an ordered list
+(global-set-key [remap org-insert-todo-heading] 'org-checklist-start) ;; M-S-RET starting an ordered checklist
 
 (defun org-ordered-list-start ()
   (interactive)
@@ -48,8 +59,6 @@
 (defun org-clock-report-this-week ()
   (interactive)
   (org-get-weekly-clock-report "thisweek"))
-
-(setq org-completion-use-ido t)
 
 (setq org-todo-keywords
        '((type "CAPTURED" "BACKLOG" "BLOCKED" "TODO" "|" "DONE" "DELEGATED")))
