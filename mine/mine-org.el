@@ -47,7 +47,7 @@
 (defun org-get-weekly-clock-report (week)
   (end-of-line)
   (org-return t)
-  (insert (format "#+BEGIN: clocktable :block %s :step day" week))
+  (insert (format "#+BEGIN: clocktable :maxlevel 25 :narrow 200! :block %s :step day" week))
   (org-return t)
   (insert "#+END:")
   (org-clock-report))
