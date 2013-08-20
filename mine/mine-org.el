@@ -1,4 +1,5 @@
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+(add-hook 'org-mode-hook (lambda () (text-scale-set 2)))
 
 ;; bindings references: http://orgmode.org/orgcard.txt
 
@@ -11,6 +12,8 @@
 
 (setq org-use-speed-commands t)
 (setq org-completion-use-ido t)
+(setq org-return-follows-link t)
+(setq org-hide-leading-stars t)
 
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
@@ -61,19 +64,7 @@
   (org-get-weekly-clock-report "thisweek"))
 
 (setq org-todo-keywords
-       '((type "CAPTURED" "BACKLOG" "BLOCKED" "TODO" "|" "DONE" "DELEGATED")))
-
-;; TODO change the location to dropbox or somewhere
-(setq org-default-notes-file "~/.notes")
-(setq org-capture-templates '(
-                              ("c" "" entry (file+headline "~/.notes/captured.org" "Captured")
-                               "* CAPTURED %?\n  %i")
-                              ("a c" "" entry (file+headline "~/.notes/captured.org" "All Captured")
-                               "* CAPTURED %?\n  %i\n  %a")
-                              ))
-
-(define-key global-map (kbd "C-c c") (lambda () (interactive) (org-capture nil "c"))) ;; capture just text
-(define-key global-map (kbd "C-c a c") (lambda () (interactive) (org-capture nil "a c"))) ;; capture text + org-link
+      '((type "CAPTURED" "BACKLOG" "BLOCKED" "TODO" "DELEGATED" "DOING" "|" "DONE")))
 
 (require 'org-install)
 (org-babel-do-load-languages
