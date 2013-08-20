@@ -18,22 +18,8 @@
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
 
-(defvar org-automatic-todos t
-  "Automatically tagging TODO on headings & subheadings.")
-
-(defun org-turn-on-automatic-todos ()
-  (interactive)
-  (setq org-automatic-todos t))
-
-(defun org-turn-off-automatic-todos ()
-  (interactive)
-  (setq org-automatic-todos nil))
-
-(setq org-insert-heading-hook (lambda () (if org-automatic-todos (insert "TODO "))))
-
-(global-set-key [remap org-meta-return] 'org-insert-subheading) ;; M-RET creating a subheading
-(global-set-key [remap org-insert-todo-heading-respect-content] 'org-ordered-list-start) ;; C-S-RET starting an ordered list
-(global-set-key [remap org-insert-todo-heading] 'org-checklist-start) ;; M-S-RET starting an ordered checklist
+(global-set-key (kbd "C-c C-x 1") 'org-ordered-list-start)
+(global-set-key (kbd "C-c C-x l") 'org-checklist-start)
 
 (defun org-ordered-list-start ()
   (interactive)
@@ -64,7 +50,7 @@
   (org-get-weekly-clock-report "thisweek"))
 
 (setq org-todo-keywords
-      '((type "CAPTURED" "BACKLOG" "BLOCKED" "TODO" "DELEGATED" "DOING" "|" "DONE")))
+      '((type "TODO" "CAPTURED" "BACKLOG" "BLOCKED" "DELEGATED" "DOING" "|" "DONE")))
 
 (require 'org-install)
 (org-babel-do-load-languages
