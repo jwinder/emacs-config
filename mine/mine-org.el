@@ -14,6 +14,7 @@
 (setq org-completion-use-ido t)
 (setq org-return-follows-link t)
 (setq org-hide-leading-stars t)
+(setq org-startup-indented t)
 
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
@@ -35,7 +36,12 @@
   (org-get-weekly-clock-report "thisweek"))
 
 (setq org-todo-keywords
-      '((type "TODO" "CAPTURED" "BACKLOG" "BLOCKED" "DELEGATED" "DOING" "|" "DONE")))
+      '((type "TODO(t)" "CAPTURED(c)" "BLOCKED(b)" "DELEGATED(e)" "DOING(o)" "|" "DONE(d)")))
+
+(setq org-todo-keyword-faces
+      (quote (("CAPTURED" :background "DarkBlue" :foreground "gray" :box (:line-width 1 :style released-button))
+              ("DELEGATED" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
+              ("DOING" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button)))))
 
 (require 'org-install)
 (org-babel-do-load-languages

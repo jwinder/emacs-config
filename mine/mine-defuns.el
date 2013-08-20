@@ -516,4 +516,9 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (interactive "p*")
   (mine-increment-decimal (if arg (- arg) -1)))
 
+(defun thats-good ()
+  (interactive)
+  (browse-url "http://i.imgur.com/jWyXr.gif")
+  (insert "http://i.imgur.com/jWyXr.gif"))
+
 (provide 'mine-defuns)
