@@ -14,7 +14,6 @@
 (setq org-completion-use-ido t)
 (setq org-return-follows-link t)
 (setq org-hide-leading-stars t)
-(setq org-startup-indented t)
 
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
@@ -36,7 +35,7 @@
   (org-get-weekly-clock-report "thisweek"))
 
 (setq org-todo-keywords
-      '((type "TODO(t)" "CAPTURED(c)" "BLOCKED(b)" "DELEGATED(e)" "DOING(o)" "|" "DONE(d)")))
+      '((type "TODO" "CAPTURED" "BLOCKED" "DELEGATED" "DOING" "|" "DONE")))
 
 (setq org-todo-keyword-faces
       (quote (("CAPTURED" :background "DarkBlue" :foreground "gray" :box (:line-width 1 :style released-button))
