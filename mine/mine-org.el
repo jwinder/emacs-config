@@ -18,21 +18,6 @@
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
 
-(global-set-key (kbd "C-c C-x 1") 'org-ordered-list-start)
-(global-set-key (kbd "C-c C-x l") 'org-checklist-start)
-
-(defun org-ordered-list-start ()
-  (interactive)
-  (end-of-line)
-  (org-return t)
-  (insert "1. "))
-
-(defun org-checklist-start ()
-  (interactive)
-  (end-of-line)
-  (org-return t)
-  (insert "1. [ ] "))
-
 (defun org-get-weekly-clock-report (week)
   (end-of-line)
   (org-return t)
