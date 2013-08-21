@@ -20,6 +20,9 @@
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
 
+(setq org-tags-column -75)
+
+;; remove priority of item on DONE state
 (setq org-after-todo-state-change-hook
       (lambda ()
         (when (string= org-state "DONE")
@@ -46,9 +49,11 @@
       '((sequence "TODO" "CAPTURED" "BLOCKED" "DELEGATED" "DOING" "|" "DONE")))
 
 (setq org-todo-keyword-faces
-      (quote (("CAPTURED" :background "DarkBlue" :foreground "gray" :box (:line-width 1 :style released-button))
-              ("DELEGATED" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
-              ("DOING" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button)))))
+      '(("TODO" :background "DarkRed" :foreground "white" :box (:line-width 1 :style released-button))
+        ("CAPTURED" :background "DarkBlue" :foreground "gray" :box (:line-width 1 :style released-button))
+        ("DELEGATED" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
+        ("DOING" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
+        ("DONE" :background "DarkGreen" :foreground "white" :box (:line-width 1 :style released-button))))
 
 (require 'org-install)
 (org-babel-do-load-languages
@@ -77,8 +82,6 @@
  '(org-date ((t (:inherit font-lock-constant-face))))
  '(org-tag ((t (:inherit font-lock-comment-delimiter-face))))
  '(org-hide ((t (:foreground "#191919"))))
- '(org-todo ((t (:background "DarkRed" :foreground "white" :box (:line-width 1 :style released-button)))))
- '(org-done ((t (:background "DarkGreen" :foreground "white" :box (:line-width 1 :style released-button)))))
  '(org-column ((t (:background "#222222"))))
  '(org-column-title ((t (:background "DarkGreen" :foreground "white" :bold t :box (:line-width 1 :style released-button))))))
 
