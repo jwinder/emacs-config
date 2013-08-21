@@ -1,5 +1,7 @@
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+
 (add-hook 'org-mode-hook (lambda () (text-scale-set 2)))
+(add-hook 'org-agenda-mode-hook (lambda () (org-agenda-follow-mode))) ;; better than org-agenda-start-with-follow-mode
 
 ;; bindings references: http://orgmode.org/orgcard.txt
 
