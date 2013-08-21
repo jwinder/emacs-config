@@ -20,6 +20,12 @@
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
 
+(setq org-after-todo-state-change-hook
+      (lambda ()
+        (when (string= org-state "DONE")
+            (org-priority '?\s)
+          )))
+
 (defun org-get-weekly-clock-report (week)
   (end-of-line)
   (org-return t)
