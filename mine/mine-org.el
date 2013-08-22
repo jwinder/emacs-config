@@ -1,7 +1,6 @@
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
 (add-hook 'org-mode-hook (lambda () (text-scale-set 2)))
-(add-hook 'org-agenda-mode-hook (lambda () (org-agenda-follow-mode))) ;; better than org-agenda-start-with-follow-mode
 
 ;; bindings references: http://orgmode.org/orgcard.txt
 
@@ -18,6 +17,7 @@
 (setq org-hide-leading-stars t)
 (setq org-enforce-todo-dependencies t)
 (setq org-clock-out-when-done nil)
+(setq org-agenda-start-with-follow-mode t)
 
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
