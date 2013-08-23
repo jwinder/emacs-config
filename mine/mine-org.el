@@ -19,6 +19,10 @@
 (setq org-clock-out-when-done nil)
 (setq org-agenda-start-with-follow-mode t)
 
+(setq org-refile-targets '((org-agenda-files :maxlevel . 10)))
+(setq org-refile-use-outline-path t)
+(setq org-refile-allow-creating-parent-nodes '(confirm))
+
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
 
