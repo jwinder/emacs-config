@@ -35,6 +35,9 @@
             (org-priority '?\s)
           )))
 
+;; (setq org-clock-persist 'history)
+;; (org-clock-persistence-insinuate)
+
 (defun org-get-weekly-clock-report (week)
   (end-of-line)
   (org-return t)
