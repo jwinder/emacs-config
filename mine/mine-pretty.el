@@ -11,7 +11,7 @@
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 
 (defvar mine-small-font "Monaco 11" "*The small font")
-(defvar mine-normal-font "Monaco 13" "*The main font")
+(defvar mine-normal-font "Monaco 14" "*The main font")
 (defvar mine-big-font "Monaco 20" "*The big font")
 
 ;; display settings
@@ -80,6 +80,6 @@
 (display-time)
 (display-battery-mode)
 (column-number-mode)
-(mine-use-transparency) ;; needed for separate emacs clients starting up transparent
+(mine-normal-display)
 
 (provide 'mine-pretty)

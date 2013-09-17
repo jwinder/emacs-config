@@ -20,9 +20,8 @@
 (load custom-file)
 
 (cd (getenv "HOME"))
-(mine-normal-display)
-
+(mine-toggle-fullscreen)
 (server-start)
-(put 'dired-find-alternate-file 'disabled nil)
 
+(put 'dired-find-alternate-file 'disabled nil)
 (put 'ido-exit-minibuffer 'disabled nil)

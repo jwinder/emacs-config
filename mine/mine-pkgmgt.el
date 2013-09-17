@@ -114,7 +114,7 @@
          yasnippet
          mark-multiple
          browse-kill-ring
-         ;; gist
+         gist
          )
        (mapcar 'el-get-source-name el-get-sources)))
 

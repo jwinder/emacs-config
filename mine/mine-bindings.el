@@ -84,4 +84,7 @@
 (global-set-key (kbd "C-c +") 'mine-increment-decimal)
 (global-set-key (kbd "C-c -") 'mine-decrement-decimal)
 
+;; full screen
+(global-set-key (kbd "<f11>") 'mine-toggle-fullscreen)
+
 (provide 'mine-bindings)
