@@ -175,11 +175,6 @@
 (setq visible-bell t)
 
 (setq x-select-enable-clipboard t)
-(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
-
-(setq browse-url-browser-function 'browse-url-default-macosx-browser)
-;; (setq browse-url-browser-function 'browse-url-generic
-;;       browse-url-generic-program "google-chrome")
 
 ;; Backups
 (setq version-control nil)
@@ -260,8 +255,19 @@
 ;; mac os x specific
 (if (eq system-type 'darwin)
     (progn ()
-           (setq mac-command-modifier 'meta) ;; using command key as meta instead of option
-           (setq interprogram-paste-function 'x-selection-value) ;; yank fix
+           (setq ns-command-modifier 'meta)
+           (setq interprogram-paste-function 'x-selection-value)
+           (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+           (setq ack-executable "ack")
+           ))
+
+;; linux specific
+(if (eq system-type 'gnu/linux)
+    (progn ()
+           (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+           (setq browse-url-browser-function 'browse-url-generic
+                 browse-url-generic-program "google-chrome")
+           (setq ack-executable "ack-grep")
            ))
 
 (provide 'mine-builtin)
