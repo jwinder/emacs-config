@@ -78,7 +78,7 @@
   (mine-use-transparency))
 
 (display-time)
-(display-battery-mode)
+;; (display-battery-mode) ;; is it updating correctly?
 (column-number-mode)
 (mine-normal-display)
 

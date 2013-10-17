@@ -82,6 +82,7 @@
 
 ;; increment/decrement numbers at point
 (global-set-key (kbd "C-c +") 'mine-increment-decimal)
+(global-set-key (kbd "C-c =") 'mine-increment-decimal)
 (global-set-key (kbd "C-c -") 'mine-decrement-decimal)
 
 ;; full screen

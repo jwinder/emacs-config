@@ -163,6 +163,9 @@
 ;; dired things
 (add-hook 'dired-mode-hook '(lambda ()
                               (local-set-key (kbd "C-c R") 'wdired-change-to-wdired-mode)))
+(setq wdired-allow-to-change-permissions "advanced")
+(setq wdired-confirm-overwrite t)
+(setq wdired-use-dired-vertical-movement t)
 (defalias 'wdired 'wdired-change-to-wdired-mode)
 
 ;; Midnight mode to clean up old buffers

@@ -20,7 +20,7 @@
 (load custom-file)
 
 (cd (getenv "HOME"))
-(mine-toggle-fullscreen)
+;; (mine-toggle-fullscreen)
 (server-start)
 
 (put 'dired-find-alternate-file 'disabled nil)

@@ -395,6 +395,7 @@ With prefix ARG, go to the next low priority buffer with activity."
   (rcirc-track-minor-mode -1)
   (remq 'rcirc-activity-string global-mode-string))
 
+;; todo; this doesn't work when not in the Gemfile directory anymore
 (defun bundle (cmd)
   (interactive "sbundle ")
   (require 'comint)
