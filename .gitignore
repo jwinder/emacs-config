@@ -26,3 +26,4 @@ swank
 customizations.el
 /elpa
 bookmarks
+projectile-bookmarks.eld

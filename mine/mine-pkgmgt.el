@@ -115,6 +115,7 @@
          mark-multiple
          browse-kill-ring
          gist
+         projectile
          )
        (mapcar 'el-get-source-name el-get-sources)))
 

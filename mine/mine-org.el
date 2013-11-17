@@ -65,11 +65,7 @@
         ("DONE" :background "DarkGreen" :foreground "white" :box (:line-width 1 :style released-button))))
 
 (require 'org-install)
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((sh . t)
-   (ruby . t)
-   ))
+(org-babel-do-load-languages 'org-babel-load-languages '((sh . t) (ruby . t)))
 
 (custom-set-faces
  '(outline-1 ((t (:foreground "#D6B163" :bold t))))
