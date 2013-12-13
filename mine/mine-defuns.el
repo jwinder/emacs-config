@@ -352,7 +352,6 @@ frames with exactly two windows."
 (defun mine-comment-dwifm (&optional arg)
   "dwifm = do what i fucking mean"
   (interactive "*P")
-  (comment-normalize-vars)
   (if (region-active-p)
       (comment-dwim arg)
     (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
