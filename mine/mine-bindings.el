@@ -67,6 +67,10 @@
 
 (global-set-key (kbd "C-x M-`") 'previous-error)
 
+;; comments
+(global-set-key (kbd "M-;") 'mine-comment-dwifm)
+(global-set-key (kbd "C-c M-;") 'mine-flip-comments)
+
 ;; ack searching
 (global-set-key (kbd "C-c a f") 'ack)
 (global-set-key (kbd "C-c a g") 'ack-again)

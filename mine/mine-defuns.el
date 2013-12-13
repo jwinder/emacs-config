@@ -349,6 +349,30 @@ frames with exactly two windows."
       ;; allow some user customization
       (run-hooks 'find-file-root-hook))))
 
+(defun mine-comment-dwifm (&optional arg)
+  "dwifm = do what i fucking mean"
+  (interactive "*P")
+  (comment-normalize-vars)
+  (if (region-active-p)
+      (comment-dwim arg)
+    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+
+(defun mine-flip-comments (&optional arg)
+  "line-by-line toggles comments in a region, if selected."
+  (interactive "*P")
+  (if (region-active-p)
+      (save-restriction
+        (narrow-to-region (region-beginning) (region-end))
+        (goto-char (point-min))
+        (while (< (point) (point-max))
+          (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+          (forward-line)
+          )
+        )
+    (mine-comment-dwifm arg)
+    )
+  )
+
 ;; Function to compile current buffer (if it's a LESS file) to CSS, requires 'ruby-gem less'
 (defun less-compile-css ()
   "Compile LESS to CSS"
