@@ -545,4 +545,9 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (browse-url "http://i.imgur.com/jWyXr.gif")
   (insert "http://i.imgur.com/jWyXr.gif"))
 
+(defun save-for-later (message-to-save)
+  "Save a message for later when I 'have time'..."
+  (interactive "sMessage to save for later: ")
+  (message "Saved!"))
+
 (provide 'mine-defuns)

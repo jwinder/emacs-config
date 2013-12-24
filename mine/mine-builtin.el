@@ -119,6 +119,7 @@
 
 ;; Use soft tabs
 (setq-default indent-tabs-mode nil)
+(setq default-tab-width 2)
 
 ;; Don't make backups
 (setq make-backup-files nil)
