@@ -8,7 +8,15 @@
 
 (setq el-get-user-package-directory "~/.emacs.d/init")
 
+;; nrepl is only needed here b/c it was renamed to cider and el-get doesn't rename it yet
+
 (setq el-get-sources '(
+                       (:name nrepl
+                              :description "An Emacs client for nREPL, the Clojure networked REPL server."
+                              :type github
+                              :pkgname "clojure-emacs/nrepl.el"
+                              :depends (dash clojure-mode pkg-info))
+
                        (:name enclose
                               :description "Enclose cursor within punctuation pairs"
                               :type elpa
