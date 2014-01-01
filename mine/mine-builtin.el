@@ -177,8 +177,8 @@
 ;; Miscallaneous Things
 (if (fboundp 'mouse-wheel-mode) (mouse-wheel-mode t))
 (setq visible-bell t)
-
 (setq x-select-enable-clipboard t)
+(setq save-place-file "~/.saved-places-emacs") ;; the default .emacs-places is annoying in ido-find-file
 
 ;; Backups
 (setq version-control nil)
