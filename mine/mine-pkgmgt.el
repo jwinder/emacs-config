@@ -1,5 +1,7 @@
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
+(setq el-get-install-skip-emacswiki-recipes t)
+
 (unless (require 'el-get nil t)
   (with-current-buffer
       (url-retrieve-synchronously "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
@@ -8,10 +10,8 @@
 
 (setq el-get-user-package-directory "~/.emacs.d/init")
 
-;; nrepl is only needed here b/c it was renamed to cider and el-get doesn't rename it yet
-
 (setq el-get-sources '(
-                       (:name nrepl
+                       (:name nrepl ;; nrepl is only needed here b/c it was renamed to cider and el-get doesn't rename it yet
                               :description "An Emacs client for nREPL, the Clojure networked REPL server."
                               :type github
                               :pkgname "clojure-emacs/nrepl.el"
@@ -42,12 +42,11 @@
                                          (autoload 'restclient-mode "restclient" nil t)
                                          (add-to-list 'auto-mode-alist '("\\.http\\'" . restclient-mode))))
 
-                       (:name sbt
-                              :website "https://github.com/rubbish/sbt.el"
-                              :description "support for running sbt in inferior mode."
+                       (:name sbt-mode
+                              :website "https://github.com/hvesalai/sbt-mode"
+                              :description "An emacs mode for interacting with sbt, scala console (aka REPL) and sbt projects"
                               :type github
-                              :pkgname "rubbish/sbt.el"
-                              :prepare (add-hook 'scala-mode-hook 'turn-on-sbt-mode))
+                              :pkgname "hvesalai/sbt-mode")
                        (:name scala-mode2
                               :website "https://github.com/hvesalai/scala-mode2"
                               :type github
@@ -83,6 +82,14 @@
                               :description "Org-mode is for keeping notes, maintaining ToDo lists, doing project planning, and authoring with a fast and effective plain-text system."
                               :type elpa
                               :repo ("org" . "http://orgmode.org/elpa/"))
+
+                       (:name gh
+                              :type github
+                              :pkgname "sigma/gh.el"
+                              :checkout "7c66958" ;; specific version since the last commit broke gist.el
+                              :depends (pcache logito)
+                              :description "Github API client libraries"
+                              :website "http://github.com/sigma/gh.el")
 
                        ))
 
@@ -124,6 +131,8 @@
          browse-kill-ring
          gist
          projectile
+         ag
+         pianobar
          )
        (mapcar 'el-get-source-name el-get-sources)))
 
@@ -131,8 +140,8 @@
 
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")
-                         ("tromey" . "http://tromey.com/elpa/")))
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+
 (package-initialize)
 
 (provide 'mine-pkgmgt)
