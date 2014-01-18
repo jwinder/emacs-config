@@ -365,12 +365,8 @@ frames with exactly two windows."
         (goto-char (point-min))
         (while (< (point) (point-max))
           (comment-or-uncomment-region (line-beginning-position) (line-end-position))
-          (forward-line)
-          )
-        )
-    (mine-comment-dwifm arg)
-    )
-  )
+          (forward-line)))
+    (mine-comment-dwifm arg)))
 
 ;; Function to compile current buffer (if it's a LESS file) to CSS, requires 'ruby-gem less'
 (defun less-compile-css ()
@@ -549,5 +545,9 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   "Save a message for later when I 'have time'..."
   (interactive "sMessage to save for later: ")
   (message "Saved!"))
+
+(defun soft-murmur ()
+  (interactive)
+  (browse-url "http://asoftmurmur.com/?v=32632b490000"))
 
 (provide 'mine-defuns)

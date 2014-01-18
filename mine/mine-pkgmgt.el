@@ -42,11 +42,11 @@
                                          (autoload 'restclient-mode "restclient" nil t)
                                          (add-to-list 'auto-mode-alist '("\\.http\\'" . restclient-mode))))
 
-                       (:name sbt-mode
-                              :website "https://github.com/hvesalai/sbt-mode"
-                              :description "An emacs mode for interacting with sbt, scala console (aka REPL) and sbt projects"
+                       (:name sbt
+                              :website "https://github.com/rubbish/sbt.el"
+                              :description "support for running sbt in inferior mode."
                               :type github
-                              :pkgname "hvesalai/sbt-mode")
+                              :pkgname "rubbish/sbt.el")
                        (:name scala-mode2
                               :website "https://github.com/hvesalai/scala-mode2"
                               :type github
@@ -126,10 +126,10 @@
          switch-window
          scratch
          magit
+         gist
          yasnippet
          mark-multiple
          browse-kill-ring
-         gist
          projectile
          ag
          pianobar

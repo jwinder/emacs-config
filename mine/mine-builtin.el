@@ -193,6 +193,9 @@
 (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.proto\\'" . c-mode))
 
+;; mustache are like javascript
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . javascript-mode))
+
 ;; auto revert logs by tail
 ;; (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-tail-mode))
 

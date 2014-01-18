@@ -23,7 +23,6 @@
 
 (add-hook 'auto-save-hook (lambda () (desktop-save-in-desktop-dir)))
 
-;;; desktop-override-stale-locks.el begins here
 (defun emacs-process-p (pid)
   "If pid is the process ID of an emacs process, return t, else nil.
 Also returns nil if pid is nil."
@@ -38,6 +37,5 @@ Also returns nil if pid is nil."
   "Don't allow dead emacsen to own the desktop file."
   (when (not (emacs-process-p ad-return-value))
     (setq ad-return-value nil)))
-;;; desktop-override-stale-locks.el ends here
 
 (provide 'mine-desktop)
