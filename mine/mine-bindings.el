@@ -81,9 +81,6 @@
 ;; compose new mail binding
 (global-unset-key (kbd "C-x m"))
 
-;; irc
-(global-set-key [remap rcirc-next-active-buffer] 'mine-rcirc-next-active-buffer-bury-rcirc-buffers)
-
 ;; increment/decrement numbers at point
 (global-set-key (kbd "C-c +") 'mine-increment-decimal)
 (global-set-key (kbd "C-c =") 'mine-increment-decimal)

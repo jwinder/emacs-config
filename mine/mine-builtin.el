@@ -208,54 +208,11 @@
 (setq battery-echo-area-format "Battery: %p%% %B")
 (setq battery-update-interval 10)
 
-(add-hook 'window-configuration-change-hook
-          '(lambda ()
-             (setq rcirc-fill-column (- (window-width) 2))))
-
 ;; viewing gists in browse-url after gisting
 (setq gist-view-gist t)
 
 ;; pop-to-buffer to split horizontally rather than vertically
 (setq split-width-threshold nil)
-
-;; rcirc things
-
-;; (defun mine-rcirc-message (message)
-;;   (interactive "i")
-;;   (rcirc-cmd-msg message))
-
-;; (defun-rcirc-command msg (message)
-;;   "Send private MESSAGE to TARGET."
-;;   (interactive "i")
-;;   (if (null message)
-;;       (progn
-;;         (setq target (completing-read "Message nick: "
-;;                                       (with-rcirc-server-buffer
-;; 					rcirc-nick-table)))
-;;         (when (> (length target) 0)
-;;           (setq message (read-string (format "Message %s: " target)))
-;;           (when (> (length message) 0)
-;;             (rcirc-send-message process target message))))
-;;     (if (not (string-match "\\([^ ]+\\) \\(.+\\)" message))
-;;         (message "Not enough args, or something.")
-;;       (setq target (match-string 1 message)
-;;             message (match-string 2 message))
-;;       (rcirc-send-message process target message))))
-
-(custom-set-faces
- '(rcirc-my-nick ((t (:foreground "#00ffff"))))
- '(rcirc-other-nick ((t (:foreground "#90ee90"))))
- '(rcirc-server ((t (:foreground "#a2b5cd"))))
- '(rcirc-server-prefix ((t (:foreground "#00bfff"))))
- '(rcirc-timestamp ((t (:foreground "#7d7d7d"))))
- '(rcirc-nick-in-message ((t (:foreground "#00ffff"))))
- '(rcirc-prompt ((t (:foreground "#00bfff")))))
-
-(add-hook 'rcirc-mode-hook 'turn-on-flyspell)
-(add-hook 'rcirc-mode-hook (lambda () (rcirc-track-minor-mode t)))
-
-(setq rcirc-notify-message "%s: %s"
-      rcirc-buffer-maximum-lines 2000)
 
 (toggle-case-fold-search)
 

@@ -1,3 +1,6 @@
+(defun noop ()
+  (interactive))
+
 (defun beginning-of-line-or-back-to-indention ()
   (interactive)
   "This goes to back to indention or if already there beginning of line"
@@ -391,28 +394,6 @@ frames with exactly two windows."
   (let ((scratch-buffer (get-buffer-create "*text*")))
     (switch-to-buffer scratch-buffer)
     (text-mode)))
-
-(defun mine-rcirc-bury-buffers ()
-  "Bury all rcirc-mode buffers."
-  (interactive)
-  (save-excursion)
-  (dolist (buffer (buffer-list))
-    (with-current-buffer buffer
-      (if (eq major-mode 'rcirc-mode)
-          (bury-buffer buffer)))))
-
-(defun mine-rcirc-next-active-buffer-bury-rcirc-buffers (arg)
-  "Switch to the next rcirc buffer with activity, burying all rcirc buffers after returning to a non-rcirc buffer.
-With prefix ARG, go to the next low priority buffer with activity."
-  (interactive "P")
-  (rcirc-next-active-buffer arg)
-  (unless (eq major-mode 'rcirc-mode)
-    (mine-rcirc-bury-buffers)))
-
-(defun mine-rcirc-shut-up ()
-  (interactive)
-  (rcirc-track-minor-mode -1)
-  (remq 'rcirc-activity-string global-mode-string))
 
 ;; todo; this doesn't work when not in the Gemfile directory anymore
 (defun bundle (cmd)
