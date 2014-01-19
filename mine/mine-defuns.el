@@ -1,5 +1,6 @@
 (defun noop ()
-  (interactive))
+  (interactive)
+  nil)
 
 (defun beginning-of-line-or-back-to-indention ()
   (interactive)

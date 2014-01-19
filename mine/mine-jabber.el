@@ -14,8 +14,9 @@
       jabber-backlog-number 40
       jabber-backlog-days 30
       jabber-print-rare-time nil
-      jabber-alert-message-hooks '(jabber-message-scroll)
-      jabber-alert-presense-message-function (lambda (who oldstatus newstatus statustext) (noop)))
+      jabber-alert-message-hooks nil;;'(mine-jabber-mode-bar-alert)
+      jabber-alert-presence-hooks nil
+      jabber-alert-presense-message-function (lambda (who oldstatus newstatus statustext) nil))
 
 (setq jabber-chat-prompt "[%t] %n >\s")
 (setq jabber-muc-chat-prompt "[%t] %g/%n >\s")
@@ -27,6 +28,8 @@
 
 (custom-set-faces
  '(jabber-activity-face ((t (:foreground "#4b89d0"))))
+ '(jabber-activity-personal-face ((t :foreground "#ee2c2c")))
+
  '(jabber-chat-prompt-local ((t (:foreground "#2e8b57"))))
  '(jabber-chat-prompt-foreign ((t (:foreground "#4b89d0"))))
  '(jabber-chat-prompt-system ((t (:foreground "#ee2c2c"))))
@@ -36,19 +39,12 @@
 
  '(jabber-roster-user-online ((t (:foreground "#4b89d0"))))
  '(jabber-roster-user-away ((t (:foreground "#2e8b57" :slant italic))))
- '(jabber-roster-user-chatty ((t (:foreground "dark orange"))))
+ '(jabber-roster-user-chatty ((t (:foreground "#ee2c2c"))))
  '(jabber-roster-user-error ((t (:foreground "#4b89d0"))))
  '(jabber-roster-user-offline ((t (:foreground "dark grey" :slant italic))))
  )
 
 (defalias 'jabber-roster 'jabber-switch-to-roster-buffer)
-
-(defun mine-jabber-add-accounts (&rest accounts)
-  "Append to the jabber account list without setq-ing it.
-E.g (mine-jabber-add-accounts '(\"your-server\" (:password . \"your-password\")))"
-  (interactive)
-  (dolist (account accounts)
-    (add-to-list 'jabber-account-list account)))
 
 (defun mine-jabber-groupchat-join (room nickname)
   (jabber-muc-join (jabber-read-account) room nickname t))
@@ -58,10 +54,10 @@ E.g (mine-jabber-add-accounts '(\"your-server\" (:password . \"your-password\"))
   (save-excursion)
   (dolist (buffer (buffer-list))
     (with-current-buffer buffer
-      (if (eq major-mode 'jabber-chat-mode)
-          (bury-buffer buffer))))
-  (if (eq major-mode 'jabber-chat-mode)
-      (bury-buffer)))
+      (when (eq major-mode 'jabber-chat-mode)
+        (bury-buffer buffer))))
+  (when (eq major-mode 'jabber-chat-mode)
+    (switch-to-buffer (other-buffer))))
 
 (defun mine-jabber-return ()
   "Open address at point or send jabber input if appropriate."
@@ -73,17 +69,29 @@ E.g (mine-jabber-add-accounts '(\"your-server\" (:password . \"your-password\"))
   "Opens url at point and returns true or nil."
   (require 'browse-url)
   (let ((url (browse-url-url-at-point)))
-    (if url (progn (browse-url url) t)
+    (if url
+        (progn (browse-url url) t)
       nil)))
 
 (defun mine-jabber-send-input ()
   "Sends jabber input if on input line, returning t or nil"
   (interactive)
   (if (eq (count-lines (point-min) (point)) (count-lines (point-min) (point-max)))
-    (progn (jabber-chat-buffer-send) t)
+      (progn (jabber-chat-buffer-send) t)
     nil))
+
+(defun mine-jabber-next-active-buffer-bury-jabber-buffers (&optional jid-param)
+  "Switch to next jabber buffer with activity, burying all jabber buffers after all are cycled."
+  (interactive)
+  (jabber-activity-switch-to jid-param)
+  (unless (eq major-mode 'jabber-chat-mode)
+    (mine-jabber-bury-buffers)))
 
 (define-key jabber-chat-mode-map (kbd "RET") 'mine-jabber-return)
 (define-key jabber-chat-mode-map [C-return] 'newline)
+(define-key jabber-chat-mode-map (kbd "C-x C-j C-n") 'jabber-muc-names)
+
+(global-set-key (kbd "C-x C-j C-SPC") 'mine-jabber-next-active-buffer-bury-jabber-buffers)
+(global-set-key [remap jabber-activity-switch-to] 'mine-jabber-next-active-buffer-bury-jabber-buffers) ;; C-x C-j C-l
 
 (provide 'mine-jabber)
