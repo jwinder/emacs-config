@@ -200,7 +200,7 @@
 ;; (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-tail-mode))
 
 ;; custom battery info
-(setq display-time-format "(%I:%M%p %A %B %d %Y) ")
+(setq display-time-format "\s(%I:%M%p %A %B %d %Y)\s")
 (setq display-time-mail-file -1)
 (setq display-time-default-load-average nil)
 

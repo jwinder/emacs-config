@@ -5,6 +5,7 @@
       ssl-certificate-verification-policy 1)
 
 (add-hook 'jabber-chat-mode-hook 'goto-address)
+(add-hook 'jabber-chat-mode-hook (lambda () (flyspell-mode t)))
 (add-hook 'jabber-chat-mode-hook (lambda () (setq fill-column (- (window-width) 2))))
 
 (setq jabber-groupchat-buffer-format "%n"
@@ -28,14 +29,15 @@
 
 (custom-set-faces
  '(jabber-activity-face ((t (:foreground "#4b89d0"))))
- '(jabber-activity-personal-face ((t :foreground "#ee2c2c")))
+ '(jabber-activity-personal-face ((t :foreground "#4b89d0")))
 
- '(jabber-chat-prompt-local ((t (:foreground "#2e8b57"))))
+ '(jabber-chat-prompt-local ((t (:foreground "#40e0d0"))))
  '(jabber-chat-prompt-foreign ((t (:foreground "#4b89d0"))))
- '(jabber-chat-prompt-system ((t (:foreground "#ee2c2c"))))
+ '(jabber-chat-prompt-system ((t (:foreground "#8b668b"))))
  '(jabber-chat-text-local ((t ())))
  '(jabber-chat-text-foreign ((t ())))
- '(jabber-chat-error ((t (:foreground "#4b89d0"))))
+ '(jabber-chat-text-system ((t (:foreground "dark grey"))))
+ '(jabber-chat-error ((t (:foreground "#cd3278"))))
 
  '(jabber-roster-user-online ((t (:foreground "#4b89d0"))))
  '(jabber-roster-user-away ((t (:foreground "#2e8b57" :slant italic))))
