@@ -520,8 +520,11 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 
 (defun thats-good ()
   (interactive)
-  (browse-url "http://i.imgur.com/jWyXr.gif")
-  (insert "http://i.imgur.com/jWyXr.gif"))
+  (browse-url "http://i.imgur.com/jWyXr.gif"))
+
+(defun jack-nicholson-creepy-nod ()
+  (interactive)
+  (browse-url "http://img.pandawhale.com/post-30824-Jack-Nicholson-Creepy-Nodding-SRXv.gif"))
 
 (defun save-for-later (message-to-save)
   "Save a message for later when I 'have time'..."

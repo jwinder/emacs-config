@@ -1,28 +1,3 @@
-
-;; rcirc things
-
-;; (defun mine-rcirc-message (message)
-;;   (interactive "i")
-;;   (rcirc-cmd-msg message))
-
-;; (defun-rcirc-command msg (message)
-;;   "Send private MESSAGE to TARGET."
-;;   (interactive "i")
-;;   (if (null message)
-;;       (progn
-;;         (setq target (completing-read "Message nick: "
-;;                                       (with-rcirc-server-buffer
-;; 					rcirc-nick-table)))
-;;         (when (> (length target) 0)
-;;           (setq message (read-string (format "Message %s: " target)))
-;;           (when (> (length message) 0)
-;;             (rcirc-send-message process target message))))
-;;     (if (not (string-match "\\([^ ]+\\) \\(.+\\)" message))
-;;         (message "Not enough args, or something.")
-;;       (setq target (match-string 1 message)
-;;             message (match-string 2 message))
-;;       (rcirc-send-message process target message))))
-
 (custom-set-faces
  '(rcirc-my-nick ((t (:foreground "#00ffff"))))
  '(rcirc-other-nick ((t (:foreground "#90ee90"))))
@@ -34,6 +9,7 @@
 
 (add-hook 'rcirc-mode-hook 'turn-on-flyspell)
 (add-hook 'rcirc-mode-hook (lambda () (rcirc-track-minor-mode t)))
+(add-hook 'window-configuration-change-hook '(lambda () (setq rcirc-fill-column (- (window-width) 2))))
 
 (setq rcirc-notify-message "%s: %s"
       rcirc-buffer-maximum-lines 2000)
@@ -59,10 +35,6 @@ With prefix ARG, go to the next low priority buffer with activity."
   (interactive)
   (rcirc-track-minor-mode -1)
   (remq 'rcirc-activity-string global-mode-string))
-
-(add-hook 'window-configuration-change-hook
-          '(lambda ()
-             (setq rcirc-fill-column (- (window-width) 2))))
 
 (global-set-key [remap rcirc-next-active-buffer] 'mine-rcirc-next-active-buffer-bury-rcirc-buffers)
 
