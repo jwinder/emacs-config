@@ -193,18 +193,15 @@
 (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.proto\\'" . c-mode))
 
-;; mustache are like javascript
-(add-to-list 'auto-mode-alist '("\\.mustache\\'" . javascript-mode))
-
 ;; auto revert logs by tail
 ;; (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-tail-mode))
 
 ;; custom battery info
-(setq display-time-format "\s(%I:%M%p %A %B %d %Y)\s")
+(setq display-time-format "\s(%I:%M%p %a %m/%d/%y)\s")
 (setq display-time-mail-file -1)
 (setq display-time-default-load-average nil)
 
-(setq battery-mode-line-format "(%p %B) ")
+(setq battery-mode-line-format "(%p %B)\s")
 (setq battery-echo-area-format "Battery: %p%% %B")
 (setq battery-update-interval 10)
 

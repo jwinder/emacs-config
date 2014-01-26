@@ -1,23 +1,15 @@
-(defun set-mode-bar-colors ()
+(defun set-mode-line-colors ()
   (interactive)
-  (set-face-background 'mode-line "#483d8b")
-  (set-face-foreground 'mode-line "#dcdcdc")
-  (set-face-background 'powerline-active1 "#191970")
-  (set-face-foreground 'powerline-active1 "#dcdcdc")
-  (set-face-background 'powerline-active2 "#1a1a1a")
-  (set-face-foreground 'powerline-active2 "#dcdcdc")
+  (custom-set-faces
+   '(mode-line ((t (:foreground "#dcdcdc" :background "#483d8b"))))
+   '(mode-line-buffer-id ((t (:weight bold :inheret region :foreground unspecified :background unspecified))))
+   '(powerline-active1 ((t (:foreground "#dcdcdc" :background "#191970"))))
+   '(powerline-active2 ((t (:foreground "#dcdcdc" :background "#1a1a1a"))))
+   '(mode-line-inactive ((t (:foreground "#000000" :background "#1a1a1a"))))
+   '(powerline-inactive1 ((t (:foreground "#000000" :background "#333333"))))
+   '(powerline-inactive2 ((t (:foreground "#000000" :background "#1a1a1a"))))))
 
-  (set-face-background 'mode-line-inactive "#1a1a1a")
-  (set-face-foreground 'mode-line-inactive "#000000")
-  (set-face-background 'powerline-inactive1 "#333333")
-  (set-face-foreground 'powerline-inactive1 "#000000")
-  (set-face-background 'powerline-inactive2 "#1a1a1a")
-  (set-face-foreground 'powerline-inactive2 "#000000")
-  )
-
-(set-mode-bar-colors)
-
-(setq-default mode-line-format
+(setq mine-mode-line-format
       '("%e"
         (:eval
          (let* ((active (powerline-selected-window-active))
@@ -65,3 +57,21 @@
             (powerline-render lhs)
             (powerline-fill face2 (powerline-width rhs))
             (powerline-render rhs))))))
+
+(defun turn-on-mode-line ()
+  "Turn on mode line in all buffers."
+  (interactive)
+  (setq-default mode-line-format mine-mode-line-format))
+
+(defun turn-off-mode-line ()
+  "Turn off mode line in all buffers."
+  (interactive)
+  (setq-default mode-line-format nil))
+
+(defun reset-mode-line ()
+  "Reset mode line colors and turn on mode line."
+  (interactive)
+  (set-mode-line-colors)
+  (turn-on-mode-line))
+
+(reset-mode-line)

@@ -1,9 +1,10 @@
 ;; desktop setup
 (desktop-save-mode t)
 
-(setq desktop-path '("~/.emacs.d"))
-(setq desktop-dirname "~/.emacs.d")
-(setq desktop-base-file-name "emacs-desktop")
+(setq desktop-path '("~/.emacs.d")
+      desktop-dirname "~/.emacs.d"
+      desktop-base-file-name "emacs-desktop"
+      desktop-save t)
 
 ;; (setq tramp-verbose 6) ;; tramp debug buffer
 
@@ -21,7 +22,8 @@
 	     (desktop-remove)
 	     (setq desktop-dirname desktop-dirname-tmp)))
 
-(add-hook 'auto-save-hook (lambda () (desktop-save-in-desktop-dir)))
+;; (add-hook 'auto-save-hook 'desktop-save-in-desktop-dir)
+(add-hook 'emacs-kill-hook 'desktop-save-in-desktop-dir)
 
 (defun emacs-process-p (pid)
   "If pid is the process ID of an emacs process, return t, else nil.

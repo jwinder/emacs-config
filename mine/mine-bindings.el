@@ -56,8 +56,7 @@
 
 (global-set-key (kbd "C-<") 'mark-previous-like-this)
 (global-set-key (kbd "C->") 'mark-next-like-this)
-(global-set-key (kbd "C-M-m") 'mark-more-like-this)
-(global-set-key (kbd "C-*") 'mark-all-like-this)
+(global-set-key (kbd "C-M-m") 'mark-all-like-this)
 
 ;; Use regex searches
 (global-set-key [remap isearch-forward] 'isearch-forward-regexp)
@@ -72,8 +71,9 @@
 (global-set-key (kbd "C-c M-;") 'mine-flip-comments)
 
 ;; ack searching
-(global-set-key (kbd "C-c a f") 'ack)
-(global-set-key (kbd "C-c a g") 'ack-again)
+(global-set-key (kbd "C-c a f") 'ag)
+;; (global-set-key (kbd "C-c a f") 'ack)
+;; (global-set-key (kbd "C-c a g") 'ack-again)
 
 ;; annoying suspend
 (global-unset-key (kbd "C-z"))

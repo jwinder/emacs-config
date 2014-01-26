@@ -1,6 +1,5 @@
 (defun noop ()
-  (interactive)
-  nil)
+  (interactive))
 
 (defun beginning-of-line-or-back-to-indention ()
   (interactive)
@@ -534,5 +533,9 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 (defun soft-murmur ()
   (interactive)
   (browse-url "http://asoftmurmur.com/?v=32632b490000"))
+
+(defun scalaz-disjunction ()
+  (interactive)
+  (insert "\\/"))
 
 (provide 'mine-defuns)

@@ -55,13 +55,14 @@
   (org-get-weekly-clock-report "thisweek"))
 
 (setq org-todo-keywords
-      '((sequence "TODO" "CAPTURED" "BLOCKED" "DELEGATED" "DOING" "|" "DONE")))
+      '((sequence "TODO" "CAPTURED" "BLOCKED" "DELEGATED" "DOING" "ABANDONED" "|" "DONE")))
 
 (setq org-todo-keyword-faces
       '(("TODO" :background "DarkRed" :foreground "white" :box (:line-width 1 :style released-button))
         ("CAPTURED" :background "DarkBlue" :foreground "gray" :box (:line-width 1 :style released-button))
         ("DELEGATED" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
         ("DOING" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
+        ("ABANDONED" :background "#5d478b" :foreground "white" :box (:line-width 1 :style released-button))
         ("DONE" :background "DarkGreen" :foreground "white" :box (:line-width 1 :style released-button))))
 
 (require 'org-install)
