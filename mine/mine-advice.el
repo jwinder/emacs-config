@@ -18,10 +18,11 @@
                                     "You can run the command"))
 
 (defadvice message (before ignorable-message activate compile)
- "Do not echo any messages matching a pattern in `echo-area-silenced-patterns`. This only works for elisp `message` and not the C primitive."
- (let ((current-echo (current-message))
-       (incoming-echo (apply 'format (cons format-string args))))
-   (when (member-if '(lambda (pattern) (search pattern incoming-echo)) echo-area-silenced-patterns)
-     (ad-set-arg 0 current-echo))))
+  "Do not echo any messages matching a pattern in `echo-area-silenced-patterns'. This only works for elisp `message' and not the C primitive."
+  (when format-string
+    (let ((current-echo (current-message))
+          (incoming-echo (apply 'format (cons format-string args))))
+      (when (member-if '(lambda (pattern) (search pattern incoming-echo)) echo-area-silenced-patterns)
+        (ad-set-arg 0 current-echo)))))
 
 (provide 'mine-advice)
