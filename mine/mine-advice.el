@@ -12,7 +12,7 @@
        (list (region-beginning) (region-end))
      (list (line-beginning-position) (line-beginning-position 2)))))
 
-(setq echo-area-silenced-patterns '("Desktop saved"
+(setq echo-area-silenced-patterns '(;;"Desktop saved"
                                     "Auto saving"
                                     "No changes need to be saved"
                                     "You can run the command"))

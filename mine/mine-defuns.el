@@ -1,6 +1,10 @@
 (defun noop ()
   (interactive))
 
+(defun time ()
+  (interactive)
+  (message (current-time-string)))
+
 (defun beginning-of-line-or-back-to-indention ()
   (interactive)
   "This goes to back to indention or if already there beginning of line"

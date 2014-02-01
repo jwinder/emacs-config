@@ -5,35 +5,28 @@
 ;; bindings references: http://orgmode.org/orgcard.txt
 
 (setq org-speed-commands-user
-      '(
-        ("P" . org-shiftmetaup) ;; move item up
+      '(("P" . org-shiftmetaup) ;; move item up
         ("N" . org-shiftmetadown) ;; move item down
-        ("h" . org-speed-command-help)
-        ))
+        ("h" . org-speed-command-help)))
 
-(setq org-use-speed-commands t)
-(setq org-completion-use-ido t)
-(setq org-return-follows-link t)
-(setq org-hide-leading-stars t)
-(setq org-enforce-todo-dependencies t)
-(setq org-clock-out-when-done nil)
-(setq org-agenda-start-with-follow-mode t)
-
-(setq org-refile-targets '((org-agenda-files :maxlevel . 10)))
-(setq org-refile-use-outline-path t)
-(setq org-refile-allow-creating-parent-nodes '(confirm))
+(setq org-use-speed-commands t
+      org-completion-use-ido t
+      org-return-follows-link t
+      org-hide-leading-stars t
+      org-enforce-todo-dependencies t
+      org-clock-out-when-done nil
+      org-clock-clocked-in-display 'mode-line
+      org-agenda-start-with-follow-mode t
+      org-refile-targets '((org-agenda-files :maxlevel . 10))
+      org-refile-use-outline-path t
+      org-refile-allow-creating-parent-nodes '(confirm)
+      org-tags-column -75)
 
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
 
-(setq org-tags-column -75)
-
 ;; remove priority of item on DONE state
-(setq org-after-todo-state-change-hook
-      (lambda ()
-        (when (string= org-state "DONE")
-            (org-priority '?\s)
-          )))
+(setq org-after-todo-state-change-hook (lambda () (when (string= org-state "DONE") (org-priority '?\s))))
 
 ;; (setq org-clock-persist 'history)
 ;; (org-clock-persistence-insinuate)
@@ -89,6 +82,8 @@
  '(org-tag ((t (:inherit font-lock-comment-delimiter-face))))
  '(org-hide ((t (:foreground "#191919"))))
  '(org-column ((t (:background "#222222"))))
- '(org-column-title ((t (:background "DarkGreen" :foreground "white" :bold t :box (:line-width 1 :style released-button))))))
+ '(org-column-title ((t (:background "DarkGreen" :foreground "white" :bold t :box (:line-width 1 :style released-button)))))
+ '(org-mode-line-clock ((t (:inheret region :foreground unspecified :background unspecified))))
+ '(org-mode-line-clock-overrun ((t (:inheret region :foreground unspecified :background unspecified)))))
 
 (provide 'mine-org)

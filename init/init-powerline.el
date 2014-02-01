@@ -58,20 +58,20 @@
             (powerline-fill face2 (powerline-width rhs))
             (powerline-render rhs))))))
 
-(defun turn-on-mode-line ()
+(defun mode-line-on ()
   "Turn on mode line in all buffers."
   (interactive)
   (setq-default mode-line-format mine-mode-line-format))
 
-(defun turn-off-mode-line ()
+(defun mode-line-off ()
   "Turn off mode line in all buffers."
   (interactive)
   (setq-default mode-line-format nil))
 
-(defun reset-mode-line ()
+(defun mode-line-reset ()
   "Reset mode line colors and turn on mode line."
   (interactive)
   (set-mode-line-colors)
-  (turn-on-mode-line))
+  (mode-line-on))
 
-(reset-mode-line)
+(mode-line-reset)

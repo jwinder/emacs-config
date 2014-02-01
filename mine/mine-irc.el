@@ -1,3 +1,5 @@
+(require 'rcirc)
+
 (custom-set-faces
  '(rcirc-my-nick ((t (:foreground "#00ffff"))))
  '(rcirc-other-nick ((t (:foreground "#90ee90"))))
@@ -41,21 +43,5 @@ With prefix ARG, go to the next low priority buffer with activity."
   (remq 'rcirc-activity-string global-mode-string))
 
 (global-set-key [remap rcirc-next-active-buffer] 'mine-rcirc-next-active-buffer-bury-rcirc-buffers)
-
-;;;###autoload
-(define-minor-mode hipchat-mode "Hipchat minor mode"
-  :group 'hipchat
-  :lighter "hipchat")
-
-(defun turn-on-hipchat-mode ()
-  (interactive)
-  (hipchat-mode t))
-
-(defun turn-off-hipchat-mode ()
-  (interactive)
-  (hipchat-mode -1))
-
-(add-hook 'rcirc-mode-hook '(lambda () (when (search "_hipchat@localhost" (buffer-name)) (turn-on-hipchat-mode))))
-(add-hook 'hipchat-mode-hook '(lambda () (setq-local rcirc-nick-completion-format "@%s "))) ;; hipchat uses @name, not name:
 
 (provide 'mine-irc)

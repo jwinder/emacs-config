@@ -22,7 +22,7 @@
 	     (desktop-remove)
 	     (setq desktop-dirname desktop-dirname-tmp)))
 
-;; (add-hook 'auto-save-hook 'desktop-save-in-desktop-dir)
+(add-hook 'auto-save-hook 'desktop-save-in-desktop-dir)
 (add-hook 'emacs-kill-hook 'desktop-save-in-desktop-dir)
 
 (defun emacs-process-p (pid)

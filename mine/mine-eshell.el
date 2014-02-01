@@ -60,6 +60,8 @@
 (setq eshell-highlight-prompt t)
 (custom-set-faces '(eshell-prompt ((t (:foreground "#87cefa" :bold t)))))
 
+(setq eshell-status-in-mode-line nil) ;; otherwise eshell makes mode-line-format local to the buffer :-(
+
 ;; Plan 9 9term
 (require 'em-smart)
 
