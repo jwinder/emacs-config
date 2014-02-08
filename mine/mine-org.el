@@ -1,6 +1,7 @@
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-(add-hook 'org-mode-hook (lambda () (text-scale-set 2)))
+(require 'diminish)
+(add-hook 'org-mode-hook '(lambda () (text-scale-set 2) (diminish 'text-scale-mode)))
 
 ;; bindings references: http://orgmode.org/orgcard.txt
 
@@ -20,13 +21,14 @@
       org-refile-targets '((org-agenda-files :maxlevel . 10))
       org-refile-use-outline-path t
       org-refile-allow-creating-parent-nodes '(confirm)
-      org-tags-column -75)
+      org-tags-column -100)
 
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a a") 'org-agenda)
 
-;; remove priority of item on DONE state
-(setq org-after-todo-state-change-hook (lambda () (when (string= org-state "DONE") (org-priority '?\s))))
+;; remove priority of item on a done state
+(setq org-after-todo-state-change-hook
+      '(lambda () (when (or (string= org-state "done") (string= org-state "cancelled") (string= org-state "abandoned")) (org-priority '?\s))))
 
 ;; (setq org-clock-persist 'history)
 ;; (org-clock-persistence-insinuate)
@@ -48,22 +50,23 @@
   (org-get-weekly-clock-report "thisweek"))
 
 (setq org-todo-keywords
-      '((sequence "TODO" "CAPTURED" "BLOCKED" "DELEGATED" "DOING" "ABANDONED" "|" "DONE")))
+      '((sequence "todo" "blocked" "delegated" "doing" "|" "done")
+        (sequence "|" "cancelled")))
 
 (setq org-todo-keyword-faces
-      '(("TODO" :background "DarkRed" :foreground "white" :box (:line-width 1 :style released-button))
-        ("CAPTURED" :background "DarkBlue" :foreground "gray" :box (:line-width 1 :style released-button))
-        ("DELEGATED" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
-        ("DOING" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
-        ("ABANDONED" :background "#5d478b" :foreground "white" :box (:line-width 1 :style released-button))
-        ("DONE" :background "DarkGreen" :foreground "white" :box (:line-width 1 :style released-button))))
+      '(("todo" :background "DarkRed" :foreground "white" :box (:line-width 1 :style released-button))
+        ("blocked" :background "DarkRed" :foreground "white" :box (:line-width 1 :style released-button))
+        ("delegated" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
+        ("doing" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
+        ("done" :background "DarkGreen" :foreground "white" :box (:line-width 1 :style released-button))
+        ("cancelled" :background "DarkGreen" :foreground "white" :box (:line-width 1 :style released-button))))
 
 (require 'org-install)
 (org-babel-do-load-languages 'org-babel-load-languages '((sh . t) (ruby . t)))
 
 (custom-set-faces
- '(outline-1 ((t (:foreground "#D6B163" :bold t))))
- '(outline-2 ((t (:foreground "#A5F26E" :bold t))))
+ '(outline-1 ((t (:foreground "#D6B163" :bold nil))))
+ '(outline-2 ((t (:foreground "#A5F26E" :bold nil))))
  '(outline-3 ((t (:foreground "#B150E7" :bold nil))))
  '(outline-4 ((t (:foreground "#529DB0" :bold nil))))
  '(outline-5 ((t (:foreground "#CC7832" :bold nil))))

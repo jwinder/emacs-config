@@ -1,10 +1,6 @@
 (defun mine-eshell-rename-buffer-pwd ()
   (let ((pwd (eshell/pwd)))
-    (rename-buffer
-     (concat "*"
-             "eshell " "<" pwd ">"
-             "*")
-     t)))
+    (rename-buffer (concat "*" "eshell " "<" pwd ">" "*") t)))
 
 (defun mine-eshell-buffer-p (buffer)
   (and (eq 'eshell-mode (buffer-local-value 'major-mode buffer))
@@ -58,7 +54,7 @@
 (add-hook 'eshell-directory-change-hook 'mine-eshell-rename-buffer-pwd)
 
 (setq eshell-highlight-prompt t)
-(custom-set-faces '(eshell-prompt ((t (:foreground "#87cefa" :bold t)))))
+(custom-set-faces '(eshell-prompt ((t (:foreground "#87cefa")))))
 
 (setq eshell-status-in-mode-line nil) ;; otherwise eshell makes mode-line-format local to the buffer :-(
 

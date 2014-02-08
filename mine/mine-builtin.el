@@ -211,7 +211,7 @@
 ;; pop-to-buffer to split horizontally rather than vertically
 (setq split-width-threshold nil)
 
-(toggle-case-fold-search)
+;; (toggle-case-fold-search)
 
 ;; mac os x specific
 (if (eq system-type 'darwin)

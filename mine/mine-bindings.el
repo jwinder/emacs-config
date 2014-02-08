@@ -1,6 +1,6 @@
 ;; move help
-;;(define-key key-translation-map [?\C-h] [?\C-?])
-;;(global-set-key (kbd "C-M-?") 'help-command)
+;; (define-key key-translation-map [?\C-h] [?\C-?])
+;; (global-set-key (kbd "C-M-?") 'help-command)
 
 ;; processes
 (global-set-key (kbd "C-x p p") 'proced)
@@ -46,7 +46,7 @@
 (global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "M-g") 'goto-line)
 (global-set-key (kbd "C-c o") 'indent-buffer)
-;; (global-set-key [remap dabbrev-expand] 'hippie-expand)
+(global-set-key (kbd "C-M-?") 'hippie-expand)
 (global-set-key (kbd "C-x a r") 'align-regexp)
 (global-set-key (kbd "C-M-h") 'backward-kill-word)
 
