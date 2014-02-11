@@ -33,22 +33,6 @@
 ;; (setq org-clock-persist 'history)
 ;; (org-clock-persistence-insinuate)
 
-(defun org-get-weekly-clock-report (week)
-  (end-of-line)
-  (org-return t)
-  (insert (format "#+BEGIN: clocktable :maxlevel 25 :narrow 200! :block %s :step day :scope tree1" week))
-  (org-return t)
-  (insert "#+END:")
-  (org-clock-report))
-
-(defun org-clock-report-last-week ()
-  (interactive)
-  (org-get-weekly-clock-report "lastweek"))
-
-(defun org-clock-report-this-week ()
-  (interactive)
-  (org-get-weekly-clock-report "thisweek"))
-
 (setq org-todo-keywords
       '((sequence "todo" "blocked" "delegated" "doing" "|" "done")
         (sequence "|" "cancelled")))
@@ -65,11 +49,11 @@
 (org-babel-do-load-languages 'org-babel-load-languages '((sh . t) (ruby . t)))
 
 (custom-set-faces
- '(outline-1 ((t (:foreground "#D6B163" :bold nil))))
- '(outline-2 ((t (:foreground "#A5F26E" :bold nil))))
- '(outline-3 ((t (:foreground "#B150E7" :bold nil))))
- '(outline-4 ((t (:foreground "#529DB0" :bold nil))))
- '(outline-5 ((t (:foreground "#CC7832" :bold nil))))
+ '(outline-1 ((t (:foreground "#cdb5cd" :bold nil))))
+ '(outline-2 ((t (:foreground "#00cdcd" :bold nil))))
+ '(outline-3 ((t (:foreground "#7a67ee" :bold nil))))
+ '(outline-4 ((t (:foreground "#36648b" :bold nil))))
+ '(outline-5 ((t (:foreground "#cc5555" :bold nil))))
  '(org-level-1 ((t (:inherit outline-1))))
  '(org-level-2 ((t (:inherit outline-2))))
  '(org-level-3 ((t (:inherit outline-3))))
@@ -88,5 +72,34 @@
  '(org-column-title ((t (:background "DarkGreen" :foreground "white" :bold t :box (:line-width 1 :style released-button)))))
  '(org-mode-line-clock ((t (:inheret region :foreground unspecified :background unspecified))))
  '(org-mode-line-clock-overrun ((t (:inheret region :foreground unspecified :background unspecified)))))
+
+(defun org-dblock-write:rangereport (params)
+  "Display day-by-day time reports."
+  (let* ((ts (plist-get params :tstart))
+         (te (plist-get params :tend))
+         (start (time-to-seconds
+                 (apply 'encode-time (org-parse-time-string ts))))
+         (end (time-to-seconds
+               (apply 'encode-time (org-parse-time-string te))))
+         day-numbers)
+    (setq params (plist-put params :tstart nil))
+    (setq params (plist-put params :end nil))
+    (while (<= start end)
+      (save-excursion
+        (insert "\n\n"
+                (format-time-string (car org-time-stamp-formats)
+                                    (seconds-to-time start))
+                "----------------\n")
+        (org-dblock-write:clocktable
+         (plist-put
+          (plist-put
+           params
+           :tstart
+           (format-time-string (car org-time-stamp-formats)
+                               (seconds-to-time start)))
+          :tend
+          (format-time-string (car org-time-stamp-formats)
+                              (seconds-to-time end))))
+        (setq start (+ 86400 start))))))
 
 (provide 'mine-org)
