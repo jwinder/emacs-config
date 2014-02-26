@@ -18,7 +18,7 @@
  (let ((custom-files (directory-files mine-custom-dir t "\.el$")))
   (mapcar 'load-file custom-files)))
 
-(setq custom-file (expand-file-name "~/.emacs.d/customizations.el"))
+(setq custom-file (expand-file-name "~/.emacs.d/customizations.el")) ;; todo put inside of custom
 (load custom-file)
 
 (cd (getenv "HOME"))
@@ -27,3 +27,4 @@
 
 (put 'dired-find-alternate-file 'disabled nil)
 (put 'ido-exit-minibuffer 'disabled nil)
+(put 'upcase-region 'disabled nil)

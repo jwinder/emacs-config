@@ -1,4 +1,5 @@
 (setq max-lisp-eval-depth 10000) ;; scary stuff
+(setq gc-cons-threshold 20000000)
 
 ;; ido-mode
 (require 'ido)
@@ -160,6 +161,10 @@
 (defalias 'web 'w3m)
 (defalias 'ps 'proced)
 (defalias 'find-anything 'apropos)
+
+(defalias 'filter-lines 'keep-lines)
+(defalias 'filter-out-lines 'flush-lines)
+(defalias 'remove-lines 'flush-lines)
 
 ;; dired things
 (add-hook 'dired-mode-hook '(lambda ()
