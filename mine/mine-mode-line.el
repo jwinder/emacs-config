@@ -1,5 +1,11 @@
 (require 'powerline)
 
+;; todo; this doesn't work when in mine-builtin
+(require 'flx-ido)
+(flx-ido-mode 1)
+(setq ido-use-faces nil)
+(setq flx-ido-use-faces t)
+
 (defun set-default-mode-line-colors ()
   (interactive)
   (custom-set-faces
