@@ -19,9 +19,6 @@
  (let ((custom-files (directory-files mine-custom-dir t "\.el$")))
   (mapcar 'load-file custom-files)))
 
-(setq custom-file (expand-file-name "~/.emacs.d/customizations.el")) ;; todo put inside of custom
-(load custom-file)
-
 (cd (getenv "HOME"))
 ;; (mine-toggle-fullscreen)
 (server-start)
