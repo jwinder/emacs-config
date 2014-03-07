@@ -1,3 +1,5 @@
+(require 'powerline)
+
 (defun set-default-mode-line-colors ()
   (interactive)
   (custom-set-faces
@@ -78,3 +80,5 @@
     (mode-line-reset)))
 
 (mode-line-reset)
+
+(provide 'mine-mode-line)

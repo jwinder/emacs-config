@@ -16,6 +16,14 @@
       ido-max-prospects 10
       ido-show-dot-for-dired nil)
 
+(require 'flx-ido)
+(flx-ido-mode 1)
+(setq ido-use-faces nil)
+(setq flx-ido-use-faces t)
+
+(custom-set-faces
+ '(flx-highlight-face ((t (:foreground "#00ee76" :bold nil :underline nil)))))
+
 ;; inf-ruby-key renamed, this should not be needed
 (defun inf-ruby-setup-keybindings ()
   (interactive)

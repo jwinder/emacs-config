@@ -488,18 +488,20 @@ frames with exactly two windows."
 White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string)))
 
-(defun uuid ()
+(defun uuid-kill-ring ()
   "Generates a new uuid."
   (interactive)
-  (let* ((uuid (trim-string (shell-command-to-string "uuidgen"))))
+  (let* ((uuid (mine-uuid)))
     (message "New uuid appened to kill ring: %s" uuid)
-    (kill-new uuid)
-    ))
+    (kill-new uuid)))
 
 (defun uuid-insert ()
   "Generates and inserts a new uuid."
   (interactive)
-  (insert (trim-string (shell-command-to-string "uuidgen"))))
+  (insert (mine-uuid)))
+
+(defun mine-uuid ()
+  (downcase (trim-string (shell-command-to-string "uuidgen"))))
 
 (defun mine-increment-decimal (&optional arg)
   (interactive "p*")
@@ -540,5 +542,9 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 (defun scalaz-disjunction ()
   (interactive)
   (insert "\\/"))
+
+(defun sql-joins-image ()
+  (interactive)
+  (browse-url "https://pbs.twimg.com/media/Bhpy2dUIEAAGr6D.jpg:large"))
 
 (provide 'mine-defuns)
