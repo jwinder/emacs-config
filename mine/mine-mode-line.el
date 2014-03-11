@@ -8,6 +8,10 @@
 (setq battery-echo-area-format "Battery: %p%% %B")
 (setq battery-update-interval 10)
 
+(display-time)
+;; (display-battery-mode) ;; is it updating correctly?
+(column-number-mode)
+
 (defun set-default-mode-line-colors ()
   (interactive)
   (custom-set-faces

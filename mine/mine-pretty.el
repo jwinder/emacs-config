@@ -77,9 +77,6 @@
   (mine-use-big-font)
   (mine-use-transparency))
 
-(display-time)
-;; (display-battery-mode) ;; is it updating correctly?
-(column-number-mode)
 (mine-normal-display)
 
 (provide 'mine-pretty)
