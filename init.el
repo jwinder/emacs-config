@@ -1,4 +1,4 @@
-(add-to-list 'load-path "~/.emacs.d/mine")
+(add-to-list 'load-path (concat user-emacs-directory "/mine"))
 
 (require 'mine-builtin)
 (require 'mine-defuns)
@@ -16,15 +16,13 @@
 (when (eq system-type 'darwin) (require 'mine-osx))
 (when (eq system-type 'gnu/linux) (require 'mine-linux))
 
-(setq mine-custom-dir "~/.emacs.d/custom/")
-(if (file-exists-p mine-custom-dir)
- (let ((custom-files (directory-files mine-custom-dir t "\.el$")))
-  (mapcar 'load-file custom-files)))
+(setq mine-custom-dir (concat user-emacs-directory "/custom/"))
+(defun load-custom-files ()
+  (interactive)
+  (when (file-exists-p mine-custom-dir)
+      (let ((custom-files (directory-files mine-custom-dir t "\.el$")))
+        (mapcar 'load-file custom-files))))
 
+(load-custom-files)
 (cd (getenv "HOME"))
-;; (mine-toggle-fullscreen)
 (server-start)
-
-(put 'dired-find-alternate-file 'disabled nil)
-(put 'ido-exit-minibuffer 'disabled nil)
-(put 'upcase-region 'disabled nil)
