@@ -49,26 +49,6 @@
   (interactive)
   (indent-region (point-min) (point-max)))
 
-(defun clear-unit-test-from-mode-line ()
-  (interactive)
-  (mapcar (lambda (buffer)
-            (with-current-buffer buffer
-              (show-test-none)))
-          (remove-if 'minibufferp (buffer-list))))
-
-(defun move-to-pending ()
-  "Moves marked files in dired buffer to pending and creates pending links for them in the inbox.org file"
-  (interactive)
-  (dolist (file-to-move (mapcar (function car) (dired-map-over-marks
-                                                (cons (dired-get-filename) (point)) nil)))
-    (let ((file-name (file-name-nondirectory file-to-move))
-          (org-capture-link-is-already-stored t))
-      (message "Moving file %s to pending" file-name)
-      (org-store-link-props :annotation (org-make-link-string (concat "pending:" file-name) file-name))
-      (org-capture nil "l")
-      (rename-file file-to-move (concat "~/Desktop/Pending/" file-name) t)))
-  (revert-buffer))
-
 (defun move-marked-dired-files (destination-dir)
   (dolist (file-to-move (mapcar (function car) (dired-map-over-marks
                                                 (cons (dired-get-filename) (point)) nil)))
@@ -84,13 +64,6 @@
 (defun move-to-private ()
   (interactive)
   (move-marked-dired-files "~/Private/"))
-
-(defun dired-reveal (file)
-  "Reveals the file inside of a dired buffer"
-  (let* ((full-file (expand-file-name file))
-         (dir (file-name-directory full-file)))
-    (dired dir)
-    (dired-goto-file full-file)))
 
 (defun dired-mac-open ()
   "Invoke xdg-open on the file at point"
@@ -196,22 +169,6 @@ frames with exactly two windows."
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
-;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
-;; (defun rename-file-and-buffer-safe (new-name)
-;;   "Renames both current buffer and file it's visiting to NEW-NAME."
-;;   (interactive "sNew name: ")
-;;   (let ((name (buffer-name))
-;;         (filename (buffer-file-name)))
-;;     (if (not filename)
-;;         (message "Buffer '%s' is not visiting a file!" name)
-;;       (if (get-buffer new-name)
-;;           (message "A buffer named '%s' already exists!" new-name)
-;;         (progn
-;;           (rename-file name new-name 1)
-;;           (rename-buffer new-name)
-;;           (set-visited-file-name new-name)
-;;           (set-buffer-modified-p nil))))))
-
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
   (interactive "sNew name: ")
@@ -245,18 +202,6 @@ frames with exactly two windows."
         (delete-file filename)
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
-
-(defun get-eshell-create (shell-name &optional initial-command)
-  (if (eq nil (get-buffer shell-name))
-      (progn
-        (mine-eshell-create)
-        (rename-buffer shell-name)
-        (if initial-command
-            (progn
-              (insert initial-command)
-              (eshell-send-input))))
-    (switch-to-buffer shell-name))
-  (end-of-buffer))
 
 (defun ssh-tunnel ()
   (interactive)
@@ -306,23 +251,6 @@ frames with exactly two windows."
 (defun pingg ()
   (interactive)
   (ping "google.com"))
-
-(defun sudo ()
-  (interactive)
-  (find-file "/sudo:root@localhost:/"))
-
-(require 'url)
-(defun http-do (method url headers entity raw)
-  (let* ((url-request-method method)
-         (url-request-extra-headers headers)
-         (url-request-data entity))
-    (url-retrieve url 'http-handle-response)))
-
-(defun http-handle-response (status)
-  ;;(switch-to-buffer (current-buffer))
-  ;;(message status)
-  (message "Captured successfully.")
-  )
 
 ;; using tramp to find/open a file as sudo
 (defvar find-file-root-prefix (if (featurep 'xemacs) "/[sudo/root@localhost]" "/sudo:root@localhost:" )
@@ -398,59 +326,6 @@ frames with exactly two windows."
     (switch-to-buffer scratch-buffer)
     (text-mode)))
 
-;; todo; this doesn't work when not in the Gemfile directory anymore
-(defun bundle (cmd)
-  (interactive "sbundle ")
-  (require 'comint)
-  (let* ((directory (locate-dominating-file default-directory "Gemfile"))
-         (name (format "bundle <%s>" directory))
-         (buffer-name (format "*%s*" name))
-         (buffer (get-buffer-create buffer-name)))
-    (if directory
-        (progn
-          (cd directory)
-          (apply 'make-comint-in-buffer name buffer "bundle" nil (split-string cmd))
-          (switch-to-buffer buffer)
-          )
-      (message "Cannot find project root containing Gemfile."))
-    ))
-
-(defun bundle-exec (cmd)
-  (interactive "sbundle exec ")
-  (bundle (concat "exec " cmd)))
-
-(defun kitchen (cmd)
-  (interactive "sbundle exec kitchen ")
-  (bundle-exec (concat "kitchen " cmd)))
-
-(defun kitchen-list ()
-  (interactive)
-  (kitchen "list"))
-
-(defun kitchen-converge ()
-  (interactive)
-  (kitchen "converge"))
-
-(defun kitchen-destroy ()
-  (interactive)
-  (kitchen "destroy"))
-
-(defun bundle-install ()
-  (interactive)
-  (bundle "install"))
-
-(defun bundle-install-pick-gemfile (gemfile)
-  (interactive "FGemfile: ")
-  (bundle (concat "install --gemfile=" (car (last (split-string gemfile "/"))))))
-
-(defun bundle-rspec ()
-  (interactive)
-  (bundle-exec "rspec"))
-
-(defun bundle-guard ()
-  (interactive)
-  (bundle-exec "guard"))
-
 (defun google ()
   "Google the selected region if any, display a query prompt otherwise."
   (interactive)
@@ -464,19 +339,6 @@ frames with exactly two windows."
 (defun rubbish-emacs-setup ()
   (interactive)
   (browse-url "https://github.com/rubbish/rubbish-emacs-setup"))
-
-;; todo; change http-do to handle GET responses & use that for these, not curl
-(defun ifconfig.me ()
-  "Curls ifconfig.me for external IP"
-  (interactive)
-  ;;(http-do "GET" "http://ifconfig.me/ip" nil "" "not needed")
-  ;;(kill-new (shell-command-to-string "curl ifconfig.me/ip"))
-  (shell-command "curl ifconfig.me")
-  )
-
-(defun ifconfig.me/all ()
-  (interactive)
-  (shell-command "curl ifconfig.me/all"))
 
 (defun ssh-copy-id (username host)
   (interactive "sUsername: \nsHost: ")
@@ -522,14 +384,6 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (interactive "p*")
   (mine-increment-decimal (if arg (- arg) -1)))
 
-(defun thats-good ()
-  (interactive)
-  (browse-url "http://i.imgur.com/jWyXr.gif"))
-
-(defun jack-nicholson-creepy-nod ()
-  (interactive)
-  (browse-url "http://img.pandawhale.com/post-30824-Jack-Nicholson-Creepy-Nodding-SRXv.gif"))
-
 (defun save-for-later (message-to-save)
   "Save a message for later when I 'have time'..."
   (interactive "sMessage to save for later: ")
@@ -538,13 +392,5 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 (defun soft-murmur ()
   (interactive)
   (browse-url "http://asoftmurmur.com/?v=32632b490000"))
-
-(defun scalaz-disjunction ()
-  (interactive)
-  (insert "\\/"))
-
-(defun sql-joins-image ()
-  (interactive)
-  (browse-url "https://pbs.twimg.com/media/Bhpy2dUIEAAGr6D.jpg:large"))
 
 (provide 'mine-defuns)

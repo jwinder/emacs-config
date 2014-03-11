@@ -14,6 +14,18 @@
   (eshell t)
   (mine-eshell-rename-buffer-pwd))
 
+(defun get-eshell-create (shell-name &optional initial-command)
+  (if (eq nil (get-buffer shell-name))
+      (progn
+        (mine-eshell-create)
+        (rename-buffer shell-name)
+        (if initial-command
+            (progn
+              (insert initial-command)
+              (eshell-send-input))))
+    (switch-to-buffer shell-name))
+  (end-of-buffer))
+
 (defun mine-eshell-find-best-match (dir)
   (let ((pwd (expand-file-name dir))
         (best-match-buffer nil))

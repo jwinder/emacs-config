@@ -8,6 +8,7 @@
     (let (el-get-master-branch el-get-install-skip-emacswiki-recipes)
       (goto-char (point-max)) (eval-print-last-sexp))))
 
+
 (setq el-get-user-package-directory "~/.emacs.d/init")
 
 (setq el-get-sources '(
@@ -91,6 +92,12 @@
                               :description "Github API client libraries"
                               :website "http://github.com/sigma/gh.el")
 
+                       (:name flx
+                              :type github
+                              :pkgname "lewang/flx"
+                              :description "flx & flx-ido"
+                              :website "http://github.com/lewang/flx")
+
                        ))
 
 (setq mine-pkgs-to-install
@@ -131,17 +138,19 @@
          mark-multiple
          browse-kill-ring
          projectile
+         flx
          ag
          pianobar
          )
        (mapcar 'el-get-source-name el-get-sources)))
 
-(el-get 'sync mine-pkgs-to-install)
-
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
 
+
+(el-get 'sync mine-pkgs-to-install)
+
 (package-initialize)
 
-(provide 'mine-pkgmgt)
+(provide 'mine-packages)
