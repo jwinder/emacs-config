@@ -204,15 +204,6 @@
 ;; auto revert logs by tail
 ;; (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-tail-mode))
 
-;; custom battery info
-(setq display-time-format "\s(%I:%M%p %a %m/%d/%y)\s")
-(setq display-time-mail-file -1)
-(setq display-time-default-load-average nil)
-
-(setq battery-mode-line-format "(%p %B)\s")
-(setq battery-echo-area-format "Battery: %p%% %B")
-(setq battery-update-interval 10)
-
 ;; viewing gists in browse-url after gisting
 (setq gist-view-gist t)
 
@@ -220,23 +211,5 @@
 (setq split-width-threshold nil)
 
 ;; (toggle-case-fold-search)
-
-;; mac os x specific
-(if (eq system-type 'darwin)
-    (progn ()
-           (setq ns-command-modifier 'meta)
-           (setq interprogram-paste-function 'x-selection-value)
-           (setq browse-url-browser-function 'browse-url-default-macosx-browser)
-           (setq ack-executable "ack")
-           ))
-
-;; linux specific
-(if (eq system-type 'gnu/linux)
-    (progn ()
-           (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
-           (setq browse-url-browser-function 'browse-url-generic
-                 browse-url-generic-program "google-chrome")
-           (setq ack-executable "ack-grep")
-           ))
 
 (provide 'mine-builtin)

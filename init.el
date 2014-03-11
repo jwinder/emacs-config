@@ -13,6 +13,9 @@
 (require 'mine-jabber)
 (require 'mine-mode-line)
 
+(when (eq system-type 'darwin) (require 'mine-osx))
+(when (eq system-type 'gnu/linux) (require 'mine-linux))
+
 (setq mine-custom-dir "~/.emacs.d/custom/")
 (if (file-exists-p mine-custom-dir)
  (let ((custom-files (directory-files mine-custom-dir t "\.el$")))

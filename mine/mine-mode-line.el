@@ -1,5 +1,13 @@
 (require 'powerline)
 
+(setq display-time-format "\s(%I:%M%p %a %m/%d/%y)\s")
+(setq display-time-mail-file -1)
+(setq display-time-default-load-average nil)
+
+(setq battery-mode-line-format "(%p %B)\s")
+(setq battery-echo-area-format "Battery: %p%% %B")
+(setq battery-update-interval 10)
+
 (defun set-default-mode-line-colors ()
   (interactive)
   (custom-set-faces
