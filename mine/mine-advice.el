@@ -12,6 +12,13 @@
        (list (region-beginning) (region-end))
      (list (line-beginning-position) (line-beginning-position 2)))))
 
+(defadvice find-file (before make-directory-maybe (filename &optional wildcards) activate)
+  "Create parent directory if not exists while visiting file."
+  (unless (file-exists-p filename)
+    (let ((dir (file-name-directory filename)))
+      (unless (file-exists-p dir)
+        (make-directory dir)))))
+
 (setq echo-area-silenced-patterns '(;;"Desktop saved"
                                     "Auto saving"
                                     "No changes need to be saved"

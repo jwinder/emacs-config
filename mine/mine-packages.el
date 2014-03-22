@@ -98,6 +98,12 @@
                               :description "flx & flx-ido"
                               :website "http://github.com/lewang/flx")
 
+                       (:name request
+                              :type github
+                              :pkgname "tkf/emacs-request"
+                              :description "http request wrappers around url.el and curl"
+                              :website "https://github.com/tkf/emacs-request")
+
                        ))
 
 (setq mine-pkgs-to-install
@@ -141,6 +147,9 @@
          flx
          ag
          pianobar
+
+         deferred
+         request
          )
        (mapcar 'el-get-source-name el-get-sources)))
 

@@ -28,3 +28,5 @@ customizations.el
 bookmarks
 projectile-bookmarks.eld
 jabber-history
+/shell-cmds
+/request/*

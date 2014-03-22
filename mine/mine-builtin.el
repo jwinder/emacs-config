@@ -196,10 +196,11 @@
       `((".*" ,temporary-file-directory t)))
 (setq create-lockfiles nil)
 
-;; Protobuf files are like c
+(add-to-list 'auto-mode-alist '("\\.proto\\'" . c-mode))
 (add-to-list 'auto-mode-alist '("Vagrantfile" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.proto\\'" . c-mode))
+(add-to-list 'auto-mode-alist '("Berksfile" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
 
 ;; auto revert logs by tail
 ;; (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-tail-mode))
@@ -211,5 +212,43 @@
 (setq split-width-threshold nil)
 
 ;; (toggle-case-fold-search)
+
+(setq mine-shell-cmds-filename "shell-cmds")
+
+(defun mine-shell-cmds ()
+  (interactive)
+  (find-file (concat user-emacs-directory mine-shell-cmds-filename)))
+
+(defalias 'shell-cmds 'mine-shell-cmds)
+
+(defun mine-shell-cmds-run-line ()
+  (let ((cmd (trim-string (thing-at-point 'line))))
+    (when (not (string= "" cmd))
+      (save-excursion (shell-command cmd)))))
+
+(defun mine-shell-cmds-run-lines ()
+  (interactive)
+  (if (region-active-p)
+      (save-restriction
+        (narrow-to-region (region-beginning) (region-end))
+        (goto-char (point-min))
+        (while (< (point) (point-max))
+          (mine-shell-cmds-run-line)
+          (forward-line)))
+    (mine-shell-cmds-run-line)))
+
+(defvar shell-cmds-mode-map (make-sparse-keymap))
+(define-key shell-cmds-mode-map (kbd "C-c C-c") 'mine-shell-cmds-run-lines)
+
+;;;###autoload
+(add-to-list 'auto-mode-alist `(,mine-shell-cmds-filename . shell-cmds-mode))
+
+(defun shell-cmds-mode ()
+  "My Shell commands mode."
+  (interactive)
+  (kill-all-local-variables)
+  (setq major-mode 'shell-cmds-mode)
+  (setq mode-name "shell-cmds")
+  (use-local-map shell-cmds-mode-map))
 
 (provide 'mine-builtin)

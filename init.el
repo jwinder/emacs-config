@@ -26,3 +26,5 @@
 (load-custom-files)
 (cd (getenv "HOME"))
 (server-start)
+(put 'dired-find-alternate-file 'disabled nil)
+(put 'upcase-region 'disabled nil)
