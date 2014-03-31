@@ -35,6 +35,7 @@
 (defun open-line-and-indent ()
   (interactive)
   "Opens a line and and indents"
+  (beginning-of-line)
   (newline-and-indent)
   (previous-line)
   (indent-for-tab-command))
