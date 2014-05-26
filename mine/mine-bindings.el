@@ -20,6 +20,7 @@
 (global-set-key (kbd "C-M-0") 'winner-redo)
 
 ;; file navigation
+(global-set-key (kbd "C-x n") 'ido-switch-buffer)
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
 (global-set-key (kbd "C-x p f") 'ido-find-file-other-window)
 (global-set-key (kbd "C-x M-b") 'pop-to-buffer)

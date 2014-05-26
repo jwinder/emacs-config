@@ -34,8 +34,9 @@
   uniquify-buffer-name-style 'post-forward
   uniquify-separator ":")
 
-;; tramp remote sudo
+;; tramp
 (set-default 'tramp-default-proxies-alist (quote ((".*" "\\`root\\'" "/ssh:%h:"))))
+(setq shell-prompt-pattern "^[^#$>\n]*[#$%>] *") ;; allow percent signs in the prompt
 
 (require 'recentf)
 (recentf-mode t)

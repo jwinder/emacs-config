@@ -1,4 +1,5 @@
 (require 'sbt-mode)
+(setq sbt:clear-buffer-before-command nil)
 
 (defun mine-set-sbt-keys-if-possible ()
   (if (sbt:find-root)
