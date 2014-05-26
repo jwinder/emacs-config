@@ -24,6 +24,7 @@
                                     "No changes need to be saved"
                                     "You can run the command"))
 
+(require 'cl)
 (defadvice message (before ignorable-message activate compile)
   "Do not echo any messages matching a pattern in `echo-area-silenced-patterns'. This only works for elisp `message' and not the C primitive."
   (when format-string

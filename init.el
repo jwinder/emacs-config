@@ -17,13 +17,10 @@
 (when (eq system-type 'gnu/linux) (require 'mine-linux))
 
 (setq mine-custom-dir (concat user-emacs-directory "/custom/"))
-(defun load-custom-files ()
-  (interactive)
-  (when (file-exists-p mine-custom-dir)
-      (let ((custom-files (directory-files mine-custom-dir t "\.el$")))
-        (mapcar 'load-file custom-files))))
+(when (file-exists-p mine-custom-dir)
+  (let ((custom-files (directory-files mine-custom-dir t "\.el$")))
+    (mapcar 'load-file custom-files)))
 
-(load-custom-files)
 (cd (getenv "HOME"))
 (server-start)
 (put 'dired-find-alternate-file 'disabled nil)
