@@ -1,3 +1,9 @@
+(defun read-file-lines-to-string (path)
+  (interactive "sPath: ")
+  (with-temp-buffer
+    (insert-file-contents path)
+    (split-string (buffer-string) "\n" t)))
+
 (defun noop ()
   (interactive))
 
