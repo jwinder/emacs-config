@@ -122,6 +122,9 @@
                            (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
                   (make-directory dir t))))))
 
+;; Make #! scripts executable automatically
+(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
+
 ;; Use soft tabs
 (setq-default indent-tabs-mode nil)
 (setq default-tab-width 2)
