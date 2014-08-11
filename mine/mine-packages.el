@@ -26,13 +26,13 @@
                                          (autoload 'enclose-global-mode "enclose" nil t)
                                          (autoload 'enclose-mode "enclose" nil t)))
 
-                       (:name midnight-theme
-                              :website "https://github.com/jwinder/midnight-theme.el"
-                              :description "A port of the midnight color theme using the new deftheme format."
-                              :type github
-                              :pkgname "jwinder/midnight-theme.el"
-                              :post-init (progn
-                                           (add-to-list 'custom-theme-load-path default-directory)))
+                       ;; (:name midnight-theme
+                       ;;        :website "https://github.com/jwinder/midnight-theme.el"
+                       ;;        :description "A port of the midnight color theme using the new deftheme format."
+                       ;;        :type github
+                       ;;        :pkgname "jwinder/midnight-theme.el"
+                       ;;        :post-init (progn
+                       ;;                     (add-to-list 'custom-theme-load-path default-directory)))
 
                        (:name restclient
                               :website "https://github.com/pashky/restclient.el"

@@ -23,11 +23,10 @@
 (defun mine-rcirc-bury-buffers ()
   "Bury all rcirc-mode buffers."
   (interactive)
-  (save-excursion
-    (dolist (buffer (buffer-list))
-      (with-current-buffer buffer
-        (if (eq major-mode 'rcirc-mode)
-            (bury-buffer buffer))))))
+  (dolist (buffer (buffer-list))
+    (with-current-buffer buffer
+      (if (eq major-mode 'rcirc-mode)
+          (bury-buffer buffer)))))
 
 (defun mine-rcirc-next-active-buffer-bury-rcirc-buffers (arg)
   "Switch to the next rcirc buffer with activity, burying all rcirc buffers after returning to a non-rcirc buffer.

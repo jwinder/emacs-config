@@ -1,4 +1,6 @@
-(add-to-list 'load-path (concat user-emacs-directory "/mine"))
+(setq mine-directory (concat user-emacs-directory "mine"))
+(add-to-list 'load-path mine-directory)
+(add-to-list 'custom-theme-load-path mine-directory)
 
 (require 'mine-builtin)
 (require 'mine-defuns)
@@ -16,6 +18,8 @@
 (when (eq system-type 'darwin) (require 'mine-osx))
 (when (eq system-type 'gnu/linux) (require 'mine-linux))
 
+(load-theme 'mine-color t)
+
 (setq mine-custom-dir (concat user-emacs-directory "/custom/"))
 (when (file-exists-p mine-custom-dir)
   (let ((custom-files (directory-files mine-custom-dir t "\.el$")))
@@ -23,5 +27,3 @@
 
 (cd (getenv "HOME"))
 (server-start)
-(put 'dired-find-alternate-file 'disabled nil)
-(put 'upcase-region 'disabled nil)
