@@ -16,14 +16,11 @@
       ido-max-prospects 10
       ido-show-dot-for-dired nil)
 
-(custom-set-faces
- '(flx-highlight-face ((t (:foreground "#00ee76" :bold nil :underline nil)))))
-
 ;; inf-ruby-key renamed, this should not be needed
-(defun inf-ruby-setup-keybindings ()
-  (interactive)
-  (require 'inf-ruby)
-  (inf-ruby-keys))
+;; (defun inf-ruby-setup-keybindings ()
+;;   (interactive)
+;;   (require 'inf-ruby)
+;;   (inf-ruby-keys))
 
 ;; using cookies in w3m
 (setq w3m-use-cookies t)
