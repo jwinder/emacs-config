@@ -184,6 +184,8 @@
 ;; Midnight mode to clean up old buffers
 (require 'midnight)
 
+(add-to-list 'clean-buffer-list-kill-regexps '("^ \\*ag search text.*\\*$"))
+
 (add-hook 'emacs-lisp-mode-hook '(lambda () (eldoc-mode t)))
 
 ;; Miscallaneous Things
@@ -201,10 +203,6 @@
 (setq create-lockfiles nil)
 
 (add-to-list 'auto-mode-alist '("\\.proto\\'" . c-mode))
-(add-to-list 'auto-mode-alist '("Vagrantfile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Rakefile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Berksfile" . ruby-mode))
-(add-to-list 'auto-mode-alist '("Gemfile" . ruby-mode))
 
 ;; auto revert logs by tail
 ;; (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-tail-mode))
