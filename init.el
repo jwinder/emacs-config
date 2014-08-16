@@ -12,6 +12,7 @@
 (require 'mine-eshell)
 (require 'mine-org)
 (require 'mine-irc)
+(require 'mine-json)
 (require 'mine-mode-line)
 
 (when (eq system-type 'darwin) (require 'mine-osx))
