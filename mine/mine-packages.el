@@ -130,6 +130,9 @@
             (diminish 'flycheck-mode " Φ")
             (setq flycheck-standard-error-navigation nil)))
 
+(use-package json-reformat
+  :ensure t)
+
 (use-package markdown-mode
   :ensure t
   :config (progn
