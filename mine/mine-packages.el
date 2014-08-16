@@ -128,7 +128,8 @@
   :idle (global-flycheck-mode)
   :config (progn
             (diminish 'flycheck-mode " Φ")
-            (setq flycheck-standard-error-navigation nil)))
+            (setq flycheck-standard-error-navigation nil)
+            (setq flycheck-display-errors-function nil)))
 
 (use-package json-reformat
   :ensure t)
