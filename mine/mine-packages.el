@@ -63,8 +63,8 @@
 (use-package htmlize
   :ensure t)
 
-;; (use-package gist
-;;   :ensure t)
+(use-package gist
+  :ensure t)
 
 ;; (use-package projectile
 ;;   :ensure t
