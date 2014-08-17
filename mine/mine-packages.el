@@ -51,8 +51,8 @@
             (add-hook 'edit-server-edit-mode-hook 'beginning-of-buffer)
             (add-hook 'edit-server-done-hook 'ns-raise-chrome)))
 
-(use-package gmail-message-mode
-  :ensure t)
+;; (use-package gmail-message-mode
+;;   :ensure t)
 
 (use-package org
   :ensure t
@@ -63,8 +63,8 @@
 (use-package htmlize
   :ensure t)
 
-(use-package gist
-  :ensure t)
+;; (use-package gist
+;;   :ensure t)
 
 ;; (use-package projectile
 ;;   :ensure t
