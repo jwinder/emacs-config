@@ -107,6 +107,7 @@
 (add-hook 'dired-load-hook
           (lambda ()
             (define-key dired-mode-map (kbd "M-RET") 'dired-external-open)))
+(put 'dired-find-alternate-file 'disabled nil)
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
