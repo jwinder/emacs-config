@@ -176,6 +176,8 @@
 (defalias 'filter-out-lines 'flush-lines)
 (defalias 'remove-lines 'flush-lines)
 
+(defalias 'gist-dired-all-marked 'dired-do-gist)
+
 ;; dired things
 (add-hook 'dired-mode-hook '(lambda ()
                               (local-set-key (kbd "C-c R") 'wdired-change-to-wdired-mode)))
