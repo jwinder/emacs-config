@@ -90,7 +90,7 @@
   :idle (smartparens-global-mode t)
   :config (progn
             (require 'smartparens-config)
-            (add-hook 'smartparens-enabled-hook '(lambda () (smartparens-strict-mode t)))
+            (add-hook 'smartparens-enabled-hook '(lambda () (smartparens-strict-mode nil)))
             (sp-use-smartparens-bindings)
             (define-key sp-keymap (kbd "M-<backspace>") nil)))
 
@@ -170,7 +170,9 @@
   (add-hook 'sbt-mode-hook '(lambda ()
                               (setq compilation-skip-threshold 2)
                               (local-set-key (kbd "C-a") 'comint-bol)
-                              (local-set-key (kbd "M-RET") 'comint-accumulate)))
+                              (local-set-key (kbd "M-RET") 'comint-accumulate)
+                              (local-set-key (kbd "M-P") 'compilation-previous-error)
+                              (local-set-key (kbd "M-N") 'compilation-next-error)))
   :bind ("C-c s s" . sbt-start))
 
 (use-package haskell-mode

@@ -111,6 +111,11 @@
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
+(add-hook 'compilation-shell-minor-mode
+          (lambda ()
+            (define-key compilation-shell-minor-mode-map (kbd "M-N") 'compilation-next-error)
+            (define-key compilation-shell-minor-mode-map (kbd "N-P") 'compilation-previous-error)))
+
 ;; Create non-existent directories containing a new file before saving
 (add-hook 'before-save-hook
           (lambda ()
