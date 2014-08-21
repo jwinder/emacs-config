@@ -210,6 +210,23 @@ frames with exactly two windows."
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
 
+(defun mine-command-line-tool (command &optional history history-symbol)
+  (let* ((rest-of-command (read-from-minibuffer (concat command " ") (car history) nil nil history-symbol))
+         (command-with-args (append (split-string command) (split-string rest-of-command)))
+         (args (cdr command-with-args))
+         (command (car command-with-args))
+         (name (mapconcat 'identity command-with-args " "))
+         (buffer-name (concat "*" name "*"))
+         (buffer (get-buffer-create buffer-name)))
+    (switch-to-buffer buffer)
+    (apply 'make-comint-in-buffer name buffer command nil args)))
+
+;; todo -- make more of these? maybe consolidate ssh-tunnel function into command-line-tool
+(defvar curl-history nil)
+(defun curl ()
+  (interactive)
+  (mine-command-line-tool "curl" curl-history 'curl-history))
+
 (defun ssh-tunnel ()
   (interactive)
   (let* ((host (read-string "Host: "))
