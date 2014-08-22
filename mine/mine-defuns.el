@@ -364,10 +364,6 @@ frames with exactly two windows."
   (interactive)
   (browse-url "https://github.com/rubbish/rubbish-emacs-setup"))
 
-(defun ssh-copy-id (username host)
-  (interactive "sUsername: \nsHost: ")
-  (shell-command (format "ssh-copy-id %s@%s" username host)))
-
 (defun trim-string (string)
   (interactive "sString: ")
   "Remove white spaces in beginning and ending of STRING.
@@ -387,7 +383,7 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
   (insert (mine-uuid)))
 
 (defun mine-uuid ()
-  (downcase (trim-string (shell-command-to-string "uuidgen"))))
+  (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
 
 (defun mine-increment-decimal (&optional arg)
   (interactive "p*")
