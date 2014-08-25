@@ -17,7 +17,7 @@
   (let ((previous-point (point)))
     (back-to-indentation)
     (if (equal previous-point (point))
-	(beginning-of-line))))
+        (beginning-of-line))))
 
 (defun kill-to-end-or-join ()
   (interactive)
@@ -55,39 +55,6 @@
 (defun indent-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
-
-(defun move-marked-dired-files (destination-dir)
-  (dolist (file-to-move (mapcar (function car) (dired-map-over-marks
-                                                (cons (dired-get-filename) (point)) nil)))
-    (let ((file-name (file-name-nondirectory file-to-move)))
-      (message "Moving file %s to %s" file-name destination-dir)
-      (rename-file file-to-move (concat destination-dir file-name) t)))
-  (revert-buffer))
-
-(defun move-to-documents ()
-  (interactive)
-  (move-marked-dired-files "~/Documents/"))
-
-(defun move-to-private ()
-  (interactive)
-  (move-marked-dired-files "~/Private/"))
-
-(defun dired-mac-open ()
-  "Invoke xdg-open on the file at point"
-  (interactive)
-  (call-process "open" nil 0 nil (expand-file-name (dired-file-name-at-point))))
-
-(defun dired-xdg-open ()
-  "Invoke xdg-open on the file at point"
-  (interactive)
-  (call-process "xdg-open" nil 0 nil (expand-file-name (dired-file-name-at-point))))
-
-(defun dired-external-open ()
-  "Opens the file at point in an external viewer"
-  (interactive)
-  (case system-type
-    ('darwin (dired-mac-open))
-    ('gnu/linux (dired-xdg-open))))
 
 (defun switch-to-other-buffer ()
   (interactive)
@@ -127,7 +94,7 @@
   "kill all buffers, leaving *scratch* only"
   (interactive)
   (mapcar (lambda (x) (kill-buffer x))
-	  (buffer-list))
+          (buffer-list))
   (delete-other-windows))
 
 (defun swap-windows ()
@@ -290,16 +257,16 @@ frames with exactly two windows."
   (interactive)
   (require 'tramp)
   (let* ( ;; We bind the variable `file-name-history' locally so we can
-	 ;; use a separate history list for "root" files.
-	 (file-name-history find-file-root-history)
-	 (name (or buffer-file-name default-directory))
-	 (tramp (and (tramp-tramp-file-p name)
-		     (tramp-dissect-file-name name)))
-	 path dir file)
+         ;; use a separate history list for "root" files.
+         (file-name-history find-file-root-history)
+         (name (or buffer-file-name default-directory))
+         (tramp (and (tramp-tramp-file-p name)
+                     (tramp-dissect-file-name name)))
+         path dir file)
     ;; If called from a "root" file, we need to fix up the path.
     (when tramp
       (setq path (tramp-file-name-localname tramp)
-	    dir (file-name-directory path)))
+            dir (file-name-directory path)))
     (when (setq file (read-file-name "Find file (sudo): " dir path))
       (find-file (concat find-file-root-prefix file))
       ;; If this all succeeded save our new history list.
