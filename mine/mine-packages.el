@@ -173,7 +173,28 @@
                               (local-set-key (kbd "M-RET") 'comint-accumulate)
                               (local-set-key (kbd "M-P") 'compilation-previous-error)
                               (local-set-key (kbd "M-N") 'compilation-next-error)))
-  :bind ("C-c s s" . sbt-start))
+  :bind (("C-c s s" . sbt-start)
+         ("C-c s o" . mine-sbt-test-only-current-test))))
+
+(defun mine-sbt-current-test-in-buffer ()
+  (save-excursion
+    (goto-char (point-min))
+    (let* ((pkg-name (progn
+                       (re-search-forward "package ")
+                       (filter-buffer-substring (point) (point-at-eol))))
+           (test-name (progn
+                        (re-search-forward "\\(object\\|class\\) ")
+                        (filter-buffer-substring
+                         (point)
+                         (progn
+                           (re-search-forward " ")
+                           (forward-char -1)
+                           (point))))))
+      (concat pkg-name "." test-name))))
+
+(defun mine-sbt-test-only-current-test ()
+  (interactive)
+  (sbt-command (concat "test-only " (mine-sbt-current-test-in-buffer))))
 
 (use-package haskell-mode
   :ensure t
