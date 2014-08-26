@@ -174,7 +174,7 @@
                               (local-set-key (kbd "M-P") 'compilation-previous-error)
                               (local-set-key (kbd "M-N") 'compilation-next-error)))
   :bind (("C-c s s" . sbt-start)
-         ("C-c s o" . mine-sbt-test-only-current-test))))
+         ("C-c s o" . mine-sbt-test-only-current-test)))
 
 (defun mine-sbt-current-test-in-buffer ()
   (save-excursion
