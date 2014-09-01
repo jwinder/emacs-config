@@ -4,9 +4,6 @@
     (insert-file-contents path)
     (split-string (buffer-string) "\n" t)))
 
-(defun noop ()
-  (interactive))
-
 (defun time ()
   (interactive)
   (message (current-time-string)))
@@ -39,26 +36,29 @@
     (unless (eolp) (kill-sexp))))
 
 (defun open-line-and-indent ()
-  (interactive)
   "Opens a line and and indents"
+  (interactive)
   (beginning-of-line)
   (newline-and-indent)
   (previous-line)
   (indent-for-tab-command))
 
 (defun newline-and-indent-open-line-and-indent ()
-  (interactive)
   "Newlines, indents, then opens a line and indents"
+  (interactive)
   (newline-and-indent)
   (open-line-and-indent))
 
-(defun indent-buffer ()
+(defun open-lines-and-indent-current-or-previously-marked-region ()
+  "Pads the current or previously marked region with new lines and indents the region."
   (interactive)
-  (indent-region (point-min) (point-max)))
-
-(defun switch-to-other-buffer ()
-  (interactive)
-  (switch-to-buffer (other-buffer)))
+  (save-excursion
+    (when (> (point) (mark)) (exchange-point-and-mark))
+    (indent-region (region-beginning) (region-end))
+    (goto-char (region-beginning))
+    (newline-and-indent)
+    (goto-char (region-end))
+    (newline-and-indent)))
 
 (defun ido-imenu ()
   "Update the imenu index and then use ido to select a symbol to navigate to."
@@ -317,20 +317,6 @@ frames with exactly two windows."
     (switch-to-buffer scratch-buffer)
     (text-mode)))
 
-(defun google ()
-  "Google the selected region if any, display a query prompt otherwise."
-  (interactive)
-  (browse-url
-   (concat
-    "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
-    (url-hexify-string (if mark-active
-                           (buffer-substring (region-beginning) (region-end))
-                         (read-string "Google: "))))))
-
-(defun rubbish-emacs-setup ()
-  (interactive)
-  (browse-url "https://github.com/rubbish/rubbish-emacs-setup"))
-
 (defun trim-string (string)
   (interactive "sString: ")
   "Remove white spaces in beginning and ending of STRING.
@@ -370,11 +356,6 @@ White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
 (defun mine-decrement-decimal (&optional arg)
   (interactive "p*")
   (mine-increment-decimal (if arg (- arg) -1)))
-
-(defun save-for-later (message-to-save)
-  "Save a message for later when I 'have time'..."
-  (interactive "sMessage to save for later: ")
-  (message "Saved!"))
 
 (defun hub-browse ()
   (interactive)

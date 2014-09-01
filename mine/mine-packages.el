@@ -103,8 +103,6 @@
             (define-key sp-keymap (kbd "C-M-p") nil)
             (define-key sp-keymap (kbd "C-M-n") nil)))
 
-
-
 (use-package multiple-cursors
   :ensure t
   :bind (("C->" . mc/mark-next-like-this)
