@@ -66,6 +66,10 @@
 (use-package gist
   :ensure t)
 
+(use-package restclient
+  :ensure t
+  :mode (("\\.http$" . restclient-mode)))
+
 ;; (use-package projectile
 ;;   :ensure t
 ;;   :idle (projectile-global-mode)
@@ -90,9 +94,16 @@
   :idle (smartparens-global-mode t)
   :config (progn
             (require 'smartparens-config)
-            (add-hook 'smartparens-enabled-hook '(lambda () (smartparens-strict-mode nil)))
+            (add-hook 'smartparens-enabled-hook '(lambda () (setq smartparens-strict-mode t)))
+            (setq sp-highlight-wrap-overlay nil)
+            (setq sp-highlight-wrap-tag-overlay nil)
+            (setq sp-highlight-pair-overlay nil)
             (sp-use-smartparens-bindings)
-            (define-key sp-keymap (kbd "M-<backspace>") nil)))
+            (define-key sp-keymap (kbd "M-<backspace>") nil)
+            (define-key sp-keymap (kbd "C-M-p") nil)
+            (define-key sp-keymap (kbd "C-M-n") nil)))
+
+
 
 (use-package multiple-cursors
   :ensure t
@@ -169,9 +180,7 @@
   (add-hook 'sbt-mode-hook '(lambda ()
                               (setq compilation-skip-threshold 2)
                               (local-set-key (kbd "C-a") 'comint-bol)
-                              (local-set-key (kbd "M-RET") 'comint-accumulate)
-                              (local-set-key (kbd "M-P") 'compilation-previous-error)
-                              (local-set-key (kbd "M-N") 'compilation-next-error)))
+                              (local-set-key (kbd "M-RET") 'comint-accumulate)))
   :bind (("C-c s s" . sbt-start)
          ("C-c s o" . mine-sbt-test-only-current-test)))
 
@@ -195,32 +204,32 @@
   (interactive)
   (sbt-command (concat "test-only " (mine-sbt-current-test-in-buffer))))
 
-(use-package haskell-mode
-  :ensure t
-  :config
-  (progn
-    (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-    (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
-    (add-hook 'haskell-mode-hook 'haskell-auto-insert-module-template)
+;; (use-package haskell-mode
+;;   :ensure t
+;;   :config
+;;   (progn
+;;     (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+;;     (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
+;;     (add-hook 'haskell-mode-hook 'haskell-auto-insert-module-template)
 
-    (setq haskell-process-suggest-remove-import-lines t
-          haskell-process-auto-import-loaded-modules t
-          haskell-process-suggest-hoogle-imports nil ;; 'cabal install hoogle' fails
-          haskell-process-log t
-          haskell-process-type 'cabal-repl
-          haskell-interactive-mode-eval-mode 'haskell-mode
-          haskell-process-show-debug-tips nil)
+;;     (setq haskell-process-suggest-remove-import-lines t
+;;           haskell-process-auto-import-loaded-modules t
+;;           haskell-process-suggest-hoogle-imports nil ;; 'cabal install hoogle' fails
+;;           haskell-process-log t
+;;           haskell-process-type 'cabal-repl
+;;           haskell-interactive-mode-eval-mode 'haskell-mode
+;;           haskell-process-show-debug-tips nil)
 
-    (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
-    (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-bring)
-    (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
-    (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
-    (define-key haskell-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-    (define-key haskell-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-    (define-key haskell-mode-map (kbd "C-c c") 'haskell-process-cabal)
-    (define-key haskell-mode-map (kbd "M-.") 'haskell-mode-jump-to-def-or-tag)
-    (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
-    (eval-after-load 'haskell-cabal '(define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal))))
+;;     (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
+;;     (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-bring)
+;;     (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
+;;     (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
+;;     (define-key haskell-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
+;;     (define-key haskell-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
+;;     (define-key haskell-mode-map (kbd "C-c c") 'haskell-process-cabal)
+;;     (define-key haskell-mode-map (kbd "M-.") 'haskell-mode-jump-to-def-or-tag)
+;;     (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
+;;     (eval-after-load 'haskell-cabal '(define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal))))
 
 (use-package ruby-mode
   :mode (("Vagrantfile$" . ruby-mode)
