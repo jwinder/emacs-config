@@ -55,10 +55,6 @@
 
 (global-set-key (kbd "C-x r t") 'inline-string-rectangle)
 
-(global-set-key (kbd "C-<") 'mark-previous-like-this)
-(global-set-key (kbd "C->") 'mark-next-like-this)
-(global-set-key (kbd "C-M-m") 'mark-all-like-this)
-
 ;; Use regex searches
 (global-set-key [remap isearch-forward] 'isearch-forward-regexp)
 (global-set-key [remap isearch-backward] 'isearch-backward-regexp)
