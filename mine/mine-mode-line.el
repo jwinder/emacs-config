@@ -91,6 +91,6 @@
       (mode-line-off)
     (mode-line-reset)))
 
-(mode-line-reset)
+(mode-line-off)
 
 (provide 'mine-mode-line)

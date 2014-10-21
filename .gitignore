@@ -32,3 +32,4 @@ jabber-history
 /request/*
 abbrev_defs
 .mc-lists.el
+/url

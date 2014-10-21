@@ -2,11 +2,13 @@
 (add-to-list 'load-path mine-directory)
 (add-to-list 'custom-theme-load-path mine-directory)
 
+(load-theme 'mine-color t)
+
 (require 'mine-builtin)
 (require 'mine-defuns)
 (require 'mine-advice)
 (require 'mine-bindings)
-(require 'mine-desktop)
+;; (require 'mine-desktop)
 (require 'mine-pretty)
 (require 'mine-packages)
 (require 'mine-eshell)
@@ -17,8 +19,6 @@
 
 (when (eq system-type 'darwin) (require 'mine-osx))
 (when (eq system-type 'gnu/linux) (require 'mine-linux))
-
-(load-theme 'mine-color t)
 
 (setq mine-custom-dir (concat user-emacs-directory "/custom/"))
 (when (file-exists-p mine-custom-dir)
