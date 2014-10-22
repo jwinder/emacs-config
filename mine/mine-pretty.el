@@ -1,6 +1,8 @@
 (require 'ansi-color)
 (ansi-color-for-comint-mode-on)
 
+(load-theme 'manoj-dark t)
+
 (show-paren-mode t)
 (transient-mark-mode t)
 (blink-cursor-mode t)
