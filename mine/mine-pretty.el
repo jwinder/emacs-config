@@ -4,6 +4,7 @@
 (show-paren-mode t)
 (transient-mark-mode t)
 (blink-cursor-mode t)
+(set-cursor-color "#6c6c6c")
 
 ;; Remove noise
 ;; (global-hl-line-mode t)
