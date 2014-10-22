@@ -1,14 +1,12 @@
 (setq mine-directory (concat user-emacs-directory "mine"))
 (add-to-list 'load-path mine-directory)
-(add-to-list 'custom-theme-load-path mine-directory)
 
-(load-theme 'mine-color t)
+(load-theme 'manoj-dark t)
 
 (require 'mine-builtin)
 (require 'mine-defuns)
 (require 'mine-advice)
 (require 'mine-bindings)
-;; (require 'mine-desktop)
 (require 'mine-pretty)
 (require 'mine-packages)
 (require 'mine-eshell)
