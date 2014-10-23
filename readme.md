@@ -2,7 +2,7 @@
 
 I use the emacs setup from [rubbish](https://github.com/rubbish/rubbish-emacs-setup) as a basis. I've added a few of my own opinionated things over the past couple years.
 
-This configuration has been used for both Ubuntu & OSX. It __should__ work fairly well right away.
+This configuration has been used for both Ubuntu & OSX. It _should_ work fairly well right away.
 
 # Install Emacs
 
@@ -22,4 +22,4 @@ Clone this repo:
 
     git clone git@github.com:jwinder/emacs.d.git $HOME/.emacs.d
 
-Then Run Emacs.
+Now you may run Emacs.
