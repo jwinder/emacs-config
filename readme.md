@@ -2,36 +2,24 @@
 
 I use the emacs setup from [rubbish](https://github.com/rubbish/rubbish-emacs-setup) as a basis. I've added a few of my own opinionated things over the past couple years.
 
-This configuration has been used for both Ubuntu & OSX. It should work fairly well right away.
+This configuration has been used for both Ubuntu & OSX. It __should__ work fairly well right away.
 
-# Getting Started w/ Ubuntu
+# Install Emacs
 
-Here are some helpful things for using this config with Ubuntu.
+With Homebrew:
 
-Some common packages (you might need others):
+    brew install emacs --cocoa --srgb
 
-    apt-get install -y libgtk2.0-dev libXpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libncurses-dev markdown texinfo git subversion cvs rubygems rake
-    gem install rake
-
-Either download & install emacs:
-* download [emacs 24.x](http://www.gnu.org/software/emacs/), `./configure`, `make`, `sudo make install`
-
-Or use your package manager:
+With Apt:
 
     sudo add-apt-repository ppa:cassou/emacs
     sudo apt-get update
     sudo apt-get install emacs24
 
-And then:
-* clone this repo to `$HOME/.emacs.d`
-* run emacs
+# Using This Config
 
-# Getting Started w/ OSX
+Clone this repo:
 
-Check out the OSX installation options on the [Emacs wiki](http://www.emacswiki.org/emacs/EmacsForMacOS).
+    git clone git@github.com:jwinder/emacs.d.git $HOME/.emacs.d
 
-I prefer [homebrew](https://github.com/Homebrew/homebrew).
-
-And then:
-* clone this repo to `$HOME/.emacs.d`
-* run emacs
+Then Run Emacs.
