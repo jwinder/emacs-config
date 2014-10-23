@@ -20,6 +20,10 @@
     (eval-after-load 'flyspell '(diminish 'flyspell-mode))
     (diminish 'abbrev-mode)))
 
+(use-package ido-vertical-mode
+  :ensure t
+  :config (ido-vertical-mode t))
+
 (use-package smex
   :ensure t
   :bind ("M-x" . smex))
