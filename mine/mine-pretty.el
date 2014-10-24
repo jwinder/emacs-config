@@ -6,6 +6,8 @@
 (show-paren-mode t)
 (transient-mark-mode t)
 (blink-cursor-mode t)
+
+(set-face-background 'fringe "black")
 (set-cursor-color "dark grey")
 
 ;; Remove noise
