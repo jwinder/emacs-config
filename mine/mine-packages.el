@@ -12,6 +12,9 @@
   (package-install 'use-package))
 (require 'use-package)
 
+(use-package cyberpunk-theme)
+(use-package afternoon-theme)
+
 (use-package diminish
   :ensure t
   :config

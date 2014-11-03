@@ -1,13 +1,16 @@
 (require 'ansi-color)
 (ansi-color-for-comint-mode-on)
 
-(load-theme 'manoj-dark t)
+;; (load-theme 'manoj-dark t)
+;; (set-face-background 'fringe "black")
+
+;; (load-theme 'cyberpunk t)
+(load-theme 'afternoon t)
 
 (show-paren-mode t)
 (transient-mark-mode t)
 (blink-cursor-mode t)
 
-(set-face-background 'fringe "black")
 (set-cursor-color "dark grey")
 
 ;; Remove noise
