@@ -12,8 +12,13 @@
   (package-install 'use-package))
 (require 'use-package)
 
-(use-package cyberpunk-theme)
-(use-package afternoon-theme)
+(use-package afternoon-theme
+  :ensure t
+  :config
+  (progn
+    (load-theme 'afternoon t)
+    (set-cursor-color "dark grey")
+    (set-background-color "black")))
 
 (use-package diminish
   :ensure t
