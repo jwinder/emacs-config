@@ -1,5 +1,7 @@
 (require 'json-reformat)
 
+(setq js-indent-level 2)
+
 (defun json-prettify ()
   (interactive)
   (if (region-active-p)
