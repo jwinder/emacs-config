@@ -10,6 +10,7 @@
 ;; (display-battery-mode) ;; is it updating correctly?
 (column-number-mode)
 
+;; todo -- the mode line border and font is annoying
 (setq mine-default-mode-line-format mode-line-format)
 
 (defun mode-line-on ()
@@ -22,18 +23,12 @@
   (interactive)
   (setq-default mode-line-format nil))
 
-(defun mode-line-reset ()
-  "Reset mode line colors and turn on mode line."
-  (interactive)
-  (set-default-mode-line-colors)
-  (mode-line-on))
-
 (defun mode-line-toggle ()
   "Toggles mode line on/off."
   (interactive)
   (if mode-line-format
       (mode-line-off)
-    (mode-line-reset)))
+    (mode-line-on)))
 
 (mode-line-off)
 
