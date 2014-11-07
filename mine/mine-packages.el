@@ -49,9 +49,6 @@
 (use-package scratch
   :ensure t)
 
-(use-package powerline
-  :ensure t)
-
 (use-package edit-server
   :ensure t
   :idle (edit-server-start)
