@@ -18,7 +18,8 @@
   (progn
     (load-theme 'afternoon t)
     (set-cursor-color "dark grey")
-    (set-background-color "black")))
+    (set-background-color "black")
+    (set-face-background 'fringe nil)))
 
 (use-package diminish
   :ensure t
