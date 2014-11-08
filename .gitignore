@@ -33,3 +33,4 @@ jabber-history
 abbrev_defs
 .mc-lists.el
 /url
+flycheck_init.el
