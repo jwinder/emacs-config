@@ -11,7 +11,7 @@
 ;; (column-number-mode)
 
 (custom-set-faces
- '(mode-line ((t (:family "Monaco" :background nil :foreground "red" :box nil))))
+ '(mode-line ((t (:family "Monaco" :background nil :foreground "#ff7a58" :box nil))))
  '(mode-line-inactive ((t (:family "Monaco" :background nil :foreground "gray" :box nil))))
  '(mode-line-buffer-id ((t :family "Monaco" :background nil :foreground "#7db5d6"))))
 
