@@ -15,7 +15,7 @@
  '(mode-line-inactive ((t (:family "Monaco" :background nil :foreground "gray" :box nil))))
  '(mode-line-buffer-id ((t :family "Monaco" :background nil :foreground "#7db5d6"))))
 
-(setq mine-mode-line-format '(" \u222E " mode-line-buffer-identification " ds\u20D7"))
+(setq mine-mode-line-format '(" \u222E " mode-line-buffer-identification " dr\u20D7"))
 
 (defun mode-line-on ()
   "Turn on mode line in all buffers."
