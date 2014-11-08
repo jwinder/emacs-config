@@ -35,6 +35,9 @@
       (mode-line-off)
     (mode-line-on)))
 
+(defalias 'buffer-name-off 'mode-line-off)
+(defalias 'buffer-name-on 'mode-line-on)
+
 (mode-line-on)
 
 (provide 'mine-mode-line)
