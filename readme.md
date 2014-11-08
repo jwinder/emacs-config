@@ -20,6 +20,6 @@ With Apt:
 
 Clone this repo:
 
-    git clone git@github.com:jwinder/emacs.d.git $HOME/.emacs.d
+    git clone git@github.com:jwinder/emacs.git $HOME/.emacs.d
 
 Now you may run Emacs.
