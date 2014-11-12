@@ -4,6 +4,8 @@
 (add-to-list 'package-archives
              '("org" . "http://orgmode.org/elpa/") t)
 
+;; todo -- try https://github.com/tj64/outshine
+
 (package-initialize)
 (unless (file-exists-p package-user-dir)
   (package-refresh-contents))
