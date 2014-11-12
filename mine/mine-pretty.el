@@ -10,10 +10,10 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 
-(defvar mine-font-name "Monaco" "*Base font")
-(defvar mine-small-font (concat mine-font-name " 11") "*The small font")
-(defvar mine-normal-font (concat mine-font-name " 14") "*The main font")
-(defvar mine-big-font (concat mine-font-name " 20") "*The big font")
+(defun mine-font (&optional size) (if size (concat "Monaco " size) "Monaco"))
+(defvar mine-small-font (mine-font "11") "*The small font")
+(defvar mine-normal-font (mine-font "14") "*The main font")
+(defvar mine-big-font (mine-font "20") "*The big font")
 
 ;; mode line settings
 
@@ -29,10 +29,11 @@
 ;; (display-battery-mode) ;; is it updating correctly?
 ;; (column-number-mode)
 
+;; todo -- couldn't get this to eval (mine-font) correctly inline
 (custom-set-faces
- '(mode-line ((t (:family mine-font-name :background nil :foreground "#ff7a58" :box nil))))
- '(mode-line-inactive ((t (:family mine-font-name :background nil :foreground "gray" :box nil))))
- '(mode-line-buffer-id ((t :family mine-font-name :background nil :foreground "#7db5d6"))))
+ '(mode-line ((t (:family "Monaco" :background nil :foreground "#ff7a58" :box nil))))
+ '(mode-line-inactive ((t (:family "Monaco" :background nil :foreground "gray" :box nil))))
+ '(mode-line-buffer-id ((t :family "Monaco" :background nil :foreground "#7db5d6"))))
 
 (setq mine-mode-line-format '(" \u222E " mode-line-buffer-identification " dr\u20D7"))
 
