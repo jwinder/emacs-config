@@ -203,6 +203,7 @@
 (setq create-lockfiles nil)
 
 (add-to-list 'auto-mode-alist '("\\.proto\\'" . c-mode))
+(add-to-list 'auto-mode-alist '("\\.less\\'" . css-mode))
 
 ;; auto revert logs by tail
 ;; (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-tail-mode))
