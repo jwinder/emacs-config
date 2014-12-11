@@ -23,6 +23,14 @@
     (set-background-color "black")
     (set-face-background 'fringe nil)))
 
+;; (use-package noctilux-theme
+;;   :ensure t
+;;   :config
+;;   (progn
+;;     (load-theme 'noctilux t)
+;;     (set-background-color "black")
+;;     (set-face-background 'fringe nil)))
+
 (use-package diminish
   :ensure t
   :config

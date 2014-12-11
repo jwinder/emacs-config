@@ -85,5 +85,6 @@
 
 ;; full screen
 (global-set-key (kbd "<f11>") 'mine-toggle-fullscreen)
+(global-set-key (kbd "M-RET") 'mine-toggle-fullscreen)
 
 (provide 'mine-bindings)
