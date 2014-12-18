@@ -53,8 +53,6 @@
 
 (global-set-key (kbd "C-M-y") 'browse-kill-ring)
 
-(global-set-key (kbd "C-x r t") 'string-rectangle)
-
 ;; Use regex searches
 (global-set-key [remap isearch-forward] 'isearch-forward-regexp)
 (global-set-key [remap isearch-backward] 'isearch-backward-regexp)
