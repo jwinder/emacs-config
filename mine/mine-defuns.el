@@ -168,7 +168,8 @@ frames with exactly two windows."
          (sqli-buffer (if sql-buffer (progn (split-window) sql-buffer) (sql-product-interactive product new-name))))
     (switch-to-buffer sql-text-buffer nil t)
     (set (make-local-variable 'sql-buffer) sqli-buffer)
-    (switch-to-buffer sqli-buffer nil t)))
+    (switch-to-buffer sqli-buffer nil t)
+    (sql-send-string "\\x")))
 
 (defun delete-this-buffer-and-file ()
   "Removes file connected to current buffer and kills buffer."

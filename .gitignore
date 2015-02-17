@@ -34,3 +34,6 @@ abbrev_defs
 .mc-lists.el
 /url
 flycheck_init.el
+ido.last
+recentf
+smex-items
