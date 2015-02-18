@@ -8,6 +8,8 @@
   (interactive)
   (message (current-time-string)))
 
+(defalias 'date 'time)
+
 (defun buffername ()
   (interactive)
   (message (buffer-name)))
