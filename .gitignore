@@ -1,6 +1,10 @@
 DS_STORE
 
+private
+
 elpa/
+
+recentf
 
 eshell/
 auto-save-list/

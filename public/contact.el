@@ -1,11 +1,11 @@
-(defun jw-config-insert-author ()
+(defun config-insert-author ()
   (interactive)
   (insert jw-config-author-name))
 
-(defun jw-config-goto-homepage ()
+(defun config-goto-homepage ()
   (interactive)
   (browse-url jw-config-author-url))
 
-(defun jw-config-goto-github ()
+(defun config-goto-github ()
   (interactive)
   (browse-url jw-config-github-url))
