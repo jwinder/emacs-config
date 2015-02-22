@@ -8,3 +8,5 @@ recentf
 
 eshell/
 auto-save-list/
+
+flycheck_core.el

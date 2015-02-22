@@ -1,3 +1,5 @@
+(require 'jw-lib)
+
 (defalias 'filter-lines 'keep-lines)
 (defalias 'filter-out-lines 'flush-lines)
 (defalias 'elisp-shell 'ielm)
@@ -21,7 +23,13 @@
 
 (defun uuid ()
   (interactive)
-  (insert (downcase (shell-command-to-string "uuidgen | tr -d '\n'"))))
+  (insert (jw--make-uuid)))
+
+(defun json-prettify ()
+	(interactive)
+	(if (region-active-p)
+			(json-pretty-print (region-beginning) (region-end))
+		(json-pretty-print-buffer)))
 
 (defun hub-browse ()
 	(interactive)

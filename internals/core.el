@@ -9,6 +9,8 @@
 (setq indent-tabs-mode nil
       default-tab-width 2)
 
+(setq js-indent-level 2)
+
 (delete-selection-mode t)
 
 (winner-mode t)
@@ -26,5 +28,7 @@
 (setq uniquify-buffer-name-style 'forward)
 
 (setq ring-bell-function 'ignore)
+
+(add-to-list 'auto-mode-alist '("\\.proto$" . c-mode))
 
 (server-start)
