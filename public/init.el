@@ -124,3 +124,9 @@
 (defun kill-log-buffers ()
   (interactive)
   (kill-matching-buffers-silently ".+\\.log$"))
+
+(defun toggle-fullscreen ()
+  (interactive)
+  (if (frame-parameter (selected-frame) 'fullscreen)
+      (set-frame-parameter (selected-frame) 'fullscreen nil)
+    (set-frame-parameter (selected-frame) 'fullscreen 'fullboth)))

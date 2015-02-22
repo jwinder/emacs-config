@@ -1,3 +1,5 @@
+(global-set-key (kbd "M-RET") 'toggle-fullscreen)
+
 (global-set-key (kbd "C-c m") 'eshell)
 
 (global-set-key (kbd "C-x n") 'switch-to-buffer)
