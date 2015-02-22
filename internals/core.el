@@ -1,5 +1,3 @@
-(require 'uniquify)
-
 (ansi-color-for-comint-mode-on)
 
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -21,13 +19,12 @@
 
 (put 'dired-find-alternate-file 'disabled nil)
 
-;; uniquify?
-
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-(setq uniquify-buffer-name-style 'post-forward
-			uniquify-separator ":")
+(setq uniquify-buffer-name-style 'forward)
+
+(setq ring-bell-function 'ignore)
 
 (server-start)

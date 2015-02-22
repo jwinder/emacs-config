@@ -8,4 +8,4 @@
 		  '(mode-line-inactive ((t (:family "Monaco" :background nil :foreground "gray" :box nil))))
 		  '(mode-line-buffer-id ((t :family "Monaco" :background nil :foreground "#7db5d6"))))
 
-(setq-default mode-line-format '(" \u222E " mode-line-buffer-identification " dr\u20D7"))
+(setq-default mode-line-format '(" \u2207 \u0192\u25E6\u0067 = " mode-line-buffer-identification))
