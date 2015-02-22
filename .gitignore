@@ -1,6 +1,7 @@
 .DS_STORE
 private
 elpa/
+tramp
 recentf
 eshell/history
 eshell/lastdir

@@ -29,6 +29,12 @@
 
 (setq ring-bell-function 'ignore)
 
+(setq enable-recursive-minibuffers t)
+
+(setq tramp-default-method "ssh")
+
+(setq eshell-buffer-shorthand t)
+
 (add-to-list 'auto-mode-alist '("\\.proto$" . c-mode))
 
 (server-start)
