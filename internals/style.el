@@ -5,7 +5,7 @@
 (add-to-list 'default-frame-alist (cons 'font "Monaco 14"))
 
 (custom-set-faces '(mode-line ((t (:family "Monaco" :background nil :foreground "#ff7a58" :box nil))))
-		  '(mode-line-inactive ((t (:family "Monaco" :background nil :foreground "gray" :box nil))))
-		  '(mode-line-buffer-id ((t :family "Monaco" :background nil :foreground "#7db5d6"))))
+      '(mode-line-inactive ((t (:family "Monaco" :background nil :foreground "gray" :box nil))))
+      '(mode-line-buffer-id ((t :family "Monaco" :background nil :foreground "#7db5d6"))))
 
 (setq-default mode-line-format '(" \u2207 \u0192\u25E6\u0067 = " mode-line-buffer-identification))

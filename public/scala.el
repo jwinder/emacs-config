@@ -20,13 +20,13 @@
   (sbt-command (concat "test-only " (sbt-current-test-in-buffer))))
 
 (setq scala-indent:align-forms t
-			scala-indent:align-parameters t)
+      scala-indent:align-parameters t)
 
 (add-hook 'scala-mode-hook
-					'(lambda ()
-						 (local-set-key (kbd "C-c s s") 'sbt-start)
-						 (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)))
+          '(lambda ()
+             (local-set-key (kbd "C-c s s") 'sbt-start)
+             (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)))
 
 (add-hook 'sbt-mode-hook
-					'(lambda ()
-						 (setq compilation-skip-threshold 1)))
+          '(lambda ()
+             (setq compilation-skip-threshold 1)))
