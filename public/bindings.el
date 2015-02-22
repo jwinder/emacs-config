@@ -7,6 +7,12 @@
 
 (global-set-key (kbd "C-x 9") 'toggle-window-split)
 
-;; suspends
+(global-set-key [remap move-beginning-of-line] 'mwim-beginning-of-line-or-code) ;; C-a
+(global-set-key [remap move-end-of-line] 'mwim-end-of-line-or-code) ;; C-e
+(global-set-key [remap open-line] 'open-line-previous) ;; C-o
+(global-set-key (kbd "C-j") 'newline-and-open-line-previous)
+
+(global-set-key (kbd "M-;") 'comment-dwim-region-or-line)
+
 (global-unset-key (kbd "C-z"))
 (global-unset-key (kbd "C-x C-z"))

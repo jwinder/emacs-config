@@ -79,3 +79,27 @@
           (set-window-buffer (next-window) next-win-buffer)
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
+
+(defun comment-dwim-region-or-line (&optional arg)
+  (interactive "*P")
+  (if (region-active-p)
+      (comment-dwim arg)
+    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+
+(defun open-line-next ()
+  (interactive)
+  (end-of-line)
+  (open-line 1)
+  (next-line 1)
+  (indent-according-to-mode))
+
+(defun open-line-previous ()
+  (interactive)
+  (beginning-of-line)
+  (open-line 1)
+  (indent-according-to-mode))
+
+(defun newline-and-open-line-previous ()
+  (interactive)
+  (newline-and-indent)
+  (open-line-previous))

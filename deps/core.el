@@ -7,6 +7,7 @@
                  (set-face-background 'fringe nil)))
 
 (use-package scratch :ensure t)
+(use-package mwim :ensure t)
 
 (use-package org :ensure t)
 (use-package gist :ensure t)
