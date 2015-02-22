@@ -1,3 +1,5 @@
+(require 'uniquify)
+
 (ansi-color-for-comint-mode-on)
 
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -11,11 +13,11 @@
 
 (delete-selection-mode t)
 
-;; todo -- delete trailing whitespace
-
 (winner-mode t)
 
 (setq default-major-mode 'text-mode)
+
+(setq gist-view-gist t)
 
 (put 'dired-find-alternate-file 'disabled nil)
 
@@ -24,5 +26,8 @@
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(setq uniquify-buffer-name-style 'post-forward
+			uniquify-separator ":")
 
 (server-start)

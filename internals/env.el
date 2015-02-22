@@ -2,7 +2,7 @@
 
 (setenv "EDITOR" "emacsclient")
 
-;; opininated way of setting system properties
+;; opinionated way of setting system properties
 ;; (you can have your shell rc file parse the same two files)
 
 ;; e.g., keep something like this in your private dir:
