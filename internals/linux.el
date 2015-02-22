@@ -4,4 +4,3 @@
 	browse-url-generic-program "google-chrome")
   (setq ack-executable "ack-grep")
   )
-

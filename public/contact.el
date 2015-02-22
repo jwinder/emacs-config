@@ -9,3 +9,7 @@
 (defun config-goto-github ()
   (interactive)
   (browse-url jw-config-github-url))
+
+(defun rubbish-config-goto-github ()
+  (interactive)
+  (browse-url rubbish-config-github-url))

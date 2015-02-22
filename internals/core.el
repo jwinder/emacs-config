@@ -6,6 +6,9 @@
       version-control nil
       create-lockfiles nil)
 
+(setq indent-tabs-mode nil
+      default-tab-width 2)
+
 (delete-selection-mode t)
 
 ;; todo -- delete trailing whitespace
@@ -17,5 +20,9 @@
 (put 'dired-find-alternate-file 'disabled nil)
 
 ;; uniquify?
+
+(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (server-start)

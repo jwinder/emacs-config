@@ -38,7 +38,6 @@
         (setenv name (jw--trim-string value))))))
 
 (defun jw--env-set-path (path-file)
-  (interactive)
   (let* ((path-list (mapcar 'substitute-env-vars (jw--read-file-lines-to-string path-file)))
          (path-str (mapconcat 'identity path-list ":")))
     (setq exec-path path-list)
