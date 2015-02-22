@@ -1,12 +1,8 @@
 .DS_STORE
-
 private
-
 elpa/
-
 recentf
-
-eshell/
+eshell/history
+eshell/lastdir
 auto-save-list/
-
 flycheck_*

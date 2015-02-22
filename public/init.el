@@ -80,6 +80,13 @@
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
+(defun beginning-of-line-or-indentation ()
+  (interactive)
+  (let ((previous-point (point)))
+    (back-to-indentation)
+    (if (equal previous-point (point))
+        (beginning-of-line))))
+
 (defun comment-dwim-region-or-line (&optional arg)
   (interactive "*P")
   (if (region-active-p)
@@ -103,3 +110,17 @@
   (interactive)
   (newline-and-indent)
   (open-line-previous))
+
+(defun kill-matching-buffers-silently (pattern)
+  (interactive "sKill buffers matching: ")
+  (dolist (buffer (buffer-list))
+    (when (string-match pattern (buffer-name buffer))
+      (kill-buffer buffer))))
+
+(defun kill-ag-buffers ()
+  (interactive)
+  (kill-matching-buffers-silently "*ag "))
+
+(defun kill-log-buffers ()
+  (interactive)
+  (kill-matching-buffers-silently ".+\\.log$"))
