@@ -15,6 +15,8 @@
 
 (winner-mode t)
 
+(global-subword-mode t)
+
 (setq default-major-mode 'text-mode)
 
 (setq gist-view-gist t)
