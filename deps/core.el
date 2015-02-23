@@ -32,7 +32,9 @@
   :config (progn (require 'smartparens-config)
                  (smartparens-global-mode t)
                  (sp-use-smartparens-bindings)
-                 (define-key sp-keymap (kbd "M-<backspace>") nil)))
+                 (define-key sp-keymap (kbd "M-<backspace>") nil)
+                 (define-key sp-keymap (kbd "C-M-p") nil)
+                 (define-key sp-keymap (kbd "C-M-n") nil)))
 
 (use-package flycheck :ensure t
   :idle (global-flycheck-mode)

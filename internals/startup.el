@@ -6,5 +6,4 @@
 ;; You should also check out %s.
 ;; Any questions? Email me at %s. -- %s
 
-" jw-config-github-url jw-config-version rubbish-config-github-url jw-config-author-email jw-config-author-name)
- )
+" jw-config-github-url jw-config-version rubbish-config-github-url jw-config-author-email jw-config-author-name))
