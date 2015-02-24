@@ -1,5 +1,3 @@
-;; projectile+helm
-
 (use-package afternoon-theme :ensure t
   :config (progn (load-theme 'afternoon t)
                  (set-cursor-color "dark grey")
@@ -40,5 +38,7 @@
   :idle (global-flycheck-mode)
   :config (progn (setq flycheck-standard-error-navigation nil)
                  (setq flycheck-display-errors-function nil)))
+
+;; (use-package projectile :ensure t) ;; projectile + helm?
 
 (use-package helm :ensure t)
