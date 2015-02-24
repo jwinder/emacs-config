@@ -25,3 +25,4 @@
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 
 (helm-mode 1)
+(helm-autoresize-mode 1)
