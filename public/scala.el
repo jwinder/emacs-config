@@ -1,3 +1,5 @@
+(defalias 'sbt 'sbt-start)
+
 (defun sbt-current-test-in-buffer ()
   (save-excursion
     (goto-char (point-min))
