@@ -18,6 +18,18 @@
 
 (defalias 'time 'date)
 
+(defun scratch-lisp ()
+  (interactive)
+  (let ((scratch-buffer (get-buffer-create "*scratch*")))
+    (switch-to-buffer scratch-buffer)
+    (lisp-interaction-mode)))
+
+(defun scratch-text ()
+  (interactive)
+  (let ((scratch-buffer (get-buffer-create "*text*")))
+    (switch-to-buffer scratch-buffer)
+    (text-mode)))
+
 (defun ping-google ()
   (interactive)
   (ping "google.com"))
