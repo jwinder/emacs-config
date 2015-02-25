@@ -1,4 +1,4 @@
-(require 'cl)
+(eval-when-compile (require 'cl))
 
 (defadvice kill-ring-save (before slick-copy activate compile)
   "When called interactively with no active region, copy a single line instead."

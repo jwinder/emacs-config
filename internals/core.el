@@ -39,4 +39,7 @@
 
 (add-to-list 'auto-mode-alist '("\\.proto$" . c-mode))
 
+(add-to-list 'tramp-default-proxies-alist '(nil "\\`root\\'" "/ssh:%h:"))
+(add-to-list 'tramp-default-proxies-alist '((regexp-quote (system-name)) nil nil))
+
 (server-start)

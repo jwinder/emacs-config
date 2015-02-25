@@ -32,3 +32,11 @@
 (add-hook 'sbt-mode-hook
           '(lambda ()
              (setq compilation-skip-threshold 1)))
+
+(defun scala-append ()
+  (interactive)
+  (insert "+:"))
+
+(defun scala-prepend ()
+  (interactive)
+  (insert ":+"))
