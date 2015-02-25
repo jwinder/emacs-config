@@ -1,5 +1,3 @@
-(global-set-key (kbd "M-RET") 'toggle-fullscreen)
-
 (global-set-key (kbd "C-c M-e") 'eshell)
 
 (global-set-key (kbd "C-x n") 'switch-to-buffer)
@@ -11,8 +9,8 @@
 
 (global-set-key (kbd "C-x 9") 'toggle-window-split)
 
-(global-set-key [remap move-beginning-of-line] 'beginning-of-line-or-indentation) ;; C-a
-(global-set-key [remap open-line] 'open-line-previous) ;; C-o
+(global-set-key (kbd "C-a") 'beginning-of-line-or-indentation)
+(global-set-key (kbd "C-o") 'open-line-previous)
 (global-set-key (kbd "C-j") 'newline-and-open-line-previous)
 
 (global-set-key (kbd "M-;") 'comment-dwim-region-or-line)
