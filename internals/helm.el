@@ -25,9 +25,9 @@
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-c s s") 'helm-ag)
+(global-set-key (kbd "M-s o") 'helm-occur)
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
-(defalias 'occur 'helm-occur) ;; M-s o
 (defalias 'list-colors-display 'helm-colors)
 
 (add-hook 'eshell-mode-hook
