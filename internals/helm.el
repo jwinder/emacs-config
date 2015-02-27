@@ -14,8 +14,6 @@
 (setq projectile-completion-system 'helm
       projectile-switch-project-action 'helm-projectile)
 
-(define-key projectile-command-map (kbd "a") 'projectile-ag)
-
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
 
@@ -23,6 +21,7 @@
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "C-c s s") 'helm-ag)
 
 (add-hook 'eshell-mode-hook
           #'(lambda ()

@@ -10,10 +10,6 @@
 (use-package gist :ensure t)
 (use-package undo-tree :ensure t)
 
-(use-package ag :ensure t
-  :bind (("C-c a f" . ag))
-  :config (setq ag-highlight-search t))
-
 (use-package magit :ensure t
   :bind (("C-M-g" . magit-status)))
 
@@ -43,5 +39,6 @@
   :idle (projectile-global-mode))
 
 (use-package helm :ensure t)
+(use-package helm-ag :ensure t)
 (use-package helm-projectile :ensure t)
 (use-package helm-descbinds :ensure t)
