@@ -43,18 +43,6 @@
 (use-package projectile :ensure t
   :idle (projectile-global-mode))
 
-;; (define-key projectile-command-map (kbd "a") 'projectile-ag)
-
-;; (use-package projectile :ensure t) ;; projectile + helm?
-
 (use-package helm :ensure t)
 (use-package helm-projectile :ensure t)
 (use-package helm-descbinds :ensure t)
-
-
-;; (setq projectile-completion-system 'helm)
-;; (use-package helm-projectile
-;;   :ensure t
-;;   :idle (progn (helm-projectile-on)
-;;                (define-key projectile-command-map (kbd "a") 'projectile-ag))
-;;   :config (setq projectile-switch-project-action 'helm-projectile))
