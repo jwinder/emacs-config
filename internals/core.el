@@ -39,4 +39,6 @@
 
 (add-to-list 'auto-mode-alist '("\\.proto$" . c-mode))
 
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
 (server-start)
