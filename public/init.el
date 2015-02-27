@@ -71,7 +71,7 @@
 
 (defun decrement-number (&optional arg)
   (interactive "p*")
-  (mine-increment-decimal (if arg (- arg) -1)))
+  (increment-number (if arg (- arg) -1)))
 
 (defun toggle-window-split ()
   (interactive)
