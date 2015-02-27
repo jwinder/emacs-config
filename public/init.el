@@ -15,7 +15,7 @@
 (defun emacs-hard-reload-config ()
   (interactive)
   (when (file-exists-p package-user-dir)
-        (delete-directory package-user-dir t))
+    (delete-directory package-user-dir t))
   (emacs-reload-config))
 
 (defun date ()
