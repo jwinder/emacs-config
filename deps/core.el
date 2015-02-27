@@ -39,7 +39,6 @@
   :config (progn (setq flycheck-standard-error-navigation nil)
                  (setq flycheck-display-errors-function nil)))
 
-
 (use-package projectile :ensure t
   :idle (projectile-global-mode))
 
