@@ -26,12 +26,14 @@
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-c s s") 'helm-ag)
 
+(defalias 'kill-ring-show 'helm-show-kill-ring)
+(defalias 'occur 'helm-occur) ;; M-s o
+(defalias 'list-colors-display 'helm-colors)
+
 (add-hook 'eshell-mode-hook
           #'(lambda ()
               (define-key eshell-mode-map [remap eshell-pcomplete] 'helm-esh-pcomplete)
               (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)))
-
-(defalias 'kill-ring-show 'helm-show-kill-ring)
 
 (add-hook 'flycheck-mode-hook
           '(lambda ()
