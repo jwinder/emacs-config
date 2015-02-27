@@ -30,15 +30,8 @@
                  (define-key sp-keymap (kbd "C-M-p") nil)
                  (define-key sp-keymap (kbd "C-M-n") nil)))
 
-(use-package flycheck :ensure t
-  :idle (global-flycheck-mode)
-  :config (progn (setq flycheck-standard-error-navigation nil)
-                 (setq flycheck-display-errors-function nil)))
-
-(use-package projectile :ensure t
-  :idle (projectile-global-mode))
-
 (use-package helm :ensure t)
 (use-package helm-ag :ensure t)
 (use-package helm-projectile :ensure t)
+(use-package helm-flycheck :ensure t)
 (use-package helm-descbinds :ensure t)

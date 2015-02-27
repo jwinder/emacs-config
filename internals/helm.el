@@ -14,6 +14,9 @@
 (setq projectile-completion-system 'helm
       projectile-switch-project-action 'helm-projectile)
 
+(setq flycheck-standard-error-navigation nil
+      flycheck-display-errors-function nil)
+
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
 
@@ -30,6 +33,14 @@
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 
+(add-hook 'flycheck-mode-hook
+          '(lambda ()
+             (define-key flycheck-mode-map (kbd "C-c ! l") 'helm-flycheck)))
+
 (helm-mode 1)
 (helm-autoresize-mode 1)
+
+(projectile-global-mode)
 (helm-projectile-on)
+
+(global-flycheck-mode)

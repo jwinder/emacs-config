@@ -8,9 +8,15 @@
 (defalias 'count-lines-region 'count-words-region)
 (defalias 'count-lines 'count-words)
 
-(defun reload-emacs-config ()
+(defun emacs-reload-config ()
   (interactive)
   (load-file (concat user-emacs-directory "init.el")))
+
+(defun emacs-hard-reload-config ()
+  (interactive)
+  (when (file-exists-p package-user-dir)
+        (delete-directory package-user-dir t))
+  (emacs-reload-config))
 
 (defun date ()
   (interactive)
