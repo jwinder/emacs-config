@@ -27,7 +27,8 @@
 (add-hook 'scala-mode-hook
           '(lambda ()
              (local-set-key (kbd "C-c s s") 'sbt-start)
-             (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)))
+             (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)
+             (local-set-key (kbd "C-c s p") 'sbt-run-previous-command)))
 
 (add-hook 'sbt-mode-hook
           '(lambda ()
