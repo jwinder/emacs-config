@@ -6,6 +6,10 @@
   (interactive)
   (browse-url "http://asoftmurmur.com/?v=32632b490000"))
 
-(defun jack-nicholson-creepy-nod ()
+(defun img-jack-nicholson-creepy-nod ()
   (interactive)
   (browse-url "http://img.pandawhale.com/post-30824-Jack-Nicholson-Creepy-Nodding-SRXv.gif"))
+
+(defun img-working-hard ()
+  (interactive)
+  (browse-url "http://i.imgur.com/Lkw5kmF.jpg"))
