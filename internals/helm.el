@@ -24,7 +24,7 @@
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-(global-set-key (kbd "C-c s s") 'helm-ag)
+(global-set-key (kbd "C-c a a") 'helm-ag)
 (global-set-key (kbd "M-s o") 'helm-occur)
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
@@ -34,6 +34,10 @@
           #'(lambda ()
               (define-key eshell-mode-map [remap eshell-pcomplete] 'helm-esh-pcomplete)
               (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)))
+
+(add-hook 'projectile-mode-hook
+          '(lambda ()
+             (define-key projectile-command-map (kbd "a") 'helm-projectile-ag)))
 
 (add-hook 'flycheck-mode-hook
           '(lambda ()
