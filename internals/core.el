@@ -6,6 +6,11 @@
       version-control nil
       create-lockfiles nil)
 
+(global-auto-revert-mode 1)
+
+(setq global-auto-revert-non-file-buffers t
+      auto-revert-verbose nil)
+
 (setq-default indent-tabs-mode nil)
 
 (setq default-tab-width 2)
