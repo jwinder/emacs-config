@@ -8,6 +8,9 @@
 (defalias 'count-lines-region 'count-words-region)
 (defalias 'count-lines 'count-words)
 
+(defalias 'font-size-increase 'text-scale-increase)
+(defalias 'font-size-decrease 'text-scale-decrease)
+
 (defun emacs-reload-config ()
   (interactive)
   (load-file (concat user-emacs-directory "init.el")))

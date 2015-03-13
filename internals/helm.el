@@ -12,7 +12,7 @@
       helm-quick-update t)
 
 (setq projectile-completion-system 'helm
-      projectile-switch-project-action 'helm-projectile)
+      projectile-switch-project-action 'helm-projectile-ag)
 
 (setq flycheck-standard-error-navigation nil
       flycheck-display-errors-function nil)
