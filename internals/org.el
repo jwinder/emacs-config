@@ -1,3 +1,5 @@
+(global-set-key (kbd "C-c a") 'org-agenda)
+
 (setq org-speed-commands-user
       '(("P" . org-shiftmetaup) ;; move item up
         ("N" . org-shiftmetadown) ;; move item down
