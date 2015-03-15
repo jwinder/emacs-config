@@ -23,7 +23,7 @@
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-(global-set-key (kbd "C-c a a") 'helm-ag)
+(global-set-key (kbd "M-s C-s") 'helm-ag)
 (global-set-key (kbd "M-s o") 'helm-occur)
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
