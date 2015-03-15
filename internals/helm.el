@@ -11,8 +11,7 @@
       helm-locate-fuzzy-match t
       helm-quick-update t)
 
-(setq projectile-completion-system 'helm
-      projectile-switch-project-action 'helm-projectile-ag)
+(setq projectile-completion-system 'helm)
 
 (setq flycheck-standard-error-navigation nil
       flycheck-display-errors-function nil)
@@ -37,7 +36,8 @@
 
 (add-hook 'projectile-mode-hook
           '(lambda ()
-             (define-key projectile-command-map (kbd "a") 'helm-projectile-ag)))
+             (define-key projectile-command-map (kbd "a") 'helm-projectile-ag)
+             (setq projectile-switch-project-action 'helm-projectile-ag)))
 
 (add-hook 'flycheck-mode-hook
           '(lambda ()
