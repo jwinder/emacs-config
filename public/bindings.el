@@ -1,7 +1,7 @@
 (global-set-key (kbd "C-c M-e") 'eshell)
 
 (global-set-key (kbd "C-x n") 'switch-to-buffer)
-(global-set-key (kbd "M-g") 'goto-line)
+(global-set-key (kbd "C-M-g") 'goto-line)
 
 (global-set-key (kbd "C-M-9") 'winner-undo)
 (global-set-key (kbd "C-M-0") 'winner-redo)

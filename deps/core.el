@@ -11,7 +11,7 @@
 (use-package undo-tree :ensure t)
 
 (use-package magit :ensure t
-  :bind (("C-M-g" . magit-status)))
+  :bind (("M-g" . magit-status)))
 
 (use-package expand-region :ensure t
   :bind ("C-=" . er/expand-region))
