@@ -1,3 +1,5 @@
+(require 'helm-dabbrev)
+
 (setq helm-split-window-in-side-p t
       helm-move-to-line-cycle-in-source t
       helm-ff-search-library-in-sexp t
@@ -19,12 +21,17 @@
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
 
+(define-key helm-command-map (kbd "h") 'helm-descbinds)
+(define-key helm-command-map (kbd "g") 'helm-google-suggest)
+
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "M-s C-s") 'helm-ag)
 (global-set-key (kbd "M-s o") 'helm-occur)
+(global-set-key (kbd "M-s i") 'helm-semantic-or-imenu)
+(global-set-key (kbd "M-/") 'helm-dabbrev)
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 (defalias 'list-colors-display 'helm-colors)
@@ -50,3 +57,9 @@
 (helm-projectile-on)
 
 (global-flycheck-mode)
+
+(add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
+
+;; this allows fresh completions directly following periods
+(setq helm-dabbrev--original-regexp-format helm-dabbrev--regexp)
+(setq helm-dabbrev--regexp (concat helm-dabbrev--original-regexp-format "\\|\\."))

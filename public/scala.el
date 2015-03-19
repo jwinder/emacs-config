@@ -1,4 +1,8 @@
-(defalias 'sbt 'sbt-start)
+(defun sbt ()
+  (interactive)
+  (if (eq major-mode 'sbt-mode)
+      (switch-to-buffer (other-buffer))
+    (sbt-start)))
 
 (defun sbt-current-test-in-buffer ()
   (save-excursion
@@ -26,12 +30,13 @@
 
 (add-hook 'scala-mode-hook
           '(lambda ()
-             (local-set-key (kbd "C-c s s") 'sbt-start)
+             (local-set-key (kbd "C-c s s") 'sbt)
              (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)
              (local-set-key (kbd "C-c s p") 'sbt-run-previous-command)))
 
 (add-hook 'sbt-mode-hook
           '(lambda ()
+             (local-set-key (kbd "C-c s s") 'sbt)
              (setq compilation-skip-threshold 1)))
 
 (defun scala-append ()

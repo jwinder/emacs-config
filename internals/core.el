@@ -33,18 +33,22 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+(add-hook 'next-error-hook 'delete-other-windows)
+
 (setq uniquify-buffer-name-style 'forward)
 
 (setq ring-bell-function 'ignore)
 
 (setq enable-recursive-minibuffers t)
 
-(setq tramp-default-method "ssh")
+(setq tramp-default-method "sshx")
 
 (setq eshell-buffer-shorthand t)
 
 (add-to-list 'auto-mode-alist '("\\.proto$" . c-mode))
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+(put 'temporary-file-directory 'standard-value '((file-name-as-directory "/tmp")))
 
 (server-start)
