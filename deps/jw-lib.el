@@ -1,5 +1,10 @@
 (require 'comint)
 
+(defun jw--font-name (&optional size)
+  (if size
+      (concat "Monaco " size)
+    "Monaco"))
+
 (defun jw--trim-string (string)
   (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string)))
 

@@ -1,3 +1,4 @@
+(require 'jw-lib)
 (require 'helm-dabbrev)
 
 (setq helm-split-window-in-side-p t
@@ -36,10 +37,12 @@
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 (defalias 'list-colors-display 'helm-colors)
 
+(set-face-attribute 'helm-source-header nil :height 1.0 :family (jw--font-name) :box '(:style released-button))
+
 (add-hook 'eshell-mode-hook
-          #'(lambda ()
-              (define-key eshell-mode-map [remap eshell-pcomplete] 'helm-esh-pcomplete)
-              (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)))
+          '(lambda ()
+             (define-key eshell-mode-map [remap eshell-pcomplete] 'helm-esh-pcomplete)
+             (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)))
 
 (add-hook 'projectile-mode-hook
           '(lambda ()
