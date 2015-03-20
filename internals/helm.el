@@ -37,7 +37,8 @@
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 (defalias 'list-colors-display 'helm-colors)
 
-(set-face-attribute 'helm-source-header nil :height 1.0 :family (jw--font-name) :box '(:style released-button))
+(set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
+(set-face-attribute 'helm-candidate-number nil :background nil :foreground "Goldenrod")
 
 (add-hook 'eshell-mode-hook
           '(lambda ()
