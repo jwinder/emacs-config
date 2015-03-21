@@ -7,8 +7,7 @@
 ;;       rcirc-default-full-name "your full name")
 
 (setq rcirc-notify-message "%s: %s"
-      rcirc-buffer-maximum-lines 2000
-      rcirc-server-alist '(("irc.freenode.net")))
+      rcirc-buffer-maximum-lines 2000)
 
 (custom-set-faces
  '(rcirc-my-nick ((t (:foreground "#00ffff"))))
