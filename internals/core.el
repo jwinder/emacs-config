@@ -25,8 +25,6 @@
 
 (setq default-major-mode 'text-mode)
 
-(setq gist-view-gist t)
-
 (put 'dired-find-alternate-file 'disabled nil)
 
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
