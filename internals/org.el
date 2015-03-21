@@ -23,12 +23,12 @@
         (sequence "|" "cancelled")))
 
 (setq org-todo-keyword-faces
-      '(("todo" :background "DarkRed" :foreground "white" :box (:line-width 1 :style released-button))
-        ("blocked" :background "DarkRed" :foreground "white" :box (:line-width 1 :style released-button))
-        ("delegated" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
-        ("doing" :background "DeepSkyBlue4" :foreground "white" :box (:line-width 1 :style released-button))
-        ("done" :background "DarkGreen" :foreground "white" :box (:line-width 1 :style released-button))
-        ("cancelled" :background "DarkGreen" :foreground "white" :box (:line-width 1 :style released-button))))
+      '(("todo" :background "DarkRed" :foreground "white" :box (:style released-button))
+        ("blocked" :background "DarkRed" :foreground "white" :box (:style released-button))
+        ("delegated" :background "DeepSkyBlue4" :foreground "white" :box (:style released-button))
+        ("doing" :background "DeepSkyBlue4" :foreground "white" :box (:style released-button))
+        ("done" :background "DarkGreen" :foreground "white" :box (:style released-button))
+        ("cancelled" :background "DarkGreen" :foreground "white" :box (:style released-button))))
 
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 

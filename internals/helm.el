@@ -36,6 +36,7 @@
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 (defalias 'list-colors-display 'helm-colors)
+(defalias 'proced 'helm-top)
 
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
 (set-face-attribute 'helm-candidate-number nil :background nil :foreground "Goldenrod")
