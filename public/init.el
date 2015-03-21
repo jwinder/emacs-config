@@ -1,5 +1,3 @@
-(require 'jw-lib)
-
 (defalias 'qrr 'query-replace-regexp)
 (defalias 'filter-lines 'keep-lines)
 (defalias 'filter-out-lines 'flush-lines)

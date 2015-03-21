@@ -1,4 +1,4 @@
-(require 'jw-lib)
+(require 'helm)
 (require 'helm-dabbrev)
 
 (setq helm-split-window-in-side-p t
@@ -23,7 +23,9 @@
 (global-unset-key (kbd "C-x c"))
 
 (define-key helm-command-map (kbd "h") 'helm-descbinds)
-(define-key helm-command-map (kbd "g") 'helm-google-suggest)
+
+(define-key helm-command-map (kbd "s") 'helm-google-suggest)
+(define-key helm-command-map (kbd "w") 'helm-wikipedia-suggest)
 
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)

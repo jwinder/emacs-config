@@ -39,7 +39,7 @@
 
 (setq enable-recursive-minibuffers t)
 
-(setq tramp-default-method "sshx")
+(setq tramp-default-method "scp")
 
 (setq eshell-buffer-shorthand t)
 

@@ -1,5 +1,3 @@
-(require 'jw-lib)
-
 (setenv "EDITOR" "emacsclient")
 
 ;; opinionated way of setting system properties

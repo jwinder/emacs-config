@@ -1,4 +1,3 @@
-(require 'jw-lib)
 (require 'rcirc)
 
 (tool-bar-mode -1)
