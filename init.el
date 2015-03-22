@@ -9,11 +9,19 @@
   (if (string-match "init\.el$" filename1) t
     (string-lessp filename1 filename2)))
 
+(defun jw--pre-configure ())
+
 (defun jw--configure ()
   (jw--load "deps")
   (jw--load "internals")
   (jw--load "public")
-  (jw--load "private")
-  (cd (getenv "HOME")))
+  (jw--load "private"))
 
+(defun jw--post-configure ()
+  (cd (getenv "HOME"))
+  (toggle-fullscreen)
+  (server-start))
+
+(jw--pre-configure)
 (jw--configure)
+(jw--post-configure)

@@ -13,3 +13,5 @@
 (set-face-attribute 'header-line nil :background "#005858" :foreground "white")
 
 (setq-default mode-line-format '(" ✔ " mode-line-buffer-identification " " mode-line-misc-info))
+
+(custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))

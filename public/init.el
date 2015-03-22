@@ -55,10 +55,6 @@
   (interactive)
   (shell-command "hub browse"))
 
-(defun hub-clone (org repo dir)
-  (interactive "sGithub org: \nsGithub repo: \nDClone to directory: ")
-  (shell-command (format "hub clone %s/%s %s/%s" org repo dir repo)))
-
 (defun increment-number (&optional arg)
   (interactive "p*")
   (save-excursion

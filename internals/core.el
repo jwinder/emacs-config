@@ -48,5 +48,3 @@
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (put 'temporary-file-directory 'standard-value '((file-name-as-directory "/tmp")))
-
-(server-start)

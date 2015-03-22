@@ -6,18 +6,18 @@
 
 (defvar jw--rubbish--command-line-tool:ssh-history nil)
 
-(defun ssh (&optional args)
+(defun cmd-ssh (&optional args)
   (interactive)
   (jw--rubbish--command-line-tool "ssh" args jw--rubbish--command-line-tool:ssh-history 'jw--rubbish--command-line-tool:ssh-history))
 
 (defvar jw--rubbish--command-line-tool:brew-history nil)
 
-(defun brew ()
+(defun cmd-brew ()
   (interactive)
   (jw--rubbish--command-line-tool "brew" nil jw--rubbish--command-line-tool:brew-history 'jw--rubbish--command-line-tool:brew-history))
 
 (defvar jw--rubbish--command-line-tool:docker-history nil)
 
-(defun docker ()
+(defun cmd-docker ()
   (interactive)
   (jw--rubbish--command-line-tool "docker" nil jw--rubbish--command-line-tool:docker-history 'jw--rubbish--command-line-tool:docker-history))
