@@ -55,6 +55,22 @@
   (interactive)
   (shell-command "hub browse"))
 
+(defun cmd ()
+  (interactive)
+  (jw--make-cmd-line-process))
+
+(defun cmd-ssh (&optional args)
+  (interactive)
+  (jw--make-cmd-line-process "ssh" args))
+
+(defun cmd-brew ()
+  (interactive)
+  (jw--make-cmd-line-process "brew"))
+
+(defun cmd-docker ()
+  (interactive)
+  (jw--make-cmd-line-process "docker"))
+
 (defun increment-number (&optional arg)
   (interactive "p*")
   (save-excursion

@@ -1,9 +1,8 @@
 (require 'comint)
+(eval-when-compile (require 'em-hist))  ;; for eshell-history-file-name
 
 (defun jw--font-name (&optional size)
-  (if size
-      (concat "Monaco " size)
-    "Monaco"))
+  (if size (concat "Monaco " size) "Monaco"))
 
 (defun jw--trim-string (string)
   (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string)))
@@ -16,7 +15,8 @@
 (defun jw--make-uuid ()
   (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
 
-(defun jw--rubbish--make-sql-process (product sql-user sql-password sql-server sql-database root-sql-script-dir)
+(defun jw--make-sql-process (product sql-user sql-password sql-server sql-database root-sql-script-dir)
+  "Inspired by rubbish's `sql' function."
   (let* ((sql-text-buffer (find-file (concat root-sql-script-dir sql-database "_" sql-server ".sql")))
          (new-name (concat sql-user "@" sql-database "." sql-server))
          (sqli-buffer (if sql-buffer (progn (split-window) sql-buffer) (sql-product-interactive product new-name))))
@@ -25,15 +25,19 @@
     (switch-to-buffer sqli-buffer nil t)
     (sql-send-string "\\x")))
 
-(defun jw--rubbish--command-line-tool (command &optional initial-args history history-symbol in-named-directory)
-  (let* ((rest-of-command (read-from-minibuffer (concat command " ") (or initial-args (car history)) nil nil history-symbol))
-         (command-with-args (append (split-string command) (split-string rest-of-command)))
-         (args (cdr command-with-args))
-         (command (car command-with-args))
-         (name (mapconcat 'identity command-with-args " "))
-         (buffer-name (concat "*" name (if in-named-directory (concat " <" in-named-directory ">")) "*"))
+(defun jw--make-cmd-line-process (&optional command args)
+  "Inspired by rubbish's `command-line-tool' function but uses eshell's history file and completing-read which helm enriches."
+  (let* ((history (reverse (jw--read-file-lines-to-string eshell-history-file-name)))
+         (full-command (completing-read "Command: " history nil nil (if command (concat command " " (or args "")) "")))
+         (full-command-tokens (split-string full-command))
+         (command-name (car full-command-tokens))
+         (command-args (cdr full-command-tokens))
+         (buffer-name (concat "*" full-command "*"))
          (buffer (get-buffer-create buffer-name)))
-    (switch-to-buffer buffer)
-    (apply 'make-comint-in-buffer name buffer command nil args)))
+    (if command-name
+        (progn (write-region (concat full-command "\n") nil eshell-history-file-name 'append 1)
+               (switch-to-buffer buffer)
+               (apply 'make-comint-in-buffer full-command buffer command-name nil command-args))
+      (message "Empty command name. Did nothing."))))
 
 (provide 'jw-lib)
