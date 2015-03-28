@@ -1,3 +1,13 @@
+(setq org-current-org-buffer-narrowed-to-subtree nil)
+
+(defun org-narrow-or-widen ()
+  (interactive)
+  (if org-current-org-buffer-narrowed-to-subtree
+      (progn (setq-local org-current-org-buffer-narrowed-to-subtree nil)
+             (widen))
+    (progn (setq-local org-current-org-buffer-narrowed-to-subtree t)
+           (org-narrow-to-subtree))))
+
 (global-set-key (kbd "C-c a") 'org-agenda)
 
 (setq org-speed-commands-user
@@ -32,4 +42,6 @@
 
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-(add-hook 'org-mode-hook '(lambda () (text-scale-set 2)))
+(add-hook 'org-mode-hook '(lambda ()
+                            (text-scale-set 2)
+                            (define-key org-mode-map (kbd "C-c n") 'org-narrow-or-widen)))
