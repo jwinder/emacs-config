@@ -7,8 +7,11 @@
 (use-package scratch :ensure t)
 
 (use-package org :ensure t)
+
 (use-package gist :ensure t)
-(use-package undo-tree :ensure t)
+
+(use-package undo-tree :ensure t
+  :config (global-undo-tree-mode 1))
 
 (use-package magit :ensure t
   :bind (("M-g" . magit-status)))
