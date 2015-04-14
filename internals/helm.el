@@ -34,6 +34,7 @@
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "M-s C-s") 'helm-ag)
 (global-set-key (kbd "M-s o") 'helm-occur)
+(global-set-key (kbd "M-s s") 'helm-swoop)
 (global-set-key (kbd "M-s i") 'helm-semantic-or-imenu)
 (global-set-key (kbd "M-/") 'helm-dabbrev)
 

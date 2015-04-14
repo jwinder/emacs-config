@@ -35,6 +35,7 @@
 
 (use-package helm :ensure t)
 (use-package helm-ag :ensure t)
+(use-package helm-swoop :ensure t)
 (use-package helm-projectile :ensure t)
 (use-package helm-flycheck :ensure t)
 (use-package helm-descbinds :ensure t)
