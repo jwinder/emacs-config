@@ -4,6 +4,7 @@
 (setq helm-split-window-in-side-p t
       helm-ff-search-library-in-sexp t
       helm-scroll-amount 8
+      helm-buffer-max-length nil
       helm-ff-file-name-history-use-recentf t
       helm-quick-update t)
 
