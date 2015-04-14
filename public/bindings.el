@@ -3,7 +3,6 @@
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
-(global-set-key (kbd "C-x n") 'switch-to-buffer)
 (global-set-key (kbd "C-M-g") 'goto-line)
 
 (global-set-key (kbd "C-M-9") 'winner-undo)
