@@ -49,5 +49,4 @@
 
 (put 'temporary-file-directory 'standard-value '((file-name-as-directory "/tmp")))
 
-(setq magit-auto-revert-mode nil
-      magit-last-seen-setup-instructions "1.4.0")
+(setq magit-last-seen-setup-instructions "1.4.0")
