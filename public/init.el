@@ -19,6 +19,18 @@
     (delete-directory package-user-dir t))
   (emacs-reload-config))
 
+(defun eshell-and-cd-pwd ()
+  (interactive)
+  (let ((current-pwd (jw--pwd))
+        (refresh-and-cd-pwd #'(lambda ()
+                                (eshell-kill-input)
+                                (goto-char (point-max))
+                                (when current-pwd
+                                  (progn (insert (format "cd '%s'" current-pwd))
+                                         (eshell-send-input))))))
+    (eshell)
+    (funcall refresh-and-cd-pwd)))
+
 (defun date ()
   (interactive)
   (message (current-time-string)))
@@ -165,3 +177,7 @@
   (if (frame-parameter (selected-frame) 'fullscreen)
       (set-frame-parameter (selected-frame) 'fullscreen nil)
     (set-frame-parameter (selected-frame) 'fullscreen 'fullboth)))
+
+(defun emacs-uptime ()
+  (interactive)
+  (message (format "%d days" (random 100))))

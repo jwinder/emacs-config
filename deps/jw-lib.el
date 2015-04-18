@@ -15,6 +15,11 @@
 (defun jw--make-uuid ()
   (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
 
+(defun jw--pwd ()
+  (if (buffer-file-name)
+      (file-name-directory (buffer-file-name))
+    nil))
+
 (defun jw--make-sql-process (product sql-user sql-password sql-server sql-database root-sql-script-dir)
   "Inspired by rubbish's `sql' function."
   (let* ((sql-text-buffer (find-file (concat root-sql-script-dir sql-database "_" sql-server ".sql")))
