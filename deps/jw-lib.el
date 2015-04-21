@@ -16,9 +16,7 @@
   (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
 
 (defun jw--pwd ()
-  (if (buffer-file-name)
-      (file-name-directory (buffer-file-name))
-    nil))
+  default-directory)
 
 (defun jw--make-sql-process (product sql-user sql-password sql-server sql-database root-sql-script-dir)
   "Inspired by rubbish's `sql' function."
