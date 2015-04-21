@@ -67,9 +67,9 @@
   (interactive)
   (shell-command "hub browse"))
 
-(defun cmd ()
+(defun cmd (&optional command args)
   (interactive)
-  (jw--make-cmd-line-process))
+  (jw--make-cmd-line-process command args))
 
 (defun cmd-ssh (&optional args)
   (interactive)
