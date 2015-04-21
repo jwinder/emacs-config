@@ -2,7 +2,7 @@
 (defconst jw-config-author-email "jsph.winder@gmail.com")
 (defconst jw-config-author-url "http://jwinder.io")
 (defconst jw-config-github-url "https://github.com/jwinder/emacs")
-(defconst jw-config-version "2.3.0")
+(defconst jw-config-version "2.4.0")
 
 (defconst adamdecaf-config-github-url "https://github.com/adamdecaf/emacs.d")
 (defconst knuckolls-config-github-url "https://github.com/knuckolls/knuckolls-emacs-config")
