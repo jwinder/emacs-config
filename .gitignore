@@ -8,6 +8,7 @@ flycheck_*
 projectile-bookmarks.eld
 projectile.cache
 .mc-lists.el
+completer.hist
 auto-save-list/
 games/
 elpa/
