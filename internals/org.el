@@ -1,5 +1,6 @@
-(setq org-current-org-buffer-narrowed-to-subtree nil)
+(defvar jw-org-todo-file "/path/to/my/org/todo.org") ;; override this in the private dir
 
+(setq org-current-org-buffer-narrowed-to-subtree nil)
 (defun org-narrow-or-widen ()
   (interactive)
   (if org-current-org-buffer-narrowed-to-subtree
@@ -8,6 +9,18 @@
     (progn (setq-local org-current-org-buffer-narrowed-to-subtree t)
            (org-narrow-to-subtree))))
 
+(defun todo ()
+  (interactive)
+  (find-file jw-org-todo-file)
+  (cd (getenv "HOME")))
+
+(defun toggle-todo ()
+  (interactive)
+  (if (string= (buffer-name) "todo.org")
+      (switch-to-buffer (other-buffer))
+    (todo)))
+
+(global-set-key (kbd "C-c o") 'toggle-todo)
 (global-set-key (kbd "C-c a") 'org-agenda)
 
 (setq org-speed-commands-user
@@ -28,17 +41,31 @@
       org-refile-allow-creating-parent-nodes '(confirm)
       org-tags-column -100)
 
-(setq org-todo-keywords
-      '((sequence "todo" "blocked" "delegated" "doing" "|" "done")
-        (sequence "|" "cancelled")))
+;; try to guess which states various (some possibly shared) org files might use and add them to org-todo-keyword-faces
+(setq org--possible-todo-todo-states '("todo" "incoming")
+      org--possible-blocked-todo-states '("blocked" "halted" "stalled")
+      org--possible-doing-todo-states '("doing" "going")
+      org--possible-delegated-todo-states '("delegated" "assigned")
+      org--possible-done-todo-states '("done" "cancelled" "canceled" "finished" "boom"))
+
+(defun org--make-single-todo-face-entry (state color)
+  `(,state :background ,color :foreground white :box (:style released-button)))
+
+(defun org--make-todo-face-entries (state color)
+  `(,(org--make-single-todo-face-entry state color)
+    ,(org--make-single-todo-face-entry (upcase state) color)
+    ,(org--make-single-todo-face-entry (capitalize state) color)))
+
+(defun org--make-red-face-entries (state) (org--make-todo-face-entries state "DarkRed"))
+(defun org--make-blue-face-entries (state) (org--make-todo-face-entries state "DeepSkyBlue4"))
+(defun org--make-green-face-entries (state) (org--make-todo-face-entries state "DarkGreen"))
 
 (setq org-todo-keyword-faces
-      '(("todo" :background "DarkRed" :foreground "white" :box (:style released-button))
-        ("blocked" :background "DarkRed" :foreground "white" :box (:style released-button))
-        ("delegated" :background "DeepSkyBlue4" :foreground "white" :box (:style released-button))
-        ("doing" :background "DeepSkyBlue4" :foreground "white" :box (:style released-button))
-        ("done" :background "DarkGreen" :foreground "white" :box (:style released-button))
-        ("cancelled" :background "DarkGreen" :foreground "white" :box (:style released-button))))
+      (apply #'append (append (mapcar 'org--make-red-face-entries org--possible-todo-todo-states)
+                              (mapcar 'org--make-red-face-entries org--possible-blocked-todo-states)
+                              (mapcar 'org--make-blue-face-entries org--possible-doing-todo-states)
+                              (mapcar 'org--make-blue-face-entries org--possible-delegated-todo-states)
+                              (mapcar 'org--make-green-face-entries org--possible-done-todo-states))))
 
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
