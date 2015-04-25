@@ -17,7 +17,7 @@
   :bind (("M-g" . magit-status)))
 
 (use-package expand-region :ensure t
-  :bind ("C-=" . er/expand-region))
+  :bind (("C-=" . er/expand-region)))
 
 (use-package multiple-cursors :ensure t
   :bind (("C-*" . mc/mark-all-like-this)
@@ -39,3 +39,6 @@
 (use-package helm-projectile :ensure t)
 (use-package helm-flycheck :ensure t)
 (use-package helm-descbinds :ensure t)
+
+(use-package sx :ensure t
+  :bind (("C-c x" . sx-search)))
