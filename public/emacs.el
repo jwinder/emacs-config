@@ -46,8 +46,6 @@
 
 (defun emacs-config--release-version (next-version)
   (setq jw-config-version next-version)
-  (set-initial-scratch-message)
-  (emacs-config--update-readme)
   (emacs-config--commit-tag-push next-version))
 
 (defun emacs-config-bump-bugfix-version ()
