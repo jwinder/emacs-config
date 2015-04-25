@@ -10,6 +10,6 @@
 ;; %s
 ;; %s
 
-;; Warning: This config is a buyer beware product.
+;; This config is a buyer beware product.
 
 " jw-config-github-url jw-config-version jw-config-author-email jw-config-author-name adamdecaf-config-github-url knuckolls-config-github-url rubbish-config-github-url))
