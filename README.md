@@ -1,7 +1,11 @@
 ## Emacs Config
 
-Current version: 2.4.0
+Welcome to https://github.com/jwinder/emacs version 2.5.0.
+If you used my previous config, it is tagged 1.0.0.
+Any questions? Email me at jsph.winder@gmail.com. -- Joe Winder
 
-My current setup: emacs 24.5.1 installed with homebrew on OSX 10.10.3
+Here are some other emacs configs you might like more:
+https://github.com/adamdecaf/emacs.d
+https://github.com/knuckolls/knuckolls-emacs-config
+https://github.com/rubbish/rubbish-emacs-setup
 
-Warning: This config is a _cloner beware_ product. I'm happy to answer any questions about my emacs habits which have led to certain decisions in this config.

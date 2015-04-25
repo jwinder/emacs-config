@@ -9,16 +9,6 @@
 (defalias 'font-size-increase 'text-scale-increase)
 (defalias 'font-size-decrease 'text-scale-decrease)
 
-(defun emacs-reload-config ()
-  (interactive)
-  (load-file (concat user-emacs-directory "init.el")))
-
-(defun emacs-hard-reload-config ()
-  (interactive)
-  (when (file-exists-p package-user-dir)
-    (delete-directory package-user-dir t))
-  (emacs-reload-config))
-
 (defun eshell-cd-pwd-or-other-buffer ()
   (interactive)
   (if (eq major-mode 'eshell-mode)
@@ -177,7 +167,3 @@
   (if (frame-parameter (selected-frame) 'fullscreen)
       (set-frame-parameter (selected-frame) 'fullscreen nil)
     (set-frame-parameter (selected-frame) 'fullscreen 'fullboth)))
-
-(defun emacs-uptime ()
-  (interactive)
-  (message (format "%d days" (random 100))))
