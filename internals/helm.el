@@ -54,8 +54,7 @@
 
 (add-hook 'projectile-mode-hook
           '(lambda ()
-             (define-key projectile-command-map (kbd "a") 'helm-projectile-ag)
-             (setq projectile-switch-project-action 'helm-projectile-ag)))
+             (setq projectile-switch-project-action 'helm-projectile)))
 
 (add-hook 'flycheck-mode-hook
           '(lambda ()
