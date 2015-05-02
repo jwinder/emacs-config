@@ -44,9 +44,12 @@
     (shell-command git-command)))
 
 (defun emacs-config--release-version (previous-version next-version)
-  (setq jw-config-version next-version)
-  (emacs-config--update-version-in-emacs-config previous-version next-version)
-  (emacs-config--commit-tag-push next-version))
+  (if (yes-or-no-p (format "Push release %s? " next-version))
+      (progn (setq jw-config-version next-version)
+             (emacs-config--update-version-in-emacs-config previous-version next-version)
+             (emacs-config--commit-tag-push next-version)
+             (message "Release of %s finished!" next-version))
+    (message "Release of %s aborted." next-version)))
 
 (defun emacs-config-bump-bugfix-version ()
   (interactive)
