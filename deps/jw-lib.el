@@ -1,5 +1,7 @@
 (require 'comint)
+(require 'vc)
 (eval-when-compile (require 'em-hist))  ;; for eshell-history-file-name
+
 
 (defun jw--font-name (&optional size)
   (if size (concat "Monaco " size) "Monaco"))
@@ -16,7 +18,13 @@
   (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
 
 (defun jw--pwd ()
-  default-directory)
+  (file-truename default-directory))
+
+(defun jw--vc-root-dir ()
+  (let ((vc-root-dir (ignore-errors (vc-call-backend (vc-responsible-backend (jw--pwd)) 'root (jw--pwd)))))
+    (if vc-root-dir (file-truename vc-root-dir) nil)))
+
+(defalias 'jw--git-root-dir 'jw--vc-root-dir)
 
 (defun jw--make-sql-process (product sql-user sql-password sql-server sql-database root-sql-script-dir)
   "Inspired by rubbish's `sql' function."

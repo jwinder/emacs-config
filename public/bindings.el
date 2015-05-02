@@ -1,4 +1,4 @@
-(global-set-key (kbd "C-c M-e") 'eshell-cd-pwd-or-other-buffer)
+(global-set-key (kbd "C-c M-e") 'eshell-cd-vc-root-dir-or-pwd-otherwise-other-buffer)
 
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)

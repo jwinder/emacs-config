@@ -9,11 +9,11 @@
 (defalias 'font-size-increase 'text-scale-increase)
 (defalias 'font-size-decrease 'text-scale-decrease)
 
-(defun eshell-cd-pwd-or-other-buffer ()
+(defun eshell-cd-vc-root-dir-or-pwd-otherwise-other-buffer ()
   (interactive)
   (if (eq major-mode 'eshell-mode)
       (switch-to-buffer (other-buffer))
-    (let ((current-pwd (jw--pwd)))
+    (let ((current-pwd (or (jw--vc-root-dir) (jw--pwd))))
       (eshell)
       (eshell-kill-input)
       (goto-char (point-max))
