@@ -1,4 +1,5 @@
 (require 'helm)
+(require 'helm-config)
 (require 'helm-dabbrev)
 (require 'helm-swoop)
 
