@@ -38,7 +38,8 @@
 (global-set-key (kbd "M-s o") 'helm-occur)
 (global-set-key (kbd "M-s s") 'helm-swoop)
 (global-set-key (kbd "M-s i") 'helm-semantic-or-imenu)
-(global-set-key (kbd "M-/") 'helm-dabbrev)
+;; (global-set-key (kbd "M-/") 'helm-dabbrev)
+(global-set-key (kbd "M-/") 'dabbrev-expand)
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 (defalias 'list-colors-display 'helm-colors)
