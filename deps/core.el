@@ -38,6 +38,7 @@
 (use-package helm-swoop :ensure t)
 (use-package helm-projectile :ensure t)
 (use-package helm-flycheck :ensure t)
+(use-package helm-flyspell :ensure t)
 (use-package helm-descbinds :ensure t)
 
 (use-package sx :ensure t

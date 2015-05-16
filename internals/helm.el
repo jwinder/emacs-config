@@ -62,6 +62,10 @@
           '(lambda ()
              (define-key flycheck-mode-map (kbd "C-c ! l") 'helm-flycheck)))
 
+(add-hook 'flyspell-mode-hook
+          '(lambda ()
+             (define-key flyspell-mode-map (kbd "C-M-i") 'helm-flyspell-correct))) ;; also works with M-<tab>
+
 (helm-mode 1)
 (helm-autoresize-mode 1)
 
