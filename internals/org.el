@@ -71,4 +71,5 @@
 
 (add-hook 'org-mode-hook '(lambda ()
                             (text-scale-set 2)
+                            (save-window-excursion (calendar)) ;; start calendar silently for org-date-from-calendar
                             (define-key org-mode-map (kbd "C-c n") 'org-narrow-or-widen)))

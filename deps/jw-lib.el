@@ -2,7 +2,6 @@
 (require 'vc)
 (eval-when-compile (require 'em-hist))  ;; for eshell-history-file-name
 
-
 (defun jw--font-name (&optional size)
   (if size (concat "Monaco " size) "Monaco"))
 
