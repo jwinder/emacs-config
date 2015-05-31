@@ -1,5 +1,3 @@
-(setenv "EDITOR" "emacsclient")
-
 ;; opinionated way of setting system properties
 ;; (you can have your shell rc file parse the same two files)
 
@@ -23,6 +21,8 @@
 ;; $HOME/bin
 ;; /usr/local/bin
 ;; /usr/bin
+
+(setenv "EDITOR" "emacsclient")
 
 (defun jw--env-set-vars (vars-file)
   (dolist (line (jw--read-file-lines-to-string vars-file))
