@@ -13,3 +13,7 @@
 (defun img-working-hard ()
   (interactive)
   (browse-url "http://i.imgur.com/Lkw5kmF.jpg"))
+
+(defun horse-books-dont-block ()
+  (interactive)
+  (browse-url "https://twitter.com/Horse_ebooks/status/364096530451410947"))

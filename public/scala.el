@@ -38,11 +38,3 @@
           '(lambda ()
              (local-set-key (kbd "C-c s s") 'sbt)
              (setq compilation-skip-threshold 1)))
-
-(defun scala-append ()
-  (interactive)
-  (insert "+:"))
-
-(defun scala-prepend ()
-  (interactive)
-  (insert ":+"))
