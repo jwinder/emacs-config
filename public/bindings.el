@@ -16,5 +16,7 @@
 
 (global-set-key (kbd "M-;") 'comment-dwim-region-or-line)
 
+(global-set-key (kbd "C-x n") 'switch-to-buffer) ;; helps with my current keyboard
+
 (global-unset-key (kbd "C-z"))
 (global-unset-key (kbd "C-x C-z"))
