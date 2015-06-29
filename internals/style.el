@@ -13,3 +13,6 @@
 (setq-default mode-line-format '(" ✔ " mode-line-buffer-identification " " mode-line-misc-info))
 
 (custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
+
+(add-hook 'minibuffer-setup-hook '(lambda ()
+                                    (set (make-local-variable 'face-remapping-alist) '((default :height 1.3)))))
