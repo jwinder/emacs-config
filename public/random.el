@@ -1,3 +1,13 @@
+(defun weather ()
+  "Runs the `weather' shell command which delegates to https://github.com/jfrazelle/weather."
+  (interactive)
+  (jw--quick-run-cmd-line-process "weather" "*weather*"))
+
+(defun twitter ()
+  "This starts a buffer with the `rainbowstream' process. I really like `rainbowstream', so I use that instead of `twittering-mode'."
+  (interactive)
+  (jw--quick-run-cmd-line-process "rainbowstream" "*twitter*"))
+
 (defun javascript-equality-table ()
   (interactive)
   (browse-url "http://zero.milosz.ca/"))
