@@ -1,7 +1,7 @@
 (defun weather ()
   "Runs the `weather' shell command which delegates to https://github.com/jfrazelle/weather."
   (interactive)
-  (jw--quick-run-cmd-line-process "weather" "*weather*"))
+  (jw--quick-run-cmd-line-process "weather -days=3" "*weather*"))
 
 (defun twitter ()
   "This starts a buffer with the `rainbowstream' process. I really like `rainbowstream', so I use that instead of `twittering-mode'."
