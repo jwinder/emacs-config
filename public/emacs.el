@@ -51,6 +51,10 @@
              (message "Release of %s finished!" next-version))
     (message "Release of %s aborted." next-version)))
 
+(defun emacs-config-version ()
+  (interactive)
+  (message jw-config-version))
+
 (defun emacs-config-bump-bugfix-version ()
   (interactive)
   (emacs-config--release-version jw-config-version (emacs-config--get-next-bugfix-version)))
