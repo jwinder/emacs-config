@@ -6,3 +6,4 @@ alias vi find-file $1
 alias vim find-file $1
 alias less find-file $1
 alias cat find-file $1
+alias :q exit

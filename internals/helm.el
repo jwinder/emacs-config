@@ -76,6 +76,6 @@
 
 (add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
 
-;; this allows fresh completions directly following periods
-(setq helm-dabbrev--original-regexp-format helm-dabbrev--regexp)
-(setq helm-dabbrev--regexp (concat helm-dabbrev--original-regexp-format "\\|\\."))
+;; this allows fresh completions directly following periods in helm-dabbrev
+;; (setq helm-dabbrev--original-regexp-format helm-dabbrev--regexp)
+;; (setq helm-dabbrev--regexp (concat helm-dabbrev--original-regexp-format "\\|\\."))
