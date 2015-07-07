@@ -14,7 +14,8 @@
   :config (global-undo-tree-mode 1))
 
 (use-package magit :ensure t
-  :bind (("M-g" . magit-status)))
+  :bind (("M-g" . magit-dispatch-popup))
+  :config (setq magit-revert-buffers t))
 
 (use-package expand-region :ensure t
   :bind (("C-=" . er/expand-region)))
