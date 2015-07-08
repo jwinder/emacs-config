@@ -9,6 +9,7 @@
 (global-set-key (kbd "C-M-0") 'winner-redo)
 
 (global-set-key (kbd "C-x 9") 'toggle-window-split)
+(global-set-key (kbd "C-x p f") 'pop-to-buffer)
 
 (global-set-key (kbd "C-a") 'beginning-of-line-or-indentation)
 (global-set-key (kbd "C-o") 'open-line-previous)

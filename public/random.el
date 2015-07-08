@@ -24,6 +24,10 @@
   (interactive)
   (browse-url "http://i.imgur.com/Lkw5kmF.jpg"))
 
+(defun img-run ()
+  (interactive)
+  (browse-url "http://replygif.net/i/1238.gif"))
+
 (defun horse-books-dont-block ()
   (interactive)
   (browse-url "https://twitter.com/Horse_ebooks/status/364096530451410947"))

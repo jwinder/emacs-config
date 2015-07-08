@@ -15,7 +15,8 @@
 
 (use-package magit :ensure t
   :bind (("M-g" . magit-dispatch-popup))
-  :config (setq magit-revert-buffers t))
+  :config (progn (setq magit-revert-buffers t)
+                 (magit-define-popup-action 'magit-dispatch-popup ?L "Blaming" 'magit-blame-popup)))
 
 (use-package expand-region :ensure t
   :bind (("C-=" . er/expand-region)))

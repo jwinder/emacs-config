@@ -47,4 +47,6 @@
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
+(setq git-commit-summary-max-length 150)
+
 (put 'temporary-file-directory 'standard-value '((file-name-as-directory "/tmp")))
