@@ -45,3 +45,7 @@
 
 (use-package sx :ensure t
   :bind (("C-c x" . sx-search)))
+
+(use-package hackernews :ensure t
+  :config (progn (setq hackernews-top-story-limit 100)
+                 (set-face-attribute 'hackernews-link-face nil :foreground "SkyBlue1")))
