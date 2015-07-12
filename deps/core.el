@@ -47,5 +47,7 @@
   :bind (("C-c x" . sx-search)))
 
 (use-package hackernews :ensure t
-  :config (progn (setq hackernews-top-story-limit 100)
-                 (set-face-attribute 'hackernews-link-face nil :foreground "SkyBlue1")))
+  :config (progn (require 'hackernews)
+                 (setq hackernews-top-story-limit 100)
+                 (set-face-attribute 'hackernews-link-face nil :foreground "SkyBlue1")
+                 (advice-add 'hackernews :after #'(lambda () (text-scale-set 2)))))
