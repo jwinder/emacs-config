@@ -50,4 +50,4 @@
   :config (progn (require 'hackernews)
                  (setq hackernews-top-story-limit 100)
                  (set-face-attribute 'hackernews-link-face nil :foreground "SkyBlue1")
-                 (advice-add 'hackernews :after #'(lambda () (text-scale-set 2)))))
+                 (advice-add 'hackernews :after #'(lambda () (when (string= (buffer-name) "*hackernews*") (text-scale-set 2))))))
