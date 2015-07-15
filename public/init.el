@@ -54,6 +54,10 @@
   (interactive)
   (shell-command "hub browse"))
 
+(defun hub-compare ()
+  (interactive)
+  (shell-command "hub compare"))
+
 (defun cmd (&optional command args)
   (interactive)
   (jw--make-cmd-line-process command args))
