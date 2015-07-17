@@ -50,11 +50,11 @@
       (json-pretty-print (region-beginning) (region-end))
     (json-pretty-print-buffer)))
 
-(defun hub-browse ()
+(defun github-browse ()
   (interactive)
   (shell-command "hub browse"))
 
-(defun hub-compare ()
+(defun github-compare ()
   (interactive)
   (shell-command "hub compare"))
 
