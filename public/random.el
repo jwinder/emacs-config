@@ -3,11 +3,6 @@
   (interactive)
   (jw--quick-run-cmd-line-process "weather -days=3" "*weather*"))
 
-(defun twitter ()
-  "This starts a buffer with the `rainbowstream' process. I really like `rainbowstream', so I use that instead of `twittering-mode'."
-  (interactive)
-  (jw--quick-run-cmd-line-process "rainbowstream" "*twitter*"))
-
 (defun javascript-equality-table ()
   (interactive)
   (browse-url "http://zero.milosz.ca/"))
