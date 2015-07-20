@@ -16,5 +16,8 @@
          ("Vagrantfile$" . ruby-mode)
          ("Berksfile$" . ruby-mode)))
 
+(use-package haskell-mode :ensure t
+  :config (progn (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)))
+
 (use-package coffee-mode :ensure t
   :config (setq coffee-tab-width 2))
