@@ -6,6 +6,6 @@ alias vi find-file $1
 alias vim find-file $1
 alias less find-file $1
 alias cat find-file $1
-alias git hub $1
-alias g hub $1
+alias git hub $*
+alias g hub $*
 alias :q exit
