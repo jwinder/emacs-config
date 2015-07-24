@@ -8,7 +8,8 @@
       helm-scroll-amount 8
       helm-buffer-max-length nil
       helm-ff-file-name-history-use-recentf t
-      helm-quick-update t)
+      helm-quick-update t
+      helm-move-to-line-cycle-in-source nil)
 
 (setq helm-buffers-fuzzy-matching t
       helm-M-x-fuzzy-match t
@@ -38,8 +39,7 @@
 (global-set-key (kbd "M-s o") 'helm-occur)
 (global-set-key (kbd "M-s s") 'helm-swoop)
 (global-set-key (kbd "M-s i") 'helm-semantic-or-imenu)
-;; (global-set-key (kbd "M-/") 'helm-dabbrev)
-(global-set-key (kbd "M-/") 'dabbrev-expand)
+(global-set-key (kbd "M-/") 'helm-dabbrev)
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 (defalias 'list-colors-display 'helm-colors)
@@ -75,7 +75,3 @@
 (global-flycheck-mode)
 
 (add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
-
-;; this allows fresh completions directly following periods in helm-dabbrev
-;; (setq helm-dabbrev--original-regexp-format helm-dabbrev--regexp)
-;; (setq helm-dabbrev--regexp (concat helm-dabbrev--original-regexp-format "\\|\\."))
