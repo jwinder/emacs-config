@@ -3,8 +3,13 @@
 (defalias 'filter-out-lines 'flush-lines)
 (defalias 'elisp-shell 'ielm)
 
-(defalias 'font-size-increase 'text-scale-increase)
-(defalias 'font-size-decrease 'text-scale-decrease)
+(defun font-size-big ()
+  (interactive)
+  (jw--set-font-size "18"))
+
+(defun font-size-normal ()
+  (interactive)
+  (jw--set-font-size "14"))
 
 (defun eshell-cd-vc-root-dir-or-pwd-otherwise-other-buffer ()
   (interactive)

@@ -2,7 +2,7 @@
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 
-(set-face-attribute 'default nil :font (jw--font-name "14"))
+(jw--set-font-size "14")
 
 (set-face-attribute 'mode-line nil :font (jw--font-name "14") :background "#22083397778B" :foreground "#7db5d6" :box '(:style released-button))
 (set-face-attribute 'mode-line-inactive nil  :background "#263238" :foreground "gray" :box '(:style released-button))

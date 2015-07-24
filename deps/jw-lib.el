@@ -5,6 +5,9 @@
 (defun jw--font-name (&optional size)
   (if size (concat "Monaco " size) "Monaco"))
 
+(defun jw--set-font-size (size)
+  (set-face-attribute 'default nil :font (jw--font-name size)))
+
 (defun jw--trim-string (string)
   (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string)))
 
