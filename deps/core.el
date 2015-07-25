@@ -16,6 +16,7 @@
 (use-package magit :ensure t
   :bind (("M-g" . magit-dispatch-popup))
   :config (progn (setq magit-revert-buffers t)
+                 (setq magit-push-always-verify nil)
                  (magit-define-popup-action 'magit-dispatch-popup ?L "Blaming" 'magit-blame-popup)))
 
 (use-package expand-region :ensure t
