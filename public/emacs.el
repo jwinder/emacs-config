@@ -4,13 +4,19 @@
 
 (defun emacs-destructively-reload-config ()
   (interactive)
-  (when (file-exists-p package-user-dir)
-    (delete-directory package-user-dir t))
+  (emacs-archive-deps-dir)
   (emacs-reload-config))
 
-(defun emacs-uptime ()
+(defun emacs-archive-deps-and-die ()
   (interactive)
-  (message (format "%d days" (random 100))))
+  (emacs-archive-deps-dir)
+  (save-buffers-kill-terminal))
+
+(defun emacs-archive-deps-dir ()
+  (when (file-exists-p package-user-dir)
+    (let ((archive-dir (format "/tmp/emacs-elpa--%s" (current-time-string))))
+      (copy-directory package-user-dir archive-dir)
+      (delete-directory package-user-dir t))))
 
 ;; Bumping the current emacs config version
 
