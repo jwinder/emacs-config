@@ -15,7 +15,7 @@
 (global-set-key (kbd "C-o") 'open-line-previous)
 (global-set-key (kbd "C-j") 'newline-and-open-line-previous)
 
-(global-set-key (kbd "M-;") 'comment-dwim-region-or-line)
+(global-set-key (kbd "M-;") 'comment-dwim-region-or-line-or-end-of-line)
 
 (global-set-key (kbd "C-x n") 'switch-to-buffer) ;; helps with my current keyboard
 

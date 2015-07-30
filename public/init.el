@@ -130,11 +130,13 @@
     (if (equal previous-point (point))
         (beginning-of-line))))
 
-(defun comment-dwim-region-or-line (&optional arg)
+(defun comment-dwim-region-or-line-or-end-of-line (&optional arg)
   (interactive "*P")
   (if (region-active-p)
       (comment-dwim arg)
-    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+    (if arg ;; utilize prefix argument to append comment to line instead of comment entire line
+        (comment-dwim nil)
+      (comment-or-uncomment-region (line-beginning-position) (line-end-position)))))
 
 (defun open-line-next ()
   (interactive)
