@@ -2,17 +2,17 @@
   (interactive)
   (load-file (concat user-emacs-directory "init.el")))
 
-(defun emacs-archive-deps-and-reload-config ()
+(defun emacs-archive-packages-and-reload-config ()
   (interactive)
-  (emacs-archive-deps-dir)
+  (emacs-archive-packages)
   (emacs-reload-config))
 
-(defun emacs-archive-deps-and-die ()
+(defun emacs-archive-packages-and-die ()
   (interactive)
-  (emacs-archive-deps-dir)
+  (emacs-archive-packages)
   (save-buffers-kill-terminal))
 
-(defun emacs-archive-deps-dir ()
+(defun emacs-archive-packages ()
   (when (file-exists-p package-user-dir)
     (let ((archive-dir (format "/tmp/emacs-elpa--%s" (current-time-string))))
       (copy-directory package-user-dir archive-dir)

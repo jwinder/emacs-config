@@ -14,11 +14,11 @@
   :config (global-undo-tree-mode 1))
 
 (use-package magit :ensure t
-  :bind (("M-g" . magit-status)
-         ("C-c M-g" . magit-dispatch-popup))
+  :bind (("M-g" . magit-dispatch-popup))
   :config (progn (setq magit-revert-buffers t)
                  (setq magit-push-always-verify nil)
-                 (magit-define-popup-action 'magit-dispatch-popup ?L "Blaming" 'magit-blame-popup)))
+                 (magit-define-popup-action 'magit-dispatch-popup ?L "Blaming" 'magit-blame-popup)
+                 (magit-define-popup-action 'magit-dispatch-popup ?g "Status" 'magit-status)))
 
 (use-package expand-region :ensure t
   :bind (("C-=" . er/expand-region)))
