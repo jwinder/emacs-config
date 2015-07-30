@@ -17,6 +17,7 @@
   :bind (("M-g" . magit-dispatch-popup))
   :config (progn (setq magit-revert-buffers t)
                  (setq magit-push-always-verify nil)
+                 (setq magit-push-arguments '("--set-upstream"))
                  (magit-define-popup-action 'magit-dispatch-popup ?L "Blaming" 'magit-blame-popup)
                  (magit-define-popup-action 'magit-dispatch-popup ?g "Status" 'magit-status)))
 
