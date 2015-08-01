@@ -175,3 +175,11 @@
   (if (frame-parameter (selected-frame) 'fullscreen)
       (set-frame-parameter (selected-frame) 'fullscreen nil)
     (set-frame-parameter (selected-frame) 'fullscreen 'fullboth)))
+
+(defun unbind-variable (name)
+  (interactive "SVariable name: ")
+  (makunbound name))
+
+(defun unbind-function (name)
+  (interactive "SFunction name: ")
+  (fmakunbound name))
