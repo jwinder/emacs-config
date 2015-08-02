@@ -8,9 +8,6 @@
 (defun jw--set-font-size (size)
   (set-face-attribute 'default nil :font (jw--font-name size)))
 
-(defun jw--trim-string (string)
-  (replace-regexp-in-string "\\`[ \t\n]*" "" (replace-regexp-in-string "[ \t\n]*\\'" "" string)))
-
 (defun jw--read-file-lines-to-string (file)
   (with-temp-buffer
     (insert-file-contents file)
@@ -47,7 +44,7 @@
       (let* ((full-command-tokens (split-string full-command))
              (command-name (car full-command-tokens))
              (command-args (cdr full-command-tokens))
-             (name-for-buffer (or buffer-name (concat "*" (jw--trim-string full-command) "*")))
+             (name-for-buffer (or buffer-name (concat "*" (string-trim full-command) "*")))
              (buffer (get-buffer-create name-for-buffer)))
         (if command-name
             (progn

@@ -32,7 +32,7 @@
              (value-string (mapconcat 'identity (cdr tokens) "="))
              (value-env-vars-parsed (substitute-env-vars value-string)) ;; parse lines containing env vars
              (value (shell-command-to-string (format "echo %s" value-env-vars-parsed)))) ;; parse shell commands in lines
-        (setenv name (jw--trim-string value))))))
+        (setenv name (string-trim value))))))
 
 (defun jw--env-set-path (path-file)
   (let* ((path-list (mapcar 'substitute-env-vars (jw--read-file-lines-to-string path-file)))
