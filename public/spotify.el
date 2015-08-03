@@ -15,6 +15,7 @@
   (ns-do-applescript (format "tell application \"Spotify\" to %s" cmd)))
 
 (global-unset-key (kbd "C-x m"))
-(global-set-key (kbd "C-x m p") 'spotify-pause)
-(global-set-key (kbd "C-x m r") 'spotify-previous)
+(global-set-key (kbd "C-x m m") 'spotify-pause)
+(global-set-key (kbd "C-x m SPC") 'spotify-pause)
+(global-set-key (kbd "C-x m p") 'spotify-previous)
 (global-set-key (kbd "C-x m n") 'spotify-next)
