@@ -18,6 +18,8 @@
       helm-imenu-fuzzy-match t
       helm-locate-fuzzy-match t)
 
+(setq helm-ag-base-command "pt -e --nocolor --nogroup")
+
 (setq projectile-completion-system 'helm)
 
 (setq flycheck-standard-error-navigation nil
