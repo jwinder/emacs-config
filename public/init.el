@@ -55,14 +55,6 @@
       (json-pretty-print (region-beginning) (region-end))
     (json-pretty-print-buffer)))
 
-(defun github-browse ()
-  (interactive)
-  (shell-command "hub browse"))
-
-(defun github-compare ()
-  (interactive)
-  (shell-command "hub compare"))
-
 (defun cmd (&optional command args)
   (interactive)
   (jw--make-cmd-line-process command args))
