@@ -9,25 +9,25 @@
   (interactive)
   (magit-run-git "undo"))
 
-(defun magit-github-browse ()
+(defun github-browse ()
   (interactive)
   (shell-command "hub browse"))
 
-(defun magit-github-issues ()
+(defun github-issues ()
   (interactive)
   (shell-command "hub browse -- issues"))
 
-(defun magit-github-pulls ()
+(defun github-pulls ()
   (interactive)
   (shell-command "hub browse -- pulls"))
 
-(defun magit-github-compare ()
+(defun github-compare ()
   (interactive)
   (shell-command "hub browse -- compare"))
 
-(defun magit-github-pull-request ()
+(defun github-pull-request ()
   (interactive)
-  (magit-run-git-with-editor "pull-request"))
+  (async-shell-command "hub pull-request" "*hub pull-request*"))
 
 (magit-define-popup magit-git-extras-popup
   "Popup console for git-extras commands."
@@ -41,11 +41,11 @@
   "Popup console for github hub commands."
   'magit-commands
   :man-page "hub"
-  :actions '((?b "Browse" magit-github-browse)
-             (?i "Issues" magit-github-issues)
-             (?p "Pulls" magit-github-pulls)
-             (?c "Compare" magit-github-compare)
-             (?P "Pull Request" magit-github-pull-request)))
+  :actions '((?b "Browse" github-browse)
+             (?i "Issues" github-issues)
+             (?p "Pulls" github-pulls)
+             (?c "Compare" github-compare)
+             (?P "Pull Request" github-pull-request)))
 
 (magit-define-popup-action 'magit-dispatch-popup ?g "Status" 'magit-status)
 (magit-define-popup-action 'magit-dispatch-popup ?x "Extras" 'magit-git-extras-popup)
