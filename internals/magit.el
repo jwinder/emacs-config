@@ -1,6 +1,7 @@
 (require 'magit)
 
-(setq magit-revert-buffers t
+(setq magit-git-executable "hub"
+      magit-revert-buffers t
       magit-push-always-verify nil
       magit-push-arguments '("--set-upstream"))
 
