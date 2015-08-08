@@ -37,8 +37,7 @@
 (defun github-pull-request (head-branch base-branch)
   (interactive (list (magit-read-branch "Create Pull Request starting at" (magit-get-current-branch))
                      (magit-read-branch "Request to merge into" (magit-get-previous-branch))))
-  (let* ((magit-popup-args (string-join (magit-github-arguments) "\s"))
-         (hub-pull-request (format "hub pull-request -h %s -b %s %s" head-branch base-branch magit-popup-args)))
+  (let ((hub-pull-request (format "hub pull-request -h %s -b %s" head-branch base-branch)))
     (async-shell-command hub-pull-request "*hub pull-request*")))
 
 (magit-define-popup magit-git-extras-popup
@@ -56,7 +55,6 @@
   "Popup console for github hub commands."
   'magit-commands
   :man-page "hub"
-  :switches '((?b "Pull Request open in browser after submitting" "--browse"))
   :actions '((?b "Browse" github-browse)
              (?i "Issues" github-issues)
              (?p "Pulls" github-pulls)
