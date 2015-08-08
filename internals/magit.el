@@ -17,8 +17,7 @@
   (interactive)
   (let* ((file (magit-read-tracked-file "File to obliterate"))
          (obliterate (format "obliterate %s" file)))
-    (magit-git-command obliterate (magit-toplevel))
-    (magit-git-command "push --force")))
+    (magit-git-command obliterate (magit-toplevel))))
 
 (defun github-browse ()
   (interactive)
@@ -50,8 +49,7 @@
              (?b "Blaming" magit-blame-popup)
              (?r "Repl" magit-x-repl)
              (?U "Undo commit" magit-x-undo)
-             (?D "Obliterate file" magit-x-obliterate)
-             ))
+             (?D "Obliterate file" magit-x-obliterate)))
 
 (magit-define-popup magit-github-popup
   "Popup console for github hub commands."
