@@ -10,11 +10,11 @@
   (interactive)
   (magit-run-git "undo"))
 
-(defun magit-x-github-browse ()
+(defun github-browse ()
   (interactive)
   (shell-command "hub browse"))
 
-(defun magit-x-github-compare ()
+(defun github-issues ()
   (interactive)
   (shell-command "hub browse -- issues"))
 
