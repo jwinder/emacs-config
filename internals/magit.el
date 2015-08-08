@@ -17,7 +17,8 @@
   (interactive)
   (let* ((file (magit-read-tracked-file "File to obliterate"))
          (obliterate (format "obliterate %s" file)))
-    (magit-git-command obliterate (magit-toplevel))))
+    (magit-git-command obliterate (magit-toplevel))
+    (magit-git-command "push --force")))
 
 (defun github-browse ()
   (interactive)
