@@ -1,8 +1,7 @@
 (require 'magit)
 (require 'subr-x)
 
-(setq magit-git-executable "hub"
-      magit-revert-buffers t
+(setq magit-revert-buffers t
       magit-push-always-verify nil
       magit-push-arguments '("--set-upstream"))
 
@@ -14,9 +13,11 @@
   (interactive)
   (async-shell-command "git repl" "*git repl*"))
 
-;; (defun magit-x-obliterate (file)
-;;   (interactive (list (magit-read-file)))
-;;   (magit-run-git "obliterate" file))
+(defun magit-x-obliterate ()
+  (interactive)
+  (let* ((file (magit-read-tracked-file "File to obliterate"))
+         (obliterate (format "obliterate %s" file)))
+    (magit-git-command obliterate (magit-toplevel))))
 
 (defun github-browse ()
   (interactive)
@@ -46,9 +47,9 @@
   :man-page "git-extras"
   :actions '((?g "Github" magit-github-popup)
              (?b "Blaming" magit-blame-popup)
-             (?u "Undo commit" magit-x-undo)
              (?r "Repl" magit-x-repl)
-             ;; (?D "Obliterate" magit-x-obliterate)
+             (?U "Undo commit" magit-x-undo)
+             (?D "Obliterate file" magit-x-obliterate)
              ))
 
 (magit-define-popup magit-github-popup
@@ -60,12 +61,6 @@
              (?p "Pulls" github-pulls)
              (?c "Compare" github-compare)
              (?P "Pull Request" github-pull-request)))
-
-(defun magit-github-popup-read-pull-request-head (prompt &optional initial)
-  (magit-read-branch "Pull Request Head" (magit-get-current-branch)))
-
-(defun magit-github-popup-read-pull-request-base (prompt &optional initial)
-  (magit-read-branch "Pull Request Base" (magit-get-previous-branch)))
 
 (magit-define-popup-action 'magit-dispatch-popup ?g "Status" 'magit-status)
 (magit-define-popup-action 'magit-dispatch-popup ?x "Extras" 'magit-git-extras-popup)
