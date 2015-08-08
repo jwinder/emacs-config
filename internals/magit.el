@@ -10,6 +10,14 @@
   (interactive)
   (magit-run-git "undo"))
 
+(defun magit-x-repl ()
+  (interactive)
+  (async-shell-command "git repl" "*git repl*"))
+
+;; (defun magit-x-obliterate (file)
+;;   (interactive (list (magit-read-file)))
+;;   (magit-run-git "obliterate" file))
+
 (defun github-browse ()
   (interactive)
   (shell-command "hub browse"))
@@ -26,9 +34,10 @@
   (interactive)
   (shell-command "hub browse -- compare"))
 
-(defun github-pull-request ()
-  (interactive)
-  (let ((hub-pull-request (format "hub pull-request %s" (string-join (magit-github-arguments) "\s"))))
+(defun github-pull-request (head-branch base-branch)
+  (interactive (list (magit-read-branch "Create Pull Request starting at" (magit-get-current-branch))
+                     (magit-read-branch "Request to merge into" (magit-get-previous-branch))))
+  (let ((hub-pull-request (format "hub pull-request -h %s -b %s" head-branch base-branch)))
     (async-shell-command hub-pull-request "*hub pull-request*")))
 
 (magit-define-popup magit-git-extras-popup
@@ -37,14 +46,15 @@
   :man-page "git-extras"
   :actions '((?g "Github" magit-github-popup)
              (?b "Blaming" magit-blame-popup)
-             (?u "Undo commit" magit-x-undo)))
+             (?u "Undo commit" magit-x-undo)
+             (?r "Repl" magit-x-repl)
+             ;; (?D "Obliterate" magit-x-obliterate)
+             ))
 
 (magit-define-popup magit-github-popup
   "Popup console for github hub commands."
   'magit-commands
   :man-page "hub"
-  :options '((?h "Pull Request Head (default current branch)" "--head=" magit-github-popup-read-pull-request-head)
-             (?b "Pull Request Base (default master)" "--base=" magit-github-popup-read-pull-request-base))
   :actions '((?b "Browse" github-browse)
              (?i "Issues" github-issues)
              (?p "Pulls" github-pulls)
