@@ -1,6 +1,8 @@
 (require 'magit)
 (require 'subr-x)
 
+(global-set-key (kbd "M-g") 'magit-dispatch-popup)
+
 (setq magit-revert-buffers t
       magit-push-always-verify nil
       magit-push-arguments '("--set-upstream"))
@@ -64,4 +66,4 @@
 (magit-define-popup-action 'magit-dispatch-popup ?g "Status" 'magit-status)
 (magit-define-popup-action 'magit-dispatch-popup ?x "Extras" 'magit-git-extras-popup)
 
-(global-set-key (kbd "M-g") 'magit-dispatch-popup)
+(advice-add 'helm-projectile-vc :after #'(lambda (arg) (magit-dispatch-popup)))
