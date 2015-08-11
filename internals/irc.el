@@ -9,6 +9,8 @@
 (setq rcirc-notify-message "%s: %s"
       rcirc-buffer-maximum-lines 2000)
 
+(add-to-list 'rcirc-omit-responses "MODE")
+
 (custom-set-faces
  '(rcirc-my-nick ((t (:foreground "#00ffff"))))
  '(rcirc-other-nick ((t (:foreground "#90ee90"))))
@@ -25,7 +27,8 @@
 (add-hook 'rcirc-mode-hook
           '(lambda ()
              (turn-on-flyspell)
-             (rcirc-track-minor-mode t)))
+             (rcirc-track-minor-mode t)
+             (rcirc-omit-mode)))
 
 (add-hook 'window-configuration-change-hook
           '(lambda () (setq rcirc-fill-column (- (window-width) 2))))
