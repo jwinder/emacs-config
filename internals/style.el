@@ -17,7 +17,7 @@
 (make-variable-buffer-local 'mode-line-git-cleanliness)
 
 (defun set-mode-line-git-cleanliness ()
-  (setq mode-line-git-cleanliness (if (magit-anything-modified-p) "✘" "✔"))
+  (setq mode-line-git-cleanliness (if (jw--vc-root-dir) (if (magit-anything-modified-p) "✘" "✔") nil))
   (force-mode-line-update))
 
 (add-hook 'change-major-mode-hook 'set-mode-line-git-cleanliness)
