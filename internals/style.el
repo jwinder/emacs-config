@@ -7,18 +7,24 @@
 (jw--set-font-size "14")
 
 (set-face-attribute 'mode-line nil :font (jw--font-name "14") :background "#22083397778B" :foreground "#7db5d6" :box '(:style released-button))
-(set-face-attribute 'mode-line-inactive nil  :background "#263238" :foreground "gray" :box '(:style released-button))
+(set-face-attribute 'mode-line-inactive nil :background "#263238" :foreground "gray" :box '(:style released-button))
 (set-face-attribute 'mode-line-buffer-id nil :foreground "white")
 (set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
 (set-face-attribute 'header-line nil :background "#005858" :foreground "white")
 
-(setq-default mode-line-format '(" ✔ " mode-line-buffer-identification " " mode-line-misc-info))
+(put 'mode-line-git-cleanliness 'risky-local-variable t)
+(put 'mode-line-git-cleanliness 'permanent-local t)
+(make-variable-buffer-local 'mode-line-git-cleanliness)
 
-;; (setq-default mode-line-format '(" " (vc-mode vc-mode) " " mode-line-buffer-identification " " mode-line-misc-info))
+(defun set-mode-line-git-cleanliness ()
+  (setq mode-line-git-cleanliness (if (magit-anything-modified-p) "✘" "✔"))
+  (force-mode-line-update))
 
-;; (advice-add 'vc-mode-line :after #'(lambda (file &optional backend)
-;;                                      (when (stringp vc-mode)
-;;                                        (setq vc-mode (if (magit-anything-modified-p) "✘" "✔")))))
+(add-hook 'change-major-mode-hook 'set-mode-line-git-cleanliness)
+(add-hook 'after-save-hook 'set-mode-line-git-cleanliness)
+(add-hook 'focus-in-hook 'set-mode-line-git-cleanliness)
+
+(setq-default mode-line-format '(" " mode-line-git-cleanliness " " mode-line-buffer-identification " " mode-line-misc-info))
 
 (custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
 
