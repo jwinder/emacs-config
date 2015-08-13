@@ -12,11 +12,13 @@
 (set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
 (set-face-attribute 'header-line nil :background "#005858" :foreground "white")
 
-(setq-default mode-line-format '(" " (vc-mode vc-mode) " " mode-line-buffer-identification " " mode-line-misc-info))
+(setq-default mode-line-format '(" ✔ " mode-line-buffer-identification " " mode-line-misc-info))
 
-(advice-add 'vc-mode-line :after #'(lambda (file &optional backend)
-                                     (when (stringp vc-mode)
-                                       (setq vc-mode (if (magit-anything-modified-p) "✘" "✔")))))
+;; (setq-default mode-line-format '(" " (vc-mode vc-mode) " " mode-line-buffer-identification " " mode-line-misc-info))
+
+;; (advice-add 'vc-mode-line :after #'(lambda (file &optional backend)
+;;                                      (when (stringp vc-mode)
+;;                                        (setq vc-mode (if (magit-anything-modified-p) "✘" "✔")))))
 
 (custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
 
