@@ -12,20 +12,22 @@
 (set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
 (set-face-attribute 'header-line nil :background "#005858" :foreground "white")
 
-(put 'mode-line-git-cleanliness 'risky-local-variable t)
-(put 'mode-line-git-cleanliness 'permanent-local t)
-(make-variable-buffer-local 'mode-line-git-cleanliness)
+;; (put 'mode-line-git-cleanliness 'risky-local-variable t)
+;; (put 'mode-line-git-cleanliness 'permanent-local t)
+;; (make-variable-buffer-local 'mode-line-git-cleanliness)
 
-(defun set-mode-line-git-cleanliness ()
-  (setq mode-line-git-cleanliness (if (jw--vc-root-dir) (if (magit-anything-modified-p) "✘" "✔") nil))
-  (force-mode-line-update))
+;; (defun set-mode-line-git-cleanliness ()
+;;   (setq mode-line-git-cleanliness (if (jw--vc-root-dir) (if (magit-anything-modified-p) "✘" "✔") nil))
+;;   (force-mode-line-update))
 
-;; hacky way to use vc-mode hook to update custom git status string
-(vc-mode)
-(advice-add 'vc-mode-line :around #'(lambda (vc-mode-line-function file &optional backend)
-                                      (set-mode-line-git-cleanliness)))
+;; ;; hacky way to use vc-mode hook to update custom git status string
+;; (vc-mode)
+;; (advice-add 'vc-mode-line :around #'(lambda (vc-mode-line-function file &optional backend)
+;;                                       (set-mode-line-git-cleanliness)))
 
-(setq-default mode-line-format '(" " mode-line-git-cleanliness " " mode-line-buffer-identification " " mode-line-misc-info))
+;; (setq-default mode-line-format '(" " mode-line-git-cleanliness " " mode-line-buffer-identification " " mode-line-misc-info))
+
+(setq-default mode-line-format '(" ✔ " mode-line-buffer-identification " " mode-line-misc-info))
 
 (custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
 
