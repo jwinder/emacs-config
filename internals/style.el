@@ -20,9 +20,10 @@
   (setq mode-line-git-cleanliness (if (jw--vc-root-dir) (if (magit-anything-modified-p) "✘" "✔") nil))
   (force-mode-line-update))
 
-(add-hook 'change-major-mode-hook 'set-mode-line-git-cleanliness)
-(add-hook 'after-save-hook 'set-mode-line-git-cleanliness)
-(add-hook 'focus-in-hook 'set-mode-line-git-cleanliness)
+;; hacky way to use vc-mode hook to update custom git status string
+(vc-mode)
+(advice-add 'vc-mode-line :around #'(lambda (vc-mode-line-function file &optional backend)
+                                      (set-mode-line-git-cleanliness)))
 
 (setq-default mode-line-format '(" " mode-line-git-cleanliness " " mode-line-buffer-identification " " mode-line-misc-info))
 
