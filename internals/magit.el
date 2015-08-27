@@ -21,6 +21,11 @@
          (obliterate (format "obliterate %s" file)))
     (magit-git-command obliterate (magit-toplevel))))
 
+(defun magit-x-swoosh ()
+  "This is a local script I use to prune remotes and clean up local and remote branches."
+  (interactive)
+  (async-shell-command "git swoosh" "*git swoosh*"))
+
 (defun github-browse ()
   (interactive)
   (shell-command "hub browse"))
@@ -51,6 +56,7 @@
              (?b "Blaming" magit-blame-popup)
              (?r "Repl" magit-x-repl)
              (?U "Undo commit" magit-x-undo)
+             (?S "Swooshing" magit-x-swoosh)
              (?D "Obliterate file" magit-x-obliterate)))
 
 (magit-define-popup magit-github-popup
