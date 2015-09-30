@@ -56,7 +56,7 @@
              (?b "Blaming" magit-blame-popup)
              (?r "Repl" magit-x-repl)
              (?U "Undo commit" magit-x-undo)
-             (?S "Swooshing" magit-x-swoosh)
+             (?S "Swoosh repo" magit-x-swoosh)
              (?D "Obliterate file" magit-x-obliterate)))
 
 (magit-define-popup magit-github-popup
