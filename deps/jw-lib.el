@@ -2,6 +2,8 @@
 (require 'vc)
 (eval-when-compile (require 'em-hist))  ;; for eshell-history-file-name
 
+(defconst jw--mode-line-color "#22083397778B")
+
 (defun jw--font-name (&optional size)
   (if size (concat "Monaco " size) "Monaco"))
 

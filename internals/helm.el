@@ -48,7 +48,7 @@
 (defalias 'proced 'helm-top)
 
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
-(set-face-attribute 'helm-candidate-number nil :background nil :foreground "goldenrod")
+(set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
 (set-face-attribute 'helm-swoop-target-line-face nil :background "goldenrod")
 
 (add-hook 'eshell-mode-hook
