@@ -45,6 +45,8 @@
 
 (add-to-list 'auto-mode-alist '("\\.proto$" . c-mode))
 
+(add-to-list 'auto-mode-alist '("\\.scss$" . css-mode))
+
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (setq git-commit-summary-max-length 150)
