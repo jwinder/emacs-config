@@ -1,4 +1,5 @@
 .DS_STORE
+emacs.el
 private
 eshell/history
 eshell/lastdir

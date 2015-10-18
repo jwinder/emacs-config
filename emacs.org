@@ -1,0 +1,1015 @@
+* introduction
+
+#+TITLE: jwinder emacs config
+
+#+AUTHOR: Joe Winder
+#+EMAIL: jsph.winder@gmail.com
+
+#+LANGUAGE: en
+
+#+BEGIN_SRC emacs-list :tangle no
+(org-babel-load-file (concat user-emacs-directory "emacs.org"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defconst jw-config-author-name "Joe Winder")
+(defconst jw-config-author-email "jsph.winder@gmail.com")
+(defconst jw-config-author-url "http://jwinder.io")
+(defconst jw-config-github-url "https://github.com/jwinder/emacs")
+#+END_SRC
+
+* pre-hook
+* dependencies
+** package management
+
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+
+(package-initialize)
+
+(unless (file-exists-p package-user-dir) (package-refresh-contents))
+(unless (package-installed-p 'use-package) (package-install 'use-package))
+
+(require 'use-package)
+#+END_SRC
+
+** helper functions
+
+#+BEGIN_SRC emacs-lisp
+(require 'comint)
+(require 'vc)
+(eval-when-compile (require 'em-hist))  ;; for eshell-history-file-name
+
+(defconst jw--mode-line-color "#22083397778B")
+
+(defun jw--font-name (&optional size)
+  (if size (concat "Monaco " size) "Monaco"))
+
+(defun jw--set-font-size (size)
+  (set-face-attribute 'default nil :font (jw--font-name size)))
+
+(defun jw--read-file-lines-to-string (file)
+  (with-temp-buffer
+    (insert-file-contents file)
+    (split-string (buffer-string) "\n" t)))
+
+(defun jw--make-uuid ()
+  (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
+
+(defun jw--pwd ()
+  (file-truename default-directory))
+
+(defun jw--vc-root-dir ()
+  (let ((vc-root-dir (ignore-errors (vc-call-backend (vc-responsible-backend (jw--pwd)) 'root (jw--pwd)))))
+    (if vc-root-dir (file-truename vc-root-dir) nil)))
+
+(defalias 'jw--git-root-dir 'jw--vc-root-dir)
+
+(defun jw--make-sql-process (product sql-user sql-password sql-server sql-database root-sql-script-dir)
+  "Inspired by rubbish's `sql' function."
+  (let* ((sql-text-buffer (find-file (concat root-sql-script-dir sql-database "_" sql-server ".sql")))
+         (new-name (concat sql-user "@" sql-database "." sql-server))
+         (sqli-buffer (if sql-buffer (progn (split-window) sql-buffer) (sql-product-interactive product new-name))))
+    (switch-to-buffer sql-text-buffer nil t)
+    (set (make-local-variable 'sql-buffer) sqli-buffer)
+    (switch-to-buffer sqli-buffer nil t)
+    (sql-send-string "\\x")))
+
+(defun jw--quick-run-cmd-line-process (full-command &optional buffer-name just-toggle-back-if-current-buffer-matches before-buffer-process-creation-hook)
+  "Just a nice wrapper around `make-comint-in-buffer'. If `buffer-name' already exists, this will just switch to it. if `just-toggle-back-if-current-buffer-matches' is `non-nil' then we just switch back to `(other-buffer)'."
+  (if (and just-toggle-back-if-current-buffer-matches buffer-name (string= (buffer-name) buffer-name))
+      (switch-to-buffer (other-buffer))
+    (if (and buffer-name (get-buffer buffer-name))
+        (switch-to-buffer buffer-name)
+      (let* ((full-command-tokens (split-string full-command))
+             (command-name (car full-command-tokens))
+             (command-args (cdr full-command-tokens))
+             (name-for-buffer (or buffer-name (concat "*" (string-trim full-command) "*")))
+             (buffer (get-buffer-create name-for-buffer)))
+        (if command-name
+            (progn
+              (when before-buffer-process-creation-hook (funcall before-buffer-process-creation-hook))
+              (switch-to-buffer buffer)
+              (apply 'make-comint-in-buffer full-command buffer command-name nil command-args))
+          (message "Empty command name! Did nothing."))))))
+
+(defun jw--make-cmd-line-process (&optional command args)
+  "Inspired by rubbish's `command-line-tool' function but uses eshell's history file and completing-read which helm enriches."
+  (let* ((history (reverse (jw--read-file-lines-to-string eshell-history-file-name)))
+         (full-command (completing-read "Command: " history nil nil (if command (concat command " " (or args "")) "")))
+         (add-command-to-eshell-history #'(lambda () (write-region (concat full-command "\n") nil eshell-history-file-name 'append 1))))
+    (jw--quick-run-cmd-line-process full-command nil nil add-command-to-eshell-history)))
+#+END_SRC
+
+** packages
+*** common
+
+#+BEGIN_SRC emacs-lisp
+(use-package afternoon-theme :ensure t
+  :config (progn (load-theme 'afternoon t)
+                 (set-cursor-color "dark grey")
+                 (set-background-color "black")
+                 (set-face-background 'fringe nil)))
+
+(use-package scratch :ensure t)
+
+(use-package org :ensure t)
+
+(use-package gist :ensure t)
+
+(use-package undo-tree :ensure t
+  :config (global-undo-tree-mode 1))
+
+(use-package magit :ensure t)
+
+(use-package expand-region :ensure t
+  :bind (("C-=" . er/expand-region)))
+
+(use-package multiple-cursors :ensure t
+  :bind (("C-*" . mc/mark-all-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C->" . mc/mark-next-like-this)
+         ("C-x r t" . mc/edit-lines)))
+
+(use-package smartparens :ensure t
+  :config (progn (require 'smartparens-config)
+                 (smartparens-global-mode t)
+                 (sp-use-smartparens-bindings)
+                 (define-key sp-keymap (kbd "M-<backspace>") nil)
+                 (define-key sp-keymap (kbd "C-M-p") nil)
+                 (define-key sp-keymap (kbd "C-M-n") nil)))
+
+(use-package helm :ensure t)
+(use-package helm-ag :ensure t)
+(use-package helm-swoop :ensure t)
+(use-package helm-projectile :ensure t)
+(use-package helm-flycheck :ensure t)
+(use-package helm-flyspell :ensure t)
+(use-package helm-descbinds :ensure t)
+
+(use-package sx :ensure t
+  :bind (("C-c x" . sx-search)))
+
+(use-package hackernews :ensure t
+  :config (progn (require 'hackernews)
+                 (setq hackernews-top-story-limit 100)
+                 (set-face-attribute 'hackernews-link-face nil :foreground "SkyBlue1")
+                 (advice-add 'hackernews :after #'(lambda () (when (string= (buffer-name) "*hackernews*") (text-scale-set 2))))))
+#+END_SRC
+
+*** languages
+
+#+BEGIN_SRC emacs-lisp
+(use-package yaml-mode :ensure t)
+
+(use-package markdown-mode :ensure t)
+
+(use-package dockerfile-mode :ensure t)
+
+(use-package scala-mode2 :ensure t
+  :mode (("\\.scala$" . scala-mode)
+         ("\\.sbt$" . scala-mode)))
+
+(use-package sbt-mode :ensure t)
+
+(use-package ruby-mode :ensure t
+  :mode (("Gemfile$" . ruby-mode)
+         ("Rakefile$" . ruby-mode)
+         ("Vagrantfile$" . ruby-mode)
+         ("Berksfile$" . ruby-mode)))
+
+(use-package haskell-mode :ensure t
+  :config (progn (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)))
+
+(use-package coffee-mode :ensure t
+  :config (setq coffee-tab-width 2))
+#+END_SRC
+
+* internals
+** editor
+*** settings
+
+#+BEGIN_SRC emacs-lisp
+(ansi-color-for-comint-mode-on)
+
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(setq make-backup-files nil
+      version-control nil
+      create-lockfiles nil)
+
+(global-auto-revert-mode 1)
+
+(setq global-auto-revert-non-file-buffers t
+      auto-revert-verbose nil)
+
+(setq-default indent-tabs-mode nil)
+
+(setq default-tab-width 2)
+
+(setq js-indent-level 2)
+
+(delete-selection-mode t)
+
+(winner-mode t)
+
+(global-subword-mode t)
+
+(setq default-major-mode 'text-mode)
+
+(put 'dired-find-alternate-file 'disabled nil)
+
+(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(add-hook 'next-error-hook 'delete-other-windows)
+
+(setq uniquify-buffer-name-style 'forward)
+
+(setq ring-bell-function 'ignore)
+
+(setq enable-recursive-minibuffers t)
+
+(setq tramp-default-method "scp")
+
+(setq eshell-buffer-shorthand t)
+
+(add-to-list 'auto-mode-alist '("\\.proto$" . c-mode))
+
+(add-to-list 'auto-mode-alist '("\\.scss$" . css-mode))
+
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+(setq git-commit-summary-max-length 150)
+
+(put 'temporary-file-directory 'standard-value '((file-name-as-directory "/tmp")))
+#+END_SRC
+
+*** macros
+#+BEGIN_SRC emacs-lisp
+(eval-when-compile (require 'cl))
+
+(defadvice kill-ring-save (before slick-copy activate compile)
+  "When called interactively with no active region, copy a single line instead."
+  (interactive
+   (if mark-active
+       (list (region-beginning) (region-end))
+     (list (line-beginning-position) (line-beginning-position 2)))))
+
+(defadvice kill-region (before slick-cut activate compile)
+  "When called interactively with no active region, kill a single line instead."
+  (interactive
+   (if mark-active
+       (list (region-beginning) (region-end))
+     (list (line-beginning-position) (line-beginning-position 2)))))
+
+(setq echo-area-silenced-patterns
+      '("Auto saving"
+        "No changes need to be saved"
+        "You can run the command"
+        "Shell command succeeded with no output"))
+
+(defadvice message (before ignorable-message activate compile)
+  "Do not echo any messages matching a pattern in `echo-area-silenced-patterns'. This only works for elisp `message' and not the C primitive."
+  (when format-string
+    (let ((current-echo (current-message))
+          (incoming-echo (apply 'format (cons format-string args))))
+      (when (member-if '(lambda (pattern) (search pattern incoming-echo)) echo-area-silenced-patterns)
+        (ad-set-arg 0 current-echo)))))
+#+END_SRC
+
+*** style
+
+#+BEGIN_SRC emacs-lisp
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+
+(jw--set-font-size "14")
+
+(set-face-attribute 'mode-line nil :font (jw--font-name "14") :background jw--mode-line-color :foreground "#7db5d6" :box '(:style released-button))
+(set-face-attribute 'mode-line-inactive nil :background "#263238" :foreground "gray" :box '(:style released-button))
+(set-face-attribute 'mode-line-buffer-id nil :foreground "white")
+(set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
+(set-face-attribute 'header-line nil :background "#005858" :foreground "white")
+
+(setq-default mode-line-format '(" ✔ " mode-line-buffer-identification " " mode-line-misc-info))
+
+(custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
+
+(add-hook 'minibuffer-setup-hook '(lambda ()
+                                    (set (make-local-variable 'face-remapping-alist) '((default :height 1.3)))))
+
+(setq inhibit-startup-message t)
+
+(setq initial-scratch-message (format "\
+;; Welcome to %s.
+;; Any questions? Email me at %s. -- %s
+
+;; Disclaimer: This config is a buyer beware product.
+
+" jw-config-github-url jw-config-author-email jw-config-author-name))
+#+END_SRC
+
+** env path & vars
+
+#+BEGIN_SRC emacs-lisp
+;; opinionated way of setting system properties
+;; (you can have your shell rc file parse the same two files)
+
+;; e.g., keep something like this in your private dir:
+
+;; (require 'eshell)
+;; (defun jw-env-set ()
+;;   (interactive)
+;;   (jw--env-set-vars "/path/to/vars-file)
+;;   (jw--env-set-path "/path/to/path-file))
+;; (jw-env-set)
+;; (add-to-list 'eshell-mode-hook 'jw-env-set)
+
+;; where vars-file looks like:
+
+;; DROPBOX_HOME=$HOME/Dropbox
+;; DRIVE_HOME=$HOME/GoogleDrive
+
+;; and path-file looks like (will become PATH=$HOME/bin:/usr/local/bin:/usr/bin):
+
+;; $HOME/bin
+;; /usr/local/bin
+;; /usr/bin
+
+(setenv "EDITOR" "emacsclient")
+
+(defun jw--env-set-vars (vars-file)
+  (dolist (line (jw--read-file-lines-to-string vars-file))
+    (unless (= 0 (length line))
+      (let* ((tokens (split-string line "="))
+             (name (car tokens))
+             (value-string (mapconcat 'identity (cdr tokens) "="))
+             (value-env-vars-parsed (substitute-env-vars value-string)) ;; parse lines containing env vars
+             (value (shell-command-to-string (format "echo %s" value-env-vars-parsed)))) ;; parse shell commands in lines
+        (setenv name (string-trim value))))))
+
+(defun jw--env-set-path (path-file)
+  (let* ((path-list (mapcar 'substitute-env-vars (jw--read-file-lines-to-string path-file)))
+         (path-str (mapconcat 'identity path-list ":")))
+    (setq exec-path path-list)
+    (setenv "PATH" path-str)
+    (setq eshell-path-env path-str)))
+#+END_SRC
+
+** helm
+
+#+BEGIN_SRC emacs-lisp
+(require 'helm)
+(require 'helm-config)
+(require 'helm-dabbrev)
+(require 'helm-swoop)
+
+(setq helm-split-window-in-side-p t
+      helm-ff-search-library-in-sexp t
+      helm-scroll-amount 8
+      helm-buffer-max-length nil
+      helm-ff-file-name-history-use-recentf t
+      helm-quick-update t
+      helm-move-to-line-cycle-in-source nil)
+
+(setq helm-buffers-fuzzy-matching t
+      helm-M-x-fuzzy-match t
+      helm-recentf-fuzzy-match t
+      helm-semantic-fuzzy-match t
+      helm-imenu-fuzzy-match t
+      helm-locate-fuzzy-match t)
+
+(setq helm-ag-base-command "pt -e --nocolor --nogroup")
+
+(setq projectile-completion-system 'helm)
+
+(setq flycheck-standard-error-navigation nil
+      flycheck-display-errors-function nil)
+
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-unset-key (kbd "C-x c"))
+
+(define-key helm-command-map (kbd "h") 'helm-descbinds)
+
+(define-key helm-command-map (kbd "s") 'helm-google-suggest)
+(define-key helm-command-map (kbd "w") 'helm-wikipedia-suggest)
+
+(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "M-s C-s") 'helm-ag)
+(global-set-key (kbd "M-s o") 'helm-occur)
+(global-set-key (kbd "M-s s") 'helm-swoop)
+(global-set-key (kbd "M-s i") 'helm-semantic-or-imenu)
+(global-set-key (kbd "M-/") 'helm-dabbrev)
+
+(defalias 'kill-ring-show 'helm-show-kill-ring)
+(defalias 'list-colors-display 'helm-colors)
+(defalias 'proced 'helm-top)
+
+(set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
+(set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
+(set-face-attribute 'helm-swoop-target-line-face nil :background "goldenrod")
+
+(add-hook 'eshell-mode-hook
+          '(lambda ()
+             (define-key eshell-mode-map [remap eshell-pcomplete] 'helm-esh-pcomplete)
+             (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)))
+
+(add-hook 'projectile-mode-hook
+          '(lambda ()
+             (setq projectile-switch-project-action 'helm-projectile)))
+
+(add-hook 'flycheck-mode-hook
+          '(lambda ()
+             (define-key flycheck-mode-map (kbd "C-c ! l") 'helm-flycheck)))
+
+(add-hook 'flyspell-mode-hook
+          '(lambda ()
+             (define-key flyspell-mode-map (kbd "C-M-i") 'helm-flyspell-correct))) ;; also works with M-<tab>
+
+(helm-mode 1)
+(helm-autoresize-mode 1)
+
+(projectile-global-mode)
+(helm-projectile-on)
+
+(global-flycheck-mode)
+
+(add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
+#+END_SRC
+
+** rcirc
+
+#+BEGIN_SRC emacs-lisp
+(require 'rcirc)
+
+;; you should consider a custom nickname in your private dir!
+;; e.g.
+;; (setq rcirc-default-nick "your nick"
+;;       rcirc-default-user-name "your username"
+;;       rcirc-default-full-name "your full name")
+
+(setq rcirc-notify-message "%s: %s"
+      rcirc-buffer-maximum-lines 2000)
+
+(add-to-list 'rcirc-omit-responses "MODE")
+
+(custom-set-faces
+ '(rcirc-my-nick ((t (:foreground "#00ffff"))))
+ '(rcirc-other-nick ((t (:foreground "#90ee90"))))
+ '(rcirc-server ((t (:foreground "#a2b5cd"))))
+ '(rcirc-server-prefix ((t (:foreground "#00bfff"))))
+ '(rcirc-timestamp ((t (:foreground "#7d7d7d"))))
+ '(rcirc-nick-in-message ((t (:foreground "#00ffff"))))
+ '(rcirc-prompt ((t (:foreground "#00bfff"))))
+ '(rcirc-keyword ((t :foreground "#00ffff")))
+ '(rcirc-nick-in-message-full-line ((t ())))
+ '(rcirc-track-nick ((t (:foreground "#00ffff"))))
+ '(rcirc-track-keyword ((t (:foreground "#00ffff")))))
+
+(add-hook 'rcirc-mode-hook
+          '(lambda ()
+             (turn-on-flyspell)
+             (rcirc-track-minor-mode t)
+             (rcirc-omit-mode)))
+
+(add-hook 'window-configuration-change-hook
+          '(lambda () (setq rcirc-fill-column (- (window-width) 2))))
+#+END_SRC
+
+** operating system
+
+#+BEGIN_SRC emacs-lisp
+(when (eq system-type 'gnu/linux)
+  (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+  (setq browse-url-browser-function 'browse-url-generic
+        browse-url-generic-program "google-chrome")
+  (setq ack-executable "ack-grep"))
+
+(when (eq system-type 'darwin)
+  (setq ns-command-modifier 'meta)
+  (setq interprogram-paste-function 'x-selection-value)
+  (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+  (setq ispell-program-name "aspell"))
+#+END_SRC
+
+** magit
+
+#+BEGIN_SRC emacs-lisp
+(require 'magit)
+(require 'subr-x)
+
+(global-set-key (kbd "M-g") 'magit-dispatch-popup)
+
+(setq magit-revert-buffers t
+      magit-push-always-verify nil
+      magit-push-arguments '("--set-upstream"))
+
+(defun magit-x-undo ()
+  (interactive)
+  (magit-run-git "undo"))
+
+(defun magit-x-repl ()
+  (interactive)
+  (async-shell-command "git repl" "*git repl*"))
+
+(defun magit-x-obliterate ()
+  (interactive)
+  (let* ((file (magit-read-tracked-file "File to obliterate"))
+         (obliterate (format "obliterate %s" file)))
+    (magit-git-command obliterate (magit-toplevel))))
+
+(defun magit-x-swoosh ()
+  "This is a local script I use to prune remotes and clean up local and remote branches."
+  (interactive)
+  (async-shell-command "git swoosh" "*git swoosh*"))
+
+(defun github-browse ()
+  (interactive)
+  (shell-command "hub browse"))
+
+(defun github-issues ()
+  (interactive)
+  (shell-command "hub browse -- issues"))
+
+(defun github-pulls ()
+  (interactive)
+  (shell-command "hub browse -- pulls"))
+
+(defun github-compare ()
+  (interactive)
+  (shell-command "hub browse -- compare"))
+
+(defun github-pull-request (head-branch base-branch)
+  (interactive (list (magit-read-branch "Create Pull Request starting at" (magit-get-current-branch))
+                     (magit-read-branch "Request to merge into" (magit-get-previous-branch))))
+  (let ((hub-pull-request (format "hub pull-request -h %s -b %s" head-branch base-branch)))
+    (async-shell-command hub-pull-request "*hub pull-request*")))
+
+(magit-define-popup magit-git-extras-popup
+  "Popup console for git-extras commands."
+  'magit-commands
+  :man-page "git-extras"
+  :actions '((?g "Github" magit-github-popup)
+             (?b "Blaming" magit-blame-popup)
+             (?r "Repl" magit-x-repl)
+             (?U "Undo commit" magit-x-undo)
+             (?S "Swoosh repo" magit-x-swoosh)
+             (?D "Obliterate file" magit-x-obliterate)))
+
+(magit-define-popup magit-github-popup
+  "Popup console for github hub commands."
+  'magit-commands
+  :man-page "hub"
+  :actions '((?b "Browse" github-browse)
+             (?i "Issues" github-issues)
+             (?p "Pulls" github-pulls)
+             (?c "Compare" github-compare)
+             (?P "Pull Request" github-pull-request)))
+
+(magit-define-popup-action 'magit-dispatch-popup ?g "Status" 'magit-status)
+(magit-define-popup-action 'magit-dispatch-popup ?x "Extras" 'magit-git-extras-popup)
+
+(advice-add 'helm-projectile-vc :after #'(lambda (arg) (magit-dispatch-popup)))
+#+END_SRC
+
+** org
+
+#+BEGIN_SRC emacs-lisp
+(defvar jw-org-todo-file "/path/to/my/org/todo.org") ;; override this in the private dir
+
+(setq org-current-org-buffer-narrowed-to-subtree nil)
+(defun org-narrow-or-widen ()
+  (interactive)
+  (if org-current-org-buffer-narrowed-to-subtree
+      (progn (setq-local org-current-org-buffer-narrowed-to-subtree nil)
+             (widen))
+    (progn (setq-local org-current-org-buffer-narrowed-to-subtree t)
+           (org-narrow-to-subtree))))
+
+(defun todo ()
+  (interactive)
+  (find-file jw-org-todo-file)
+  (cd (getenv "HOME")))
+
+(defun toggle-todo ()
+  (interactive)
+  (if (string= (buffer-name) "todo.org")
+      (switch-to-buffer (other-buffer))
+    (todo)))
+
+(global-set-key (kbd "C-c o") 'toggle-todo)
+(global-set-key (kbd "C-c a") 'org-agenda)
+
+(setq org-speed-commands-user
+      '(("P" . org-shiftmetaup) ;; move item up
+        ("N" . org-shiftmetadown) ;; move item down
+        ("h" . org-speed-command-help)))
+
+(setq org-use-speed-commands t
+      org-completion-use-ido t
+      org-return-follows-link t
+      org-hide-leading-stars t
+      org-enforce-todo-dependencies t
+      org-clock-out-when-done nil
+      org-clock-clocked-in-display 'mode-line
+      org-agenda-start-with-follow-mode t
+      org-refile-targets '((org-agenda-files :maxlevel . 10))
+      org-refile-use-outline-path t
+      org-refile-allow-creating-parent-nodes '(confirm)
+      org-tags-column -100)
+
+;; try to guess which states various (some possibly shared) org files might use and add them to org-todo-keyword-faces
+(setq org--possible-todo-todo-states '("todo" "incoming")
+      org--possible-blocked-todo-states '("blocked" "halted" "stalled")
+      org--possible-doing-todo-states '("doing" "going")
+      org--possible-delegated-todo-states '("delegated" "assigned")
+      org--possible-done-todo-states '("done" "cancelled" "canceled" "finished" "boom"))
+
+(defun org--make-single-todo-face-entry (state color)
+  `(,state :background ,color :foreground white :box (:style released-button)))
+
+(defun org--make-todo-face-entries (state color)
+  `(,(org--make-single-todo-face-entry state color)
+    ,(org--make-single-todo-face-entry (upcase state) color)
+    ,(org--make-single-todo-face-entry (capitalize state) color)))
+
+(defun org--make-red-face-entries (state) (org--make-todo-face-entries state "DarkRed"))
+(defun org--make-blue-face-entries (state) (org--make-todo-face-entries state "DeepSkyBlue4"))
+(defun org--make-green-face-entries (state) (org--make-todo-face-entries state "DarkGreen"))
+
+(setq org-todo-keyword-faces
+      (apply #'append (append (mapcar 'org--make-red-face-entries org--possible-todo-todo-states)
+                              (mapcar 'org--make-red-face-entries org--possible-blocked-todo-states)
+                              (mapcar 'org--make-blue-face-entries org--possible-doing-todo-states)
+                              (mapcar 'org--make-blue-face-entries org--possible-delegated-todo-states)
+                              (mapcar 'org--make-green-face-entries org--possible-done-todo-states))))
+
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+
+(add-hook 'org-mode-hook '(lambda ()
+                            (text-scale-set 2)
+                            (save-window-excursion (calendar)) ;; start calendar silently for org-date-from-calendar
+                            (define-key org-mode-map (kbd "C-c n") 'org-narrow-or-widen)))
+#+END_SRC
+
+* public
+** functions
+*** common
+
+#+BEGIN_SRC emacs-lisp
+(defalias 'qrr 'query-replace-regexp)
+(defalias 'filter-lines 'keep-lines)
+(defalias 'filter-out-lines 'flush-lines)
+(defalias 'elisp-shell 'ielm)
+
+(defun font-size-big ()
+  (interactive)
+  (jw--set-font-size "18"))
+
+(defun font-size-normal ()
+  (interactive)
+  (jw--set-font-size "14"))
+
+(defun eshell-cd-vc-root-dir-or-pwd-otherwise-other-buffer ()
+  (interactive)
+  (if (eq major-mode 'eshell-mode)
+      (switch-to-buffer (other-buffer))
+    (let ((current-pwd (or (jw--vc-root-dir) (jw--pwd))))
+      (eshell)
+      (eshell-kill-input)
+      (goto-char (point-max))
+      (unless (string= current-pwd (jw--pwd))
+        (insert (format "cd '%s'" current-pwd))
+        (eshell-send-input)))))
+
+(defun date ()
+  (interactive)
+  (message (current-time-string)))
+
+(defalias 'time 'date)
+
+(defun scratch-lisp ()
+  (interactive)
+  (let ((scratch-buffer (get-buffer-create "*scratch*")))
+    (switch-to-buffer scratch-buffer)
+    (lisp-interaction-mode)))
+
+(defun scratch-text ()
+  (interactive)
+  (let ((scratch-buffer (get-buffer-create "*text*")))
+    (switch-to-buffer scratch-buffer)
+    (text-mode)))
+
+(defun ping-google ()
+  (interactive)
+  (ping "google.com"))
+
+(defun uuid ()
+  (interactive)
+  (insert (jw--make-uuid)))
+
+(defun json-prettify ()
+  (interactive)
+  (if (region-active-p)
+      (json-pretty-print (region-beginning) (region-end))
+    (json-pretty-print-buffer)))
+
+(defun cmd (&optional command args)
+  (interactive)
+  (jw--make-cmd-line-process command args))
+
+(defun cmd-ssh (&optional args)
+  (interactive)
+  (jw--make-cmd-line-process "ssh" args))
+
+(defun cmd-brew ()
+  (interactive)
+  (jw--make-cmd-line-process "brew"))
+
+(defun cmd-docker ()
+  (interactive)
+  (jw--make-cmd-line-process "docker"))
+
+(defun increment-number (&optional arg)
+  (interactive "p*")
+  (save-excursion
+    (save-match-data
+      (let (inc-by field-width answer)
+        (setq inc-by (if arg arg 1))
+        (skip-chars-backward "0123456789")
+        (when (re-search-forward "[0-9]+" nil t)
+          (setq field-width (- (match-end 0) (match-beginning 0)))
+          (setq answer (+ (string-to-number (match-string 0) 10) inc-by))
+          (when (< answer 0)
+            (setq answer (+ (expt 10 field-width) answer)))
+          (replace-match (format (concat "%0" (int-to-string field-width) "d")
+                                 answer)))))))
+
+(defun decrement-number (&optional arg)
+  (interactive "p*")
+  (increment-number (if arg (- arg) -1)))
+
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+
+(defun beginning-of-line-or-indentation ()
+  (interactive)
+  (let ((previous-point (point)))
+    (back-to-indentation)
+    (if (equal previous-point (point))
+        (beginning-of-line))))
+
+(defun comment-dwim-region-or-line-or-end-of-line (&optional arg)
+  (interactive "*P")
+  (if (region-active-p)
+      (comment-dwim arg)
+    (if arg ;; utilize prefix argument to append comment to line instead of comment entire line
+        (comment-dwim nil)
+      (comment-or-uncomment-region (line-beginning-position) (line-end-position)))))
+
+(defun open-line-next ()
+  (interactive)
+  (end-of-line)
+  (open-line 1)
+  (next-line 1)
+  (indent-according-to-mode))
+
+(defun open-line-previous ()
+  (interactive)
+  (beginning-of-line)
+  (open-line 1)
+  (indent-according-to-mode))
+
+(defun newline-and-open-line-previous ()
+  (interactive)
+  (newline-and-indent)
+  (open-line-previous))
+
+(defun kill-matching-buffers-silently (pattern)
+  (interactive "sKill buffers matching: ")
+  (dolist (buffer (buffer-list))
+    (when (string-match pattern (buffer-name buffer))
+      (kill-buffer buffer))))
+
+(defun kill-ag-buffers ()
+  (interactive)
+  (kill-matching-buffers-silently "*ag "))
+
+(defun kill-log-buffers ()
+  (interactive)
+  (kill-matching-buffers-silently ".+\\.log$"))
+
+(defun toggle-fullscreen ()
+  (interactive)
+  (if (frame-parameter (selected-frame) 'fullscreen)
+      (set-frame-parameter (selected-frame) 'fullscreen nil)
+    (set-frame-parameter (selected-frame) 'fullscreen 'fullboth)))
+
+(defun unbind-variable (name)
+  (interactive "SVariable name: ")
+  (makunbound name))
+
+(defun unbind-function (name)
+  (interactive "SFunction name: ")
+  (fmakunbound name))
+#+END_SRC
+
+*** contact
+
+#+BEGIN_SRC emacs-lisp
+(defun config-insert-author ()
+  (interactive)
+  (insert jw-config-author-name))
+
+(defun config-goto-homepage ()
+  (interactive)
+  (browse-url jw-config-author-url))
+
+(defun config-goto-github ()
+  (interactive)
+  (browse-url jw-config-github-url))
+#+END_SRC
+
+*** emacs
+
+#+BEGIN_SRC emacs-lisp
+(defun emacs-config ()
+  (interactive)
+  (find-file (concat user-emacs-directory "emacs.org")))
+
+(defun emacs-reload-config ()
+  (interactive)
+  (load-file (concat user-emacs-directory "init.el")))
+
+(defun emacs-archive-packages-and-reload-config ()
+  (interactive)
+  (emacs-archive-packages)
+  (emacs-reload-config))
+
+(defun emacs-archive-packages-and-die ()
+  (interactive)
+  (emacs-archive-packages)
+  (save-buffers-kill-terminal))
+
+(defun emacs-archive-packages ()
+  (when (file-exists-p package-user-dir)
+    (let ((archive-dir (format "/tmp/emacs-elpa--%s" (current-time-string))))
+      (copy-directory package-user-dir archive-dir)
+      (delete-directory package-user-dir t))))
+#+END_SRC
+
+*** random
+
+#+BEGIN_SRC emacs-lisp
+(defun weather ()
+  "Runs the `weather' shell command which delegates to https://github.com/jfrazelle/weather."
+  (interactive)
+  (jw--quick-run-cmd-line-process "weather -days=3" "*weather*"))
+
+(defun javascript-equality-table ()
+  (interactive)
+  (browse-url "http://zero.milosz.ca/"))
+
+(defun soft-murmur-background-sound ()
+  (interactive)
+  (browse-url "http://asoftmurmur.com/?v=32632b490000"))
+
+(defun img-jack-nicholson-creepy-nod ()
+  (interactive)
+  (browse-url "http://img.pandawhale.com/post-30824-Jack-Nicholson-Creepy-Nodding-SRXv.gif"))
+
+(defun img-working-hard ()
+  (interactive)
+  (browse-url "http://i.imgur.com/Lkw5kmF.jpg"))
+
+(defun img-run ()
+  (interactive)
+  (browse-url "http://replygif.net/i/1238.gif"))
+
+(defun horse-books-dont-block ()
+  (interactive)
+  (browse-url "https://twitter.com/Horse_ebooks/status/364096530451410947"))
+#+END_SRC
+
+** key bindings
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-c M-e") 'eshell-cd-vc-root-dir-or-pwd-otherwise-other-buffer)
+
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+
+(global-set-key (kbd "C-M-g") 'goto-line)
+
+(global-set-key (kbd "C-M-9") 'winner-undo)
+(global-set-key (kbd "C-M-0") 'winner-redo)
+
+(global-set-key (kbd "M-RET") 'toggle-fullscreen)
+
+(global-set-key (kbd "C-x 9") 'toggle-window-split)
+(global-set-key (kbd "C-x p f") 'pop-to-buffer)
+
+(global-set-key (kbd "C-a") 'beginning-of-line-or-indentation)
+(global-set-key (kbd "C-o") 'open-line-previous)
+(global-set-key (kbd "C-j") 'newline-and-open-line-previous)
+
+(global-set-key (kbd "M-;") 'comment-dwim-region-or-line-or-end-of-line)
+
+(global-set-key (kbd "C-x n") 'switch-to-buffer) ;; helps with my current keyboard
+
+(global-unset-key (kbd "C-z"))
+(global-unset-key (kbd "C-x C-z"))
+#+END_SRC
+
+** scala
+
+#+BEGIN_SRC emacs-lisp
+(defun sbt ()
+  (interactive)
+  (if (eq major-mode 'sbt-mode)
+      (switch-to-buffer (other-buffer))
+    (sbt-start)))
+
+(defun sbt-current-test-in-buffer ()
+  (save-excursion
+    (goto-char (point-min))
+    (let* ((pkg-name (progn
+                       (re-search-forward "package ")
+                       (filter-buffer-substring (point) (point-at-eol))))
+           (test-name (progn
+                        (re-search-forward "\\(object\\|class\\) ")
+                        (filter-buffer-substring
+                         (point)
+                         (progn
+                           (re-search-forward " ")
+                           (forward-char -1)
+                           (point))))))
+      (concat pkg-name "." test-name))))
+
+(defun sbt-test-only-current-test ()
+  "Run test-only for the test in the current buffer"
+  (interactive)
+  (sbt-command (concat "test-only " (sbt-current-test-in-buffer))))
+
+(setq scala-indent:align-forms t
+      scala-indent:align-parameters t)
+
+(add-hook 'scala-mode-hook
+          '(lambda ()
+             (local-set-key (kbd "C-c s s") 'sbt)
+             (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)
+             (local-set-key (kbd "C-c s p") 'sbt-run-previous-command)))
+
+(add-hook 'sbt-mode-hook
+          '(lambda ()
+             (local-set-key (kbd "C-c s s") 'sbt)
+             (setq compilation-skip-threshold 1)))
+#+END_SRC
+
+* private
+
+#+BEGIN_SRC emacs-lisp
+(let ((path (concat user-emacs-directory "private")))
+  (when (file-exists-p path)
+    (add-to-list 'load-path path)
+    (mapcar 'load-file (directory-files path t "\.el$"))))
+#+END_SRC
+
+* post-hook
+
+#+BEGIN_SRC emacs-lisp
+(cd (getenv "HOME"))
+(toggle-fullscreen)
+(server-start)
+#+END_SRC
