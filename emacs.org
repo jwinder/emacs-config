@@ -41,8 +41,6 @@ ln -s /path/to/your/safe/directory $HOME/emacs/private
 ** future ideas
 *** TODO better documentation in this config
 *** TODO export to html and post to jwinder.io/emacs
-* pre-hook
-** nothing yet...
 * dependencies
 ** package management
 
@@ -212,7 +210,7 @@ ln -s /path/to/your/safe/directory $HOME/emacs/private
   :config (setq coffee-tab-width 2))
 #+END_SRC
 
-* internals
+* customization
 ** editor
 *** settings
 
@@ -694,7 +692,6 @@ $HOME/bin
                             (define-key org-mode-map (kbd "C-c n") 'org-narrow-or-widen)))
 #+END_SRC
 
-* public
 ** functions
 *** common
 
@@ -1039,7 +1036,7 @@ $HOME/bin
     (mapcar 'load-file (directory-files path t "\.el$"))))
 #+END_SRC
 
-* post-hook
+* finally
 
 #+BEGIN_SRC emacs-lisp
 (cd (getenv "HOME"))
