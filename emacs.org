@@ -3,7 +3,7 @@
 *** I prefer to clone this repository as `$HOME/emacs` and symlink it to `$HOME/.emacs.d`.
 
 #+BEGIN_SRC sh :tangle no
-git@github.com:jwinder/emacs.git $HOME/emacs
+git clone git@github.com:jwinder/emacs.git $HOME/emacs
 ln -s $HOME/emacs $HOME/.emacs.d
 #+END_SRC
 
