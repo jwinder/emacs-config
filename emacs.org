@@ -1,4 +1,20 @@
 * introduction
+** getting started
+*** I prefer to clone this repository as `$HOME/emacs` and symlink it to `$HOME/.emacs.d`.
+
+#+BEGIN_SRC sh :tangle no
+git@github.com:jwinder/emacs.git $HOME/emacs
+ln -s $HOME/emacs $HOME/.emacs.d
+#+END_SRC
+
+*** You can also create a `private` symlink to a directory in a safe place, containing elisp files with private or personal configs. This works well for irc passwords, tramp helpers, etc.
+
+#+BEGIN_SRC sh :tangle no
+ln -s /path/to/your/safe/directory $HOME/emacs/private
+#+END_SRC
+
+*** Now, start emacs.
+** org configs
 
 #+TITLE: jwinder emacs config
 
@@ -7,9 +23,13 @@
 
 #+LANGUAGE: en
 
+** contents of init.el
+
 #+BEGIN_SRC emacs-list :tangle no
 (org-babel-load-file (concat user-emacs-directory "emacs.org"))
 #+END_SRC
+
+** personal info vars
 
 #+BEGIN_SRC emacs-lisp
 (defconst jw-config-author-name "Joe Winder")
@@ -19,6 +39,7 @@
 #+END_SRC
 
 * pre-hook
+** nothing yet...
 * dependencies
 ** package management
 
@@ -329,30 +350,6 @@
 ** env path & vars
 
 #+BEGIN_SRC emacs-lisp
-;; opinionated way of setting system properties
-;; (you can have your shell rc file parse the same two files)
-
-;; e.g., keep something like this in your private dir:
-
-;; (require 'eshell)
-;; (defun jw-env-set ()
-;;   (interactive)
-;;   (jw--env-set-vars "/path/to/vars-file)
-;;   (jw--env-set-path "/path/to/path-file))
-;; (jw-env-set)
-;; (add-to-list 'eshell-mode-hook 'jw-env-set)
-
-;; where vars-file looks like:
-
-;; DROPBOX_HOME=$HOME/Dropbox
-;; DRIVE_HOME=$HOME/GoogleDrive
-
-;; and path-file looks like (will become PATH=$HOME/bin:/usr/local/bin:/usr/bin):
-
-;; $HOME/bin
-;; /usr/local/bin
-;; /usr/bin
-
 (setenv "EDITOR" "emacsclient")
 
 (defun jw--env-set-vars (vars-file)
@@ -372,6 +369,32 @@
     (setenv "PATH" path-str)
     (setq eshell-path-env path-str)))
 #+END_SRC
+
+*** these provide an opinionated way of setting up env vars & path
+
+#+BEGIN_SRC emacs-lisp :tangle no
+;; should be in a safe place
+(require 'eshell)
+(defun set-your-env ()
+  (interactive)
+  (jw--env-set-vars "/path/to/vars-file)
+  (jw--env-set-path "/path/to/path-file))
+(set-your-env)
+(add-to-list 'eshell-mode-hook 'set-your-env)
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+# example vars-file
+DROPBOX_HOME=$HOME/Dropbox
+DRIVE_HOME=$HOME/GoogleDrive
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+# example path-file
+$HOME/bin
+/usr/local/bin
+/usr/bin
+#+END_EXAMPLE
 
 ** helm
 
@@ -462,12 +485,6 @@
 #+BEGIN_SRC emacs-lisp
 (require 'rcirc)
 
-;; you should consider a custom nickname in your private dir!
-;; e.g.
-;; (setq rcirc-default-nick "your nick"
-;;       rcirc-default-user-name "your username"
-;;       rcirc-default-full-name "your full name")
-
 (setq rcirc-notify-message "%s: %s"
       rcirc-buffer-maximum-lines 2000)
 
@@ -494,6 +511,14 @@
 
 (add-hook 'window-configuration-change-hook
           '(lambda () (setq rcirc-fill-column (- (window-width) 2))))
+#+END_SRC
+
+*** you should consider a custom nickname in a safe place, e.g. the `private` dir
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq rcirc-default-nick "your nick"
+      rcirc-default-user-name "your username"
+      rcirc-default-full-name "your full name")
 #+END_SRC
 
 ** operating system
