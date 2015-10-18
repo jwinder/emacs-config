@@ -38,6 +38,9 @@ ln -s /path/to/your/safe/directory $HOME/emacs/private
 (defconst jw-config-github-url "https://github.com/jwinder/emacs")
 #+END_SRC
 
+** future ideas
+*** TODO better documentation in this config
+*** TODO export to html and post to jwinder.io/emacs
 * pre-hook
 ** nothing yet...
 * dependencies
