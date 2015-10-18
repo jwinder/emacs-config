@@ -25,7 +25,7 @@ ln -s /path/to/your/safe/directory $HOME/emacs/private
 
 ** contents of init.el
 
-#+BEGIN_SRC emacs-list :tangle no
+#+BEGIN_SRC emacs-lisp :tangle no
 (org-babel-load-file (concat user-emacs-directory "emacs.org"))
 #+END_SRC
 
