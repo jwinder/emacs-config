@@ -208,6 +208,17 @@
 
 (setq-default indent-tabs-mode nil)
 
+(add-to-list 'eshell-command-aliases-list '("d" "dired $1"))
+(add-to-list 'eshell-command-aliases-list '("e" "find-file $1"))
+(add-to-list 'eshell-command-aliases-list '("emacs" "find-file $1"))
+(add-to-list 'eshell-command-aliases-list '("vi" "find-file $1"))
+(add-to-list 'eshell-command-aliases-list '("vim" "find-file $1"))
+(add-to-list 'eshell-command-aliases-list '("less" "find-file $1"))
+(add-to-list 'eshell-command-aliases-list '("cat" "find-file $1"))
+(add-to-list 'eshell-command-aliases-list '("git" "hub $*"))
+(add-to-list 'eshell-command-aliases-list '("g" "hub $*"))
+(add-to-list 'eshell-command-aliases-list '(":q" "exit"))
+
 (setq default-tab-width 2)
 
 (setq js-indent-level 2)

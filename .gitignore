@@ -1,8 +1,7 @@
 .DS_STORE
 emacs.el
 private
-eshell/history
-eshell/lastdir
+eshell/
 tramp
 recentf
 flycheck_*
