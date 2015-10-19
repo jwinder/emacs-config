@@ -7,10 +7,11 @@ git clone git@github.com:jwinder/emacs.git $HOME/emacs
 ln -s $HOME/emacs $HOME/.emacs.d
 #+END_SRC
 
-*** You can also create a `private` symlink to a directory in a safe place, containing elisp files with private or personal configs. This works well for irc passwords, tramp helpers, etc.
+*** You can also create `private` or `private.org` symlinks to a directory or file in a safe place, containing private or personal settings. This works well for irc passwords, tramp helpers, etc.
 
 #+BEGIN_SRC sh :tangle no
-ln -s /path/to/your/safe/directory $HOME/emacs/private
+ln -s /path/to/your/safe/directory $HOME/emacs/private # directory of elisp files
+ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing elisp segments
 #+END_SRC
 
 *** Now, start emacs.
@@ -1074,6 +1075,10 @@ $HOME/bin
   (when (file-exists-p path)
     (add-to-list 'load-path path)
     (mapcar 'load-file (directory-files path t "\.el$"))))
+
+(let ((private-org (concat user-emacs-directory "private.org")))
+  (when (file-exists-p private-org)
+    (org-babel-load-file private-org)))
 #+END_SRC
 
 * finally

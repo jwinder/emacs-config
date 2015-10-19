@@ -1,6 +1,8 @@
 .DS_STORE
 emacs.el
 private
+private.org
+private.el
 eshell/
 tramp
 recentf
