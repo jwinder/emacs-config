@@ -603,10 +603,11 @@ $HOME/bin
   "Popup console for github hub commands."
   'magit-commands
   :man-page "hub"
-  :actions '((?b "Browse" github-browse)
+  :actions '((?g "Browse repository" github-browse)
              (?f "Browse file" github-browse-file)
-             (?i "Issues" github-issues)
-             (?p "Pulls" github-pulls)
+             (?b "Browse file with blame" github-browse-file-blame)
+             (?i "Browse issues" github-issues)
+             (?p "Browse pulls" github-pulls)
              (?c "Compare" github-compare)
              (?P "Pull Request" github-pull-request)))
 
