@@ -1023,6 +1023,8 @@ $HOME/bin
 
 (global-set-key (kbd "C-x n") 'switch-to-buffer) ;; helps with my current keyboard
 
+(global-set-key (kbd "C-c M-t") 'transpose-lines)
+
 (global-unset-key (kbd "C-z"))
 (global-unset-key (kbd "C-x C-z"))
 #+END_SRC
