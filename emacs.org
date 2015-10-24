@@ -967,6 +967,14 @@ $HOME/bin
 *** random
 
 #+BEGIN_SRC emacs-lisp
+(defun exercism-fetch-all ()
+  (interactive)
+  (shell-command "exercism fetch"))
+
+(defun exercism-submit-this-file ()
+  (interactive)
+  (shell-command (format "exercism submit %s" (buffer-file-name))))
+
 (defun weather ()
   "Runs the `weather' shell command which delegates to https://github.com/jfrazelle/weather."
   (interactive)
@@ -978,7 +986,7 @@ $HOME/bin
 
 (defun soft-murmur-background-sound ()
   (interactive)
-  (browse-url "http://asoftmurmur.com/?v=32632b490000"))
+  (browse-url "http://asoftmurmur.com/"))
 
 (defun img-jack-nicholson-creepy-nod ()
   (interactive)
