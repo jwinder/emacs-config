@@ -24,6 +24,8 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
 
 #+LANGUAGE: en
 
+#+SEQ_TODO: todo doing | done cancelled
+
 ** contents of init.el
 
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -39,9 +41,9 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
 (defconst jw-config-github-url "https://github.com/jwinder/emacs")
 #+END_SRC
 
-** future ideas
-*** TODO better documentation in this config
-*** TODO export to html and post to jwinder.io/emacs
+** todos
+*** todo better documentation in this config
+*** todo export to html and post to jwinder.io/emacs
 * dependencies
 ** package management
 
@@ -1014,7 +1016,7 @@ $HOME/bin
 #+END_SRC
 
 ** scala
-*** TODO make this better with https://gist.github.com/rubbish/50e96e83671eadf7f8bc
+*** todo make this better with https://gist.github.com/rubbish/50e96e83671eadf7f8bc
 
 #+BEGIN_SRC emacs-lisp
 (defun sbt ()
