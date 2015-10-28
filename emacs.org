@@ -99,7 +99,7 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
     (switch-to-buffer sql-text-buffer nil t)
     (set (make-local-variable 'sql-buffer) sqli-buffer)
     (switch-to-buffer sqli-buffer nil t)
-    (sql-send-string "\\x")))
+    (sql-send-string "\\x auto")))
 
 (defun jw--quick-run-cmd-line-process (full-command &optional buffer-name just-toggle-back-if-current-buffer-matches before-buffer-process-creation-hook)
   "Just a nice wrapper around `make-comint-in-buffer'. If `buffer-name' already exists, this will just switch to it. if `just-toggle-back-if-current-buffer-matches' is `non-nil' then we just switch back to `(other-buffer)'."
@@ -924,30 +924,16 @@ $HOME/bin
       (delete-directory package-user-dir t))))
 #+END_SRC
 
-*** music
+*** random
 
 #+BEGIN_SRC emacs-lisp
-(defun spotify-pause ()
+(defun exercism-fetch-all ()
   (interactive)
-  (spotify-cmd "playpause"))
+  (shell-command "exercism fetch"))
 
-(defun spotify-previous ()
+(defun exercism-submit-this-file ()
   (interactive)
-  (spotify-cmd "previous track"))
-
-(defun spotify-next ()
-  (interactive)
-  (spotify-cmd "next track"))
-
-(defun spotify-cmd (cmd)
-  (interactive "sCommand: ")
-  (ns-do-applescript (format "tell application \"Spotify\" to %s" cmd)))
-
-(global-unset-key (kbd "C-x m"))
-(global-set-key (kbd "C-x m m") 'spotify-pause)
-(global-set-key (kbd "C-x m SPC") 'spotify-pause)
-(global-set-key (kbd "C-x m p") 'spotify-previous)
-(global-set-key (kbd "C-x m n") 'spotify-next)
+  (shell-command (format "exercism submit %s" (buffer-file-name))))
 
 (defun sonic-pi-run ()
   (interactive)
@@ -959,21 +945,6 @@ $HOME/bin
 (defun sonic-pi-stop ()
   (interactive)
   (shell-command "sonic_pi stop"))
-
-(global-set-key (kbd "C-x m r") 'sonic-pi-run)
-(global-set-key (kbd "C-x m s") 'sonic-pi-stop)
-#+END_SRC
-
-*** random
-
-#+BEGIN_SRC emacs-lisp
-(defun exercism-fetch-all ()
-  (interactive)
-  (shell-command "exercism fetch"))
-
-(defun exercism-submit-this-file ()
-  (interactive)
-  (shell-command (format "exercism submit %s" (buffer-file-name))))
 
 (defun weather ()
   "Runs the `weather' shell command which delegates to https://github.com/jfrazelle/weather."
@@ -1008,6 +979,11 @@ $HOME/bin
 ** key bindings
 
 #+BEGIN_SRC emacs-lisp
+(global-unset-key (kbd "C-z"))
+(global-unset-key (kbd "C-x C-z"))
+(global-unset-key (kbd "C-x m"))
+(global-unset-key (kbd "C-x m m"))
+
 (global-set-key (kbd "C-c M-e") 'eshell-cd-vc-root-dir-or-pwd-otherwise-other-buffer)
 
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
@@ -1033,11 +1009,12 @@ $HOME/bin
 
 (global-set-key (kbd "C-c M-t") 'transpose-lines)
 
-(global-unset-key (kbd "C-z"))
-(global-unset-key (kbd "C-x C-z"))
+(global-set-key (kbd "C-x m r") 'sonic-pi-run)
+(global-set-key (kbd "C-x m s") 'sonic-pi-stop)
 #+END_SRC
 
 ** scala
+*** TODO make this better with https://gist.github.com/rubbish/50e96e83671eadf7f8bc
 
 #+BEGIN_SRC emacs-lisp
 (defun sbt ()
