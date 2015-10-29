@@ -1017,6 +1017,7 @@ $HOME/bin
 
 ** scala
 *** todo make this better with https://gist.github.com/rubbish/50e96e83671eadf7f8bc
+*** todo make the sbt-current-test-in-buffer better by finding all package lines and all class lines
 
 #+BEGIN_SRC emacs-lisp
 (defun sbt ()
@@ -1041,10 +1042,11 @@ $HOME/bin
                            (point))))))
       (concat pkg-name "." test-name))))
 
-(defun sbt-test-only-current-test ()
-  "Run test-only for the test in the current buffer"
-  (interactive)
-  (sbt-command (concat "test-only " (sbt-current-test-in-buffer))))
+(defun sbt-test-only-current-test (only-zzz)
+  (interactive "P")
+  (if only-zzz
+      (sbt-command (concat "test-only " (sbt-current-test-in-buffer) " -- ex zzz"))
+    (sbt-command (concat "test-only " (sbt-current-test-in-buffer)))))
 
 (setq scala-indent:align-forms t
       scala-indent:align-parameters t)
