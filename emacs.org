@@ -1025,27 +1025,30 @@ $HOME/bin
       (switch-to-buffer (other-buffer))
     (sbt-start)))
 
-(defun sbt-current-test-in-buffer ()
+(defun sbt-current-tests-in-buffer ()
+  (interactive)
   (save-excursion
-    (goto-char (point-min))
-    (let* ((pkg-name (progn
-                       (re-search-forward "package ")
-                       (filter-buffer-substring (point) (point-at-eol))))
-           (test-name (progn
-                        (re-search-forward "\\(object\\|class\\) ")
-                        (filter-buffer-substring
-                         (point)
-                         (progn
-                           (re-search-forward " ")
-                           (forward-char -1)
-                           (point))))))
-      (concat pkg-name "." test-name))))
+    (let* ((pkg-name-components)
+           (test-names))
+      (goto-char (point-min))
+      (while (re-search-forward "package " nil t)
+        (push (filter-buffer-substring (point) (point-at-eol)) pkg-name-components))
+      (goto-char (point-min))
+      (while (re-search-forward "\\(object\\|class\\) " nil t)
+        (push (filter-buffer-substring (point) (progn (re-search-forward " ")
+                                                      (forward-char -1)
+                                                      (point)))
+              test-names))
+      (let* ((full-pkg-name (string-join (reverse pkg-name-components) "."))
+             (full-test-names (mapcar #'(lambda (test-name) (string-join (list full-pkg-name "." test-name))) test-names))
+             (full-test-names-str (string-join full-test-names " ")))
+        (message full-test-names-str)))))
 
 (defun sbt-test-only-current-test (only-zzz)
   (interactive "P")
   (if only-zzz
-      (sbt-command (concat "test-only " (sbt-current-test-in-buffer) " -- ex zzz"))
-    (sbt-command (concat "test-only " (sbt-current-test-in-buffer)))))
+      (sbt-command (concat "test-only " (sbt-current-tests-in-buffer) " -- ex zzz"))
+    (sbt-command (concat "test-only " (sbt-current-tests-in-buffer)))))
 
 (setq scala-indent:align-forms t
       scala-indent:align-parameters t)
