@@ -1016,7 +1016,6 @@ $HOME/bin
 #+END_SRC
 
 ** scala
-*** todo make the sbt-current-test-in-buffer better by finding all package lines and all class lines
 
 #+BEGIN_SRC emacs-lisp
 (defun sbt ()
