@@ -421,6 +421,8 @@ $HOME/bin
 
 (setq helm-ag-base-command "pt -e --nocolor --nogroup")
 
+(setq helm-ag-insert-at-point 'word)
+
 (setq projectile-completion-system 'helm)
 
 (setq flycheck-standard-error-navigation nil
