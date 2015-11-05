@@ -665,7 +665,8 @@ $HOME/bin
       org-refile-targets '((org-agenda-files :maxlevel . 10))
       org-refile-use-outline-path t
       org-refile-allow-creating-parent-nodes '(confirm)
-      org-tags-column -100)
+      org-tags-column -100
+      org-src-preserve-indentation t)
 
 ;; try to guess which states various (some possibly shared) org files might use and add them to org-todo-keyword-faces
 (setq org--possible-todo-todo-states '("todo" "incoming")
