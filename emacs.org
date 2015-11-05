@@ -235,10 +235,9 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
 
 (setq-default indent-tabs-mode nil)
 
-(setq eshell-command-aliases-list
-  '(("d" "dired $1") ("e" "find-file $1") ("emacs" "find-file $1")
-    ("vi" "find-file $1") ("vim" "find-file $1") ("less" "find-file $1") ("cat" "find-file $1")
-    ("git" "hub $*") ("g" "hub $*") (":q" "exit")))
+(setq eshell-command-aliases-list '(("d" "dired $1") ("e" "find-file $1") ("emacs" "find-file $1") ("vi" "find-file $1")
+                                    ("vim" "find-file $1") ("less" "find-file $1") ("cat" "find-file $1")
+                                    ("git" "hub $*") ("g" "hub $*") (":q" "exit")))
 
 (setq default-tab-width 2)
 
