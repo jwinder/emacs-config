@@ -418,7 +418,7 @@ $HOME/bin
       helm-imenu-fuzzy-match t
       helm-locate-fuzzy-match t)
 
-(setq helm-ag-base-command "pt -e --nocolor --nogroup")
+(setq helm-ag-base-command "pt -i -e --nocolor --nogroup")
 
 (setq helm-ag-insert-at-point 'word)
 
