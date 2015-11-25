@@ -153,6 +153,9 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
 
 (use-package magit :ensure t)
 
+(use-package restclient :ensure t
+  :mode (("\\.http$" . restclient-mode)))
+
 (use-package expand-region :ensure t
   :bind (("C-=" . er/expand-region)))
 
@@ -950,11 +953,6 @@ $HOME/bin
 (defun sonic-pi-stop ()
   (interactive)
   (shell-command "sonic_pi stop"))
-
-(defun weather ()
-  "Runs the `weather' shell command which delegates to https://github.com/jfrazelle/weather."
-  (interactive)
-  (jw--quick-run-cmd-line-process "weather -days=3" "*weather*"))
 
 (defun javascript-equality-table ()
   (interactive)
