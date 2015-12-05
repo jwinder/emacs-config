@@ -585,11 +585,17 @@ $HOME/bin
   (interactive)
   (kill-matching-buffers-silently ".+\\.log$"))
 
-(defun toggle-fullscreen ()
+(defalias 'toggle-fullscreen 'toggle-frame-fullscreen)
+
+(defun fullscreen ()
   (interactive)
-  (if (frame-parameter (selected-frame) 'fullscreen)
-      (set-frame-parameter (selected-frame) 'fullscreen nil)
-    (set-frame-parameter (selected-frame) 'fullscreen 'fullboth)))
+  (unless (frame-parameter (selected-frame) 'fullscreen)
+    (toggle-frame-fullscreen)))
+
+(defun fullscreen-off ()
+  (interactive)
+  (when (frame-parameter (selected-frame) 'fullscreen)
+    (toggle-frame-fullscreen)))
 
 (defun unbind-variable (name)
   (interactive "SVariable name: ")
@@ -709,7 +715,7 @@ $HOME/bin
 (global-set-key (kbd "C-M-9") 'winner-undo)
 (global-set-key (kbd "C-M-0") 'winner-redo)
 
-(global-set-key (kbd "M-RET") 'toggle-fullscreen)
+(global-set-key (kbd "M-RET") 'toggle-frame-fullscreen)
 
 (global-set-key (kbd "C-x 9") 'toggle-window-split)
 (global-set-key (kbd "C-x p f") 'pop-to-buffer)
@@ -1084,6 +1090,6 @@ $HOME/bin
 
 #+BEGIN_SRC emacs-lisp
 (cd (getenv "HOME"))
-(toggle-fullscreen)
+(fullscreen)
 (server-start)
 #+END_SRC
