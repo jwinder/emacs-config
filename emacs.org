@@ -627,21 +627,12 @@ $HOME/bin
 ** org
 
 #+BEGIN_SRC emacs-lisp
-(defvar jw-org-todo-file "/path/to/my/org/todo.org") ;; override this in the private dir
-
-(setq org-current-org-buffer-narrowed-to-subtree nil)
-(defun org-narrow-or-widen ()
-  (interactive)
-  (if org-current-org-buffer-narrowed-to-subtree
-      (progn (setq-local org-current-org-buffer-narrowed-to-subtree nil)
-             (widen))
-    (progn (setq-local org-current-org-buffer-narrowed-to-subtree t)
-           (org-narrow-to-subtree))))
-
 (defun todo ()
   (interactive)
-  (find-file jw-org-todo-file)
-  (cd (getenv "HOME")))
+  (if (boundp 'jw-org-todo-file)
+      (progn (find-file jw-org-todo-file)
+             (cd (getenv "HOME")))
+    (message "Please set `jw-org-todo-file' to your todo org file location!")))
 
 (defun toggle-todo ()
   (interactive)
@@ -651,6 +642,15 @@ $HOME/bin
 
 (global-set-key (kbd "C-c o") 'toggle-todo)
 (global-set-key (kbd "C-c a") 'org-agenda)
+
+(setq org-current-org-buffer-narrowed-to-subtree nil)
+(defun org-narrow-or-widen ()
+  (interactive)
+  (if org-current-org-buffer-narrowed-to-subtree
+      (progn (setq-local org-current-org-buffer-narrowed-to-subtree nil)
+             (widen))
+    (progn (setq-local org-current-org-buffer-narrowed-to-subtree t)
+           (org-narrow-to-subtree))))
 
 (setq org-speed-commands-user
       '(("P" . org-shiftmetaup) ;; move item up
