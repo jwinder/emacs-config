@@ -3,6 +3,8 @@ emacs.el
 private
 private.org
 private.el
+env-path
+env-vars
 eshell/
 tramp
 recentf

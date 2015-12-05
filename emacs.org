@@ -129,6 +129,57 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
     (jw--quick-run-cmd-line-process full-command nil nil add-command-to-eshell-history)))
 #+END_SRC
 
+** env
+
+#+BEGIN_SRC emacs-lisp
+  (require 'eshell)
+  (require 'subr-x)
+
+  (setenv "EDITOR" "emacsclient")
+
+  (defun jw--env-set-vars (vars-file)
+    (dolist (line (jw--read-file-lines-to-string vars-file))
+      (unless (= 0 (length line))
+        (let* ((tokens (split-string line "="))
+               (name (car tokens))
+               (value-string (mapconcat 'identity (cdr tokens) "="))
+               (value-env-vars-parsed (substitute-env-vars value-string)) ;; parse lines containing env vars
+               (value (shell-command-to-string (format "echo %s" value-env-vars-parsed)))) ;; parse shell commands in lines
+          (setenv name (string-trim value))))))
+
+  (defun jw--env-set-path (path-file)
+    (let* ((path-list (mapcar 'substitute-env-vars (jw--read-file-lines-to-string path-file)))
+           (path-str (mapconcat 'identity path-list ":")))
+      (setq exec-path path-list)
+      (setenv "PATH" path-str)
+      (setq eshell-path-env path-str)))
+
+  (defun jw-env-set ()
+    (interactive)
+    (let ((vars-file (concat user-emacs-directory "env-vars"))
+          (path-file (concat user-emacs-directory "env-path")))
+      (when (file-exists-p vars-file) (jw--env-set-vars vars-file))
+      (when (file-exists-p path-file) (jw--env-set-path path-file))))
+
+  (jw-env-set)
+  (add-to-list 'eshell-mode-hook 'jw-env-set)
+#+END_SRC
+
+*** these provide an opinionated way of setting up env vars & path
+
+#+BEGIN_EXAMPLE
+# example env-vars file, symlinked to ~/.emacs.d/env-vars from a safe place
+DROPBOX_HOME=$HOME/Dropbox
+DRIVE_HOME=$HOME/GoogleDrive
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+# example env-path file, symblinked to ~/.emacs.d/env-path from a safe place
+$HOME/bin
+/usr/local/bin
+/usr/bin
+#+END_EXAMPLE
+
 ** packages
 *** common
 
@@ -349,55 +400,6 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
 
 " jw-config-github-url jw-config-author-email jw-config-author-name))
 #+END_SRC
-
-** env path & vars
-
-#+BEGIN_SRC emacs-lisp
-(setenv "EDITOR" "emacsclient")
-
-(defun jw--env-set-vars (vars-file)
-  (dolist (line (jw--read-file-lines-to-string vars-file))
-    (unless (= 0 (length line))
-      (let* ((tokens (split-string line "="))
-             (name (car tokens))
-             (value-string (mapconcat 'identity (cdr tokens) "="))
-             (value-env-vars-parsed (substitute-env-vars value-string)) ;; parse lines containing env vars
-             (value (shell-command-to-string (format "echo %s" value-env-vars-parsed)))) ;; parse shell commands in lines
-        (setenv name (string-trim value))))))
-
-(defun jw--env-set-path (path-file)
-  (let* ((path-list (mapcar 'substitute-env-vars (jw--read-file-lines-to-string path-file)))
-         (path-str (mapconcat 'identity path-list ":")))
-    (setq exec-path path-list)
-    (setenv "PATH" path-str)
-    (setq eshell-path-env path-str)))
-#+END_SRC
-
-*** these provide an opinionated way of setting up env vars & path
-
-#+BEGIN_SRC emacs-lisp :tangle no
-;; should be in a safe place
-(require 'eshell)
-(defun set-your-env ()
-  (interactive)
-  (jw--env-set-vars "/path/to/vars-file)
-  (jw--env-set-path "/path/to/path-file))
-(set-your-env)
-(add-to-list 'eshell-mode-hook 'set-your-env)
-#+END_SRC
-
-#+BEGIN_EXAMPLE
-# example vars-file
-DROPBOX_HOME=$HOME/Dropbox
-DRIVE_HOME=$HOME/GoogleDrive
-#+END_EXAMPLE
-
-#+BEGIN_EXAMPLE
-# example path-file
-$HOME/bin
-/usr/local/bin
-/usr/bin
-#+END_EXAMPLE
 
 ** helm
 
