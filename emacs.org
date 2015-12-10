@@ -867,7 +867,7 @@ $HOME/bin
 (require 'magit)
 (require 'subr-x)
 
-(global-set-key (kbd "M-g") 'magit-dispatch-popup)
+(global-set-key (kbd "M-g") 'magit-status)
 
 (setq magit-revert-buffers t
       magit-push-always-verify nil
@@ -937,10 +937,7 @@ $HOME/bin
              (?c "Compare" github-compare)
              (?P "Pull Request" github-pull-request)))
 
-(magit-define-popup-action 'magit-dispatch-popup ?g "Status" 'magit-status)
 (magit-define-popup-action 'magit-dispatch-popup ?x "Extras" 'magit-git-extras-popup)
-
-(advice-add 'helm-projectile-vc :after #'(lambda (arg) (magit-dispatch-popup)))
 #+END_SRC
 
 ** org
