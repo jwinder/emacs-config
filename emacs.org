@@ -868,6 +868,7 @@ $HOME/bin
 (require 'subr-x)
 
 (global-set-key (kbd "M-g") 'magit-status)
+(global-set-key (kbd "C-c M-g") 'magit-dispatch-popup)
 
 (setq magit-revert-buffers t
       magit-push-always-verify nil
