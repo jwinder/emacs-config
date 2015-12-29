@@ -870,9 +870,7 @@ $HOME/bin
 (global-set-key (kbd "M-g") 'magit-status)
 (global-set-key (kbd "C-c M-g") 'magit-dispatch-popup)
 
-(setq magit-revert-buffers t
-      magit-push-always-verify nil
-      magit-push-arguments '("--set-upstream"))
+(setq magit-revert-buffers t)
 
 (defun magit-x-undo ()
   (interactive)
