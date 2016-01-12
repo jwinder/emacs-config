@@ -1051,8 +1051,8 @@ $HOME/bin
 (defun sbt-test-only-current-test (only-zzz)
   (interactive "P")
   (if only-zzz
-      (sbt-command (concat "test-only " (sbt-current-tests-in-buffer) " -- ex zzz"))
-    (sbt-command (concat "test-only " (sbt-current-tests-in-buffer)))))
+      (sbt-command (concat "test-only " (sbt-current-tests-in-buffer) " -- showtimes -- ex zzz"))
+    (sbt-command (concat "test-only " (sbt-current-tests-in-buffer) " -- showtimes"))))
 
 (setq scala-indent:align-forms t
       scala-indent:align-parameters t)
