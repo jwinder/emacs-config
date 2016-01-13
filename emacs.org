@@ -292,7 +292,7 @@ $HOME/bin
 
 (setq eshell-command-aliases-list '(("d" "dired $1") ("e" "find-file $1") ("emacs" "find-file $1") ("vi" "find-file $1")
                                     ("vim" "find-file $1") ("less" "find-file $1") ("cat" "find-file $1")
-                                    ("git" "hub $*") ("g" "hub $*") (":q" "exit")))
+                                    ("git" "hub $*") ("g" "hub $*") (":q" "exit") (":Q" "exit")))
 
 (setq default-tab-width 2)
 
