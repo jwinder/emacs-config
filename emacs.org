@@ -263,10 +263,11 @@ $HOME/bin
          ("Vagrantfile$" . ruby-mode)
          ("Berksfile$" . ruby-mode)))
 
-(use-package go-mode :ensure t)
+(use-package go-mode :ensure t
+  :config (add-hook 'before-save-hook 'gofmt-before-save))
 
 (use-package haskell-mode :ensure t
-  :config (progn (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)))
+  :config (add-hook 'haskell-mode-hook 'turn-on-haskell-indent))
 
 (use-package coffee-mode :ensure t
   :config (setq coffee-tab-width 2))
