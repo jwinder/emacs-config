@@ -45,22 +45,6 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
 *** todo better documentation in this config
 *** todo export to html and post to jwinder.io/emacs
 * dependencies
-** package management
-
-#+BEGIN_SRC emacs-lisp
-(require 'package)
-
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-
-(package-initialize)
-
-(unless (file-exists-p package-user-dir) (package-refresh-contents))
-(unless (package-installed-p 'use-package) (package-install 'use-package))
-
-(require 'use-package)
-#+END_SRC
-
 ** helper functions
 
 #+BEGIN_SRC emacs-lisp
@@ -192,7 +176,7 @@ $HOME/bin
 
 (use-package scratch :ensure t)
 
-(use-package org :ensure t)
+(use-package ob-http :ensure t)
 
 (use-package gist :ensure t
   :config (setq gist-view-gist t))
@@ -278,6 +262,12 @@ $HOME/bin
 *** settings
 
 #+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t) (ruby . t) (sql . t) (http . t) (sh . t)))
+
+(setq org-confirm-babel-evaluate nil)
+
 (ansi-color-for-comint-mode-on)
 
 (fset 'yes-or-no-p 'y-or-n-p)
