@@ -961,8 +961,8 @@ $HOME/bin
            (org-narrow-to-subtree))))
 
 (setq org-speed-commands-user
-      '(("P" . org-shiftmetaup) ;; move item up
-        ("N" . org-shiftmetadown) ;; move item down
+      '(("P" . org-move-subtree-up) ;; move item up
+        ("N" . org-move-subtree-down) ;; move item down
         ("h" . org-speed-command-help)))
 
 (setq org-use-speed-commands t
