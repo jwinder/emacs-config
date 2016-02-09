@@ -981,7 +981,7 @@ $HOME/bin
 
 ;; try to guess which states various (some possibly shared) org files might use and add them to org-todo-keyword-faces
 (setq org--possible-todo-todo-states '("todo" "incoming")
-      org--possible-blocked-todo-states '("blocked" "halted" "stalled" "paused")
+      org--possible-blocked-todo-states '("blocked" "halted" "stalled" "paused" "pr")
       org--possible-doing-todo-states '("doing" "going")
       org--possible-delegated-todo-states '("delegated" "assigned")
       org--possible-done-todo-states '("done" "cancelled" "canceled" "finished" "boom"))
