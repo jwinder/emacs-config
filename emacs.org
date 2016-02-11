@@ -323,9 +323,11 @@ $HOME/bin
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
-(setq git-commit-summary-max-length 150)
-
 (put 'temporary-file-directory 'standard-value '((file-name-as-directory "/tmp")))
+
+(setq undo-tree-auto-save-history t)
+
+(add-to-list 'undo-tree-history-directory-alist `("" . ,(concat user-emacs-directory "undo")))
 #+END_SRC
 
 *** macros
