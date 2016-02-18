@@ -262,12 +262,6 @@ $HOME/bin
 *** settings
 
 #+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t) (ruby . t) (sql . t) (http . t) (sh . t)))
-
-(setq org-confirm-babel-evaluate nil)
-
 (ansi-color-for-comint-mode-on)
 
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -961,6 +955,12 @@ $HOME/bin
              (widen))
     (progn (setq-local org-current-org-buffer-narrowed-to-subtree t)
            (org-narrow-to-subtree))))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t) (ruby . t) (sql . t) (http . t) (sh . t)))
+
+(setq org-confirm-babel-evaluate nil)
 
 (setq org-speed-commands-user
       '(("P" . org-move-subtree-up) ;; move item up
