@@ -25,10 +25,26 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
 #+LANGUAGE: en
 
 #+SEQ_TODO: todo doing | done cancelled
-
 ** contents of init.el
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC sh :tangle no :results code
+cat init.el
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC sh
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+(package-initialize)
+
+(unless (file-exists-p package-user-dir) (package-refresh-contents))
+(unless (package-installed-p 'use-package) (package-install 'use-package))
+
+(require 'use-package)
+(use-package org-plus-contrib :ensure t)
+
+(setq package-enable-at-startup nil)
 (org-babel-load-file (concat user-emacs-directory "emacs.org"))
 #+END_SRC
 
@@ -87,6 +103,8 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
     (switch-to-buffer sqli-buffer nil t)
     (sql-send-string "\\x auto")))
 
+;; todo -- consider using prodigy instead of comint
+;; https://github.com/rejeep/prodigy.el
 (defun jw--quick-run-cmd-line-process (full-command &optional buffer-name just-toggle-back-if-current-buffer-matches before-buffer-process-creation-hook)
   "Just a nice wrapper around `make-comint-in-buffer'. If `buffer-name' already exists, this will just switch to it. if `just-toggle-back-if-current-buffer-matches' is `non-nil' then we just switch back to `(other-buffer)'."
   (if (and just-toggle-back-if-current-buffer-matches buffer-name (string= (buffer-name) buffer-name))
@@ -99,6 +117,7 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
              (name-for-buffer (or buffer-name (concat "*" (string-trim full-command) "*")))
              (buffer (get-buffer-create name-for-buffer)))
         (if command-name
+
             (progn
               (when before-buffer-process-creation-hook (funcall before-buffer-process-creation-hook))
               (switch-to-buffer buffer)
@@ -178,18 +197,19 @@ $HOME/bin
 
 (use-package ob-http :ensure t)
 
-(use-package gist :ensure t
-  :config (setq gist-view-gist t))
+(use-package magit :ensure t)
+
+(use-package magit-gh-pulls
+  :ensure t
+  :config (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls))
 
 (use-package github-browse-file :ensure t)
 
+(use-package gist :ensure t
+  :config (setq gist-view-gist t))
+
 (use-package undo-tree :ensure t
   :config (global-undo-tree-mode 1))
-
-(use-package magit :ensure t)
-
-(use-package restclient :ensure t
-  :mode (("\\.http$" . restclient-mode)))
 
 (use-package expand-region :ensure t
   :bind (("C-=" . er/expand-region)))
@@ -855,6 +875,7 @@ $HOME/bin
 #+BEGIN_SRC emacs-lisp
 (require 'magit)
 (require 'subr-x)
+(require 'magit-gh-pulls)
 
 (global-set-key (kbd "M-g") 'magit-status)
 (global-set-key (kbd "C-c M-g") 'magit-dispatch-popup)
@@ -896,12 +917,6 @@ $HOME/bin
   (interactive)
   (shell-command "hub browse -- compare"))
 
-(defun github-pull-request (head-branch base-branch)
-  (interactive (list (magit-read-branch "Create Pull Request starting at" (magit-get-current-branch))
-                     (magit-read-branch "Request to merge into" (magit-get-previous-branch))))
-  (let ((hub-pull-request (format "hub pull-request -h %s -b %s" head-branch base-branch)))
-    (async-shell-command hub-pull-request "*hub pull-request*")))
-
 (magit-define-popup magit-git-extras-popup
   "Popup console for git-extras commands."
   'magit-commands
@@ -922,10 +937,10 @@ $HOME/bin
              (?b "Browse file with blame" github-browse-file-blame)
              (?i "Browse issues" github-issues)
              (?p "Browse pulls" github-pulls)
-             (?c "Compare" github-compare)
-             (?P "Pull Request" github-pull-request)))
+             (?c "Compare" github-compare)))
 
-(magit-define-popup-action 'magit-dispatch-popup ?x "Extras" 'magit-git-extras-popup)
+(magit-define-popup-action 'magit-dispatch-popup "x" "Extras" 'magit-git-extras-popup)
+(magit-define-popup-action 'magit-dispatch-popup "#" "Github pulls" 'magit-gh-pulls-popup)
 #+END_SRC
 
 ** org
