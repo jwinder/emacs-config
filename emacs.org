@@ -922,8 +922,8 @@ $HOME/bin
              (?p "Browse pulls" github-pulls)
              (?c "Compare" github-compare)))
 
-(magit-define-popup-action 'magit-dispatch-popup "x" "Extras" 'magit-git-extras-popup)
-(magit-define-popup-action 'magit-dispatch-popup "#" "Github pulls" 'magit-gh-pulls-popup)
+(magit-define-popup-action 'magit-dispatch-popup ?# "Github pulls" 'magit-gh-pulls-popup)
+(magit-define-popup-action 'magit-dispatch-popup ?x "Extras" 'magit-git-extras-popup)
 #+END_SRC
 
 ** org
