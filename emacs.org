@@ -180,6 +180,8 @@ $HOME/bin
 
 (use-package ob-http :ensure t)
 
+(use-package org-pomodoro :ensure t)
+
 (use-package magit :ensure t)
 
 (use-package magit-gh-pulls
@@ -927,6 +929,8 @@ $HOME/bin
 ** org
 
 #+BEGIN_SRC emacs-lisp
+(require 'org-pomodoro)
+
 (defun todo ()
   (interactive)
   (if (boundp 'jw-org-todo-file)
@@ -982,6 +986,12 @@ $HOME/bin
                               (mapcar 'org--make-blue-face-entries org--possible-doing-todo-states)
                               (mapcar 'org--make-blue-face-entries org--possible-delegated-todo-states)
                               (mapcar 'org--make-green-face-entries org--possible-done-todo-states))))
+
+(setq org-pomodoro-format "Pomodoro %s"
+      org-pomodoro-short-break-format "Short Break %s"
+      org-pomodoro-long-break-format "Long Break %s")
+
+(custom-set-faces '(org-pomodoro-mode-line ((nil (:foreground "#2aa198")))))
 
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
