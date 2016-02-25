@@ -960,7 +960,8 @@ $HOME/bin
       org-refile-use-outline-path t
       org-refile-allow-creating-parent-nodes '(confirm)
       org-tags-column -100
-      org-src-preserve-indentation t)
+      org-src-preserve-indentation t
+      org-cycle-open-archived-trees t)
 
 (setq org--possible-todo-todo-states '("todo" "incoming")
       org--possible-blocked-todo-states '("blocked" "halted" "stalled" "paused" "pr")
