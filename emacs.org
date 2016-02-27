@@ -878,6 +878,11 @@ $HOME/bin
   (interactive)
   (async-shell-command "git swoosh" "*git swoosh*"))
 
+(defun magit-x-zap ()
+  "This is a local script I use to safely fetch, merge and cleanup of local branches."
+  (interactive)
+  (async-shell-command "git zap" "*git zap*"))
+
 (defun github-browse ()
   (interactive)
   (shell-command "hub browse"))
@@ -903,6 +908,7 @@ $HOME/bin
              (?r "Repl" magit-x-repl)
              (?U "Undo commit" magit-x-undo)
              (?S "Swoosh repo" magit-x-swoosh)
+             (?Z "Zap repo" magit-x-zap)
              (?D "Obliterate file" magit-x-obliterate)))
 
 (magit-define-popup magit-github-popup
