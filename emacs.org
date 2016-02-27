@@ -384,15 +384,8 @@ $HOME/bin
 (add-hook 'minibuffer-setup-hook '(lambda ()
                                     (set (make-local-variable 'face-remapping-alist) '((default :height 1.3)))))
 
-(setq inhibit-startup-message t)
-
-(setq initial-scratch-message (format "\
-;; Welcome to %s.
-;; Any questions? Email me at %s. -- %s
-
-;; Disclaimer: This config is a buyer beware product.
-
-" jw-config-github-url jw-config-author-email jw-config-author-name))
+(setq inhibit-startup-message t
+      initial-scratch-message "")
 #+END_SRC
 
 ** operating system
@@ -947,6 +940,7 @@ $HOME/bin
 
 (global-set-key (kbd "C-c o") 'toggle-todo)
 (global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c C-x <tab>") 'org-pomodoro)
 
 (org-babel-do-load-languages 'org-babel-load-languages
                              '((emacs-lisp . t) (ruby . t) (sql . t) (http . t) (sh . t)))
@@ -996,6 +990,7 @@ $HOME/bin
 (custom-set-faces '(org-pomodoro-mode-line ((nil (:foreground "#2aa198")))))
 
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.org-archive$" . org-mode))
 
 (add-hook 'org-mode-hook '(lambda () (text-scale-set 2)))
 #+END_SRC
