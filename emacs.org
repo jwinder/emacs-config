@@ -991,7 +991,8 @@ $HOME/bin
 
 (setq org-pomodoro-format "Pomodoro %s"
       org-pomodoro-short-break-format "Short Break %s"
-      org-pomodoro-long-break-format "Long Break %s")
+      org-pomodoro-long-break-format "Long Break %s"
+      org-pomodoro-ask-upon-killing nil)
 
 (custom-set-faces '(org-pomodoro-mode-line ((nil (:foreground "#2aa198")))))
 
