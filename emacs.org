@@ -946,7 +946,12 @@ $HOME/bin
 
 (global-set-key (kbd "C-c o") 'toggle-todo)
 (global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
 (global-set-key (kbd "C-c C-x <tab>") 'org-pomodoro)
+
+(add-hook 'org-mode-hook '(lambda ()
+                            (local-set-key (kbd "C-c <") 'org-time-stamp)
+                            (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)))
 
 (org-babel-do-load-languages 'org-babel-load-languages
                              '((emacs-lisp . t) (ruby . t) (sql . t) (http . t) (sh . t)))
@@ -964,7 +969,7 @@ $HOME/bin
       org-src-preserve-indentation t
       org-cycle-open-archived-trees t)
 
-(setq org--possible-todo-todo-states '("todo" "incoming")
+(setq org--possible-todo-todo-states '("todo" "incoming" "captured")
       org--possible-blocked-todo-states '("blocked" "halted" "stalled" "paused" "pr")
       org--possible-doing-todo-states '("doing" "going")
       org--possible-delegated-todo-states '("delegated" "assigned")
