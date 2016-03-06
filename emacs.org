@@ -959,6 +959,8 @@ $HOME/bin
 (setq org-confirm-babel-evaluate nil)
 
 (setq org-use-speed-commands t
+      org-enforce-todo-dependencies t
+      org-enforce-todo-checkbox-dependencies t
       org-return-follows-link t
       org-hide-leading-stars t
       org-clock-clocked-in-display 'mode-line
@@ -970,9 +972,9 @@ $HOME/bin
       org-cycle-open-archived-trees t)
 
 (setq org--possible-todo-todo-states '("todo" "incoming" "captured")
-      org--possible-blocked-todo-states '("blocked" "halted" "stalled" "paused" "pr")
+      org--possible-blocked-todo-states '("blocked" "halted" "stalled" "paused")
       org--possible-doing-todo-states '("doing" "going")
-      org--possible-delegated-todo-states '("delegated" "assigned")
+      org--possible-delegated-todo-states '("delegated" "assigned" "pr")
       org--possible-done-todo-states '("done" "cancelled" "canceled" "finished" "boom"))
 
 (defun org--make-single-todo-face-entry (state color)
