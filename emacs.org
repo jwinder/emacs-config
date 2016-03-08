@@ -320,6 +320,10 @@ $HOME/bin
 
 (add-to-list 'auto-mode-alist '("\\.scss$" . css-mode))
 
+(add-hook 'text-mode-hook 'flyspell-mode)
+
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (put 'temporary-file-directory 'standard-value '((file-name-as-directory "/tmp")))
