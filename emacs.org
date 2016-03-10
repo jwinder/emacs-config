@@ -83,11 +83,8 @@ cat init.el
          (sqli-buffer (if sql-buffer (progn (split-window) sql-buffer) (sql-product-interactive product new-name))))
     (switch-to-buffer sql-text-buffer nil t)
     (set (make-local-variable 'sql-buffer) sqli-buffer)
-    (switch-to-buffer sqli-buffer nil t)
-    (sql-send-string "\\x auto")))
+    (switch-to-buffer sqli-buffer nil t)))
 
-;; todo -- consider using prodigy instead of comint
-;; https://github.com/rejeep/prodigy.el
 (defun jw--quick-run-cmd-line-process (full-command &optional buffer-name just-toggle-back-if-current-buffer-matches before-buffer-process-creation-hook)
   "Just a nice wrapper around `make-comint-in-buffer'. If `buffer-name' already exists, this will just switch to it. if `just-toggle-back-if-current-buffer-matches' is `non-nil' then we just switch back to `(other-buffer)'."
   (if (and just-toggle-back-if-current-buffer-matches buffer-name (string= (buffer-name) buffer-name))
