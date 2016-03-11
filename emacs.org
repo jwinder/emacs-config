@@ -1063,12 +1063,19 @@ $HOME/bin
       (sbt-command (concat "test-only " (sbt-current-tests-in-buffer) " -- showtimes -- ex zzz"))
     (sbt-command (concat "test-only " (sbt-current-tests-in-buffer) " -- showtimes"))))
 
+(defun sbt-compile (test-compile)
+  (interactive "P")
+  (if test-compile
+      (sbt-command "test:compile")
+    (sbt-command "compile")))
+
 (setq scala-indent:align-forms t
       scala-indent:align-parameters t)
 
 (add-hook 'scala-mode-hook
           '(lambda ()
              (local-set-key (kbd "C-c s s") 'sbt)
+             (local-set-key (kbd "C-c s c") 'sbt-compile)
              (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)
              (local-set-key (kbd "C-c s p") 'sbt-run-previous-command)))
 
