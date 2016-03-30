@@ -194,7 +194,8 @@ $HOME/bin
   :config (global-undo-tree-mode 1))
 
 (use-package expand-region :ensure t
-  :bind (("C-=" . er/expand-region)))
+  :bind (("C-=" . er/expand-region)
+         ("C-+" . er/contract-region)))
 
 (use-package multiple-cursors :ensure t
   :bind (("C-*" . mc/mark-all-like-this)
@@ -319,6 +320,8 @@ $HOME/bin
 
 (add-hook 'text-mode-hook 'flyspell-mode)
 
+(add-hook 'prog-mode-hook 'hs-minor-mode)
+
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (put 'temporary-file-directory 'standard-value '((file-name-as-directory "/tmp")))
@@ -326,6 +329,8 @@ $HOME/bin
 (setq undo-tree-auto-save-history t)
 
 (add-to-list 'undo-tree-history-directory-alist `("" . ,(concat user-emacs-directory "undo")))
+
+(put 'narrow-to-region 'disabled nil)
 #+END_SRC
 
 *** macros
