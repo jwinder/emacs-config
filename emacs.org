@@ -1072,20 +1072,18 @@ $HOME/bin
       (sbt-command "test:compile")
     (sbt-command "compile")))
 
+(defun sbt-turn-on-extra-bindings ()
+  (interactive)
+  (local-set-key (kbd "C-c s s") 'sbt)
+  (local-set-key (kbd "C-c s c") 'sbt-compile)
+  (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)
+  (local-set-key (kbd "C-c s p") 'sbt-run-previous-command))
+
 (setq scala-indent:align-forms t
       scala-indent:align-parameters t)
 
-(add-hook 'scala-mode-hook
-          '(lambda ()
-             (local-set-key (kbd "C-c s s") 'sbt)
-             (local-set-key (kbd "C-c s c") 'sbt-compile)
-             (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)
-             (local-set-key (kbd "C-c s p") 'sbt-run-previous-command)))
-
-(add-hook 'sbt-mode-hook
-          '(lambda ()
-             (local-set-key (kbd "C-c s s") 'sbt)
-             (setq compilation-skip-threshold 1)))
+(add-hook 'scala-mode-hook 'sbt-turn-on-extra-bindings)
+(add-hook 'sbt-mode-hook 'sbt-turn-on-extra-bindings)
 #+END_SRC
 
 * private
