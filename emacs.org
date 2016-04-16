@@ -43,6 +43,7 @@ cat init.el
 ** todos
 *** todo better documentation in this config
 *** todo export to html and post to jwinder.io/emacs
+*** todo testing something
 * dependencies
 ** helper functions
 
