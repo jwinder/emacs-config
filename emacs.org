@@ -969,7 +969,8 @@ $HOME/bin
       org-tags-column -100
       org-src-preserve-indentation t
       org-src-window-setup 'current-window
-      org-cycle-open-archived-trees t)
+      org-cycle-open-archived-trees t
+      org-hide-block-startup t)
 
 (setq org--possible-todo-todo-states '("todo" "incoming" "captured")
       org--possible-blocked-todo-states '("blocked" "halted" "stalled" "paused")
