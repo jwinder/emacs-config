@@ -948,6 +948,9 @@ $HOME/bin
 (global-set-key (kbd "C-c c") 'org-capture)
 (global-set-key (kbd "C-c C-x <tab>") 'org-pomodoro)
 
+(define-key org-mode-map (kbd "C-c C-x g") 'org-feed-update-all)
+(define-key org-mode-map (kbd "C-c C-x M-g") 'org-feed-update)
+
 (add-hook 'org-mode-hook '(lambda ()
                             (local-set-key (kbd "C-c <") 'org-time-stamp)
                             (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)))
