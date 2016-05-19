@@ -238,7 +238,7 @@ $HOME/bin
 
 (use-package dockerfile-mode :ensure t)
 
-(use-package scala-mode2 :ensure t
+(use-package scala-mode :ensure t
   :mode (("\\.scala$" . scala-mode)
          ("\\.sbt$" . scala-mode)))
 
