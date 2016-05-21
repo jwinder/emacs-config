@@ -167,43 +167,42 @@ $HOME/bin
 *** common
 
 #+BEGIN_SRC emacs-lisp
-(use-package afternoon-theme :ensure t
+(use-package afternoon-theme
   :config (progn (load-theme 'afternoon t)
                  (set-cursor-color "dark grey")
                  (set-background-color "black")
                  (set-face-background 'fringe nil)))
 
-(use-package scratch :ensure t)
+(use-package scratch)
 
-(use-package ob-http :ensure t)
+(use-package ob-http)
 
-(use-package org-pomodoro :ensure t)
+(use-package org-pomodoro)
 
-(use-package magit :ensure t)
+(use-package magit)
 
 (use-package magit-gh-pulls
-  :ensure t
   :config (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls))
 
-(use-package github-browse-file :ensure t)
+(use-package github-browse-file)
 
-(use-package gist :ensure t
+(use-package gist
   :config (setq gist-view-gist t))
 
-(use-package undo-tree :ensure t
+(use-package undo-tree
   :config (global-undo-tree-mode 1))
 
-(use-package expand-region :ensure t
+(use-package expand-region
   :bind (("C-=" . er/expand-region)
          ("C-+" . er/contract-region)))
 
-(use-package multiple-cursors :ensure t
+(use-package multiple-cursors
   :bind (("C-*" . mc/mark-all-like-this)
          ("C-<" . mc/mark-previous-like-this)
          ("C->" . mc/mark-next-like-this)
          ("C-x r t" . mc/edit-lines)))
 
-(use-package smartparens :ensure t
+(use-package smartparens
   :config (progn (require 'smartparens-config)
                  (smartparens-global-mode t)
                  (sp-use-smartparens-bindings)
@@ -211,18 +210,18 @@ $HOME/bin
                  (define-key sp-keymap (kbd "C-M-p") nil)
                  (define-key sp-keymap (kbd "C-M-n") nil)))
 
-(use-package helm :ensure t)
-(use-package helm-ag :ensure t)
-(use-package helm-swoop :ensure t)
-(use-package helm-projectile :ensure t)
-(use-package helm-flycheck :ensure t)
-(use-package helm-flyspell :ensure t)
-(use-package helm-descbinds :ensure t)
+(use-package helm)
+(use-package helm-ag)
+(use-package helm-swoop)
+(use-package helm-projectile)
+(use-package helm-flycheck)
+(use-package helm-flyspell)
+(use-package helm-descbinds)
 
-(use-package sx :ensure t
+(use-package sx
   :bind (("C-c x" . sx-search)))
 
-(use-package hackernews :ensure t
+(use-package hackernews
   :config (progn (require 'hackernews)
                  (setq hackernews-top-story-limit 100)
                  (set-face-attribute 'hackernews-link-face nil :foreground "SkyBlue1")
@@ -232,31 +231,31 @@ $HOME/bin
 *** languages
 
 #+BEGIN_SRC emacs-lisp
-(use-package yaml-mode :ensure t)
+(use-package yaml-mode)
 
-(use-package markdown-mode :ensure t)
+(use-package markdown-mode)
 
-(use-package dockerfile-mode :ensure t)
+(use-package dockerfile-mode)
 
-(use-package scala-mode :ensure t
+(use-package scala-mode
   :mode (("\\.scala$" . scala-mode)
          ("\\.sbt$" . scala-mode)))
 
-(use-package sbt-mode :ensure t)
+(use-package sbt-mode)
 
-(use-package ruby-mode :ensure t
+(use-package ruby-mode
   :mode (("Gemfile$" . ruby-mode)
          ("Rakefile$" . ruby-mode)
          ("Vagrantfile$" . ruby-mode)
          ("Berksfile$" . ruby-mode)))
 
-(use-package go-mode :ensure t
+(use-package go-mode
   :config (add-hook 'before-save-hook 'gofmt-before-save))
 
-(use-package haskell-mode :ensure t
+(use-package haskell-mode
   :config (add-hook 'haskell-mode-hook 'turn-on-haskell-indent))
 
-(use-package coffee-mode :ensure t
+(use-package coffee-mode
   :config (setq coffee-tab-width 2))
 #+END_SRC
 
