@@ -959,6 +959,8 @@ $HOME/bin
 
 (setq org-confirm-babel-evaluate nil)
 
+(add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC ?\n\n#+END_SRC"))
+
 (setq org-use-speed-commands t
       org-enforce-todo-dependencies t
       org-enforce-todo-checkbox-dependencies t
