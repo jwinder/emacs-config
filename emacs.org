@@ -902,6 +902,7 @@ $HOME/bin
   'magit-commands
   :man-page "git-extras"
   :actions '((?g "Github" magit-github-popup)
+             (?p "Github pulls" magit-gh-pulls-popup)
              (?b "Blaming" magit-blame-popup)
              (?r "Repl" magit-x-repl)
              (?U "Undo commit" magit-x-undo)
@@ -920,8 +921,7 @@ $HOME/bin
              (?p "Browse pulls" github-pulls)
              (?c "Compare" github-compare)))
 
-(magit-define-popup-action 'magit-dispatch-popup ?@ "Extras" 'magit-git-extras-popup)
-(magit-define-popup-action 'magit-dispatch-popup ?# "Github pulls" 'magit-gh-pulls-popup)
+(magit-define-popup-action 'magit-dispatch-popup ?x "Extras" 'magit-git-extras-popup)
 #+END_SRC
 
 ** org
