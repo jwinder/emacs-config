@@ -31,18 +31,15 @@ ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing e
 cat init.el
 #+END_SRC
 
-** personal info vars
+** personal info
 
 #+BEGIN_SRC emacs-lisp
 (defconst jw-config-author-name "Joe Winder")
 (defconst jw-config-author-email "jsph.winder@gmail.com")
-(defconst jw-config-author-url "http://jwinder.io")
+(defconst jw-config-author-url "http://jwinder.github.io")
 (defconst jw-config-github-url "https://github.com/jwinder/emacs")
 #+END_SRC
 
-** todos
-*** todo better documentation in this config
-*** todo export to html and post to jwinder.io/emacs
 * dependencies
 ** helper functions
 
