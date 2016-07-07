@@ -441,11 +441,13 @@ $HOME/bin
     (switch-to-buffer scratch-buffer)
     (lisp-interaction-mode)))
 
-(defun scratch-text ()
+(defun notepad ()
   (interactive)
-  (let ((scratch-buffer (get-buffer-create "*text*")))
+  (let ((scratch-buffer (get-buffer-create "*notepad*")))
     (switch-to-buffer scratch-buffer)
     (text-mode)))
+
+(defalias 'scratch-text 'notepad)
 
 (defun ping-google ()
   (interactive)
