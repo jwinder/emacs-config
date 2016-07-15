@@ -562,14 +562,6 @@ $HOME/bin
     (when (string-match pattern (buffer-name buffer))
       (kill-buffer buffer))))
 
-(defun kill-ag-buffers ()
-  (interactive)
-  (kill-matching-buffers-silently "*ag "))
-
-(defun kill-log-buffers ()
-  (interactive)
-  (kill-matching-buffers-silently ".+\\.log$"))
-
 (defalias 'toggle-fullscreen 'toggle-frame-fullscreen)
 
 (defun fullscreen ()
