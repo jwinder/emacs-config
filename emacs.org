@@ -73,6 +73,12 @@ cat init.el
 
 (defalias 'jw--git-root-dir 'jw--vc-root-dir)
 
+(defun jw--iso-current-time-string ()
+  (concat
+   (format-time-string "%Y-%m-%dT%T")
+   ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
+    (format-time-string "%z"))))
+
 (defun jw--make-sql-process (product sql-user sql-password sql-server sql-database root-sql-script-dir)
   "Inspired by rubbish's `sql' function."
   (let* ((sql-text-buffer (find-file (concat root-sql-script-dir sql-database "_" sql-server ".sql")))
@@ -433,7 +439,13 @@ $HOME/bin
   (interactive)
   (message (current-time-string)))
 
-(defalias 'time 'date)
+(defun iso-date ()
+  (interactive)
+  (message (jw--iso-current-time-string)))
+
+(defun insert-iso-date ()
+  (interactive)
+  (insert (jw--iso-current-time-string)))
 
 (defun scratch-lisp ()
   (interactive)
