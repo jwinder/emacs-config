@@ -860,7 +860,7 @@ $HOME/bin
 (require 'magit-gh-pulls)
 
 (global-set-key (kbd "M-g") 'magit-status)
-(global-set-key (kbd "C-c M-g") 'magit-dispatch-popup)
+(global-magit-file-mode t)
 
 (defun magit-x-undo ()
   (interactive)
@@ -908,7 +908,6 @@ $HOME/bin
   :man-page "git-extras"
   :actions '((?g "Github" magit-github-popup)
              (?p "Github pulls" magit-gh-pulls-popup)
-             (?b "Blaming" magit-blame-popup)
              (?r "Repl" magit-x-repl)
              (?U "Undo commit" magit-x-undo)
              (?S "Swoosh repo" magit-x-swoosh)
