@@ -959,7 +959,7 @@ $HOME/bin
                             (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)))
 
 (org-babel-do-load-languages 'org-babel-load-languages
-                             '((emacs-lisp . t) (ruby . t) (sql . t) (http . t) (sh . t)))
+                             '((emacs-lisp . t) (ruby . t) (sql . t) (http . t) (sh . t) (python .t)))
 
 (setq org-confirm-babel-evaluate nil)
 
