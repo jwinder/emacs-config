@@ -284,9 +284,7 @@ $HOME/bin
 
 (setq-default indent-tabs-mode nil)
 
-(setq default-tab-width 2)
-
-(setq js-indent-level 2)
+(setq tab-width 2)
 
 (delete-selection-mode t)
 
@@ -297,8 +295,6 @@ $HOME/bin
 (setq default-major-mode 'text-mode)
 
 (put 'dired-find-alternate-file 'disabled nil)
-
-(setq wdired-allow-to-change-permissions t)
 
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
@@ -312,14 +308,8 @@ $HOME/bin
 
 (setq enable-recursive-minibuffers t)
 
-(setq tramp-default-method "scp")
-
-(setq eshell-buffer-shorthand t)
-
 (add-to-list 'auto-mode-alist '("\\.proto$" . c-mode))
-
 (add-to-list 'auto-mode-alist '("\\.scss$" . css-mode))
-
 (add-to-list 'auto-mode-alist '("\\.tfstate$" . js-mode))
 
 (add-hook 'text-mode-hook 'flyspell-mode)
