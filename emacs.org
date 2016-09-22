@@ -187,7 +187,8 @@ $HOME/bin
 (use-package magit-gh-pulls
   :config (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls))
 
-(use-package github-browse-file)
+(use-package github-browse-file
+  :config (setq github-browse-file-show-line-at-point t))
 
 (use-package gist
   :config (setq gist-view-gist t))
@@ -269,6 +270,9 @@ $HOME/bin
 *** settings
 
 #+BEGIN_SRC emacs-lisp
+(setq custom-file (concat user-emacs-directory "custom.el"))
+(load custom-file 'noerror)
+
 (ansi-color-for-comint-mode-on)
 
 (fset 'yes-or-no-p 'y-or-n-p)
