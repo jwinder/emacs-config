@@ -1,17 +1,17 @@
 * introduction
 ** getting started
-*** I prefer to clone this repository as `$HOME/emacs` and symlink it to `$HOME/.emacs.d`.
+*** I prefer to clone this repository as `$HOME/emacs-config` and symlink it to `$HOME/.emacs.d`.
 
 #+BEGIN_SRC sh :tangle no
-git clone git@github.com:jwinder/emacs.git $HOME/emacs
-ln -s $HOME/emacs $HOME/.emacs.d
+git clone git@github.com:jwinder/emacs-config.git $HOME/emacs-config
+ln -s $HOME/emacs-config $HOME/.emacs.d
 #+END_SRC
 
 *** You can also create `private` or `private.org` symlinks to a directory or file in a safe place, containing private or personal settings. This works well for irc passwords, tramp helpers, etc.
 
 #+BEGIN_SRC sh :tangle no
-ln -s /path/to/your/safe/directory $HOME/emacs/private # directory of elisp files
-ln -s /path/to/your/safe/private.org $HOME/emacs/private.org # file containing elisp segments
+ln -s /path/to/your/safe/directory $HOME/emacs-config/private # directory of elisp files
+ln -s /path/to/your/safe/private.org $HOME/emacs-config/private.org # file containing elisp segments
 #+END_SRC
 
 *** Now, start emacs.
@@ -37,7 +37,7 @@ cat init.el
 (defconst jw-config-author-name "Joe Winder")
 (defconst jw-config-author-email "jsph.winder@gmail.com")
 (defconst jw-config-author-url "http://jwinder.github.io")
-(defconst jw-config-github-url "https://github.com/jwinder/emacs")
+(defconst jw-config-github-url "https://github.com/jwinder/emacs-config")
 #+END_SRC
 
 * dependencies
