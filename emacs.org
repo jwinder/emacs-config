@@ -334,6 +334,7 @@ $HOME/bin
 #+END_SRC
 
 *** macros
+
 #+BEGIN_SRC emacs-lisp
 (eval-when-compile (require 'cl))
 
@@ -955,10 +956,12 @@ $HOME/bin
                             (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)))
 
 (org-babel-do-load-languages 'org-babel-load-languages
-                             '((emacs-lisp . t) (ruby . t) (sql . t) (http . t) (sh . t) (python .t)))
+                             '((emacs-lisp . t) (ruby . t) (sql . t) (http . t) (sh . t) (python . t) (latex . t)))
 
 (setq org-confirm-babel-evaluate nil)
 
+(add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
+(add-to-list 'org-structure-template-alist '("N" "#+NAME: ?"))
 (add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC ?\n\n#+END_SRC"))
 
 (setq org-use-speed-commands t
