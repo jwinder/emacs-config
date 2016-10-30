@@ -964,6 +964,16 @@ $HOME/bin
 (add-to-list 'org-structure-template-alist '("N" "#+NAME: ?"))
 (add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC ?\n\n#+END_SRC"))
 
+(add-to-list 'org-latex-packages-alist '("" "physics"))
+
+(when (executable-find "pygmentize") ;; for syntax highlighting of code inside of org-src blocks for latex
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+  (setq org-latex-listings 'minted
+        org-latex-minted-options '(("mathescape" "true") ("frame" "leftline") ("framesep" "1em"))
+        org-latex-pdf-process '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f" ;; apparently this needs a list
+                                "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+                                "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
+
 (setq org-use-speed-commands t
       org-enforce-todo-dependencies t
       org-enforce-todo-checkbox-dependencies t
