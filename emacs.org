@@ -179,6 +179,7 @@ $HOME/bin
 (use-package scratch)
 
 (use-package ob-http)
+(use-package ob-translate)
 
 (use-package org-pomodoro)
 
@@ -252,6 +253,9 @@ $HOME/bin
          ("\\.sbt$" . scala-mode)))
 
 (use-package sbt-mode)
+
+(use-package ensime
+  :pin melpa-stable)
 
 (use-package ruby-mode
   :mode (("Gemfile$" . ruby-mode)
@@ -956,7 +960,7 @@ $HOME/bin
 
 (global-set-key (kbd "C-c o") 'toggle-todo)
 (global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
+;; (global-set-key (kbd "C-c c") 'org-capture) ;; this binding conflicts with ensime, I don't really use it anyway
 (global-set-key (kbd "C-c C-x <tab>") 'org-pomodoro)
 
 (define-key org-mode-map (kbd "C-c C-x M-g") 'org-feed-update-all)
@@ -1036,6 +1040,7 @@ $HOME/bin
 (org-babel-do-load-languages 'org-babel-load-languages
                              '((emacs-lisp . t)
                                (http . t)
+                               (translate . t)
                                (awk . t)
                                (C . t)
                                (dot . t)
@@ -1052,7 +1057,7 @@ $HOME/bin
                                (plantuml . t)
                                (python . t)
                                (ruby . t)
-                               ;; (scala . t)
+                               (scala . t)
                                (scheme . t)
                                (shell . t)
                                (sql . t)))
@@ -1132,6 +1137,15 @@ $HOME/bin
 
 (add-hook 'scala-mode-hook 'sbt-turn-on-extra-bindings)
 (add-hook 'sbt-mode-hook 'sbt-turn-on-extra-bindings)
+
+;; todo
+;; helm server crashes a lot for some reason
+;; figure out how to fix, and maybe replace a lot of this previous custom sbt stuff with just ensime
+;; also -- company inside ensime doesn't seem to use helm for some reason :-(
+
+;; (setq ensime-use-helm t)
+;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+;; (add-hook 'sbt-mode-hook 'ensime-scala-mode-hook)
 #+END_SRC
 
 * private
