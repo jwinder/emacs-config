@@ -391,7 +391,8 @@ $HOME/bin
                                     (set (make-local-variable 'face-remapping-alist) '((default :height 1.3)))))
 
 (setq inhibit-startup-message t
-      initial-scratch-message "")
+      initial-scratch-message ""
+      initial-major-mode 'org-mode)
 #+END_SRC
 
 ** operating system
@@ -451,19 +452,19 @@ $HOME/bin
   (interactive)
   (insert (jw--iso-current-time-string)))
 
-(defun scratch-lisp ()
+(defun scratch-buffer ()
   (interactive)
   (let ((scratch-buffer (get-buffer-create "*scratch*")))
     (switch-to-buffer scratch-buffer)
-    (lisp-interaction-mode)))
+    (org-mode)))
 
-(defun notepad ()
+(defalias 'notepad 'scratch-buffer)
+
+(defun toggle-scratch-buffer ()
   (interactive)
-  (let ((scratch-buffer (get-buffer-create "*notepad*")))
-    (switch-to-buffer scratch-buffer)
-    (text-mode)))
-
-(defalias 'scratch-text 'notepad)
+  (if (string= (buffer-name) "*scratch*")
+      (switch-to-buffer (other-buffer))
+    (scratch-buffer)))
 
 (defun ping-google ()
   (interactive)
@@ -697,6 +698,8 @@ $HOME/bin
 (global-unset-key (kbd "C-x C-z"))
 (global-unset-key (kbd "C-x m"))
 (global-unset-key (kbd "C-x m m"))
+
+(global-set-key (kbd "C-c i") 'toggle-scratch-buffer)
 
 (global-set-key (kbd "C-c M-e") 'eshell-cd-vc-root-dir-or-pwd-otherwise-other-buffer)
 
@@ -1018,8 +1021,6 @@ $HOME/bin
       org-pomodoro-long-break-sound-p nil)
 
 (custom-set-faces '(org-pomodoro-mode-line ((nil (:foreground "#2aa198")))))
-
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
 (add-hook 'org-mode-hook '(lambda () (text-scale-set 2)))
 
