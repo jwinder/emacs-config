@@ -214,6 +214,11 @@ $HOME/bin
                  (define-key sp-keymap (kbd "C-M-p") nil)
                  (define-key sp-keymap (kbd "C-M-n") nil)))
 
+(use-package company
+  :config (progn (global-company-mode t)
+                 (setq company-idle-delay nil
+                       company-tooltip-idle-delay nil)))
+
 (use-package helm)
 (use-package helm-ag)
 (use-package helm-swoop)
@@ -221,6 +226,7 @@ $HOME/bin
 (use-package helm-flycheck)
 (use-package helm-flyspell)
 (use-package helm-descbinds)
+(use-package helm-company)
 
 (use-package sx
   :bind (("C-c x" . sx-search)))
@@ -776,6 +782,7 @@ $HOME/bin
 (global-set-key (kbd "M-s s") 'helm-swoop)
 (global-set-key (kbd "M-s i") 'helm-semantic-or-imenu)
 (global-set-key (kbd "M-/") 'helm-dabbrev)
+(global-set-key (kbd "C-M-/") 'helm-company)
 (global-set-key (kbd "C-h b") 'helm-descbinds)
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
