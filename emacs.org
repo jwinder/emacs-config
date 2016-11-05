@@ -254,8 +254,8 @@ $HOME/bin
 
 (use-package sbt-mode)
 
-(use-package ensime
-  :pin melpa-stable)
+;; (use-package ensime
+;;   :pin melpa-stable)
 
 (use-package ruby-mode
   :mode (("Gemfile$" . ruby-mode)
@@ -1057,7 +1057,7 @@ $HOME/bin
                                (plantuml . t)
                                (python . t)
                                (ruby . t)
-                               (scala . t)
+                               ;; (scala . t) ;; there are conflicting versions in org & scala-mode requiring ensime
                                (scheme . t)
                                (shell . t)
                                (sql . t)))
