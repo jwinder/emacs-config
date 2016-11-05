@@ -956,11 +956,6 @@ $HOME/bin
                             (local-set-key (kbd "C-c <") 'org-time-stamp)
                             (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)))
 
-(org-babel-do-load-languages 'org-babel-load-languages
-                             '((emacs-lisp . t) (ruby . t) (sql . t) (http . t) (sh . t) (python . t) (latex . t)))
-
-(setq org-confirm-babel-evaluate nil)
-
 (add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
 (add-to-list 'org-structure-template-alist '("N" "#+NAME: ?"))
 (add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC ?\n\n#+END_SRC"))
@@ -1027,6 +1022,32 @@ $HOME/bin
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
 (add-hook 'org-mode-hook '(lambda () (text-scale-set 2)))
+
+(setq org-confirm-babel-evaluate nil)
+
+(org-babel-do-load-languages 'org-babel-load-languages
+                             '((emacs-lisp . t)
+                               (http . t)
+                               (awk . t)
+                               (C . t)
+                               (dot . t)
+                               (R . t)
+                               (haskell . t)
+                               (java . t)
+                               (js . t)
+                               (latex . t)
+                               (lisp . t)
+                               (makefile . t)
+                               (matlab . t)
+                               (org . t)
+                               (perl . t)
+                               (plantuml . t)
+                               (python . t)
+                               (ruby . t)
+                               ;; (scala . t)
+                               (scheme . t)
+                               (shell . t)
+                               (sql . t)))
 #+END_SRC
 
 ** flycheck
