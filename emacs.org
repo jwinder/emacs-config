@@ -262,7 +262,10 @@ $HOME/bin
 (use-package coffee-mode
   :config (setq coffee-tab-width 2))
 
-(use-package terraform-mode)
+(use-package terraform-mode
+  :mode ("\\.tfstate$" . js-mode))
+
+(use-package protobuf-mode)
 #+END_SRC
 
 * customization
@@ -314,9 +317,7 @@ $HOME/bin
 
 (setq enable-recursive-minibuffers t)
 
-(add-to-list 'auto-mode-alist '("\\.proto$" . c-mode))
 (add-to-list 'auto-mode-alist '("\\.scss$" . css-mode))
-(add-to-list 'auto-mode-alist '("\\.tfstate$" . js-mode))
 
 (add-hook 'text-mode-hook 'flyspell-mode)
 
