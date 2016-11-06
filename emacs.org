@@ -259,7 +259,13 @@ $HOME/bin
 (use-package ensime
   :pin melpa-stable
   :config (progn (setq ensime-use-helm t)
-                 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)))
+                 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+                 (advice-add 'ensime-sbt-test-dwim
+                             :around '(lambda (original-function &rest args)
+                                        (let* ((original-command (car args))
+                                               (only-zzz-str (if current-prefix-arg " -- ex zzz " ""))
+                                               (command (concat original-command only-zzz-str)))
+                                          (apply original-function (cons command (cdr args))))))))
 
 (use-package ruby-mode
   :mode (("Gemfile$" . ruby-mode)
