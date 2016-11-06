@@ -250,12 +250,16 @@ $HOME/bin
 
 (use-package scala-mode
   :mode (("\\.scala$" . scala-mode)
-         ("\\.sbt$" . scala-mode)))
+         ("\\.sbt$" . scala-mode))
+  :config (progn (setq scala-indent:align-forms t
+                       scala-indent:align-parameters t)))
 
 (use-package sbt-mode)
 
-;; (use-package ensime
-;;   :pin melpa-stable)
+(use-package ensime
+  :pin melpa-stable
+  :config (progn (setq ensime-use-helm t)
+                 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)))
 
 (use-package ruby-mode
   :mode (("Gemfile$" . ruby-mode)
@@ -786,6 +790,7 @@ $HOME/bin
 (global-set-key (kbd "M-s s") 'helm-swoop)
 (global-set-key (kbd "M-s i") 'helm-semantic-or-imenu)
 (global-set-key (kbd "M-/") 'helm-dabbrev)
+(global-set-key (kbd "C-h a") 'helm-apropos)
 (global-set-key (kbd "C-M-/") 'helm-company)
 (global-set-key (kbd "C-h b") 'helm-descbinds)
 
@@ -796,6 +801,19 @@ $HOME/bin
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
 (set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
 (set-face-attribute 'helm-swoop-target-line-face nil :background "goldenrod")
+
+(require 'company)
+(custom-set-faces ;; give company dropdown helm colors
+ `(company-tooltip ((t (:background ,jw--mode-line-color))))
+ `(company-scrollbar-bg ((t (:background "black"))))
+ `(company-scrollbar-fg ((t (:background "#005858"))))
+ `(company-tooltip-selection ((t (:inherit 'helm-selection))))
+ `(company-tooltip-common ((t (:inherit 'helm-match))))
+ `(company-tooltip-common-selection ((t (:inherit 'helm-match))))
+ `(company-tooltip-annotation ((t (:inherit 'helm-bookmark-file))))
+ `(company-preview-common ((t :inherit 'company-echo)))
+ `(company-echo-common ((t :inherit 'company-echo)))
+ `(company-template-field ((t :inherit 'helm-match-item))))
 
 (add-hook 'eshell-mode-hook
           '(lambda ()
@@ -821,6 +839,7 @@ $HOME/bin
 (helm-projectile-on)
 
 (add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
+
 #+END_SRC
 
 ** rcirc
@@ -1057,7 +1076,7 @@ $HOME/bin
                                (plantuml . t)
                                (python . t)
                                (ruby . t)
-                               ;; (scala . t) ;; there are conflicting versions in org & scala-mode requiring ensime
+                               (scala . t) ;; there are conflicting versions in org & scala-mode requiring ensime
                                (scheme . t)
                                (shell . t)
                                (sql . t)))
@@ -1083,69 +1102,6 @@ $HOME/bin
 (add-to-list 'flycheck-checkers 'proselint)
 
 (global-flycheck-mode)
-#+END_SRC
-
-** scala
-
-#+BEGIN_SRC emacs-lisp
-(defun sbt ()
-  (interactive)
-  (if (eq major-mode 'sbt-mode)
-      (switch-to-buffer (other-buffer))
-    (sbt-start)))
-
-(defun sbt-current-tests-in-buffer ()
-  (interactive)
-  (save-excursion
-    (let* ((pkg-name-components)
-           (test-names))
-      (goto-char (point-min))
-      (while (re-search-forward "package " nil t)
-        (push (filter-buffer-substring (point) (point-at-eol)) pkg-name-components))
-      (goto-char (point-min))
-      (while (re-search-forward "\\(object\\|class\\) " nil t)
-        (push (filter-buffer-substring (point) (progn (re-search-forward " ")
-                                                      (forward-char -1)
-                                                      (point)))
-              test-names))
-      (let* ((full-pkg-name (string-join (reverse pkg-name-components) "."))
-             (full-test-names (mapcar #'(lambda (test-name) (string-join (list full-pkg-name "." test-name))) test-names))
-             (full-test-names-str (string-join full-test-names " ")))
-        (message full-test-names-str)))))
-
-(defun sbt-test-only-current-test (only-zzz)
-  (interactive "P")
-  (if only-zzz
-      (sbt-command (concat "test-only " (sbt-current-tests-in-buffer) " -- showtimes -- ex zzz"))
-    (sbt-command (concat "test-only " (sbt-current-tests-in-buffer) " -- showtimes"))))
-
-(defun sbt-compile (test-compile)
-  (interactive "P")
-  (if test-compile
-      (sbt-command "test:compile")
-    (sbt-command "compile")))
-
-(defun sbt-turn-on-extra-bindings ()
-  (interactive)
-  (local-set-key (kbd "C-c s s") 'sbt)
-  (local-set-key (kbd "C-c s c") 'sbt-compile)
-  (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)
-  (local-set-key (kbd "C-c s p") 'sbt-run-previous-command))
-
-(setq scala-indent:align-forms t
-      scala-indent:align-parameters t)
-
-(add-hook 'scala-mode-hook 'sbt-turn-on-extra-bindings)
-(add-hook 'sbt-mode-hook 'sbt-turn-on-extra-bindings)
-
-;; todo
-;; helm server crashes a lot for some reason
-;; figure out how to fix, and maybe replace a lot of this previous custom sbt stuff with just ensime
-;; also -- company inside ensime doesn't seem to use helm for some reason :-(
-
-;; (setq ensime-use-helm t)
-;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-;; (add-hook 'sbt-mode-hook 'ensime-scala-mode-hook)
 #+END_SRC
 
 * private
