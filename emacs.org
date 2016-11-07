@@ -985,7 +985,7 @@ $HOME/bin
 
 (global-set-key (kbd "C-c o") 'toggle-todo)
 (global-set-key (kbd "C-c a") 'org-agenda)
-;; (global-set-key (kbd "C-c c") 'org-capture) ;; this binding conflicts with ensime, I don't really use it anyway
+(global-set-key (kbd "C-c c") 'org-capture)
 (global-set-key (kbd "C-c C-x <tab>") 'org-pomodoro)
 
 (define-key org-mode-map (kbd "C-c C-x M-g") 'org-feed-update-all)
