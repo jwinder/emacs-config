@@ -996,7 +996,8 @@ $HOME/bin
                             (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)))
 
 (add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
-(add-to-list 'org-structure-template-alist '("N" "#+NAME: ?"))
+(add-to-list 'org-structure-template-alist '("h" "#+HEADER: ?"))
+(add-to-list 'org-structure-template-alist '("p" "#+PROPERTY: ?"))
 (add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC ?\n\n#+END_SRC"))
 
 (add-to-list 'org-latex-packages-alist '("" "physics"))
@@ -1067,6 +1068,7 @@ $HOME/bin
                                (http . t)
                                (translate . t)
                                (awk . t)
+                               (calc . t)
                                (C . t)
                                (dot . t)
                                (R . t)
