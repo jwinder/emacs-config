@@ -273,6 +273,8 @@ $HOME/bin
          ("Vagrantfile$" . ruby-mode)
          ("Berksfile$" . ruby-mode)))
 
+(use-package inf-ruby)
+
 (use-package go-mode
   :config (add-hook 'before-save-hook 'gofmt-before-save))
 
@@ -286,6 +288,9 @@ $HOME/bin
   :mode ("\\.tfstate$" . js-mode))
 
 (use-package protobuf-mode)
+
+(use-package groovy-mode
+  :mode ("Jenkinsfile$" . groovy-mode))
 #+END_SRC
 
 * customization
