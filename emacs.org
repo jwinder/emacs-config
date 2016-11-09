@@ -359,38 +359,25 @@ $HOME/bin
 (put 'narrow-to-region 'disabled nil)
 #+END_SRC
 
-*** macros
+*** advice
 
 #+BEGIN_SRC emacs-lisp
 (eval-when-compile (require 'cl))
 
-(defadvice kill-ring-save (before slick-copy activate compile)
-  "When called interactively with no active region, copy a single line instead."
-  (interactive
-   (if mark-active
-       (list (region-beginning) (region-end))
-     (list (line-beginning-position) (line-beginning-position 2)))))
-
-(defadvice kill-region (before slick-cut activate compile)
-  "When called interactively with no active region, kill a single line instead."
-  (interactive
-   (if mark-active
-       (list (region-beginning) (region-end))
-     (list (line-beginning-position) (line-beginning-position 2)))))
-
-(setq echo-area-silenced-patterns
+(setq echo-area-ignored-patterns
       '("Auto saving"
         "No changes need to be saved"
         "You can run the command"
         "Shell command succeeded with no output"))
 
-(defadvice message (before ignorable-message activate compile)
-  "Do not echo any messages matching a pattern in `echo-area-silenced-patterns'. This only works for elisp `message' and not the C primitive."
-  (when format-string
-    (let ((current-echo (current-message))
-          (incoming-echo (apply 'format (cons format-string args))))
-      (when (member-if '(lambda (pattern) (search pattern incoming-echo)) echo-area-silenced-patterns)
-        (ad-set-arg 0 current-echo)))))
+(defun message--advice--ignore-patterns (message-function &rest args)
+  "Do not echo any messages matching a pattern in `echo-area-ignored-patterns'."
+  (when args ;; car args = format-string, cdr args = messages
+    (let ((current-formatted-message (apply 'format args)))
+      (unless (member-if '(lambda (pattern) (search pattern current-formatted-message)) echo-area-ignored-patterns)
+        (apply message-function args)))))
+
+(advice-add 'message :around #'message--advice--ignore-patterns)
 #+END_SRC
 
 *** style
@@ -423,17 +410,17 @@ $HOME/bin
 ** operating system
 
 #+BEGIN_SRC emacs-lisp
-(when (eq system-type 'gnu/linux)
-  (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
-  (setq browse-url-browser-function 'browse-url-generic
-        browse-url-generic-program "google-chrome")
-  (setq ack-executable "ack-grep"))
+  (when (eq system-type 'gnu/linux)
+    (setq interprogram-paste-function 'x-cut-buffer-or-selection-value
+          browse-url-browser-function 'browse-url-generic
+          browse-url-generic-program "google-chrome"
+          ack-executable "ack-grep"))
 
-(when (eq system-type 'darwin)
-  (setq ns-command-modifier 'meta)
-  (setq interprogram-paste-function 'x-selection-value)
-  (setq browse-url-browser-function 'browse-url-default-macosx-browser)
-  (setq ispell-program-name "aspell"))
+  (when (eq system-type 'darwin)
+    (setq ns-command-modifier 'meta
+          interprogram-paste-function 'x-selection-value
+          browse-url-browser-function 'browse-url-default-macosx-browser
+          ispell-program-name "aspell"))
 #+END_SRC
 
 ** functions
@@ -464,6 +451,18 @@ $HOME/bin
       (unless (string= current-pwd (jw--pwd))
         (insert (format "cd '%s'" current-pwd))
         (eshell-send-input)))))
+
+(defun kill-region-or-line ()
+  (interactive)
+  (if (region-active-p)
+      (kill-region (mark) (point))
+    (kill-line)))
+
+(defun kill-ring-save-region-or-line ()
+  (interactive)
+  (if (region-active-p)
+      (kill-ring-save (mark) (point))
+    (kill-ring-save (line-beginning-position) (line-end-position))))
 
 (defun date ()
   (interactive)
@@ -672,48 +671,24 @@ $HOME/bin
 *** random
 
 #+BEGIN_SRC emacs-lisp
-(defun exercism-fetch-all ()
-  (interactive)
-  (shell-command "exercism fetch"))
+  (defun exercism-fetch-all ()
+    (interactive)
+    (shell-command "exercism fetch"))
 
-(defun exercism-submit-this-file ()
-  (interactive)
-  (shell-command (format "exercism submit %s" (buffer-file-name))))
+  (defun exercism-submit-this-file ()
+    (interactive)
+    (shell-command (format "exercism submit %s" (buffer-file-name))))
 
-(defun sonic-pi-run ()
-  (interactive)
-  (let ((ruby (if (region-active-p)
-                  (buffer-substring-no-properties (point) (mark))
-                (buffer-substring-no-properties (point-min) (point-max)))))
-    (shell-command (format "echo '%s' | sonic_pi" ruby))))
+  (defun sonic-pi-run ()
+    (interactive)
+    (let ((ruby (if (region-active-p)
+                    (buffer-substring-no-properties (point) (mark))
+                  (buffer-substring-no-properties (point-min) (point-max)))))
+      (shell-command (format "echo '%s' | sonic_pi" ruby))))
 
-(defun sonic-pi-stop ()
-  (interactive)
-  (shell-command "sonic_pi stop"))
-
-(defun javascript-equality-table ()
-  (interactive)
-  (browse-url "http://zero.milosz.ca/"))
-
-(defun soft-murmur-background-sound ()
-  (interactive)
-  (browse-url "http://asoftmurmur.com/"))
-
-(defun img-jack-nicholson-creepy-nod ()
-  (interactive)
-  (browse-url "http://img.pandawhale.com/post-30824-Jack-Nicholson-Creepy-Nodding-SRXv.gif"))
-
-(defun img-working-hard ()
-  (interactive)
-  (browse-url "http://i.imgur.com/Lkw5kmF.jpg"))
-
-(defun img-run ()
-  (interactive)
-  (browse-url "http://replygif.net/i/1238.gif"))
-
-(defun horse-books-dont-block ()
-  (interactive)
-  (browse-url "https://twitter.com/Horse_ebooks/status/364096530451410947"))
+  (defun sonic-pi-stop ()
+    (interactive)
+    (shell-command "sonic_pi stop"))
 #+END_SRC
 
 ** key bindings
@@ -740,6 +715,9 @@ $HOME/bin
 
 (global-set-key (kbd "C-x 9") 'toggle-window-split)
 (global-set-key (kbd "C-x p f") 'pop-to-buffer)
+
+(global-set-key (kbd "C-w") 'kill-region-or-line)
+(global-set-key (kbd "M-w") 'kill-ring-save-region-or-line)
 
 (global-set-key (kbd "C-a") 'beginning-of-line-or-indentation)
 (global-set-key (kbd "C-o") 'open-line-previous)
