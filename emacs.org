@@ -309,6 +309,10 @@ $HOME/bin
       version-control nil
       create-lockfiles nil)
 
+(setq save-silently t)
+
+(setq suggest-key-bindings nil)
+
 (global-auto-revert-mode 1)
 
 (setq global-auto-revert-non-file-buffers t
@@ -357,27 +361,6 @@ $HOME/bin
 (add-to-list 'undo-tree-history-directory-alist `("" . ,(concat user-emacs-directory "undo")))
 
 (put 'narrow-to-region 'disabled nil)
-#+END_SRC
-
-*** advice
-
-#+BEGIN_SRC emacs-lisp
-(eval-when-compile (require 'cl))
-
-(setq echo-area-ignored-patterns
-      '("Auto saving"
-        "No changes need to be saved"
-        "You can run the command"
-        "Shell command succeeded with no output"))
-
-(defun message--advice--ignore-patterns (message-function &rest args)
-  "Do not echo any messages matching a pattern in `echo-area-ignored-patterns'."
-  (when args ;; car args = format-string, cdr args = messages
-    (let ((current-formatted-message (apply 'format args)))
-      (unless (member-if '(lambda (pattern) (search pattern current-formatted-message)) echo-area-ignored-patterns)
-        (apply message-function args)))))
-
-(advice-add 'message :around #'message--advice--ignore-patterns)
 #+END_SRC
 
 *** style
