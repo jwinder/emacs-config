@@ -220,6 +220,12 @@ $HOME/bin
                  (setq company-idle-delay nil
                        company-tooltip-idle-delay nil)))
 
+(use-package flycheck
+  :pin melpa-stable
+  :config (progn (setq flycheck-standard-error-navigation nil
+                       flycheck-display-errors-function nil)
+                 (global-flycheck-mode)))
+
 (use-package helm)
 (use-package helm-ag)
 (use-package helm-swoop)
@@ -256,16 +262,16 @@ $HOME/bin
 
 (use-package sbt-mode)
 
-(use-package ensime
-  :pin melpa-stable
-  :config (progn (setq ensime-use-helm t)
-                 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-                 (advice-add 'ensime-sbt-test-dwim
-                             :around '(lambda (original-function &rest args)
-                                        (let* ((original-command (car args))
-                                               (only-zzz-str (if current-prefix-arg " -- ex zzz " ""))
-                                               (command (concat original-command only-zzz-str)))
-                                          (apply original-function (cons command (cdr args))))))))
+;; (use-package ensime
+;;   :pin melpa-stable
+;;   :config (progn (setq ensime-use-helm t)
+;;                  (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+;;                  (advice-add 'ensime-sbt-test-dwim
+;;                              :around '(lambda (original-function &rest args)
+;;                                         (let* ((original-command (car args))
+;;                                                (only-zzz-str (if current-prefix-arg " -- ex zzz " ""))
+;;                                                (command (concat original-command only-zzz-str)))
+;;                                           (apply original-function (cons command (cdr args))))))))
 
 (use-package ruby-mode
   :mode (("Gemfile$" . ruby-mode)
@@ -312,6 +318,8 @@ $HOME/bin
 (setq save-silently t)
 
 (setq suggest-key-bindings nil)
+
+(setq kill-whole-line t)
 
 (global-auto-revert-mode 1)
 
@@ -439,7 +447,7 @@ $HOME/bin
   (interactive)
   (if (region-active-p)
       (kill-region (mark) (point))
-    (kill-line)))
+    (progn (beginning-of-line) (kill-line))))
 
 (defun kill-ring-save-region-or-line ()
   (interactive)
@@ -1050,32 +1058,62 @@ $HOME/bin
                                (plantuml . t)
                                (python . t)
                                (ruby . t)
-                               (scala . t) ;; there are conflicting versions in org & scala-mode requiring ensime
+                               ;; (scala . t) ;; there are conflicting versions in org & scala-mode requiring ensime
                                (scheme . t)
                                (shell . t)
                                (sql . t)))
 #+END_SRC
 
-** flycheck
+** scala
 
 #+BEGIN_SRC emacs-lisp
-(setq flycheck-standard-error-navigation nil
-      flycheck-display-errors-function nil)
+(defun sbt ()
+  (interactive)
+  (if (eq major-mode 'sbt-mode)
+      (switch-to-buffer (other-buffer))
+    (sbt-start)))
 
-(flycheck-define-checker proselint
-  "A linter for prose using proselint."
-  :command ("proselint" source-inplace)
-  :error-patterns
-  ((warning line-start (file-name) ":" line ":" column ": "
-            (id (one-or-more (not (any " "))))
-            (message (one-or-more not-newline)
-                     (zero-or-more "\n" (any " ") (one-or-more not-newline)))
-            line-end))
-  :modes (text-mode markdown-mode gfm-mode))
+(defun sbt-current-tests-in-buffer ()
+  (interactive)
+  (save-excursion
+    (let* ((pkg-name-components)
+           (test-names))
+      (goto-char (point-min))
+      (while (re-search-forward "package " nil t)
+        (push (filter-buffer-substring (point) (point-at-eol)) pkg-name-components))
+      (goto-char (point-min))
+      (while (re-search-forward "\\(object\\|class\\) " nil t)
+        (push (filter-buffer-substring (point) (progn (re-search-forward " ")
+                                                      (forward-char -1)
+                                                      (point)))
+              test-names))
+      (let* ((full-pkg-name (string-join (reverse pkg-name-components) "."))
+             (full-test-names (mapcar #'(lambda (test-name) (string-join (list full-pkg-name "." test-name))) test-names))
+             (full-test-names-str (string-join full-test-names " ")))
+        (message full-test-names-str)))))
 
-(add-to-list 'flycheck-checkers 'proselint)
+(defun sbt-test-only-current-test (only-zzz)
+  (interactive "P")
+  (if only-zzz
+      (sbt-command (concat "test-only " (sbt-current-tests-in-buffer) " -- showtimes -- ex zzz"))
+    (sbt-command (concat "test-only " (sbt-current-tests-in-buffer) " -- showtimes"))))
 
-(global-flycheck-mode)
+(defun sbt-compile (test-compile)
+  (interactive "P")
+  (if test-compile
+      (sbt-command "test:compile")
+    (sbt-command "compile")))
+
+(defun sbt-turn-on-extra-bindings ()
+  (interactive)
+  (local-set-key (kbd "C-c s s") 'sbt)
+  (local-set-key (kbd "C-c s c") 'sbt-compile)
+  (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)
+  (local-set-key (kbd "C-c s p") 'sbt-run-previous-command))
+
+(add-hook 'scala-mode-hook 'sbt-turn-on-extra-bindings)
+(add-hook 'sbt-mode-hook 'sbt-turn-on-extra-bindings)
+
 #+END_SRC
 
 * private
