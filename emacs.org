@@ -79,15 +79,6 @@ cat init.el
    ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
     (format-time-string "%z"))))
 
-(defun jw--make-sql-process (product sql-user sql-password sql-server sql-database root-sql-script-dir)
-  "Inspired by rubbish's `sql' function."
-  (let* ((sql-text-buffer (find-file (concat root-sql-script-dir sql-database "_" sql-server ".sql")))
-         (new-name (concat sql-user "@" sql-database "." sql-server))
-         (sqli-buffer (if sql-buffer (progn (split-window) sql-buffer) (sql-product-interactive product new-name))))
-    (switch-to-buffer sql-text-buffer nil t)
-    (set (make-local-variable 'sql-buffer) sqli-buffer)
-    (switch-to-buffer sqli-buffer nil t)))
-
 (defun jw--make-cmd-in-buffer (full-command &optional buffer-name just-toggle-back-if-current-buffer-matches before-buffer-process-creation-hook)
   "A wrapper around `make-comint-in-buffer'. If `buffer-name' already exists, this will just switch to it. if `just-toggle-back-if-current-buffer-matches' is `non-nil' then we just switch back to `(other-buffer)'."
   (if (and just-toggle-back-if-current-buffer-matches buffer-name (string= (buffer-name) buffer-name))
