@@ -953,9 +953,11 @@ $HOME/bin
 
 (defun toggle-todo ()
   (interactive)
-  (if (string= (buffer-name) "todo.org")
-      (switch-to-buffer (other-buffer))
-    (todo)))
+  (if (boundp 'jw-org-todo-file)
+      (if (string= (buffer-name) (file-name-nondirectory jw-org-todo-file))
+          (switch-to-buffer (other-buffer))
+        (todo))
+    (message "Please set `jw-org-todo-file' to your todo org file location!")))
 
 (global-set-key (kbd "C-c o") 'toggle-todo)
 (global-set-key (kbd "C-c a") 'org-agenda)
