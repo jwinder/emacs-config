@@ -225,15 +225,6 @@ $HOME/bin
 (use-package helm-flyspell)
 (use-package helm-descbinds)
 (use-package helm-company)
-
-(use-package sx
-  :bind (("C-c x" . sx-search)))
-
-(use-package hackernews
-  :config (progn (require 'hackernews)
-                 (setq hackernews-top-story-limit 100)
-                 (set-face-attribute 'hackernews-link-face nil :foreground "SkyBlue1")
-                 (advice-add 'hackernews :after #'(lambda () (when (string= (buffer-name) "*hackernews*") (text-scale-set 2))))))
 #+END_SRC
 
 *** languages
