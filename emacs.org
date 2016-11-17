@@ -800,7 +800,8 @@ $HOME/bin
           '(lambda ()
              (turn-on-flyspell)
              (rcirc-track-minor-mode t)
-             (rcirc-omit-mode)))
+             (rcirc-omit-mode)
+             (cd (getenv "HOME"))))
 
 (add-hook 'window-configuration-change-hook
           '(lambda () (setq rcirc-fill-column (- (window-width) 2))))
