@@ -225,6 +225,9 @@ $HOME/bin
 (use-package helm-flyspell)
 (use-package helm-descbinds)
 (use-package helm-company)
+
+(use-package docker
+  :config (docker-global-mode t))
 #+END_SRC
 
 *** languages
