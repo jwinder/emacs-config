@@ -56,10 +56,13 @@ cat init.el
 (defun jw--set-font-size (size)
   (set-face-attribute 'default nil :font (jw--font-name size)))
 
-(defun jw--read-file-lines-to-string (file)
+(defun jw--file-lines-to-string (file)
   (with-temp-buffer
     (insert-file-contents file)
-    (split-string (buffer-string) "\n" t)))
+    (buffer-string)))
+
+(defun jw--file-lines-to-list (file)
+  (split-string (jw--file-lines-to-string file) "\n" t))
 
 (defun jw--make-uuid ()
   (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
@@ -100,7 +103,7 @@ cat init.el
 
 (defun jw--run-cmd (&optional command args)
   "Inspired by rubbish's `command-line-tool' function but uses eshell's history file and completing-read which helm enriches."
-  (let* ((history (reverse (jw--read-file-lines-to-string eshell-history-file-name)))
+  (let* ((history (reverse (jw--file-lines-to-list eshell-history-file-name)))
          (full-command (completing-read "Command: " history nil nil (if command (concat command " " (or args "")) "")))
          (add-command-to-eshell-history #'(lambda () (write-region (concat full-command "\n") nil eshell-history-file-name 'append 1))))
     (jw--make-cmd-in-buffer full-command nil nil add-command-to-eshell-history)))
@@ -115,7 +118,7 @@ cat init.el
 (setenv "EDITOR" "emacsclient")
 
 (defun jw--env-set-vars (vars-file)
-  (dolist (line (jw--read-file-lines-to-string vars-file))
+  (dolist (line (jw--file-lines-to-list vars-file))
     (unless (= 0 (length line))
       (let* ((tokens (split-string line "="))
              (name (car tokens))
@@ -125,7 +128,7 @@ cat init.el
         (setenv name (string-trim value))))))
 
 (defun jw--env-set-path (path-file)
-  (let* ((path-list (mapcar 'substitute-env-vars (jw--read-file-lines-to-string path-file)))
+  (let* ((path-list (mapcar 'substitute-env-vars (jw--file-lines-to-list path-file)))
          (path-str (mapconcat 'identity path-list ":")))
     (setq exec-path path-list)
     (setenv "PATH" path-str)
