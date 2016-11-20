@@ -964,11 +964,11 @@ $HOME/bin
       org-cycle-open-archived-trees t
       org-hide-block-startup t)
 
-(setq org--possible-todo-todo-states '("todo" "incoming" "captured")
+(setq org--possible-todo-todo-states '("todo" "incoming" "captured" "unread")
       org--possible-blocked-todo-states '("blocked" "halted" "stalled" "paused")
       org--possible-doing-todo-states '("doing" "going")
       org--possible-delegated-todo-states '("delegated" "assigned" "pr")
-      org--possible-done-todo-states '("done" "cancelled" "canceled" "finished" "boom"))
+      org--possible-done-todo-states '("done" "cancelled" "canceled" "finished" "boom" "read"))
 
 (defun org--make-single-todo-face-entry (state color)
   `(,state :background ,color :foreground white :box (:style released-button)))
