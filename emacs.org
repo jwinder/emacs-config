@@ -619,24 +619,28 @@ $HOME/bin
 *** random
 
 #+BEGIN_SRC emacs-lisp
-  (defun exercism-fetch-all ()
-    (interactive)
-    (shell-command "exercism fetch"))
+(defun exercism-fetch-all ()
+  (interactive)
+  (shell-command "exercism fetch"))
 
-  (defun exercism-submit-this-file ()
-    (interactive)
-    (shell-command (format "exercism submit %s" (buffer-file-name))))
+(defun exercism-submit-this-file ()
+  (interactive)
+  (shell-command (format "exercism submit %s" (buffer-file-name))))
 
-  (defun sonic-pi-run ()
-    (interactive)
-    (let ((ruby (if (region-active-p)
-                    (buffer-substring-no-properties (point) (mark))
-                  (buffer-substring-no-properties (point-min) (point-max)))))
-      (shell-command (format "echo '%s' | sonic_pi" ruby))))
+(defun sonic-pi-stop ()
+  (interactive)
+  (shell-command "sonic-pi stop"))
 
-  (defun sonic-pi-stop ()
-    (interactive)
-    (shell-command "sonic_pi stop"))
+(defun sonic-pi-play ()
+  (interactive)
+  (let ((ruby (if (region-active-p)
+                  (buffer-substring-no-properties (point) (mark))
+                (buffer-substring-no-properties (point-min) (point-max)))))
+    (shell-command (format "echo '%s' | sonic-pi" ruby))))
+
+(defun sonic-pi-stop-or-play (arg)
+  (interactive "P")
+  (if arg (sonic-pi-stop) (sonic-pi-play)))
 #+END_SRC
 
 ** key bindings
@@ -677,8 +681,8 @@ $HOME/bin
 
 (global-set-key (kbd "C-c M-t") 'transpose-lines)
 
-(global-set-key (kbd "C-x m r") 'sonic-pi-run)
-(global-set-key (kbd "C-x m s") 'sonic-pi-stop)
+(global-set-key (kbd "C-x m s") 'sonic-pi-stop-or-play)
+
 #+END_SRC
 
 ** helm
