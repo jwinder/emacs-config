@@ -82,7 +82,7 @@ cat init.el
    ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
     (format-time-string "%z"))))
 
-(defun jw--make-cmd-in-buffer (full-command &optional buffer-name just-toggle-back-if-current-buffer-matches before-buffer-process-creation-hook)
+(defun jw--make-cmd-in-buffer (full-command &optional buffer-name just-toggle-back-if-current-buffer-matches before-buffer-process-creation after-buffer-process-creation)
   "A wrapper around `make-comint-in-buffer'. If `buffer-name' already exists, this will just switch to it. if `just-toggle-back-if-current-buffer-matches' is `non-nil' then we just switch back to `(other-buffer)'."
   (if (and just-toggle-back-if-current-buffer-matches buffer-name (string= (buffer-name) buffer-name))
       (switch-to-buffer (other-buffer))
@@ -96,9 +96,10 @@ cat init.el
         (if command-name
 
             (progn
-              (when before-buffer-process-creation-hook (funcall before-buffer-process-creation-hook))
+              (when before-buffer-process-creation (funcall before-buffer-process-creation))
               (switch-to-buffer buffer)
-              (apply 'make-comint-in-buffer full-command buffer command-name nil command-args))
+              (apply 'make-comint-in-buffer full-command buffer command-name nil command-args)
+              (when after-buffer-process-creation (funcall after-buffer-process-creation)))
           (message "Empty command name! Did nothing."))))))
 
 (defun jw--run-cmd (&optional command args)
@@ -627,9 +628,13 @@ $HOME/bin
   (interactive)
   (shell-command (format "exercism submit %s" (buffer-file-name))))
 
-(defun sonic-pi-stop ()
+(defun sonic-pi-server ()
   (interactive)
-  (shell-command "sonic-pi stop"))
+  (jw--make-cmd-in-buffer "sonic-pi run-server" "*sonic pi*" t nil
+                          '(lambda ()
+                             (make-local-variable 'comint-output-filter-functions)
+                             (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
+                             (read-only-mode))))
 
 (defun sonic-pi-play ()
   (interactive)
@@ -637,6 +642,10 @@ $HOME/bin
                   (buffer-substring-no-properties (point) (mark))
                 (buffer-substring-no-properties (point-min) (point-max)))))
     (shell-command (format "echo '%s' | sonic-pi" ruby))))
+
+(defun sonic-pi-stop ()
+  (interactive)
+  (shell-command "sonic-pi stop"))
 
 (defun sonic-pi-stop-or-play (arg)
   (interactive "P")
@@ -681,7 +690,7 @@ $HOME/bin
 
 (global-set-key (kbd "C-c M-t") 'transpose-lines)
 
-(global-set-key (kbd "C-x m s") 'sonic-pi-stop-or-play)
+(global-set-key (kbd "C-x m m") 'sonic-pi-stop-or-play)
 
 #+END_SRC
 
