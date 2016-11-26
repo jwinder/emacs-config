@@ -286,6 +286,10 @@ $HOME/bin
 
 (use-package groovy-mode
   :mode ("Jenkinsfile$" . groovy-mode))
+
+(use-package markdown-mode
+  :mode (("\\.md$" . gfm-mode)
+         ("\\.markdown$" . gfm-mode)))
 #+END_SRC
 
 * customization
@@ -632,8 +636,7 @@ $HOME/bin
   (interactive)
   (jw--make-cmd-in-buffer "sonic-pi run-server" "*sonic pi*" t nil
                           '(lambda ()
-                             (make-local-variable 'comint-output-filter-functions)
-                             (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
+                             (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t)
                              (read-only-mode))))
 
 (defun sonic-pi-play ()
@@ -1040,6 +1043,28 @@ $HOME/bin
                                (scheme . t)
                                (shell . t)
                                (sql . t)))
+#+END_SRC
+
+hacky way of using org tables for markdown tables
+#+BEGIN_SRC emacs-lisp
+(require 'org-table)
+
+(defun markdown-cleanup-org-tables () ;; http://stackoverflow.com/questions/14275122/editing-markdown-pipe-tables-in-emacs/26297700#26297700
+  (interactive)
+  (when (or (eq major-mode 'markdown-mode) (eq major-mode 'gfm-mode))
+    (save-excursion
+      (goto-char (point-min))
+      (while (search-forward "-+-" nil t) (replace-match "-|-")))))
+
+(add-hook 'markdown-mode-hook 'turn-on-orgtbl)
+(advice-add 'org-table-align :after 'markdown-cleanup-org-tables)
+
+(defalias 'markdown-table-create 'org-table-create)
+(defalias 'markdown-table-insert-column 'org-table-insert-column)
+(defalias 'markdown-table-delete-column 'org-table-delete-column)
+(defalias 'markdown-table-insert-row 'org-table-insert-row)
+(defalias 'markdown-table-delete-row 'org-table-delete-row)
+
 #+END_SRC
 
 ** sbt
