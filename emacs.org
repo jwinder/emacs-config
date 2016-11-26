@@ -1,20 +1,19 @@
 * introduction
 ** getting started
-*** I prefer to clone this repository as `$HOME/emacs-config` and symlink it to `$HOME/.emacs.d`.
 
+I prefer to clone this repository as `$HOME/emacs-config` and symlink it to `$HOME/.emacs.d`.
 #+BEGIN_SRC sh :tangle no
 git clone git@github.com:jwinder/emacs-config.git $HOME/emacs-config
 ln -s $HOME/emacs-config $HOME/.emacs.d
 #+END_SRC
 
-*** You can also create `private` or `private.org` symlinks to a directory or file in a safe place, containing private or personal settings. This works well for irc passwords, tramp helpers, etc.
-
+You can also create `private` or `private.org` symlinks to a directory or file in a safe place, containing private or personal settings. This works well for irc passwords, tramp helpers, etc.
 #+BEGIN_SRC sh :tangle no
 ln -s /path/to/your/safe/directory $HOME/emacs-config/private # directory of elisp files
 ln -s /path/to/your/safe/private.org $HOME/emacs-config/private.org # file containing elisp segments
 #+END_SRC
 
-*** Now, start emacs.
+Now, start emacs.
 ** org configs
 
 #+TITLE: jwinder emacs config
@@ -25,6 +24,7 @@ ln -s /path/to/your/safe/private.org $HOME/emacs-config/private.org # file conta
 #+LANGUAGE: en
 
 #+SEQ_TODO: todo doing | done cancelled
+
 ** contents of init.el
 
 #+BEGIN_SRC sh :tangle no :results code
@@ -43,6 +43,7 @@ cat init.el
 * dependencies
 ** helper functions
 
+These are non-interactive library functions useful in other parts of this config.
 #+BEGIN_SRC emacs-lisp
 (require 'comint)
 (require 'vc)
@@ -112,6 +113,7 @@ cat init.el
 
 ** env
 
+An opinionated way of setting up env vars & path
 #+BEGIN_SRC emacs-lisp
 (require 'eshell)
 (require 'subr-x)
@@ -146,20 +148,21 @@ cat init.el
 (add-to-list 'eshell-mode-hook 'jw-env-set)
 #+END_SRC
 
-*** these provide an opinionated way of setting up env vars & path
-
+Example env-vars file, symlinked to ~/.emacs.d/env-vars from a safe place
 #+BEGIN_EXAMPLE
-# example env-vars file, symlinked to ~/.emacs.d/env-vars from a safe place
 DROPBOX_HOME=$HOME/Dropbox
 DRIVE_HOME=$HOME/GoogleDrive
 #+END_EXAMPLE
 
+Example env-path file, symblinked to ~/.emacs.d/env-path from a safe place
 #+BEGIN_EXAMPLE
-# example env-path file, symblinked to ~/.emacs.d/env-path from a safe place
 $HOME/bin
 /usr/local/bin
 /usr/bin
 #+END_EXAMPLE
+
+
+My terminal rc file parses these same files.
 
 ** packages
 *** common
