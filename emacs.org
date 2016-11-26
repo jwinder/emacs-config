@@ -1045,7 +1045,7 @@ $HOME/bin
                                (sql . t)))
 #+END_SRC
 
-hacky way of using org tables for markdown tables
+hacky way of using org tables for markdown tables [[https:stackoverflow.com/questions/14275122/editing-markdown-pipe-tables-in-emacs/26297700#26297700][copied from stackoverflow]]
 #+BEGIN_SRC emacs-lisp
 (require 'org-table)
 
