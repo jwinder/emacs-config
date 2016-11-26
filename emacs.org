@@ -1049,7 +1049,7 @@ hacky way of using org tables for markdown tables [[https:stackoverflow.com/ques
 #+BEGIN_SRC emacs-lisp
 (require 'org-table)
 
-(defun markdown-cleanup-org-tables () ;; http://stackoverflow.com/questions/14275122/editing-markdown-pipe-tables-in-emacs/26297700#26297700
+(defun markdown-cleanup-org-tables ()
   (interactive)
   (when (or (eq major-mode 'markdown-mode) (eq major-mode 'gfm-mode))
     (save-excursion
