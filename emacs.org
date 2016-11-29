@@ -95,7 +95,6 @@ These are non-interactive library functions useful in other parts of this config
              (name-for-buffer (or buffer-name (concat "*" (string-trim full-command) "*")))
              (buffer (get-buffer-create name-for-buffer)))
         (if command-name
-
             (progn
               (when before-buffer-process-creation (funcall before-buffer-process-creation))
               (switch-to-buffer buffer)
@@ -603,6 +602,16 @@ My terminal rc file parses these same files.
   (interactive)
   (find-file (concat user-emacs-directory "emacs.org")))
 
+(defun emacs-private-config ()
+  (interactive)
+  (find-file (concat user-emacs-directory "private.org")))
+
+(defun emacs-configs-toggle (arg)
+  (interactive "P")
+  (if arg
+      (if (string= (buffer-name) "private.org") (switch-to-buffer (other-buffer)) (emacs-private-config))
+    (if (string= (buffer-name) "emacs.org") (switch-to-buffer (other-buffer)) (emacs-config))))
+
 (defun emacs-reload-config ()
   (interactive)
   (load-file (concat user-emacs-directory "init.el")))
@@ -674,8 +683,6 @@ My terminal rc file parses these same files.
 (global-set-key (kbd "C-M-9") 'winner-undo)
 (global-set-key (kbd "C-M-0") 'winner-redo)
 
-(global-set-key (kbd "M-RET") 'toggle-frame-fullscreen)
-
 (global-set-key (kbd "C-x 9") 'toggle-window-split)
 (global-set-key (kbd "C-x p f") 'pop-to-buffer)
 
@@ -702,6 +709,10 @@ hijack C-x m as prefix key for personal bindings
 
 (global-set-key (kbd "C-x m") jw-keymap)
 (global-set-key (kbd "C-c m") jw-keymap)
+
+(define-key jw-keymap "q" 'emacs-configs-toggle)
+
+(define-key jw-keymap (kbd "RET") 'toggle-frame-fullscreen)
 
 (define-key jw-keymap "i" 'toggle-scratch-buffer)
 
@@ -910,7 +921,6 @@ here are some useful rcirc configs to set in the safe `private` location
 (magit-define-popup magit-git-extras-popup
   "Popup console for git-extras commands."
   'magit-commands
-  :man-page "git-extras"
   :actions '((?g "Github" magit-github-popup)
              (?p "Github pulls" magit-gh-pulls-popup)
              (?r "Repl" magit-x-repl)
@@ -922,7 +932,6 @@ here are some useful rcirc configs to set in the safe `private` location
 (magit-define-popup magit-github-popup
   "Popup console for github hub commands."
   'magit-commands
-  :man-page "hub"
   :actions '((?g "Browse repository" github-browse)
              (?f "Browse file" github-browse-file)
              (?b "Browse file with blame" github-browse-file-blame)
