@@ -462,6 +462,10 @@ My terminal rc file parses these same files.
   (interactive)
   (insert (jw--iso-current-time-string)))
 
+(defun weather ()
+  (interactive)
+  (jw--make-cmd-in-buffer "weather"))
+
 (defun scratch-buffer ()
   (interactive)
   (let ((scratch-buffer (get-buffer-create "*scratch*")))
@@ -712,11 +716,12 @@ hijack C-x m as prefix key for personal bindings
 
 (define-key jw-keymap "q" 'emacs-configs-toggle)
 
+(define-key jw-keymap "d" 'date)
+(define-key jw-keymap "w" 'weather)
+
 (define-key jw-keymap (kbd "RET") 'toggle-frame-fullscreen)
 
 (define-key jw-keymap "i" 'toggle-scratch-buffer)
-
-(define-key jw-keymap "D" 'emacs-archive-packages-and-die)
 
 (define-key jw-keymap "M" 'sonic-pi-server)
 (define-key jw-keymap "m" 'sonic-pi-stop-or-play)
@@ -749,7 +754,8 @@ hijack C-x m as prefix key for personal bindings
 
 (setq helm-ag-insert-at-point 'word)
 
-(setq projectile-completion-system 'helm)
+(setq projectile-completion-system 'helm
+      projectile-mode-line "") ;; this slowed tramp down sometimes
 
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
@@ -1143,8 +1149,11 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
   (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)
   (local-set-key (kbd "C-c s p") 'sbt-run-previous-command))
 
+(require 'magit-mode)
+
 (add-hook 'scala-mode-hook 'sbt-turn-on-extra-bindings)
 (add-hook 'sbt-mode-hook 'sbt-turn-on-extra-bindings)
+(add-hook 'magit-mode-hook 'sbt-turn-on-extra-bindings)
 
 #+END_SRC
 
