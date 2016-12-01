@@ -359,6 +359,8 @@ My terminal rc file parses these same files.
 
 (put 'temporary-file-directory 'standard-value '((file-name-as-directory "/tmp")))
 
+(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+
 (setq undo-tree-auto-save-history t)
 
 (add-to-list 'undo-tree-history-directory-alist `("" . ,(concat user-emacs-directory "undo")))
