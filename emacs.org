@@ -357,13 +357,13 @@ My terminal rc file parses these same files.
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
-(put 'temporary-file-directory 'standard-value '((file-name-as-directory "/tmp")))
-
-(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+(setq auto-save-directory (concat user-emacs-directory "auto-saves/"))
+(unless (file-exists-p auto-save-directory) (make-directory auto-save-directory)) ;; auto-save won't create directories
+(setq auto-save-file-name-transforms `((".*" ,auto-save-directory t)))
 
 (setq undo-tree-auto-save-history t)
 
-(add-to-list 'undo-tree-history-directory-alist `("" . ,(concat user-emacs-directory "undo")))
+(add-to-list 'undo-tree-history-directory-alist `("" . ,(concat user-emacs-directory "undo-tree")))
 
 (put 'narrow-to-region 'disabled nil)
 #+END_SRC
