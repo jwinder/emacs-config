@@ -306,9 +306,7 @@ My terminal rc file parses these same files.
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(setq make-backup-files nil
-      version-control nil
-      create-lockfiles nil)
+(setq create-lockfiles nil)
 
 (setq save-silently t)
 
@@ -357,15 +355,45 @@ My terminal rc file parses these same files.
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
-(setq auto-save-directory (concat user-emacs-directory "auto-saves/"))
-(unless (file-exists-p auto-save-directory) (make-directory auto-save-directory)) ;; auto-save won't create directories
-(setq auto-save-file-name-transforms `((".*" ,auto-save-directory t)))
+(put 'narrow-to-region 'disabled nil)
+
+(setq user-auto-save-directory (concat user-emacs-directory "auto-saves/"))
+(unless (file-exists-p user-auto-save-directory) (make-directory user-auto-save-directory)) ;; auto-save won't create directories
+(setq auto-save-file-name-transforms `((".*" ,user-auto-save-directory t)))
 
 (setq undo-tree-auto-save-history t)
 
 (add-to-list 'undo-tree-history-directory-alist `("" . ,(concat user-emacs-directory "undo-tree")))
 
-(put 'narrow-to-region 'disabled nil)
+(setq user-backup-directory (concat user-emacs-directory "backups/"))
+(unless (file-exists-p user-backup-directory) (make-directory user-backup-directory))
+
+(setq version-control t
+      vc-make-backup-files t
+      kept-new-versions 6
+      kept-old-versions 2
+      backup-by-copying t ;; deep copy of symlinks
+      delete-old-versions t)
+
+(setq backup-directory-alist `(("." . ,user-backup-directory)))
+#+END_SRC
+
+*** version control testing
+
+#+BEGIN_SRC emacs-lisp
+(setq user-backup-directory (concat user-emacs-directory "backups/"))
+(unless (file-exists-p user-backup-directory) (make-directory user-backup-directory))
+
+(setq version-control t
+      vc-make-backup-files t
+      kept-new-versions 6
+      kept-old-versions 2
+      backup-by-copying t ;; deep copy of symlinks
+      delete-old-versions t)
+
+(setq backup-directory-alist `(("." . ,user-backup-directory)))
+
+
 #+END_SRC
 
 *** style
