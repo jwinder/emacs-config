@@ -167,11 +167,7 @@ My terminal rc file parses these same files.
 *** common
 
 #+BEGIN_SRC emacs-lisp
-(use-package afternoon-theme
-  :config (progn (load-theme 'afternoon t)
-                 (set-cursor-color "dark grey")
-                 (set-background-color "black")
-                 (set-face-background 'fringe nil)))
+(use-package afternoon-theme)
 
 (use-package scratch)
 
@@ -295,8 +291,39 @@ My terminal rc file parses these same files.
 #+END_SRC
 
 * customization
-** editor
-*** settings
+** style
+
+#+BEGIN_SRC emacs-lisp
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+
+(load-theme 'afternoon t)
+(set-cursor-color "dark grey")
+(set-background-color "black")
+(set-face-background 'fringe nil)
+
+(jw--set-font-size "14")
+
+(set-face-attribute 'mode-line nil :font (jw--font-name "14") :background jw--mode-line-color :foreground "#7db5d6" :box '(:style released-button))
+(set-face-attribute 'mode-line-inactive nil :background "#263238" :foreground "gray" :box '(:style released-button))
+(set-face-attribute 'mode-line-buffer-id nil :foreground "white")
+(set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
+(set-face-attribute 'header-line nil :background "#005858" :foreground "white")
+
+(setq-default mode-line-format '(" ✔ " mode-line-buffer-identification " " mode-line-misc-info))
+
+(custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
+
+(setq inhibit-startup-message t
+      initial-scratch-message ""
+      initial-major-mode 'org-mode)
+
+(add-hook 'minibuffer-setup-hook '(lambda ()
+                                    (set (make-local-variable 'face-remapping-alist) '((default :height 1.3)))))
+#+END_SRC
+
+** settings
 
 #+BEGIN_SRC emacs-lisp
 (setq custom-file (concat user-emacs-directory "custom.el"))
@@ -357,7 +384,6 @@ My terminal rc file parses these same files.
 
 (put 'narrow-to-region 'disabled nil)
 
-
 (setq user-auto-save-directory (concat user-emacs-directory "auto-saves/"))
 (unless (file-exists-p user-auto-save-directory) (make-directory user-auto-save-directory)) ;; auto-save won't create directories
 (setq auto-save-file-name-transforms `((".*" ,user-auto-save-directory t)))
@@ -377,49 +403,18 @@ My terminal rc file parses these same files.
       delete-old-versions t)
 
 (setq backup-directory-alist `(("." . ,user-backup-directory)))
-#+END_SRC
 
-*** style
+(when (eq system-type 'gnu/linux)
+  (setq interprogram-paste-function 'x-cut-buffer-or-selection-value
+        browse-url-browser-function 'browse-url-generic
+        browse-url-generic-program "google-chrome"
+        ack-executable "ack-grep"))
 
-#+BEGIN_SRC emacs-lisp
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-
-(jw--set-font-size "14")
-
-(set-face-attribute 'mode-line nil :font (jw--font-name "14") :background jw--mode-line-color :foreground "#7db5d6" :box '(:style released-button))
-(set-face-attribute 'mode-line-inactive nil :background "#263238" :foreground "gray" :box '(:style released-button))
-(set-face-attribute 'mode-line-buffer-id nil :foreground "white")
-(set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
-(set-face-attribute 'header-line nil :background "#005858" :foreground "white")
-
-(setq-default mode-line-format '(" ✔ " mode-line-buffer-identification " " mode-line-misc-info))
-
-(custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
-
-(add-hook 'minibuffer-setup-hook '(lambda ()
-                                    (set (make-local-variable 'face-remapping-alist) '((default :height 1.3)))))
-
-(setq inhibit-startup-message t
-      initial-scratch-message ""
-      initial-major-mode 'org-mode)
-#+END_SRC
-
-** operating system
-
-#+BEGIN_SRC emacs-lisp
-  (when (eq system-type 'gnu/linux)
-    (setq interprogram-paste-function 'x-cut-buffer-or-selection-value
-          browse-url-browser-function 'browse-url-generic
-          browse-url-generic-program "google-chrome"
-          ack-executable "ack-grep"))
-
-  (when (eq system-type 'darwin)
-    (setq ns-command-modifier 'meta
-          interprogram-paste-function 'x-selection-value
-          browse-url-browser-function 'browse-url-default-macosx-browser
-          ispell-program-name "aspell"))
+(when (eq system-type 'darwin)
+  (setq ns-command-modifier 'meta
+        interprogram-paste-function 'x-selection-value
+        browse-url-browser-function 'browse-url-default-macosx-browser
+        ispell-program-name "aspell"))
 #+END_SRC
 
 ** functions
@@ -869,6 +864,7 @@ hijack C-x m as prefix key for personal bindings
              (rcirc-omit-mode)
              (cd (getenv "HOME"))))
 
+;; make rcirc buffers span the width of the frame
 (add-hook 'window-configuration-change-hook
           '(lambda () (setq rcirc-fill-column (- (window-width) 2))))
 #+END_SRC
@@ -1165,6 +1161,7 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 * private
 
+load the private directory and the private.org file
 #+BEGIN_SRC emacs-lisp
 (let ((path (concat user-emacs-directory "private")))
   (when (file-exists-p path)
