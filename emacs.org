@@ -655,28 +655,6 @@ My terminal rc file parses these same files.
 (defun exercism-submit-this-file ()
   (interactive)
   (shell-command (format "exercism submit %s" (buffer-file-name))))
-
-(defun sonic-pi-server ()
-  (interactive)
-  (jw--make-cmd-in-buffer "sonic-pi run-server" "*sonic pi*" t nil
-                          '(lambda ()
-                             (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t)
-                             (read-only-mode))))
-
-(defun sonic-pi-play ()
-  (interactive)
-  (let ((ruby (if (region-active-p)
-                  (buffer-substring-no-properties (point) (mark))
-                (buffer-substring-no-properties (point-min) (point-max)))))
-    (shell-command (format "echo '%s' | sonic-pi" ruby))))
-
-(defun sonic-pi-stop ()
-  (interactive)
-  (shell-command "sonic-pi stop"))
-
-(defun sonic-pi-stop-or-play (arg)
-  (interactive "P")
-  (if arg (sonic-pi-stop) (sonic-pi-play)))
 #+END_SRC
 
 ** key bindings
@@ -706,8 +684,6 @@ My terminal rc file parses these same files.
 (global-set-key (kbd "C-j") 'newline-and-open-line-previous)
 
 (global-set-key (kbd "M-;") 'comment-dwim-region-or-line-or-end-of-line)
-
-(global-set-key (kbd "C-x n") 'switch-to-buffer) ;; helps with my current keyboard
 
 (global-set-key (kbd "C-c M-t") 'transpose-lines)
 
@@ -1157,6 +1133,59 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (add-hook 'sbt-mode-hook 'sbt-turn-on-extra-bindings)
 (add-hook 'magit-mode-hook 'sbt-turn-on-extra-bindings)
 
+#+END_SRC
+
+** sonic pi
+
+#+BEGIN_SRC emacs-lisp
+(require 'org)
+(require 'ob)
+(require 'subr-x) ;; string-trim
+
+(defun sonic-pi-server ()
+  (interactive)
+  (jw--make-cmd-in-buffer "sonic-pi run-server" "*sonic pi*" t nil
+                          '(lambda ()
+                             (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t)
+                             (read-only-mode))))
+
+(defun sonic-pi-server-running-p ()
+  (string= (string-trim (shell-command-to-string "sonic-pi check-server")) "Sonic Pi is running"))
+
+(defun sonic-pi-server-start-if-needed ()
+  (unless (sonic-pi-server-running-p)
+    (message "Sonic Pi server not running anywhere. Starting up...")
+    (save-excursion
+      (sonic-pi-server)
+      (sleep-for 2)
+      (switch-to-buffer (other-buffer)))))
+
+(defun sonic-pi-play (&optional ruby)
+  (interactive)
+  (sonic-pi-server-start-if-needed)
+  (let ((prepared-ruby (or ruby (if (region-active-p)
+                                    (buffer-substring-no-properties (point) (mark))
+                                  (buffer-substring-no-properties (point-min) (point-max))))))
+    (shell-command (format "echo '%s' | sonic-pi" prepared-ruby))))
+
+(defun sonic-pi-stop ()
+  (interactive)
+  (shell-command "sonic-pi stop"))
+
+(defun sonic-pi-stop-or-play (arg)
+  (interactive "P")
+  (if arg (sonic-pi-stop) (sonic-pi-play)))
+
+(defun org-babel-execute:sonic-pi (body params)
+  (sonic-pi-server-start-if-needed)
+  (sonic-pi-play body)
+  "Sent to Sonic Pi")
+
+(add-to-list 'org-src-lang-modes '("sonic-pi"))
+
+(define-derived-mode sonic-pi-mode ruby-mode "sonic-pi")
+
+(setq org-babel-default-header-args:sonic-pi '((:results . "silent")))
 #+END_SRC
 
 * private
