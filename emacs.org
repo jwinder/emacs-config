@@ -1142,15 +1142,23 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (require 'ob)
 (require 'subr-x) ;; string-trim
 
-(defun sonic-pi-server ()
-  (interactive)
-  (jw--make-cmd-in-buffer "sonic-pi run-server" "*sonic pi*" t nil
-                          '(lambda ()
-                             (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t)
-                             (read-only-mode))))
+(defvar sonic-pi-server-buffer-name "*sonic pi*")
 
 (defun sonic-pi-server-running-p ()
   (string= (string-trim (shell-command-to-string "sonic-pi check-server")) "Sonic Pi is running"))
+
+(defun sonic-pi-server-cleanup-process-buffer ()
+  (interactive)
+  (when (and (not (sonic-pi-server-running-p)) (get-buffer sonic-pi-server-buffer-name))
+    (kill-buffer sonic-pi-server-buffer-name)))
+
+(defun sonic-pi-server ()
+  (interactive)
+  (sonic-pi-server-cleanup-process-buffer)
+  (jw--make-cmd-in-buffer "sonic-pi run-server" sonic-pi-server-buffer-name t nil
+                          '(lambda ()
+                             (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t)
+                             (read-only-mode))))
 
 (defun sonic-pi-server-start-if-needed ()
   (unless (sonic-pi-server-running-p)
