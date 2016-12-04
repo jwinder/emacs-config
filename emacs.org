@@ -706,9 +706,6 @@ hijack C-x m as prefix key for personal bindings
 (define-key jw-keymap (kbd "RET") 'toggle-frame-fullscreen)
 
 (define-key jw-keymap "i" 'toggle-scratch-buffer)
-
-(define-key jw-keymap "M" 'sonic-pi-server)
-(define-key jw-keymap "m" 'sonic-pi-stop-or-play)
 #+END_SRC
 
 ** helm
@@ -1183,6 +1180,9 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (defun sonic-pi-stop-or-play (arg)
   (interactive "P")
   (if arg (sonic-pi-stop) (sonic-pi-play)))
+
+(define-key jw-keymap "M" 'sonic-pi-server)
+(define-key jw-keymap "m" 'sonic-pi-stop-or-play)
 
 (defun org-babel-execute:sonic-pi (body params)
   (sonic-pi-play body)
