@@ -1185,7 +1185,6 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
   (if arg (sonic-pi-stop) (sonic-pi-play)))
 
 (defun org-babel-execute:sonic-pi (body params)
-  (sonic-pi-server-start-if-needed)
   (sonic-pi-play body)
   "Sent to Sonic Pi")
 
