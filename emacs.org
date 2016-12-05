@@ -362,6 +362,8 @@ My terminal rc file parses these same files.
 
 (setq wdired-allow-to-change-permissions 'advanced)
 
+(setq dired-listing-switches "-alk")
+
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -458,9 +460,14 @@ My terminal rc file parses these same files.
       (kill-ring-save (mark) (point))
     (kill-ring-save (line-beginning-position) (line-end-position))))
 
-(defun date ()
-  (interactive)
-  (message (current-time-string)))
+(defun date (&optional arg)
+"Display date.
+With default prefix arg (e.g. C-u M-x date), display calendar around current date.
+With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar display."
+  (interactive "P")
+  (if arg
+      (calendar (if (equal arg 4) arg nil))
+    (message (current-time-string))))
 
 (defun iso-date ()
   (interactive)
@@ -1053,6 +1060,10 @@ here are some useful rcirc configs to set in the safe `private` location
                                (scheme . t)
                                (shell . t)
                                (sql . t)))
+
+
+(setq org-babel-default-header-args:sh '((:results . "output"))
+      org-babel-default-header-args:http '((:pretty . "yes")))
 #+END_SRC
 
 hacky way of using org tables for markdown tables [[http://stackoverflow.com/questions/14275122/editing-markdown-pipe-tables-in-emacs/26297700#26297700][copied from stackoverflow]]
