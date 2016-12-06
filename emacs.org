@@ -740,7 +740,7 @@ hijack C-x m as prefix key for personal bindings
 
 (setq helm-ag-base-command "pt -i -e --nocolor --nogroup")
 
-(setq helm-ag-insert-at-point 'word)
+(setq helm-ag-insert-at-point 'symbol)
 
 (setq projectile-completion-system 'helm
       projectile-mode-line "") ;; this slowed tramp down sometimes
