@@ -87,17 +87,18 @@ These are non-interactive library functions useful in other parts of this config
                             buffer-name
                             just-toggle-back-if-current-buffer-matches
                             before-buffer-process-creation
-                            after-buffer-process-creation
-                            run-command-always)
-  "A wrapper around `async-shell-command'.
-If `buffer-name' already exists, this will just switch to it.
-If `just-toggle-back-if-current-buffer-matches' is non-nil then we just switch back to (other-buffer).
-If `run-command-always' is non-nil then we always run the command even if the target process buffer already exists."
+                            after-buffer-process-creation)
+  "A wrapper around `make-comint-in-buffer'.
+If `buffer-name' is explicitly provided and already exists, this will just switch to it (useful for long running server processes, for example).
+If `just-toggle-back-if-current-buffer-matches' is non-nil then we just switch back to (other-buffer)."
   (if (and just-toggle-back-if-current-buffer-matches buffer-name (string= (buffer-name) buffer-name))
       (switch-to-buffer (other-buffer))
-    (if (and buffer-name (get-buffer buffer-name) (not run-command-always))
+    (if (and buffer-name (get-buffer buffer-name))
         (switch-to-buffer buffer-name)
       (let* ((prepared-cmd (string-trim command))
+             (command-tokens (split-string prepared-cmd))
+             (command-name (car command-tokens))
+             (command-args (cdr command-tokens))
              (name-for-buffer (or buffer-name (concat "*" (replace-regexp-in-string "[\t\n\r]+" " " prepared-cmd) "*")))
              (buffer (get-buffer-create name-for-buffer)))
         (if (string= "" prepared-cmd)
@@ -105,7 +106,7 @@ If `run-command-always' is non-nil then we always run the command even if the ta
           (progn
             (when before-buffer-process-creation (funcall before-buffer-process-creation))
             (switch-to-buffer buffer)
-            (async-shell-command prepared-cmd buffer)
+            (apply 'make-comint-in-buffer prepared-cmd buffer command-name nil command-args)
             (when after-buffer-process-creation (funcall after-buffer-process-creation)))
           )))))
 
@@ -516,7 +517,7 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
 
 (defun cmd (command)
   (interactive "sCommand: ")
-  (jw--run-cmd command nil nil nil nil t))
+  (jw--run-cmd command))
 
 (defun cmd-tmux (command &optional tmux-session)
   (interactive "sCommand: ")
@@ -527,7 +528,7 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
 (defun cmd-dwim (arg &optional command)
   "Shell command dwim.
 
-M-x `cmd-dwim' will run an async shell command in a new buffer.
+M-x `cmd-dwim' will run an async shell command in a new buffer using comint.
 C-u M-x `cmd-dwim' will run a shell command and print the response in the echo area.
 C-u 4 M-x `cmd-dwim' will run a shell command and insert the response at point.
 C-u 8 M-x `cmd-dwim' will send a shell command to the default tmux session using `cmd-tmux'.
