@@ -512,10 +512,11 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
   (interactive "sCommand: ")
   (jw--run-cmd command (format "*%s*" (replace-regexp-in-string "\n" " && " command))))
 
-(defun cmd-tmux (command)
+(defun cmd-tmux (command &optional tmux-session)
   (interactive "sCommand: ")
-  (jw--run-cmd-tmux command "emacs")
-  (message "Sent to tmux session: emacs"))
+  (let ((ts (or tmux-session "emacs")))
+    (jw--run-cmd-tmux command ts)
+    (message "Sent to tmux session: %s" ts)))
 
 (defun cmd-dwim (arg &optional command)
   (interactive "P")
@@ -1082,14 +1083,14 @@ here are some useful rcirc configs to set in the safe `private` location
 
 (defun org-babel-execute:cmd (body params)
   (let* ((bg-option (assoc :bg params))
-         (bg (and bg-option (not (string= (cdr bg-option) "no"))))
+         (in-bg (and bg-option (not (string= (cdr bg-option) "no"))))
          (tmux-option (assoc :tmux params))
-         (tmux (and tmux-option (not (string= (cdr tmux-option) "no")))))
-    (if tmux
-        (progn (cmd-tmux body) "Sent to tmux session: emacs")
+         (tmux-session (or (cdr tmux-option) "emacs")))
+    (if tmux-option
+        (progn (cmd-tmux body tmux-session) (format "Sent to tmux session: %s" tmux-session))
       (progn
         (cmd-dwim nil body)
-        (when bg (switch-to-buffer (other-buffer)))
+        (when in-bg (switch-to-buffer (other-buffer)))
         "Running command"))))
 
 (add-to-list 'org-src-lang-modes '("cmd"))
