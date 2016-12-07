@@ -83,7 +83,7 @@ These are non-interactive library functions useful in other parts of this config
    ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
     (format-time-string "%z"))))
 
-(defun jw--run-cmd (full-command &optional buffer-name just-toggle-back-if-current-buffer-matches before-buffer-process-creation after-buffer-process-creation)
+(defun jw--run-cmd (command &optional buffer-name just-toggle-back-if-current-buffer-matches before-buffer-process-creation after-buffer-process-creation)
   "A wrapper around `async-shell-command'.
 If `buffer-name' already exists, this will just switch to it.
 If `just-toggle-back-if-current-buffer-matches' is `non-nil' then we just switch back to `(other-buffer)'."
@@ -91,7 +91,7 @@ If `just-toggle-back-if-current-buffer-matches' is `non-nil' then we just switch
       (switch-to-buffer (other-buffer))
     (if (and buffer-name (get-buffer buffer-name))
         (switch-to-buffer buffer-name)
-      (let* ((prepared-cmd (string-trim full-command))
+      (let* ((prepared-cmd (string-trim command))
              (name-for-buffer (or buffer-name (concat "*" prepared-cmd "*")))
              (buffer (get-buffer-create name-for-buffer)))
         (if (string= "" prepared-cmd)
@@ -102,6 +102,11 @@ If `just-toggle-back-if-current-buffer-matches' is `non-nil' then we just switch
             (async-shell-command prepared-cmd buffer)
             (when after-buffer-process-creation (funcall after-buffer-process-creation)))
           )))))
+
+(defun jw--run-cmd-tmux (command tmux-session)
+  "Create session `tmux-session' if needed, and send `command' to it."
+  (call-process "tmux" nil nil nil "new-session" "-d" "-s" tmux-session) ;; this does nothing if the session already exists
+  (call-process "tmux" nil nil nil "send-keys" "-t" tmux-session command "C-m"))
 #+END_SRC
 
 ** env
@@ -509,8 +514,7 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
 
 (defun cmd-tmux (command)
   (interactive "sCommand: ")
-  (call-process "tmux" nil nil nil "new-session" "-d" "-s" "emacs")
-  (call-process "tmux" nil nil nil "send-keys" "-t" "emacs" command "C-m")
+  (jw--run-cmd-tmux command "emacs")
   (message "Sent to tmux session: emacs"))
 
 (defun cmd-dwim (arg &optional command)
