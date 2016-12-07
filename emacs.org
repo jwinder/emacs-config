@@ -83,31 +83,25 @@ These are non-interactive library functions useful in other parts of this config
    ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
     (format-time-string "%z"))))
 
-(defun jw--make-cmd-in-buffer (full-command &optional buffer-name just-toggle-back-if-current-buffer-matches before-buffer-process-creation after-buffer-process-creation)
-  "A wrapper around `make-comint-in-buffer'. If `buffer-name' already exists, this will just switch to it. if `just-toggle-back-if-current-buffer-matches' is `non-nil' then we just switch back to `(other-buffer)'."
+(defun jw--run-cmd (full-command &optional buffer-name just-toggle-back-if-current-buffer-matches before-buffer-process-creation after-buffer-process-creation)
+  "A wrapper around `async-shell-command'.
+If `buffer-name' already exists, this will just switch to it.
+If `just-toggle-back-if-current-buffer-matches' is `non-nil' then we just switch back to `(other-buffer)'."
   (if (and just-toggle-back-if-current-buffer-matches buffer-name (string= (buffer-name) buffer-name))
       (switch-to-buffer (other-buffer))
     (if (and buffer-name (get-buffer buffer-name))
         (switch-to-buffer buffer-name)
-      (let* ((full-command-tokens (split-string full-command))
-             (command-name (car full-command-tokens))
-             (command-args (cdr full-command-tokens))
-             (name-for-buffer (or buffer-name (concat "*" (string-trim full-command) "*")))
+      (let* ((prepared-cmd (string-trim full-command))
+             (name-for-buffer (or buffer-name (concat "*" prepared-cmd "*")))
              (buffer (get-buffer-create name-for-buffer)))
-        (if command-name
-            (progn
-              (when before-buffer-process-creation (funcall before-buffer-process-creation))
-              (switch-to-buffer buffer)
-              (apply 'make-comint-in-buffer full-command buffer command-name nil command-args)
-              (when after-buffer-process-creation (funcall after-buffer-process-creation)))
-          (message "Empty command name! Did nothing."))))))
-
-(defun jw--run-cmd (&optional command args)
-  "Inspired by rubbish's `command-line-tool' function but uses eshell's history file and completing-read which helm enriches."
-  (let* ((history (reverse (jw--file-lines-to-list eshell-history-file-name)))
-         (full-command (completing-read "Command: " history nil nil (if command (concat command " " (or args "")) "")))
-         (add-command-to-eshell-history #'(lambda () (write-region (concat full-command "\n") nil eshell-history-file-name 'append 1))))
-    (jw--make-cmd-in-buffer full-command nil nil add-command-to-eshell-history)))
+        (if (string= "" prepared-cmd)
+            (message "Empty command name! Did nothing.")
+          (progn
+            (when before-buffer-process-creation (funcall before-buffer-process-creation))
+            (switch-to-buffer buffer)
+            (async-shell-command prepared-cmd buffer)
+            (when after-buffer-process-creation (funcall after-buffer-process-creation)))
+          )))))
 #+END_SRC
 
 ** env
@@ -479,7 +473,7 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
 
 (defun weather ()
   (interactive)
-  (jw--make-cmd-in-buffer "weather"))
+  (cmd "weather"))
 
 (defun scratch-buffer ()
   (interactive)
@@ -509,9 +503,27 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
       (json-pretty-print (region-beginning) (region-end))
     (json-pretty-print-buffer)))
 
-(defun cmd (&optional command args)
-  (interactive)
-  (jw--run-cmd command args))
+(defun cmd (command)
+  (interactive "sCommand: ")
+  (jw--run-cmd command (format "*%s*" (replace-regexp-in-string "\n" " && " command))))
+
+(defun cmd-tmux (command)
+  (interactive "sCommand: ")
+  (call-process "tmux" nil nil nil "new-session" "-d" "-s" "emacs")
+  (call-process "tmux" nil nil nil "send-keys" "-t" "emacs" command "C-m")
+  (message "Sent to tmux session: emacs"))
+
+(defun cmd-dwim (arg &optional command)
+  (interactive "P")
+  (let ((prepared-cmd (or command (if (region-active-p)
+                                      (buffer-substring-no-properties (region-beginning) (region-end))
+                                    (read-shell-command "Command: ")))))
+    (if arg
+        (case arg
+          (4 (insert (shell-command-to-string prepared-cmd)))
+          (8 (cmd-tmux prepared-cmd))
+          (t (message (string-trim (shell-command-to-string prepared-cmd)))))
+      (cmd prepared-cmd))))
 
 (defun toggle-window-split ()
   (interactive)
@@ -670,6 +682,8 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
 (global-unset-key (kbd "C-z"))
 (global-unset-key (kbd "C-x C-z"))
 
+(global-set-key (kbd "M-!") 'cmd-dwim)
+
 (global-set-key (kbd "C-c M-e") 'eshell-cd-vc-root-dir-or-pwd-otherwise-other-buffer)
 
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
@@ -693,9 +707,6 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
 (global-set-key (kbd "M-;") 'comment-dwim-region-or-line-or-end-of-line)
 
 (global-set-key (kbd "C-c M-t") 'transpose-lines)
-
-
-
 #+END_SRC
 
 hijack C-x m as prefix key for personal bindings
@@ -1064,6 +1075,24 @@ here are some useful rcirc configs to set in the safe `private` location
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:http '((:pretty . "yes")))
+
+(defun org-babel-execute:cmd (body params)
+  (let* ((bg-option (assoc :bg params))
+         (bg (and bg-option (not (string= (cdr bg-option) "no"))))
+         (tmux-option (assoc :tmux params))
+         (tmux (and tmux-option (not (string= (cdr tmux-option) "no")))))
+    (if tmux
+        (progn (cmd-tmux body) "Sent to tmux session: emacs")
+      (progn
+        (cmd-dwim nil body)
+        (when bg (switch-to-buffer (other-buffer)))
+        "Running command"))))
+
+(add-to-list 'org-src-lang-modes '("cmd"))
+
+(define-derived-mode cmd-mode sh-mode "cmd")
+
+(setq org-babel-default-header-args:cmd '((:results . "silent")))
 #+END_SRC
 
 hacky way of using org tables for markdown tables [[http://stackoverflow.com/questions/14275122/editing-markdown-pipe-tables-in-emacs/26297700#26297700][copied from stackoverflow]]
@@ -1163,10 +1192,10 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (defun sonic-pi-server ()
   (interactive)
   (sonic-pi-server-cleanup-process-buffer)
-  (jw--make-cmd-in-buffer "sonic-pi run-server" sonic-pi-server-buffer-name t nil
-                          '(lambda ()
-                             (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t)
-                             (read-only-mode))))
+  (jw--run-cmd "sonic-pi run-server" sonic-pi-server-buffer-name t nil
+               '(lambda ()
+                  (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t)
+                  (read-only-mode))))
 
 (defun sonic-pi-server-start-if-needed ()
   (unless (sonic-pi-server-running-p)
