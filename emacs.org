@@ -120,8 +120,8 @@ For long running processes, this will always toggle back and forth between the p
               (when before-process-creation (funcall before-process-creation))
               (switch-to-buffer buffer)
               (apply 'make-comint-in-buffer command-script buffer command-script nil command-args)
-              (when after-process-creation (funcall after-process-creation))))))
-      (message "Running command %s" prepared-cmd))))
+              (when after-process-creation (funcall after-process-creation))))))))
+  (message nil))
 
 ;; todo -- remote tmux sessions?
 (defun jw--run-cmd-tmux (command tmux-session)
