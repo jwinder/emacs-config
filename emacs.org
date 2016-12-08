@@ -66,7 +66,9 @@ These are non-interactive library functions useful in other parts of this config
   (split-string (jw--file-lines-to-string file) "\n" t))
 
 (defun jw--write-to-file (string file &optional append)
-  (let ((msg (current-message)))
+  (let ((msg (current-message))
+        (file-dir (file-name-directory file)))
+    (unless (file-exists-p file-dir) (make-directory file-dir t))
     (when (and (file-exists-p file) (not append)) (delete-file file))
     (append-to-file string nil file)
     (when msg (message msg))))
@@ -112,7 +114,6 @@ For long running processes, this will always toggle back and forth between the p
                                                 (t "")))
                (tmp-script-contents (format "#!%s\n\n%s\n\ncd %s\n\n%s" tmp-script-exec-program tmp-script-source-profile (jw--pwd) prepared-cmd)))
           (when (get-buffer cmd-buffer-name) (kill-buffer cmd-buffer-name))
-          (unless (file-exists-p tmp-script-dir) (make-directory tmp-script-dir))
           (jw--write-to-file tmp-script-contents tmp-script-abs-filename)
           (unless (file-executable-p tmp-script-abs-filename) (chmod tmp-script-abs-filename #o744))
           (let ((process-buffer (get-buffer-create cmd-buffer-name)))
