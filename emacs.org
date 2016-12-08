@@ -123,7 +123,6 @@ For long running processes, this will always toggle back and forth between the p
                 (apply 'make-comint-in-buffer command-script buffer command-script nil command-args)
                 (when after-process-creation (funcall after-process-creation))))))))))
 
-;; todo -- remote tmux sessions?
 (defun jw--run-cmd-tmux (command tmux-session)
   "Create session `tmux-session' if needed, and send `command' to it."
   (call-process "tmux" nil nil nil "new-session" "-d" "-s" tmux-session) ;; this does nothing if the session already exists
