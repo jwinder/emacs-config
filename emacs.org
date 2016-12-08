@@ -97,7 +97,7 @@ These are non-interactive library functions useful in other parts of this config
 For commands that have already finished, this will clean up the process buffer and re-run the command.
 For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive."
   (let* ((prepared-cmd (string-trim command))
-         (cmd-process-name (or process-name (replace-regexp-in-string "[\t\n\r]+" " " (jw--substr-first-n prepared-cmd 100))))
+         (cmd-process-name (or process-name (replace-regexp-in-string "[ \t\n\r]+" " " (jw--substr-first-n prepared-cmd 100))))
          (cmd-buffer-name (format "*%s*" cmd-process-name)))
     (if (string= "" prepared-cmd)
         (message "Empty command! Doing nothing.")
