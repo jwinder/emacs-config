@@ -1228,8 +1228,7 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
   (sonic-pi-server-cleanup-process-buffer)
   (jw--run-cmd "sonic-pi run-server" "sonic pi" nil
                '(lambda ()
-                  (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t)
-                  (read-only-mode))))
+                  (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t))))
 
 (defun sonic-pi-server-start-if-needed ()
   (unless (sonic-pi-server-running-p)
