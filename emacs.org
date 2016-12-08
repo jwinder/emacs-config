@@ -92,9 +92,10 @@ These are non-interactive library functions useful in other parts of this config
          (jw-temporary-script-dir (concat temporary-file-directory "jw-tmp-scripts/"))
          (temporary-script-absolute-filename (concat jw-temporary-script-dir temporary-script-relative-filename))
          (script-contents (format "#!/bin/sh\n\ncd %s\n\n%s" (jw--pwd) command)))
-    (unless (file-exists-p jw-temporary-script-dir) (make-directory jw-temporary-script-dir))
+    (unless (file-exists-p jw-temporary-script-dir)
+      (make-directory jw-temporary-script-dir))
     (jw--write-to-file script-contents temporary-script-absolute-filename)
-    (unless (file-executable-p temporary-script-absolute-filename) (shell-command (format "chmod u+x %s" temporary-script-absolute-filename)))
+    (chmod temporary-script-absolute-filename #o744)
     temporary-script-absolute-filename))
 
 (defun jw--run-cmd (command &optional buffer-name before-process-creation after-process-creation)
@@ -120,8 +121,7 @@ For long running processes, this will always toggle back and forth between the p
                 (when before-process-creation (funcall before-process-creation))
                 (switch-to-buffer buffer)
                 (apply 'make-comint-in-buffer command-script buffer command-script nil command-args)
-                (when after-process-creation (funcall after-process-creation))))))
-        (message nil)))))
+                (when after-process-creation (funcall after-process-creation))))))))))
 
 ;; todo -- remote tmux sessions?
 (defun jw--run-cmd-tmux (command tmux-session)
@@ -1237,7 +1237,6 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 (defun sonic-pi-server-start-if-needed ()
   (unless (sonic-pi-server-running-p)
-    (message "Sonic Pi server not running anywhere. Starting up...")
     (save-excursion
       (sonic-pi-server)
       (sleep-for 2)
