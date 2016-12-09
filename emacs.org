@@ -417,8 +417,8 @@ My terminal rc file parses these same files.
 
 (setq version-control t
       vc-make-backup-files t
-      kept-new-versions 6
-      kept-old-versions 2
+      kept-new-versions 10
+      kept-old-versions 0
       backup-by-copying t ;; deep copy of symlinks
       delete-old-versions t)
 
