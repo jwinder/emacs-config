@@ -71,7 +71,7 @@ These are non-interactive library functions useful in other parts of this config
     (unless (file-exists-p file-dir) (make-directory file-dir t))
     (when (and (file-exists-p file) (not append)) (delete-file file))
     (append-to-file string nil file)
-    (when msg (message msg))))
+    (if msg (message msg) (message nil))))
 
 (defun jw--substr-first-n (string n)
   (if (> (length string) n) (substring string 0 n) string))
