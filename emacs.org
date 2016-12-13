@@ -199,8 +199,7 @@ My terminal rc file parses these same files.
 (use-package magit-gh-pulls
   :config (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls))
 
-(use-package github-browse-file
-  :config (setq github-browse-file-show-line-at-point t))
+(use-package browse-at-remote)
 
 (use-package gist
   :config (setq gist-view-gist t))
@@ -958,10 +957,14 @@ here are some useful rcirc configs to set in the safe `private` location
   (interactive)
   (shell-command "hub browse -- compare"))
 
+(defalias 'git-browse-file 'browse-at-remote)
+(defalias 'github-browse-file 'browse-at-remote)
+
 (magit-define-popup magit-git-extras-popup
   "Popup console for git-extras commands."
   'magit-commands
-  :actions '((?g "Github" magit-github-popup)
+  :actions '((?b "Browse at remote" git-browse-file)
+             (?g "Github" magit-github-popup)
              (?p "Github pulls" magit-gh-pulls-popup)
              (?r "Repl" magit-x-repl)
              (?U "Undo commit" magit-x-undo)
@@ -973,8 +976,6 @@ here are some useful rcirc configs to set in the safe `private` location
   "Popup console for github hub commands."
   'magit-commands
   :actions '((?g "Browse repository" github-browse)
-             (?f "Browse file" github-browse-file)
-             (?b "Browse file with blame" github-browse-file-blame)
              (?i "Browse issues" github-issues)
              (?p "Browse pulls" github-pulls)
              (?c "Compare" github-compare)))
