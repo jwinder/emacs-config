@@ -45,10 +45,6 @@ cat init.el
 
 These are non-interactive library functions useful in other parts of this config.
 #+BEGIN_SRC emacs-lisp
-(require 'comint)
-(require 'vc)
-(eval-when-compile (require 'em-hist))  ;; for eshell-history-file-name
-
 (defconst jw--mode-line-color "#22083397778B")
 
 (defun jw--font-name (&optional size)
@@ -56,6 +52,13 @@ These are non-interactive library functions useful in other parts of this config
 
 (defun jw--set-font-size (size)
   (set-face-attribute 'default nil :font (jw--font-name size)))
+
+(defmacro jw--save-current-message (&rest body)
+  "Saves `current-message', executes the body, then `message' the saved message to the echo area. Any `message' calls within the body will likely not be seen."
+  (declare (debug t) (indent 0))
+  `(let ((msg (current-message)))
+     (progn ,@body)
+     (message msg)))
 
 (defun jw--file-lines-to-string (file)
   (with-temp-buffer
@@ -66,12 +69,11 @@ These are non-interactive library functions useful in other parts of this config
   (split-string (jw--file-lines-to-string file) "\n" t))
 
 (defun jw--write-to-file (string file &optional append)
-  (let ((msg (current-message))
-        (file-dir (file-name-directory file)))
-    (unless (file-exists-p file-dir) (make-directory file-dir t))
-    (when (and (file-exists-p file) (not append)) (delete-file file))
-    (append-to-file string nil file)
-    (if msg (message msg) (message nil))))
+  (jw--save-current-message
+    (let ((file-dir (file-name-directory file)))
+      (unless (file-exists-p file-dir) (make-directory file-dir t))
+      (when (and (file-exists-p file) (not append)) (delete-file file))
+      (append-to-file string nil file))))
 
 (defun jw--substr-first-n (string n)
   (if (> (length string) n) (substring string 0 n) string))
@@ -83,21 +85,21 @@ These are non-interactive library functions useful in other parts of this config
   (file-truename default-directory))
 
 (defun jw--vc-root-dir ()
+  (require 'vc)
   (let ((vc-root-dir (ignore-errors (vc-call-backend (vc-responsible-backend (jw--pwd)) 'root (jw--pwd)))))
     (if vc-root-dir (file-truename vc-root-dir) nil)))
 
 (defalias 'jw--git-root-dir 'jw--vc-root-dir)
 
 (defun jw--iso-current-time-string ()
-  (concat
-   (format-time-string "%Y-%m-%dT%T")
-   ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5)))
-    (format-time-string "%z"))))
+  (concat (format-time-string "%Y-%m-%dT%T")
+          ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5))) (format-time-string "%z"))))
 
 (defun jw--run-cmd (command &optional process-name before-process-creation after-process-creation)
   "A wrapper around `make-comint-in-buffer'.
 For commands that have already finished, this will clean up the process buffer and re-run the command.
 For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive."
+  (require 'comint)
   (let* ((prepared-cmd (string-trim command))
          (cmd-process-name (or process-name (replace-regexp-in-string "[ \t\n\r]+" " " (jw--substr-first-n prepared-cmd 100))))
          (cmd-buffer-name (format "*%s*" cmd-process-name)))
@@ -402,6 +404,10 @@ My terminal rc file parses these same files.
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (put 'narrow-to-region 'disabled nil)
+
+(defun shell-command--advice--ignore-message-with-no-output (&rest args)
+  (when (string-match "Shell command succeeded with no output" (current-message)) (message nil)))
+(advice-add 'shell-command-on-region :after 'shell-command--advice--ignore-message-with-no-output)
 
 (setq user-auto-save-directory (concat user-emacs-directory "auto-saves/"))
 (unless (file-exists-p user-auto-save-directory) (make-directory user-auto-save-directory)) ;; auto-save won't create directories
@@ -863,6 +869,14 @@ hijack C-x m as prefix key for personal bindings
 #+BEGIN_SRC emacs-lisp
 (require 'rcirc)
 
+(defun rcirc-handler-NOTICE--advice--ignore-KEEPALIVE (original-function &rest args)
+  (let* ((function-args (nth 2 args))
+         (msg (cadr function-args)))
+    (unless (string-match "keepalive" msg)
+      (apply original-function args))))
+
+(advice-add 'rcirc-handler-NOTICE :around 'rcirc-handler-NOTICE--advice--ignore-KEEPALIVE)
+
 (setq rcirc-notify-message "%s: %s"
       rcirc-buffer-maximum-lines 2000)
 
@@ -911,39 +925,13 @@ here are some useful rcirc configs to set in the safe `private` location
 
 #+BEGIN_SRC emacs-lisp
 (require 'magit)
-(require 'subr-x)
 (require 'magit-gh-pulls)
 
 (global-set-key (kbd "M-g") 'magit-status)
 (global-magit-file-mode t)
 
-(defun magit-x-undo ()
-  (interactive)
-  (magit-run-git "undo"))
-
-(defun magit-x-repl ()
-  (interactive)
-  (async-shell-command "git repl" "*git repl*"))
-
-(defun magit-x-obliterate ()
-  (interactive)
-  (let* ((file (magit-read-tracked-file "File to obliterate"))
-         (obliterate (format "obliterate %s" file)))
-    (magit-git-command obliterate (magit-toplevel))))
-
-(defun magit-x-swoosh ()
-  "This is a local script I use to prune remotes and clean up local and remote branches."
-  (interactive)
-  (async-shell-command "git swoosh" "*git swoosh*"))
-
-(defun magit-x-zap ()
-  "This is a local script I use to safely fetch, merge and cleanup of local branches."
-  (interactive)
-  (async-shell-command "git zap" "*git zap*"))
-
-(defun github-browse ()
-  (interactive)
-  (shell-command "hub browse"))
+(defalias 'git-browse-at-remote 'browse-at-remote)
+(defalias 'github-browse-file 'browse-at-remote)
 
 (defun github-issues ()
   (interactive)
@@ -957,30 +945,21 @@ here are some useful rcirc configs to set in the safe `private` location
   (interactive)
   (shell-command "hub browse -- compare"))
 
-(defalias 'git-browse-file 'browse-at-remote)
-(defalias 'github-browse-file 'browse-at-remote)
-
 (magit-define-popup magit-git-extras-popup
-  "Popup console for git-extras commands."
+  "Popup console for extra git commands."
   'magit-commands
-  :actions '((?b "Browse at remote" git-browse-file)
-             (?g "Github" magit-github-popup)
-             (?p "Github pulls" magit-gh-pulls-popup)
-             (?r "Repl" magit-x-repl)
-             (?U "Undo commit" magit-x-undo)
-             (?S "Swoosh repo" magit-x-swoosh)
-             (?Z "Zap repo" magit-x-zap)
-             (?D "Obliterate file" magit-x-obliterate)))
+  :actions '("Actions"
+             (?P "Github pulls popup" magit-gh-pulls-popup)
+             (?b "Browse at remote" git-browse-at-remote)
+             "Browse on Github"
+             (?i "Issues" github-issues)
+             (?p "Pulls" github-pulls)
+             (?c "Compare" github-compare))
+  :max-action-columns 1)
 
-(magit-define-popup magit-github-popup
-  "Popup console for github hub commands."
-  'magit-commands
-  :actions '((?g "Browse repository" github-browse)
-             (?i "Browse issues" github-issues)
-             (?p "Browse pulls" github-pulls)
-             (?c "Compare" github-compare)))
+(magit-define-popup-action 'magit-dispatch-popup ?& "Extras" 'magit-git-extras-popup)
+(define-key magit-mode-map (kbd "&") 'magit-git-extras-popup)
 
-(magit-define-popup-action 'magit-dispatch-popup ?x "Extras" 'magit-git-extras-popup)
 #+END_SRC
 
 ** org
@@ -1236,7 +1215,7 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
     (message "Sonic Pi server not running anywhere. Starting up...")
     (save-excursion
       (sonic-pi-server)
-      (sleep-for 2)
+      (sleep-for 2.5)
       (switch-to-buffer (other-buffer)))))
 
 (defun sonic-pi-play (&optional ruby)
