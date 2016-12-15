@@ -144,8 +144,7 @@ cat init.el
          ("Vagrantfile$" . ruby-mode)
          ("Berksfile$" . ruby-mode)))
 
-(use-package inf-ruby
-  :config (setq inf-ruby-default-implementation (if (executable-find "pry") "pry" "ruby")))
+(use-package inf-ruby)
 
 (use-package go-mode
   :config (add-hook 'before-save-hook 'gofmt-before-save))
@@ -401,6 +400,8 @@ My terminal rc file parses these same files.
 (setq enable-recursive-minibuffers t)
 
 (add-to-list 'auto-mode-alist '("\\.scss$" . css-mode))
+
+(when (executable-find "pry") (setq inf-ruby-default-implementation "pry"))
 
 (add-hook 'text-mode-hook 'flyspell-mode)
 
