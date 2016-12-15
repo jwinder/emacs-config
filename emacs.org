@@ -1,19 +1,20 @@
 * introduction
 ** getting started
 
-I prefer to clone this repository as `$HOME/emacs-config` and symlink it to `$HOME/.emacs.d`.
+I prefer to clone this repository as =$HOME/emacs-config= and symlink it to =$HOME/.emacs.d`=
 #+BEGIN_SRC sh :tangle no
 git clone git@github.com:jwinder/emacs-config.git $HOME/emacs-config
 ln -s $HOME/emacs-config $HOME/.emacs.d
 #+END_SRC
 
-You can also create `private` or `private.org` symlinks to a directory or file in a safe place, containing private or personal settings. This works well for irc passwords, tramp helpers, etc.
+You can also create symlinks to a =private= directory or =private.org= file in a safe place, containing private or personal settings. This works well for irc passwords, tramp helpers, etc.
 #+BEGIN_SRC sh :tangle no
 ln -s /path/to/your/safe/directory $HOME/emacs-config/private # directory of elisp files
 ln -s /path/to/your/safe/private.org $HOME/emacs-config/private.org # file containing elisp segments
 #+END_SRC
 
 Now, start emacs.
+
 ** org configs
 
 #+TITLE: jwinder emacs config
@@ -41,148 +42,6 @@ cat init.el
 #+END_SRC
 
 * dependencies
-** helper functions
-
-These are non-interactive library functions useful in other parts of this config.
-#+BEGIN_SRC emacs-lisp
-(defconst jw--mode-line-color "#22083397778B")
-
-(defun jw--font-name (&optional size)
-  (if size (concat "Monaco " size) "Monaco"))
-
-(defun jw--set-font-size (size)
-  (set-face-attribute 'default nil :font (jw--font-name size)))
-
-(defmacro jw--save-current-message (&rest body)
-  "Saves `current-message', executes the body, then `message' the saved message to the echo area. Any `message' calls within the body will likely not be seen."
-  (declare (debug t) (indent 0))
-  `(let ((msg (current-message)))
-     (progn ,@body)
-     (message msg)))
-
-(defun jw--file-lines-to-string (file)
-  (with-temp-buffer
-    (insert-file-contents file)
-    (buffer-string)))
-
-(defun jw--file-lines-to-list (file)
-  (split-string (jw--file-lines-to-string file) "\n" t))
-
-(defun jw--write-to-file (string file &optional append)
-  (jw--save-current-message
-    (let ((file-dir (file-name-directory file)))
-      (unless (file-exists-p file-dir) (make-directory file-dir t))
-      (when (and (file-exists-p file) (not append)) (delete-file file))
-      (append-to-file string nil file))))
-
-(defun jw--substr-first-n (string n)
-  (if (> (length string) n) (substring string 0 n) string))
-
-(defun jw--make-uuid ()
-  (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
-
-(defun jw--pwd ()
-  (file-truename default-directory))
-
-(defun jw--vc-root-dir ()
-  (require 'vc)
-  (let ((vc-root-dir (ignore-errors (vc-call-backend (vc-responsible-backend (jw--pwd)) 'root (jw--pwd)))))
-    (if vc-root-dir (file-truename vc-root-dir) nil)))
-
-(defalias 'jw--git-root-dir 'jw--vc-root-dir)
-
-(defun jw--iso-current-time-string ()
-  (concat (format-time-string "%Y-%m-%dT%T")
-          ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5))) (format-time-string "%z"))))
-
-(defun jw--run-cmd (command &optional process-name before-process-creation after-process-creation)
-  "A wrapper around `make-comint-in-buffer'.
-For commands that have already finished, this will clean up the process buffer and re-run the command.
-For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive."
-  (require 'comint)
-  (let* ((prepared-cmd (string-trim command))
-         (cmd-process-name (or process-name (replace-regexp-in-string "[ \t\n\r]+" " " (jw--substr-first-n prepared-cmd 100))))
-         (cmd-buffer-name (format "*%s*" cmd-process-name)))
-    (if (string= "" prepared-cmd)
-        (message "Empty command! Doing nothing.")
-      (if (process-live-p (get-process cmd-process-name))
-          (if (string= (buffer-name) cmd-buffer-name) (switch-to-buffer (other-buffer)) (switch-to-buffer cmd-buffer-name))
-        (let* ((tmp-script-dir "/tmp/emacs-jw-run-cmd/")
-               (tmp-script-rel-filename (replace-regexp-in-string "[^a-zA-Z0-9]+" "-" cmd-process-name))
-               (tmp-script-abs-filename (concat tmp-script-dir tmp-script-rel-filename))
-               (tmp-script-exec-program (or (executable-find "zsh") (executable-find "bash") (executable-find "sh")))
-               (tmp-script-source-profile (cond ((string-match "zsh$" tmp-script-exec-program) "source $HOME/.zshrc")
-                                                ((string-match "bash$" tmp-script-exec-program) "source $HOME/.bashrc")
-                                                (t "")))
-               (tmp-script-contents (format "#!%s\n\n%s\n\ncd %s\n\n%s" tmp-script-exec-program tmp-script-source-profile (jw--pwd) prepared-cmd)))
-          (when (get-buffer cmd-buffer-name) (kill-buffer cmd-buffer-name))
-          (jw--write-to-file tmp-script-contents tmp-script-abs-filename)
-          (unless (file-executable-p tmp-script-abs-filename) (chmod tmp-script-abs-filename #o744))
-          (let ((process-buffer (get-buffer-create cmd-buffer-name)))
-            (when before-process-creation (funcall before-process-creation))
-            (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
-            (when after-process-creation (funcall after-process-creation))
-            (switch-to-buffer process-buffer)))))))
-
-(defun jw--run-cmd-tmux (command tmux-session)
-  "Create session `tmux-session' if needed, and send `command' to it."
-  (call-process "tmux" nil nil nil "new-session" "-d" "-s" tmux-session) ;; this does nothing if the session already exists
-  (call-process "tmux" nil nil nil "send-keys" "-t" tmux-session command "C-m"))
-#+END_SRC
-
-** env
-
-An opinionated way of setting up env vars & path
-#+BEGIN_SRC emacs-lisp
-(require 'eshell)
-(require 'subr-x)
-
-(setenv "EDITOR" "emacsclient")
-
-(defun jw--env-set-vars (vars-file)
-  (dolist (line (jw--file-lines-to-list vars-file))
-    (unless (= 0 (length line))
-      (let* ((tokens (split-string line "="))
-             (name (car tokens))
-             (value-string (mapconcat 'identity (cdr tokens) "="))
-             (value-env-vars-parsed (substitute-env-vars value-string)) ;; parse lines containing env vars
-             (value (shell-command-to-string (format "echo %s" value-env-vars-parsed)))) ;; parse shell commands in lines
-        (setenv name (string-trim value))))))
-
-(defun jw--env-set-path (path-file)
-  (let* ((path-list (mapcar 'substitute-env-vars (jw--file-lines-to-list path-file)))
-         (path-str (mapconcat 'identity path-list ":")))
-    (setq exec-path path-list)
-    (setenv "PATH" path-str)
-    (setq eshell-path-env path-str)))
-
-(defun jw-env-set ()
-  (interactive)
-  (let ((vars-file (concat user-emacs-directory "env-vars"))
-        (path-file (concat user-emacs-directory "env-path")))
-    (when (file-exists-p vars-file) (jw--env-set-vars vars-file))
-    (when (file-exists-p path-file) (jw--env-set-path path-file))))
-
-(jw-env-set)
-(add-to-list 'eshell-mode-hook 'jw-env-set)
-#+END_SRC
-
-Example env-vars file, symlinked to ~/.emacs.d/env-vars from a safe place
-#+BEGIN_EXAMPLE
-DROPBOX_HOME=$HOME/Dropbox
-DRIVE_HOME=$HOME/GoogleDrive
-#+END_EXAMPLE
-
-Example env-path file, symblinked to ~/.emacs.d/env-path from a safe place
-#+BEGIN_EXAMPLE
-$HOME/bin
-/usr/local/bin
-/usr/bin
-#+END_EXAMPLE
-
-
-My terminal rc file parses these same files.
-
 ** packages
 *** common
 
@@ -308,6 +167,153 @@ My terminal rc file parses these same files.
   :mode (("\\.md$" . gfm-mode)
          ("\\.markdown$" . gfm-mode)))
 #+END_SRC
+
+** helper functions
+
+These are non-interactive library functions useful in other parts of this config
+#+BEGIN_SRC emacs-lisp
+(defconst jw--mode-line-color "#22083397778B")
+
+(defun jw--font-name (&optional size)
+  (if size (concat "Monaco " size) "Monaco"))
+
+(defun jw--set-font-size (size)
+  (set-face-attribute 'default nil :font (jw--font-name size)))
+
+(defmacro jw--define-menu (name doc &rest args)
+  (declare (indent defun))
+  (require 'magit-popup)
+  `(progn (magit-define-popup ,name ,doc ,@args)))
+
+(defmacro jw--save-current-message (&rest body)
+  "Saves `current-message', executes the body, then `message' the saved message to the echo area. Any `message' calls within the body will likely not be seen."
+  (declare (debug t) (indent 0))
+  `(let ((msg (current-message)))
+     (progn ,@body)
+     (message msg)))
+
+(defun jw--file-lines-to-string (file)
+  (with-temp-buffer
+    (insert-file-contents file)
+    (buffer-string)))
+
+(defun jw--file-lines-to-list (file)
+  (split-string (jw--file-lines-to-string file) "\n" t))
+
+(defun jw--write-to-file (string file &optional append)
+  (jw--save-current-message
+    (let ((file-dir (file-name-directory file)))
+      (unless (file-exists-p file-dir) (make-directory file-dir t))
+      (when (and (file-exists-p file) (not append)) (delete-file file))
+      (append-to-file string nil file))))
+
+(defun jw--substr-first-n (string n)
+  (if (> (length string) n) (substring string 0 n) string))
+
+(defun jw--make-uuid ()
+  (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
+
+(defun jw--pwd ()
+  (file-truename default-directory))
+
+(defun jw--vc-root-dir ()
+  (require 'vc)
+  (let ((vc-root-dir (ignore-errors (vc-call-backend (vc-responsible-backend (jw--pwd)) 'root (jw--pwd)))))
+    (if vc-root-dir (file-truename vc-root-dir) nil)))
+
+(defalias 'jw--git-root-dir 'jw--vc-root-dir)
+
+(defun jw--iso-current-time-string ()
+  (concat (format-time-string "%Y-%m-%dT%T")
+          ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5))) (format-time-string "%z"))))
+
+(defun jw--run-cmd (command &optional process-name before-process-creation after-process-creation)
+  "A wrapper around `make-comint-in-buffer'.
+For commands that have already finished, this will clean up the process buffer and re-run the command.
+For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive."
+  (require 'comint)
+  (let* ((prepared-cmd (string-trim command))
+         (cmd-process-name (or process-name (replace-regexp-in-string "[ \t\n\r]+" " " (jw--substr-first-n prepared-cmd 100))))
+         (cmd-buffer-name (format "*%s*" cmd-process-name)))
+    (if (string= "" prepared-cmd)
+        (message "Empty command! Doing nothing.")
+      (if (process-live-p (get-process cmd-process-name))
+          (if (string= (buffer-name) cmd-buffer-name) (switch-to-buffer (other-buffer)) (switch-to-buffer cmd-buffer-name))
+        (let* ((tmp-script-dir "/tmp/emacs-jw-run-cmd/")
+               (tmp-script-rel-filename (replace-regexp-in-string "[^a-zA-Z0-9]+" "-" cmd-process-name))
+               (tmp-script-abs-filename (concat tmp-script-dir tmp-script-rel-filename))
+               (tmp-script-exec-program (or (executable-find "zsh") (executable-find "bash") (executable-find "sh")))
+               (tmp-script-source-profile (cond ((string-match "zsh$" tmp-script-exec-program) "source $HOME/.zshrc")
+                                                ((string-match "bash$" tmp-script-exec-program) "source $HOME/.bashrc")
+                                                (t "")))
+               (tmp-script-contents (format "#!%s\n\n%s\n\ncd %s\n\n%s" tmp-script-exec-program tmp-script-source-profile (jw--pwd) prepared-cmd)))
+          (when (get-buffer cmd-buffer-name) (kill-buffer cmd-buffer-name))
+          (jw--write-to-file tmp-script-contents tmp-script-abs-filename)
+          (unless (file-executable-p tmp-script-abs-filename) (chmod tmp-script-abs-filename #o744))
+          (let ((process-buffer (get-buffer-create cmd-buffer-name)))
+            (when before-process-creation (funcall before-process-creation))
+            (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
+            (when after-process-creation (funcall after-process-creation))
+            (switch-to-buffer process-buffer)))))))
+
+(defun jw--run-cmd-tmux (command tmux-session)
+  "Create session `tmux-session' if needed, and send `command' to it."
+  (call-process "tmux" nil nil nil "new-session" "-d" "-s" tmux-session) ;; this does nothing if the session already exists
+  (call-process "tmux" nil nil nil "send-keys" "-t" tmux-session command "C-m"))
+#+END_SRC
+
+** env
+
+An opinionated way of setting up env vars & path
+#+BEGIN_SRC emacs-lisp
+(require 'eshell)
+(require 'subr-x)
+
+(setenv "EDITOR" "emacsclient")
+
+(defun jw--env-set-vars (vars-file)
+  (dolist (line (jw--file-lines-to-list vars-file))
+    (unless (= 0 (length line))
+      (let* ((tokens (split-string line "="))
+             (name (car tokens))
+             (value-string (mapconcat 'identity (cdr tokens) "="))
+             (value-env-vars-parsed (substitute-env-vars value-string)) ;; parse lines containing env vars
+             (value (shell-command-to-string (format "echo %s" value-env-vars-parsed)))) ;; parse shell commands in lines
+        (setenv name (string-trim value))))))
+
+(defun jw--env-set-path (path-file)
+  (let* ((path-list (mapcar 'substitute-env-vars (jw--file-lines-to-list path-file)))
+         (path-str (mapconcat 'identity path-list ":")))
+    (setq exec-path path-list)
+    (setenv "PATH" path-str)
+    (setq eshell-path-env path-str)))
+
+(defun jw-env-set ()
+  (interactive)
+  (let ((vars-file (concat user-emacs-directory "env-vars"))
+        (path-file (concat user-emacs-directory "env-path")))
+    (when (file-exists-p vars-file) (jw--env-set-vars vars-file))
+    (when (file-exists-p path-file) (jw--env-set-path path-file))))
+
+(jw-env-set)
+(add-to-list 'eshell-mode-hook 'jw-env-set)
+#+END_SRC
+
+Example env-vars file, symlinked to =~/.emacs.d/env-vars= from a safe place
+#+BEGIN_EXAMPLE
+DROPBOX_HOME=$HOME/Dropbox
+DRIVE_HOME=$HOME/GoogleDrive
+#+END_EXAMPLE
+
+Example env-path file, symblinked to =~/.emacs.d/env-path= from a safe place
+#+BEGIN_EXAMPLE
+$HOME/bin
+/usr/local/bin
+/usr/bin
+#+END_EXAMPLE
+
+
+My terminal rc file parses these same files.
 
 * customization
 ** style
@@ -446,7 +452,6 @@ My terminal rc file parses these same files.
 *** common
 
 #+BEGIN_SRC emacs-lisp
-(defalias 'qrr 'query-replace-regexp)
 (defalias 'filter-lines 'keep-lines)
 (defalias 'filter-out-lines 'flush-lines)
 (defalias 'elisp-shell 'ielm)
@@ -458,18 +463,6 @@ My terminal rc file parses these same files.
 (defun font-size-normal ()
   (interactive)
   (jw--set-font-size "14"))
-
-(defun eshell-cd-vc-root-dir-or-pwd-otherwise-other-buffer ()
-  (interactive)
-  (if (eq major-mode 'eshell-mode)
-      (switch-to-buffer (other-buffer))
-    (let ((current-pwd (or (jw--vc-root-dir) (jw--pwd))))
-      (eshell)
-      (eshell-kill-input)
-      (goto-char (point-max))
-      (unless (string= current-pwd (jw--pwd))
-        (insert (format "cd '%s'" current-pwd))
-        (eshell-send-input)))))
 
 (defun kill-region-or-line ()
   (interactive)
@@ -595,12 +588,15 @@ Otherwise, the shell command is read from prompt."
     (if (equal previous-point (point))
         (beginning-of-line))))
 
-(defun comment-dwim-region-or-line-or-end-of-line (&optional arg)
+(defun comment-dwim-dwim (&optional arg)
+  "When the region is active, then toggle comments over it. Otherwise, toggle commenting the current line. If there is a prefix arg, then append a comment to the end of the line instead. If the prefix arg is 4, then kill the comment on the current line."
   (interactive "*P")
   (if (region-active-p)
       (comment-dwim arg)
-    (if arg ;; utilize prefix argument to append comment to line instead of comment entire line
-        (comment-dwim nil)
+    (if arg
+        (if (equal arg 4)
+            (save-excursion (comment-dwim arg))
+          (comment-dwim nil))
       (comment-or-uncomment-region (line-beginning-position) (line-end-position)))))
 
 (defun open-line-next ()
@@ -723,8 +719,6 @@ Otherwise, the shell command is read from prompt."
 (global-set-key (kbd "M-!") 'cmd-dwim)
 (global-set-key (kbd "M-&") 'cmd-dwim)
 
-(global-set-key (kbd "C-c M-e") 'eshell-cd-vc-root-dir-or-pwd-otherwise-other-buffer)
-
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
@@ -743,26 +737,140 @@ Otherwise, the shell command is read from prompt."
 (global-set-key (kbd "C-o") 'open-line-previous)
 (global-set-key (kbd "C-j") 'newline-and-open-line-previous)
 
-(global-set-key (kbd "M-;") 'comment-dwim-region-or-line-or-end-of-line)
+(global-set-key (kbd "M-;") 'comment-dwim-dwim)
 
 (global-set-key (kbd "C-c M-t") 'transpose-lines)
 #+END_SRC
 
-hijack C-x m as prefix key for personal bindings
+hijack =C-x m= as prefix key for personal bindings
 #+BEGIN_SRC emacs-lisp
 (setq jw-keymap (make-sparse-keymap))
 
 (global-set-key (kbd "C-x m") jw-keymap)
 (global-set-key (kbd "C-c m") jw-keymap)
 
+(define-key jw-keymap "!" 'cmd-dwim)
+
 (define-key jw-keymap "q" 'emacs-configs-toggle)
 
 (define-key jw-keymap "d" 'date)
 (define-key jw-keymap "w" 'weather)
 
-(define-key jw-keymap (kbd "RET") 'toggle-frame-fullscreen)
+(define-key jw-keymap [return] 'toggle-frame-fullscreen)
 
 (define-key jw-keymap "i" 'toggle-scratch-buffer)
+#+END_SRC
+
+** eshell
+
+#+BEGIN_SRC emacs-lisp
+(require 'em-alias)
+
+(defun eshell-dwim ()
+  "Toggle eshell. If in a version control repository, then cd to the root of the repository."
+  (interactive)
+  (if (eq major-mode 'eshell-mode)
+      (switch-to-buffer (other-buffer))
+    (let ((d (or (jw--vc-root-dir) (jw--pwd))))
+      (eshell)
+      (eshell-kill-input)
+      (goto-char (point-max))
+      (unless (string= d (jw--pwd))
+        (insert (format "cd '%s'" d))
+        (eshell-send-input)))))
+
+(define-key jw-keymap "e" 'eshell-dwim)
+
+(eshell/alias "d" "dired $1")
+(eshell/alias "e" "find-file $1")
+(eshell/alias "emacs" "find-file $1")
+(eshell/alias "vi" "find-file $1")
+(eshell/alias "vim" "find-file $1")
+(eshell/alias "less" "find-file $1")
+(eshell/alias "cat" "find-file $1")
+(eshell/alias "git" "hub $*")
+(eshell/alias "g" "hub $*")
+(eshell/alias ":q" "exit")
+(eshell/alias ":Q" "exit")
+
+#+END_SRC
+
+** rcirc
+
+#+BEGIN_SRC emacs-lisp
+(require 'rcirc)
+
+(defun rcirc-connect-dwim (&optional server port nick user-name full-name startup-channels password encryption)
+  "Alternative to `rcirc-connect' which toggles to the server if already connected. If no server is provided, then a prompt will ask the user for a server."
+  (interactive)
+  (if server
+      (let ((existing-sp (get-process server)))
+        (if (process-live-p existing-sp)
+            (switch-to-buffer (process-buffer existing-sp))
+          (rcirc-connect server port nick user-name full-name startup-channels password encryption)))
+    (rcirc t)))
+
+(setq rcirc-notify-message "%s: %s"
+      rcirc-buffer-maximum-lines 2000)
+
+(add-to-list 'rcirc-omit-responses "MODE")
+
+(custom-set-faces '(rcirc-my-nick ((t (:foreground "#00ffff"))))
+                  '(rcirc-other-nick ((t (:foreground "#90ee90"))))
+                  '(rcirc-server ((t (:foreground "#a2b5cd"))))
+                  '(rcirc-server-prefix ((t (:foreground "#00bfff"))))
+                  '(rcirc-timestamp ((t (:foreground "#7d7d7d"))))
+                  '(rcirc-nick-in-message ((t (:foreground "#00ffff"))))
+                  '(rcirc-prompt ((t (:foreground "#00bfff"))))
+                  '(rcirc-keyword ((t :foreground "#00ffff")))
+                  '(rcirc-nick-in-message-full-line ((t ())))
+                  '(rcirc-track-nick ((t (:foreground "#00ffff"))))
+                  '(rcirc-track-keyword ((t (:foreground "#00ffff")))))
+
+(add-hook 'rcirc-mode-hook
+          '(lambda ()
+             (turn-on-flyspell)
+             (rcirc-track-minor-mode t)
+             (rcirc-omit-mode)
+             (cd (getenv "HOME"))))
+
+;; make rcirc buffers span the width of the frame
+(add-hook 'window-configuration-change-hook
+          '(lambda () (setq rcirc-fill-column (- (window-width) 2))))
+
+(defun rcirc-handler-NOTICE--advice--ignore-KEEPALIVE (original-function &rest args)
+  (let* ((function-args (nth 2 args))
+         (msg (cadr function-args)))
+    (unless (string-match "keepalive" msg)
+      (apply original-function args))))
+
+(advice-add 'rcirc-handler-NOTICE :around 'rcirc-handler-NOTICE--advice--ignore-KEEPALIVE)
+#+END_SRC
+
+here are some useful rcirc configs to set in in the safe =private= location
+=rcirc-server-alist= is used when calling =rcirc= without prefix arg
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq rcirc-default-nick "nick"
+      rcirc-default-user-name "username"
+      rcirc-default-full-name "full name"
+      rcirc-keywords '("nick1" "nick2")
+      rcirc-server-alist '(("irc.freenode.net"
+                            :port 6697
+                            :encryption tls
+                            :user-name "freenode username"
+                            :password "free node pass"
+                            :channels ("##doctorwho"))))
+#+END_SRC
+
+example of defining specific functions to connect to various irc servers
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun freenode-irc-connect ()
+  (interactive)
+  (rcirc-connect-dwim "irc.freenode.net" 6697 "nick" "username" "full name" '("##doctorwho" "#emacs") "your password" 'tls)
+
+(defun twitch-irc-connect ()
+  (interactive)
+  (rcirc-connect-dwim "irc.chat.twitch.tv" 6667 "nick" "username" "full name" nil "your password"))
 #+END_SRC
 
 ** helm
@@ -799,10 +907,9 @@ hijack C-x m as prefix key for personal bindings
 (global-unset-key (kbd "C-x c"))
 
 (define-key helm-command-map (kbd "h") 'helm-descbinds)
+(define-key helm-command-map (kbd "s") 'helm-google-suggest) ;; originally helm-surfraw
 
-(define-key helm-command-map (kbd "s") 'helm-google-suggest)
-(define-key helm-command-map (kbd "w") 'helm-wikipedia-suggest)
-
+(global-set-key (kbd "M-:") 'helm-eval-expression-with-eldoc)
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -862,63 +969,6 @@ hijack C-x m as prefix key for personal bindings
 
 (add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
 
-#+END_SRC
-
-** rcirc
-
-#+BEGIN_SRC emacs-lisp
-(require 'rcirc)
-
-(defun rcirc-handler-NOTICE--advice--ignore-KEEPALIVE (original-function &rest args)
-  (let* ((function-args (nth 2 args))
-         (msg (cadr function-args)))
-    (unless (string-match "keepalive" msg)
-      (apply original-function args))))
-
-(advice-add 'rcirc-handler-NOTICE :around 'rcirc-handler-NOTICE--advice--ignore-KEEPALIVE)
-
-(setq rcirc-notify-message "%s: %s"
-      rcirc-buffer-maximum-lines 2000)
-
-(add-to-list 'rcirc-omit-responses "MODE")
-
-(custom-set-faces
- '(rcirc-my-nick ((t (:foreground "#00ffff"))))
- '(rcirc-other-nick ((t (:foreground "#90ee90"))))
- '(rcirc-server ((t (:foreground "#a2b5cd"))))
- '(rcirc-server-prefix ((t (:foreground "#00bfff"))))
- '(rcirc-timestamp ((t (:foreground "#7d7d7d"))))
- '(rcirc-nick-in-message ((t (:foreground "#00ffff"))))
- '(rcirc-prompt ((t (:foreground "#00bfff"))))
- '(rcirc-keyword ((t :foreground "#00ffff")))
- '(rcirc-nick-in-message-full-line ((t ())))
- '(rcirc-track-nick ((t (:foreground "#00ffff"))))
- '(rcirc-track-keyword ((t (:foreground "#00ffff")))))
-
-(add-hook 'rcirc-mode-hook
-          '(lambda ()
-             (turn-on-flyspell)
-             (rcirc-track-minor-mode t)
-             (rcirc-omit-mode)
-             (cd (getenv "HOME"))))
-
-;; make rcirc buffers span the width of the frame
-(add-hook 'window-configuration-change-hook
-          '(lambda () (setq rcirc-fill-column (- (window-width) 2))))
-#+END_SRC
-
-here are some useful rcirc configs to set in the safe `private` location
-#+BEGIN_SRC emacs-lisp :tangle no
-(setq rcirc-default-nick "nick"
-      rcirc-default-user-name "username"
-      rcirc-default-full-name "full name"
-      rcirc-keywords '("nick1" "nick2")
-      rcirc-server-alist '(("irc.freenode.net"
-                            :port 6697
-                            :encryption tls
-                            :user-name "freenode username"
-                            :password "free node pass"
-                            :channels ("##doctorwho"))))
 #+END_SRC
 
 ** magit
@@ -1250,7 +1300,7 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 * private
 
-load the private directory and the private.org file
+load the =private= directory and the =private.org= file if they exist
 #+BEGIN_SRC emacs-lisp
 (let ((path (concat user-emacs-directory "private")))
   (when (file-exists-p path)
