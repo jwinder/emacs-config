@@ -144,7 +144,8 @@ cat init.el
          ("Vagrantfile$" . ruby-mode)
          ("Berksfile$" . ruby-mode)))
 
-(use-package inf-ruby)
+(use-package inf-ruby
+  :config (setq inf-ruby-default-implementation (if (executable-find "pry") "pry" "ruby")))
 
 (use-package go-mode
   :config (add-hook 'before-save-hook 'gofmt-before-save))
@@ -337,8 +338,6 @@ My terminal rc file parses these same files.
 (set-face-attribute 'header-line nil :background "#005858" :foreground "white")
 
 (setq-default mode-line-format '(" ✔ " mode-line-buffer-identification " " mode-line-misc-info))
-
-(custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
 
 (setq inhibit-startup-message t
       initial-scratch-message ""
@@ -793,6 +792,7 @@ hijack =C-x m= as prefix key for personal bindings
 (eshell/alias ":q" "exit")
 (eshell/alias ":Q" "exit")
 
+(custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
 #+END_SRC
 
 ** rcirc
@@ -896,7 +896,7 @@ example of defining specific functions to connect to various irc servers
       helm-imenu-fuzzy-match t
       helm-locate-fuzzy-match t)
 
-(setq helm-ag-base-command "pt -i -e --nocolor --nogroup")
+(when (executable-find "pt") (setq helm-ag-base-command "pt -i -e --nocolor --nogroup"))
 
 (setq helm-ag-insert-at-point 'symbol)
 
@@ -1042,7 +1042,7 @@ example of defining specific functions to connect to various irc servers
 (define-key jw-keymap "o" 'toggle-todo)
 (define-key jw-keymap "a" 'org-agenda)
 (define-key jw-keymap "c" 'org-capture)
-(define-key jw-keymap (kbd "<tab>") 'org-pomodoro)
+(define-key jw-keymap [tab] 'org-pomodoro)
 
 (add-hook 'org-mode-hook '(lambda ()
                             (local-set-key (kbd "C-c <") 'org-time-stamp)
@@ -1070,7 +1070,8 @@ example of defining specific functions to connect to various irc servers
       org-src-preserve-indentation t
       org-src-window-setup 'current-window
       org-cycle-open-archived-trees t
-      org-hide-block-startup t)
+      org-hide-block-startup t
+      org-ellipsis " …")
 
 (setq org--possible-todo-todo-states '("todo" "incoming" "captured" "unread")
       org--possible-blocked-todo-states '("blocked" "halted" "stalled" "paused")
