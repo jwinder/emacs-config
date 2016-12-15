@@ -299,13 +299,13 @@ An opinionated way of setting up env vars & path
 (add-to-list 'eshell-mode-hook 'jw-env-set)
 #+END_SRC
 
-Example env-vars file, symlinked to =~/.emacs.d/env-vars= from a safe place
+Example =env-vars= file, symlinked to =~/.emacs.d/env-vars= from a safe place
 #+BEGIN_EXAMPLE
 DROPBOX_HOME=$HOME/Dropbox
 DRIVE_HOME=$HOME/GoogleDrive
 #+END_EXAMPLE
 
-Example env-path file, symblinked to =~/.emacs.d/env-path= from a safe place
+Example =env-path= file, symlinked to =~/.emacs.d/env-path= from a safe place
 #+BEGIN_EXAMPLE
 $HOME/bin
 /usr/local/bin
