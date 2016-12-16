@@ -24,7 +24,7 @@ Now, start emacs.
 
 #+LANGUAGE: en
 
-#+SEQ_TODO: todo doing | done cancelled
+#+SEQ_TODO: ⚑ ⚐ | ✔
 
 ** contents of init.el
 
@@ -1072,30 +1072,51 @@ example of defining specific functions to connect to various irc servers
       org-hide-block-startup t
       org-ellipsis " …")
 
-(setq org--possible-todo-todo-states '("todo" "incoming" "captured" "unread")
-      org--possible-blocked-todo-states '("blocked" "halted" "stalled" "paused")
-      org--possible-doing-todo-states '("doing" "going")
-      org--possible-delegated-todo-states '("delegated" "assigned" "pr")
-      org--possible-done-todo-states '("done" "cancelled" "canceled" "finished" "boom" "read"))
+(setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread")
+      org--todo-todo-states '("⚑")
+      org--blocked-todo-boxed-states '("blocked" "halted" "stalled" "paused")
+      org--doing-todo-boxed-states '("doing" "going")
+      org--doing-todo-states '("⚐")
+      org--delegated-todo-boxed-states '("delegated" "assigned" "pr")
+      org--done-todo-boxed-states '("done" "cancelled" "canceled" "finished" "boom" "read")
+      org--done-todo-states '("✘" "✔"))
 
-(defun org--make-single-todo-face-entry (state color)
-  `(,state :background ,color :foreground white :box (:style released-button)))
+(defun org--red-box-state (s) `(,s :background "DarkRed" :foreground white :box (:style released-button)))
+(defun org--red-state (s) `(,s :foreground "Coral"))
+(defun org--blue-box-state (s) `(,s :background "DeepSkyBlue4" :foreground white :box (:style released-button)))
+(defun org--blue-state (s) `(,s :foreground "DeepSkyBlue1"))
+(defun org--green-box-state (s) `(,s :background "DarkGreen" :foreground white :box (:style released-button)))
+(defun org--green-state (s) `(,s :foreground "LimeGreen"))
 
-(defun org--make-todo-face-entries (state color)
-  `(,(org--make-single-todo-face-entry state color)
-    ,(org--make-single-todo-face-entry (upcase state) color)
-    ,(org--make-single-todo-face-entry (capitalize state) color)))
+(setq org-todo-keyword-faces (append (mapcar 'org--red-box-state org--todo-todo-boxed-states)
+                                     (mapcar 'org--red-box-state (mapcar 'upcase org--todo-todo-boxed-states))
 
-(defun org--make-red-face-entries (state) (org--make-todo-face-entries state "DarkRed"))
-(defun org--make-blue-face-entries (state) (org--make-todo-face-entries state "DeepSkyBlue4"))
-(defun org--make-green-face-entries (state) (org--make-todo-face-entries state "DarkGreen"))
+                                     (mapcar 'org--red-box-state org--blocked-todo-boxed-states)
+                                     (mapcar 'org--red-box-state (mapcar 'upcase org--blocked-todo-boxed-states))
 
-(setq org-todo-keyword-faces
-      (apply #'append (append (mapcar 'org--make-red-face-entries org--possible-todo-todo-states)
-                              (mapcar 'org--make-red-face-entries org--possible-blocked-todo-states)
-                              (mapcar 'org--make-blue-face-entries org--possible-doing-todo-states)
-                              (mapcar 'org--make-blue-face-entries org--possible-delegated-todo-states)
-                              (mapcar 'org--make-green-face-entries org--possible-done-todo-states))))
+                                     (mapcar 'org--red-state org--todo-todo-states)
+
+                                     (mapcar 'org--blue-box-state org--doing-todo-boxed-states)
+                                     (mapcar 'org--blue-box-state (mapcar 'upcase org--doing-todo-boxed-states))
+
+                                     (mapcar 'org--blue-box-state org--delegated-todo-boxed-states)
+                                     (mapcar 'org--blue-box-state (mapcar 'upcase org--delegated-todo-boxed-states))
+
+                                     (mapcar 'org--blue-state org--doing-todo-states)
+
+                                     (mapcar 'org--green-box-state org--done-todo-boxed-states)
+                                     (mapcar 'org--green-box-state (mapcar 'upcase org--done-todo-boxed-states))
+
+                                     (mapcar 'org--green-state org--done-todo-states)
+                                     ))
+
+(defun org-basic-seq-todo-config-words ()
+  (interactive)
+  (insert "#+SEQ_TODO: todo doing | done"))
+
+(defun org-basic-seq-todo-config-symbols ()
+  (interactive)
+  (insert "#+SEQ_TODO: ⚑ ⚐ | ✔"))
 
 (setq org-pomodoro-format "Pomodoro %s"
       org-pomodoro-short-break-format "Short Break %s"
