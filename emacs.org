@@ -781,6 +781,8 @@ hijack =C-x m= as prefix key for personal bindings
 
 (define-key jw-keymap "e" 'eshell-dwim)
 
+(custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
+
 (eshell/alias "d" "dired $1")
 (eshell/alias "e" "find-file $1")
 (eshell/alias "emacs" "find-file $1")
@@ -788,12 +790,8 @@ hijack =C-x m= as prefix key for personal bindings
 (eshell/alias "vim" "find-file $1")
 (eshell/alias "less" "find-file $1")
 (eshell/alias "cat" "find-file $1")
-(eshell/alias "git" "hub $*")
-(eshell/alias "g" "hub $*")
 (eshell/alias ":q" "exit")
 (eshell/alias ":Q" "exit")
-
-(custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
 #+END_SRC
 
 ** rcirc
@@ -984,17 +982,22 @@ example of defining specific functions to connect to various irc servers
 (defalias 'git-browse-at-remote 'browse-at-remote)
 (defalias 'github-browse-file 'browse-at-remote)
 
+(defun github-hub-cmd (cmd)
+  (if (executable-find "hub")
+      (shell-command (format "hub %s" cmd))
+    (message "Executable \"hub\" required for this command. Check it out at hub.github.com!")))
+
 (defun github-issues ()
   (interactive)
-  (shell-command "hub browse -- issues"))
+  (github-hub-cmd "browse -- issues"))
 
 (defun github-pulls ()
   (interactive)
-  (shell-command "hub browse -- pulls"))
+  (github-hub-cmd "browse -- pulls"))
 
 (defun github-compare ()
   (interactive)
-  (shell-command "hub browse -- compare"))
+  (github-hub-cmd "browse -- compare"))
 
 (magit-define-popup magit-git-extras-popup
   "Popup console for extra git commands."
@@ -1021,16 +1024,10 @@ example of defining specific functions to connect to various irc servers
 (defun todo ()
   (interactive)
   (if (boundp 'jw-org-todo-file)
-      (progn (find-file jw-org-todo-file)
-             (cd (getenv "HOME")))
-    (message "Please set `jw-org-todo-file' to your todo org file location!")))
-
-(defun toggle-todo ()
-  (interactive)
-  (if (boundp 'jw-org-todo-file)
       (if (string= (buffer-name) (file-name-nondirectory jw-org-todo-file))
           (switch-to-buffer (other-buffer))
-        (todo))
+        (progn (find-file jw-org-todo-file)
+               (cd (getenv "HOME"))))
     (message "Please set `jw-org-todo-file' to your todo org file location!")))
 
 (defun org-feed-update-all-or-one (arg)
@@ -1040,12 +1037,13 @@ example of defining specific functions to connect to various irc servers
       (call-interactively 'org-feed-update)
     (org-feed-update-all)))
 
-(define-key jw-keymap "o" 'toggle-todo)
+(define-key jw-keymap "o" 'todo)
 (define-key jw-keymap "a" 'org-agenda)
 (define-key jw-keymap "c" 'org-capture)
 (define-key jw-keymap [tab] 'org-pomodoro)
 
 (add-hook 'org-mode-hook '(lambda ()
+                            (text-scale-set 2)
                             (local-set-key (kbd "C-c <") 'org-time-stamp)
                             (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)
                             (local-set-key [remap org-feed-update-all] 'org-feed-update-all-or-one))) ;; C-c C-x g
@@ -1106,9 +1104,9 @@ example of defining specific functions to connect to various irc servers
       org-pomodoro-short-break-sound-p nil
       org-pomodoro-long-break-sound-p nil)
 
-(custom-set-faces '(org-pomodoro-mode-line ((nil (:foreground "#2aa198")))))
-
-(add-hook 'org-mode-hook '(lambda () (text-scale-set 2)))
+(custom-set-faces `(org-pomodoro-mode-line ((nil (:foreground "#2aa198"))))
+                  `(org-link ((nil (:underline nil))))
+                  `(org-date ((nil (:underline nil)))))
 
 (setq org-confirm-babel-evaluate nil)
 
