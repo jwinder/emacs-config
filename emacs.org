@@ -451,7 +451,7 @@ For long running processes, this will always toggle back and forth between the p
     (kill-ring-save (line-beginning-position) (line-end-position))))
 
 (defun date (&optional arg)
-"Display date.
+  "Display date.
 With default prefix arg (e.g. C-u M-x date), display calendar around current date.
 With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar display."
   (interactive "P")
@@ -562,6 +562,14 @@ Otherwise, the shell command is read from prompt."
     (if (equal previous-point (point))
         (beginning-of-line))))
 
+(defun indent-region-or-buffer ()
+  (interactive)
+  (jw--save-current-message
+    (save-excursion
+      (if (region-active-p)
+          (indent-region (region-beginning) (region-end))
+        (indent-region (point-min) (point-max))))))
+
 (defun comment-dwim-dwim (&optional arg)
   "When the region is active, then toggle comments over it. Otherwise, toggle commenting the current line. If there is a prefix arg, then append a comment to the end of the line instead. If the prefix arg is 4, then kill the comment on the current line."
   (interactive "*P")
@@ -608,14 +616,6 @@ Otherwise, the shell command is read from prompt."
   (interactive)
   (when (frame-parameter (selected-frame) 'fullscreen)
     (toggle-frame-fullscreen)))
-
-(defun unbind-variable (name)
-  (interactive "SVariable name: ")
-  (makunbound name))
-
-(defun unbind-function (name)
-  (interactive "SFunction name: ")
-  (fmakunbound name))
 #+END_SRC
 
 *** contact
@@ -670,15 +670,6 @@ Otherwise, the shell command is read from prompt."
     (let ((archive-dir (format "/tmp/emacs-elpa--%s" (jw--iso-current-time-string))))
       (copy-directory package-user-dir archive-dir)
       (delete-directory package-user-dir t))))
-
-(defun emacs-config-export-to-index-html ()
-  (interactive)
-  (jw--save-current-message
-    (save-window-excursion
-      (emacs-config)
-      (when (file-exists-p "emacs.html") (delete-file "emacs.html"))
-      (org-html-export-to-html nil)
-      (rename-file "emacs.html" "index.html" t))))
 #+END_SRC
 
 *** random
@@ -722,6 +713,8 @@ Otherwise, the shell command is read from prompt."
 (global-set-key (kbd "M-;") 'comment-dwim-dwim)
 
 (global-set-key (kbd "C-c M-t") 'transpose-lines)
+
+(global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
 #+END_SRC
 
 hijack =C-x m= as prefix key for personal bindings
