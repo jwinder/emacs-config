@@ -264,12 +264,10 @@ For long running processes, this will always toggle back and forth between the p
 
 ** env
 
-An opinionated way of setting up env vars & path
+A highly opinionated way of setting up env vars & path
 #+BEGIN_SRC emacs-lisp
 (require 'eshell)
 (require 'subr-x)
-
-(setenv "EDITOR" "emacsclient")
 
 (defun jw--env-set-vars (vars-file)
   (dolist (line (jw--file-lines-to-list vars-file))
@@ -279,7 +277,8 @@ An opinionated way of setting up env vars & path
              (value-string (mapconcat 'identity (cdr tokens) "="))
              (value-env-vars-parsed (substitute-env-vars value-string)) ;; parse lines containing env vars
              (value (shell-command-to-string (format "echo %s" value-env-vars-parsed)))) ;; parse shell commands in lines
-        (setenv name (string-trim value))))))
+        (setenv name (string-trim value)))))
+  (setenv "EDITOR" "emacsclient"))
 
 (defun jw--env-set-path (path-file)
   (let* ((path-list (mapcar 'substitute-env-vars (jw--file-lines-to-list path-file)))
@@ -311,7 +310,6 @@ $HOME/bin
 /usr/local/bin
 /usr/bin
 #+END_EXAMPLE
-
 
 My terminal rc file parses these same files.
 
@@ -709,7 +707,6 @@ Otherwise, the shell command is read from prompt."
   (interactive)
   (shell-command (format "exercism submit %s" (buffer-file-name))))
 #+END_SRC
-
 ** key bindings
 
 #+BEGIN_SRC emacs-lisp
@@ -800,17 +797,24 @@ hijack =C-x m= as prefix key for personal bindings
 (require 'rcirc)
 
 (defun rcirc-connect-dwim (&optional server port nick user-name full-name startup-channels password encryption)
-  "Alternative to `rcirc-connect' which toggles to the server if already connected. If no server is provided, then a prompt will ask the user for a server."
+  "Alternative to `rcirc-connect'.
+If the server is not connected, then connect to it.
+If no server is provided, then a prompt will ask the user for a server.
+If the server is connected, then toggle to it's process buffer.
+If the server is connected and a prefix arg is provided, then invoke a quick /msg on the server and toggle back to the other-buffer."
   (interactive)
   (if server
       (let ((existing-sp (get-process server)))
         (if (process-live-p existing-sp)
-            (switch-to-buffer (process-buffer existing-sp))
+            (if current-prefix-arg
+                (save-window-excursion
+                  (switch-to-buffer (process-buffer existing-sp))
+                  (call-interactively 'rcirc-cmd-msg))
+              (switch-to-buffer (process-buffer existing-sp)))
           (rcirc-connect server port nick user-name full-name startup-channels password encryption)))
     (rcirc t)))
 
-(setq rcirc-notify-message "%s: %s"
-      rcirc-buffer-maximum-lines 2000)
+(setq rcirc-buffer-maximum-lines 2000)
 
 (add-to-list 'rcirc-omit-responses "MODE")
 
@@ -826,16 +830,19 @@ hijack =C-x m= as prefix key for personal bindings
                   '(rcirc-track-nick ((t (:foreground "#00ffff"))))
                   '(rcirc-track-keyword ((t (:foreground "#00ffff")))))
 
-(add-hook 'rcirc-mode-hook
-          '(lambda ()
-             (turn-on-flyspell)
-             (rcirc-track-minor-mode t)
-             (rcirc-omit-mode)
-             (cd (getenv "HOME"))))
+(defun rcirc-hook--initial-config ()
+  (jw--save-current-message
+    (turn-on-flyspell)
+    (rcirc-track-minor-mode t)
+    (rcirc-omit-mode)
+    (cd (getenv "HOME"))))
 
-;; make rcirc buffers span the width of the frame
-(add-hook 'window-configuration-change-hook
-          '(lambda () (setq rcirc-fill-column (- (window-width) 2))))
+(add-hook 'rcirc-mode-hook 'rcirc-hook--initial-config)
+
+(defun rcirc-hook--span-window-width ()
+  (setq rcirc-fill-column (- (window-width) 2)))
+
+(add-hook 'window-configuration-change-hook 'rcirc-hook--span-window-width)
 
 (defun rcirc-handler-NOTICE--advice--ignore-KEEPALIVE (original-function &rest args)
   (let* ((function-args (nth 2 args))
@@ -1284,10 +1291,9 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (defun sonic-pi-server-start-if-needed ()
   (unless (sonic-pi-server-running-p)
     (message "Sonic Pi server not running anywhere. Starting up...")
-    (save-excursion
+    (save-window-excursion
       (sonic-pi-server)
-      (sleep-for 2.5)
-      (switch-to-buffer (other-buffer)))))
+      (sleep-for 2.5))))
 
 (defun sonic-pi-play (&optional ruby)
   (interactive)
@@ -1318,7 +1324,6 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 (setq org-babel-default-header-args:sonic-pi '((:results . "silent")))
 #+END_SRC
-
 * private
 
 load the =private= directory and the =private.org= file if they exist
