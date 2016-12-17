@@ -55,6 +55,8 @@ cat init.el
 
 (use-package org-pomodoro)
 
+(use-package htmlize)
+
 (use-package magit)
 
 (use-package magit-gh-pulls
@@ -668,6 +670,15 @@ Otherwise, the shell command is read from prompt."
     (let ((archive-dir (format "/tmp/emacs-elpa--%s" (jw--iso-current-time-string))))
       (copy-directory package-user-dir archive-dir)
       (delete-directory package-user-dir t))))
+
+(defun emacs-config-export-to-index-html ()
+  (interactive)
+  (jw--save-current-message
+    (save-window-excursion
+      (emacs-config)
+      (when (file-exists-p "emacs.html") (delete-file "emacs.html"))
+      (org-html-export-to-html nil)
+      (rename-file "emacs.html" "index.html" t))))
 #+END_SRC
 
 *** random
