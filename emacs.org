@@ -568,7 +568,8 @@ Otherwise, the shell command is read from prompt."
     (save-excursion
       (if (region-active-p)
           (indent-region (region-beginning) (region-end))
-        (indent-region (point-min) (point-max))))))
+        (indent-region (point-min) (point-max)))
+      (delete-trailing-whitespace))))
 
 (defun comment-dwim-dwim (&optional arg)
   "When the region is active, then toggle comments over it. Otherwise, toggle commenting the current line. If there is a prefix arg, then append a comment to the end of the line instead. If the prefix arg is 4, then kill the comment on the current line."
