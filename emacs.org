@@ -641,6 +641,10 @@ If the prefix arg is 4, then kill the comment on the current line."
   (interactive)
   (when (frame-parameter (selected-frame) 'fullscreen)
     (toggle-frame-fullscreen)))
+
+(defun set-transparency (value)
+  (interactive "n0 - 100 (percent): ")
+  (set-frame-parameter (selected-frame) 'alpha value))
 #+END_SRC
 
 *** contact
