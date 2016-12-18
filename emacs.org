@@ -530,6 +530,17 @@ Otherwise, the shell command is read from prompt."
           (t (message (string-trim (shell-command-to-string prepared-cmd)))))
       (cmd prepared-cmd))))
 
+(defun transpose-windows (arg)
+  (interactive "p")
+  (let ((selector (if (>= arg 0) 'next-window 'previous-window)))
+    (while (/= arg 0)
+      (let ((this-win (window-buffer))
+            (next-win (window-buffer (funcall selector))))
+        (set-window-buffer (selected-window) next-win)
+        (set-window-buffer (funcall selector) this-win)
+        (select-window (funcall selector)))
+      (setq arg (if (plusp arg) (1- arg) (1+ arg))))))
+
 (defun toggle-window-split ()
   (interactive)
   (if (= (count-windows) 2)
@@ -565,14 +576,17 @@ Otherwise, the shell command is read from prompt."
 (defun indent-region-or-buffer ()
   (interactive)
   (jw--save-current-message
+    (delete-trailing-whitespace)
     (save-excursion
       (if (region-active-p)
           (indent-region (region-beginning) (region-end))
-        (indent-region (point-min) (point-max)))
-      (delete-trailing-whitespace))))
+        (indent-region (point-min) (point-max))))))
 
 (defun comment-dwim-dwim (&optional arg)
-  "When the region is active, then toggle comments over it. Otherwise, toggle commenting the current line. If there is a prefix arg, then append a comment to the end of the line instead. If the prefix arg is 4, then kill the comment on the current line."
+  "When the region is active, then toggle comments over it.
+Otherwise, toggle commenting the current line.
+If there is a prefix arg, then append a comment to the end of the line instead.
+If the prefix arg is 4, then kill the comment on the current line."
   (interactive "*P")
   (if (region-active-p)
       (comment-dwim arg)
@@ -690,6 +704,8 @@ Otherwise, the shell command is read from prompt."
 (global-unset-key (kbd "C-z"))
 (global-unset-key (kbd "C-x C-z"))
 
+(define-key ctl-x-5-map [return] 'toggle-frame-fullscreen)
+
 (global-set-key (kbd "M-!") 'cmd-dwim)
 (global-set-key (kbd "M-&") 'cmd-dwim)
 
@@ -701,8 +717,8 @@ Otherwise, the shell command is read from prompt."
 (global-set-key (kbd "C-M-9") 'winner-undo)
 (global-set-key (kbd "C-M-0") 'winner-redo)
 
-(global-set-key (kbd "C-x 9") 'toggle-window-split)
-(global-set-key (kbd "C-x p f") 'pop-to-buffer)
+(define-key ctl-x-4-map "t" 'transpose-windows)
+(define-key ctl-x-4-map "s" 'toggle-window-split)
 
 (global-set-key (kbd "C-w") 'kill-region-or-line)
 (global-set-key (kbd "M-w") 'kill-ring-save-region-or-line)
@@ -731,8 +747,6 @@ hijack =C-x m= as prefix key for personal bindings
 
 (define-key jw-keymap "d" 'date)
 (define-key jw-keymap "w" 'weather)
-
-(define-key jw-keymap [return] 'toggle-frame-fullscreen)
 
 (define-key jw-keymap "i" 'toggle-scratch-buffer)
 #+END_SRC
