@@ -460,12 +460,14 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (defun kill-ring-cleanup-last-kill (&optional in-major-mode)
   "Cleans whitespace and reindents the text in the head of the kill ring as if in the major mode.
-NOTICE: Right after deleting selected items from the kill ring via helm, `yank' doesn't always work perfectly, and so this function might not work as exptected."
+NOTICE: Sometimes this acts funky, e.g. after removing items from the kill ring via helm."
   (interactive)
   (with-temp-buffer
     (jw--save-current-message
-      (let ((mode (or in-major-mode (completing-read "Major mode to mimic: " obarray
-                                                     '(lambda (symbol) (and (fboundp symbol) (string-match "mode$" (symbol-name symbol)))) t))))
+      (let ((mode (or in-major-mode (completing-read "Major mode to mimic: "
+                                                     obarray
+                                                     '(lambda (symbol) (and (fboundp symbol) (string-match "mode$" (symbol-name symbol))))
+                                                     t))))
         (funcall (if (stringp mode) (intern mode) mode))
         (yank)
         (indent-region (point-min) (point-max))
