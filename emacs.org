@@ -181,6 +181,7 @@ cat init.el
 These are non-interactive library functions useful in other parts of this config
 #+BEGIN_SRC emacs-lisp
 (require 's)
+(require 'dash)
 
 (defconst jw--mode-line-color "#22083397778B")
 
@@ -192,6 +193,12 @@ These are non-interactive library functions useful in other parts of this config
 
 (defun jw--login-shell ()
   (file-name-nondirectory (getenv "SHELL")))
+
+(defun jw--all-minor-modes ()
+  (sort minor-mode-list 's-less-p))
+
+(defun jw--all-major-modes ()
+  (sort (-distinct (mapcar 'cdr (-filter '(lambda (entry) (and (cdr entry) (atom (cdr entry)))) auto-mode-alist))) 's-less-p))
 
 (defmacro jw--define-menu (name doc &rest args)
   (declare (indent defun))
@@ -464,10 +471,7 @@ NOTICE: Sometimes this acts funky, e.g. after removing items from the kill ring 
   (interactive)
   (with-temp-buffer
     (jw--save-current-message
-      (let ((mode (or in-major-mode (completing-read "Major mode to mimic: "
-                                                     obarray
-                                                     '(lambda (symbol) (and (fboundp symbol) (string-match "mode$" (symbol-name symbol))))
-                                                     t))))
+      (let ((mode (or in-major-mode (completing-read "Major mode to mimic: " (jw--all-major-modes) nil t))))
         (yank)
         (funcall (if (stringp mode) (intern mode) mode))
         (indent-region (point-min) (point-max))
