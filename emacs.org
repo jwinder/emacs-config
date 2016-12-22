@@ -48,12 +48,18 @@ cat init.el
 #+BEGIN_SRC emacs-lisp
 (use-package afternoon-theme)
 
+(use-package s)
+
+(use-package dash)
+
 (use-package scratch)
 
 (use-package ob-http)
 (use-package ob-translate)
 
 (use-package org-pomodoro)
+
+(use-package edit-server)
 
 (use-package htmlize)
 
@@ -174,6 +180,8 @@ cat init.el
 
 These are non-interactive library functions useful in other parts of this config
 #+BEGIN_SRC emacs-lisp
+(require 's)
+
 (defconst jw--mode-line-color "#22083397778B")
 
 (defun jw--font-name (&optional size)
@@ -192,7 +200,7 @@ These are non-interactive library functions useful in other parts of this config
 
 (defmacro jw--save-current-message (&rest body)
   "Saves `current-message', executes the body, then `message' the saved message to the echo area. Any `message' calls within the body will likely not be seen."
-  (declare (debug t) (indent 0))
+  (declare (indent defun))
   `(let ((msg (current-message)))
      (progn ,@body)
      (message msg)))
@@ -211,9 +219,6 @@ These are non-interactive library functions useful in other parts of this config
       (unless (file-exists-p file-dir) (make-directory file-dir t))
       (when (and (file-exists-p file) (not append)) (delete-file file))
       (append-to-file string nil file))))
-
-(defun jw--substr-first-n (string n)
-  (if (> (length string) n) (substring string 0 n) string))
 
 (defun jw--make-uuid ()
   (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
@@ -234,11 +239,11 @@ These are non-interactive library functions useful in other parts of this config
 
 (defun jw--run-cmd (command &optional process-name before-process-creation after-process-creation)
   "A wrapper around `make-comint-in-buffer'.
-For commands that have already finished, this will clean up the process buffer and re-run the command.
-For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive."
+  For commands that have already finished, this will clean up the process buffer and re-run the command.
+  For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive."
   (require 'comint)
   (let* ((prepared-cmd (string-trim command))
-         (cmd-process-name (or process-name (replace-regexp-in-string "[ \t\n\r]+" " " (jw--substr-first-n prepared-cmd 100))))
+         (cmd-process-name (or process-name (replace-regexp-in-string "[ \t\n\r]+" " " (s-left 100 prepared-cmd))))
          (cmd-buffer-name (format "*%s*" cmd-process-name)))
     (if (string= "" prepared-cmd)
         (message "Empty command! Doing nothing.")
@@ -448,17 +453,40 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
   (interactive)
   (jw--set-font-size "14"))
 
-(defun kill-region-or-line ()
+(defun ns-raise-chrome ()
   (interactive)
-  (if (region-active-p)
-      (kill-region (mark) (point))
-    (progn (beginning-of-line) (kill-line))))
+  (when (fboundp 'ns-do-applescript)
+    (ns-do-applescript "tell application \"Google Chrome\" to activate")))
 
-(defun kill-ring-save-region-or-line ()
+(defun kill-ring-cleanup-last-kill (&optional in-major-mode)
+  "Cleans whitespace and reindents the text in the head of the kill ring as if in the major mode.
+NOTICE: Right after deleting selected items from the kill ring via helm, `yank' doesn't always work perfectly, and so this function might not work as exptected."
   (interactive)
-  (if (region-active-p)
-      (kill-ring-save (mark) (point))
-    (kill-ring-save (line-beginning-position) (line-end-position))))
+  (with-temp-buffer
+    (jw--save-current-message
+      (let ((mode (or in-major-mode (completing-read "Major mode to mimic: " obarray
+                                                     '(lambda (symbol) (and (fboundp symbol) (string-match "mode$" (symbol-name symbol)))) t))))
+        (funcall (if (stringp mode) (intern mode) mode))
+        (yank)
+        (indent-region (point-min) (point-max))
+        (whitespace-cleanup)
+        (kill-new (buffer-substring (point-min) (point-max)) t)))))
+
+(defun kill-ring-save-region-or-line (arg)
+  (interactive "P")
+  (let ((cleanup-kill arg))
+    (if (region-active-p)
+        (kill-ring-save (mark) (point))
+      (kill-ring-save (line-beginning-position) (line-end-position)))
+    (when cleanup-kill (kill-ring-cleanup-last-kill major-mode))))
+
+(defun kill-region-or-line (arg)
+  (interactive "P")
+  (let ((cleanup-kill arg))
+    (if (region-active-p)
+        (kill-region (mark) (point))
+      (progn (beginning-of-line) (kill-line)))
+    (when cleanup-kill (kill-ring-cleanup-last-kill major-mode))))
 
 (defun date (&optional arg)
   "Display date.
@@ -583,14 +611,14 @@ Otherwise, the shell command is read from prompt."
     (if (equal previous-point (point))
         (beginning-of-line))))
 
-(defun indent-region-or-buffer ()
-  (interactive)
+(defun indent-region-or-buffer (arg)
+  (interactive "P")
   (jw--save-current-message
-    (delete-trailing-whitespace)
     (save-excursion
       (if (region-active-p)
           (indent-region (region-beginning) (region-end))
-        (indent-region (point-min) (point-max))))))
+        (indent-region (point-min) (point-max))))
+    (when arg (whitespace-cleanup))))
 
 (defun comment-dwim-dwim (&optional arg)
   "When the region is active, then toggle comments over it.
@@ -621,8 +649,9 @@ If the prefix arg is 4, then kill the comment on the current line."
 
 (defun newline-and-open-line-previous ()
   (interactive)
-  (newline-and-indent)
-  (open-line-previous))
+  (let ((was-at-end-of-line (equal (point) (line-end-position))))
+    (newline-and-indent)
+    (unless was-at-end-of-line (open-line-previous))))
 
 (defun kill-matching-buffers-silently (pattern)
   (interactive "sKill buffers matching: ")
@@ -739,11 +768,10 @@ If the prefix arg is 4, then kill the comment on the current line."
 
 (global-set-key (kbd "C-a") 'beginning-of-line-or-indentation)
 (global-set-key (kbd "C-o") 'open-line-previous)
+(global-set-key (kbd "C-RET") 'open-line-next)
 (global-set-key (kbd "C-j") 'newline-and-open-line-previous)
 
 (global-set-key (kbd "M-;") 'comment-dwim-dwim)
-
-(global-set-key (kbd "C-c M-t") 'transpose-lines)
 
 (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
 #+END_SRC
@@ -754,6 +782,8 @@ hijack =C-x m= as prefix key for personal bindings
 
 (global-set-key (kbd "C-x m") jw-keymap)
 (global-set-key (kbd "C-c m") jw-keymap)
+(define-key ctl-x-4-map "m" jw-keymap)
+(define-key ctl-x-5-map "m" jw-keymap)
 
 (define-key jw-keymap "!" 'cmd-dwim)
 
@@ -785,7 +815,7 @@ hijack =C-x m= as prefix key for personal bindings
 
 (define-key jw-keymap "e" 'eshell-dwim)
 
-(custom-set-faces '(eshell-prompt ((nil (:foreground "#d68f7d")))))
+(custom-set-faces '(eshell-prompt ((t (:foreground "#d68f7d")))))
 
 (eshell/alias "d" "dired $1")
 (eshell/alias "e" "find-file $1")
@@ -1083,7 +1113,8 @@ example of defining specific functions to connect to various irc servers
       org-src-window-setup 'current-window
       org-cycle-open-archived-trees t
       org-hide-block-startup t
-      org-ellipsis " …")
+      org-ellipsis " …"
+      org-fontify-done-headline t)
 
 (setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread")
       org--todo-todo-states '("⚑")
@@ -1138,9 +1169,10 @@ example of defining specific functions to connect to various irc servers
       org-pomodoro-short-break-sound-p nil
       org-pomodoro-long-break-sound-p nil)
 
-(custom-set-faces `(org-pomodoro-mode-line ((nil (:foreground "#2aa198"))))
-                  `(org-link ((nil (:underline nil))))
-                  `(org-date ((nil (:underline nil)))))
+(custom-set-faces `(org-headline-done ((t (:inherit shadow))))
+                  `(org-pomodoro-mode-line ((t (:foreground "#2aa198"))))
+                  `(org-link ((t (:underline nil))))
+                  `(org-date ((t (:underline nil)))))
 
 (setq org-confirm-babel-evaluate nil)
 
@@ -1215,6 +1247,21 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (defalias 'markdown-table-insert-row 'org-table-insert-row)
 (defalias 'markdown-table-delete-row 'org-table-delete-row)
 
+#+END_SRC
+
+** edit server
+
+#+BEGIN_SRC emacs-lisp
+(require 'edit-server)
+
+(add-to-list 'edit-server-url-major-mode-alist '("github\\.com" . gfm-mode))
+(add-to-list 'edit-server-url-major-mode-alist '("trello\\.com" . gfm-mode))
+(add-to-list 'edit-server-url-major-mode-alist '("slack\\.com" . markdown-mode))
+(add-to-list 'edit-server-url-major-mode-alist '("reddit\\.com" . markdown-mode))
+
+(add-hook 'edit-server-done-hook 'ns-raise-chrome)
+
+(edit-server-start)
 #+END_SRC
 
 ** sbt
