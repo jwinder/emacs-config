@@ -468,8 +468,8 @@ NOTICE: Sometimes this acts funky, e.g. after removing items from the kill ring 
                                                      obarray
                                                      '(lambda (symbol) (and (fboundp symbol) (string-match "mode$" (symbol-name symbol))))
                                                      t))))
-        (funcall (if (stringp mode) (intern mode) mode))
         (yank)
+        (funcall (if (stringp mode) (intern mode) mode))
         (indent-region (point-min) (point-max))
         (whitespace-cleanup)
         (kill-new (buffer-substring (point-min) (point-max)) t)))))
