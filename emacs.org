@@ -434,8 +434,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (when (eq system-type 'gnu/linux)
   (setq interprogram-paste-function 'x-cut-buffer-or-selection-value
         browse-url-browser-function 'browse-url-generic
-        browse-url-generic-program "google-chrome"
-        ack-executable "ack-grep"))
+        browse-url-generic-program "google-chrome"))
 
 (when (eq system-type 'darwin)
   (setq ns-command-modifier 'meta
@@ -973,18 +972,6 @@ example of defining specific functions to connect to various irc servers
 (defalias 'list-colors-display 'helm-colors)
 (defalias 'proced 'helm-top)
 
-(when (executable-find "pt")
-  (setq helm-grep-ag-command "pt -i -e --nocolor --nogroup %s %s %s")
-  (setq helm-ag-base-command "pt -i -e --nocolor --nogroup"))
-
-;; todo; remove helm-ag from deps if helm-projectile switches helm-do-ag to helm-do-grep-ag (https://github.com/bbatsov/helm-projectile/issues/61)
-(defun helm-projectile-projects-helm-do-grep-ag (dir)
-  (let ((default-directory dir))
-    (call-interactively 'helm-do-grep-ag)))
-(helm-add-action-to-source "Grep-ag in project `M-s a'" 'helm-projectile-projects-helm-do-grep-ag helm-source-projectile-projects)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s a") #'helm-projectile-projects-helm-do-grep-ag)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") #'helm-projectile-projects-helm-do-grep-ag) ;; hijack grep's keybinding
-
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
 (set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
 (set-face-attribute 'helm-swoop-target-line-face nil :background "goldenrod")
@@ -1027,6 +1014,43 @@ example of defining specific functions to connect to various irc servers
 
 (add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
 
+#+END_SRC
+
+faster searching hacks
+ - todo -- remove helm-ag from deps if helm-projectile switches helm-do-ag to helm-do-grep-ag
+ - todo -- cleanup if this gets done: https://github.com/bbatsov/helm-projectile/issues/61
+#+BEGIN_SRC emacs-lisp
+(defun helm-grep-ag-use-ag ()
+  "Default `helm-do-grep-ag' to ag (silver searcher) with possibly opinionated flags."
+  (interactive)
+  (when (executable-find "ag")
+    (setq helm-grep-ag-command "ag -i --nogroup --nocolor --line-numbers %s %s %s")
+    (setq helm-ag-base-command "ag -i --nogroup --nocolor --line-numbers")))
+
+(defun helm-grep-ag-use-rg ()
+  "Default `helm-do-grep-ag' to rg (ripgrep) with possibly opinionated flags."
+  (interactive)
+  (when (executable-find "rg")
+    (setq helm-grep-ag-command "rg -i --no-heading --line-number %s %s %s")
+    ;; (setq helm-ag-base-command "rg -i --no-heading --line-number") ;; does not work, helm-projectile-ag tries to add flags that rg doesn't recognize
+    ))
+
+(helm-grep-ag-use-ag)
+(helm-grep-ag-use-rg)
+
+;; overwrite with fire right now until it supports rg
+(defun helm-projectile-ag (&optional options)
+  (interactive)
+  (let ((default-directory (or (projectile-project-root) (error "Not in a project"))))
+    (call-interactively 'helm-do-grep-ag)))
+
+(defun helm-projectile-projects-helm-do-grep-ag (dir)
+  (let ((default-directory dir))
+    (call-interactively 'helm-do-grep-ag)))
+
+(helm-add-action-to-source "Grep-ag in project `M-s a'" 'helm-projectile-projects-helm-do-grep-ag helm-source-projectile-projects)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s a") #'helm-projectile-projects-helm-do-grep-ag)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") #'helm-projectile-projects-helm-do-grep-ag) ;; hijack grep's keybinding
 #+END_SRC
 
 ** magit
