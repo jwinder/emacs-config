@@ -513,7 +513,7 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
 
 (defun weather ()
   (interactive)
-  (cmd "weather"))
+  (jw--run-cmd "curl wttr.in" "weather"))
 
 (defun scratch-buffer ()
   (interactive)
@@ -944,8 +944,6 @@ example of defining specific functions to connect to various irc servers
       helm-imenu-fuzzy-match t
       helm-locate-fuzzy-match t)
 
-(when (executable-find "pt") (setq helm-ag-base-command "pt -i -e --nocolor --nogroup"))
-
 (setq helm-ag-insert-at-point 'symbol)
 
 (setq projectile-completion-system 'helm
@@ -962,7 +960,7 @@ example of defining specific functions to connect to various irc servers
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-(global-set-key (kbd "M-s C-s") 'helm-ag)
+(global-set-key (kbd "M-s a") 'helm-do-grep-ag)
 (global-set-key (kbd "M-s o") 'helm-occur)
 (global-set-key (kbd "M-s s") 'helm-swoop)
 (global-set-key (kbd "M-s i") 'helm-semantic-or-imenu)
@@ -974,6 +972,18 @@ example of defining specific functions to connect to various irc servers
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 (defalias 'list-colors-display 'helm-colors)
 (defalias 'proced 'helm-top)
+
+(when (executable-find "pt")
+  (setq helm-grep-ag-command "pt -i -e --nocolor --nogroup %s %s %s")
+  (setq helm-ag-base-command "pt -i -e --nocolor --nogroup"))
+
+;; todo; remove helm-ag from deps if helm-projectile switches helm-do-ag to helm-do-grep-ag (https://github.com/bbatsov/helm-projectile/issues/61)
+(defun helm-projectile-projects-helm-do-grep-ag (dir)
+  (let ((default-directory dir))
+    (call-interactively 'helm-do-grep-ag)))
+(helm-add-action-to-source "Grep-ag in project `M-s a'" 'helm-projectile-projects-helm-do-grep-ag helm-source-projectile-projects)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s a") #'helm-projectile-projects-helm-do-grep-ag)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") #'helm-projectile-projects-helm-do-grep-ag) ;; hijack grep's keybinding
 
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
 (set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
@@ -1310,12 +1320,16 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
       (sbt-command "test:compile")
     (sbt-command "compile")))
 
+(global-unset-key (kbd "C-c s"))
+(setq sbt-keymap (make-sparse-keymap))
+(define-key sbt-keymap "s" 'sbt)
+(define-key sbt-keymap "c" 'sbt-compile)
+(define-key sbt-keymap "o" 'sbt-test-only-current-test)
+(define-key sbt-keymap "p" 'sbt-run-previous-command)
+
 (defun sbt-turn-on-extra-bindings ()
   (interactive)
-  (local-set-key (kbd "C-c s s") 'sbt)
-  (local-set-key (kbd "C-c s c") 'sbt-compile)
-  (local-set-key (kbd "C-c s o") 'sbt-test-only-current-test)
-  (local-set-key (kbd "C-c s p") 'sbt-run-previous-command))
+  (local-set-key (kbd "C-c s") sbt-keymap))
 
 (require 'magit-mode)
 
@@ -1323,6 +1337,15 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (add-hook 'sbt-mode-hook 'sbt-turn-on-extra-bindings)
 (add-hook 'magit-mode-hook 'sbt-turn-on-extra-bindings)
 
+(require 'helm-projectile)
+
+;; sbt mode sets some local variables even when not inside of a project, e.g. `sbt:buffer-project-root', the use of `with-temp-buffer' ignores them
+(defun helm-projectile-projects-sbt (dir) (interactive) (with-temp-buffer (let ((default-directory dir)) (call-interactively 'sbt))))
+(defun helm-projectile-projects-sbt-compile (dir) (interactive) (with-temp-buffer (let ((default-directory dir)) (call-interactively 'sbt-compile))))
+
+(helm-add-action-to-source "Dispatch sbt `C-c s ...'" 'helm-projectile-projects-sbt helm-source-projectile-projects)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s s") #'helm-projectile-projects-sbt)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s c") #'helm-projectile-projects-sbt-compile)
 #+END_SRC
 
 ** sonic pi
