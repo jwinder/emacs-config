@@ -962,6 +962,7 @@ example of defining specific functions to connect to various irc servers
 (global-set-key (kbd "M-s a") 'helm-do-grep-ag)
 (global-set-key (kbd "M-s o") 'helm-occur)
 (global-set-key (kbd "M-s s") 'helm-swoop)
+(global-set-key (kbd "M-s S") 'helm-multi-swoop)
 (global-set-key (kbd "M-s i") 'helm-semantic-or-imenu)
 (global-set-key (kbd "M-/") 'helm-dabbrev)
 (global-set-key (kbd "C-h a") 'helm-apropos)
@@ -1016,9 +1017,7 @@ example of defining specific functions to connect to various irc servers
 
 #+END_SRC
 
-faster searching hacks
- - todo -- remove helm-ag from deps if helm-projectile switches helm-do-ag to helm-do-grep-ag
- - todo -- cleanup if this gets done: https://github.com/bbatsov/helm-projectile/issues/61
+faster searching
 #+BEGIN_SRC emacs-lisp
 (defun helm-grep-ag-use-ag ()
   "Default `helm-do-grep-ag' to ag (silver searcher) with possibly opinionated flags."
@@ -1038,19 +1037,14 @@ faster searching hacks
 (helm-grep-ag-use-ag)
 (helm-grep-ag-use-rg)
 
-;; overwrite with fire right now until it supports rg
-(defun helm-projectile-ag (&optional options)
+(defun helm-projectile-projects-helm-projectile-ag (dir)
   (interactive)
-  (let ((default-directory (or (projectile-project-root) (error "Not in a project"))))
-    (call-interactively 'helm-do-grep-ag)))
-
-(defun helm-projectile-projects-helm-do-grep-ag (dir)
   (let ((default-directory dir))
-    (call-interactively 'helm-do-grep-ag)))
+    (call-interactively 'helm-projectile-ag))) ;; helm-do-grep-ag doesn't have anything similar to helm-ag-edit, so stick with helm-ag in projects
 
-(helm-add-action-to-source "Grep-ag in project `M-s a'" 'helm-projectile-projects-helm-do-grep-ag helm-source-projectile-projects)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s a") #'helm-projectile-projects-helm-do-grep-ag)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") #'helm-projectile-projects-helm-do-grep-ag) ;; hijack grep's keybinding
+(helm-add-action-to-source "Ag in project `M-s a'" 'helm-projectile-projects-helm-projectile-ag helm-source-projectile-projects)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s a") #'helm-projectile-projects-helm-projectile-ag)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") #'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
 #+END_SRC
 
 ** magit
