@@ -114,6 +114,11 @@ cat init.el
 (use-package helm-descbinds)
 (use-package helm-company)
 
+(use-package wgrep
+  :config (setq wgrep-auto-save-buffer t))
+
+(use-package wgrep-helm)
+
 (use-package docker
   :config (docker-global-mode t))
 #+END_SRC
@@ -1040,7 +1045,7 @@ faster searching
 (defun helm-projectile-projects-helm-projectile-ag (dir)
   (interactive)
   (let ((default-directory dir))
-    (call-interactively 'helm-projectile-ag))) ;; helm-do-grep-ag doesn't have anything similar to helm-ag-edit, so stick with helm-ag in projects
+    (call-interactively 'helm-projectile-ag)))
 
 (helm-add-action-to-source "Ag in project `M-s a'" 'helm-projectile-projects-helm-projectile-ag helm-source-projectile-projects)
 (helm-projectile-define-key helm-projectile-projects-map (kbd "M-s a") #'helm-projectile-projects-helm-projectile-ag)
