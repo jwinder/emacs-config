@@ -978,6 +978,8 @@ example of defining specific functions to connect to various irc servers
 (defalias 'list-colors-display 'helm-colors)
 (defalias 'proced 'helm-top)
 
+(define-key helm-find-files-map (kbd "M-s a") #'helm-ff-run-grep-ag)
+
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
 (set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
 (set-face-attribute 'helm-swoop-target-line-face nil :background "goldenrod")
