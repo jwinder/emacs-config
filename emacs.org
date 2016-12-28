@@ -373,14 +373,13 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq-default indent-tabs-mode nil)
 
 (setq tab-width 2)
+(setq js-indent-level 2)
 
 (delete-selection-mode t)
 
 (winner-mode t)
 
 (global-subword-mode t)
-
-(setq default-major-mode 'text-mode)
 
 (put 'dired-find-alternate-file 'disabled nil)
 
