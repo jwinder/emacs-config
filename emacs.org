@@ -777,7 +777,7 @@ If the prefix arg is 4, then kill the comment on the current line."
 
 (global-set-key (kbd "C-a") 'beginning-of-line-or-indentation)
 (global-set-key (kbd "C-o") 'open-line-previous)
-(global-set-key (kbd "C-RET") 'open-line-next)
+(global-set-key (kbd "C-<return>") 'open-line-next)
 (global-set-key (kbd "C-j") 'newline-and-open-line-previous)
 
 (global-set-key (kbd "M-;") 'comment-dwim-dwim)
@@ -966,7 +966,7 @@ example of defining specific functions to connect to various irc servers
 (global-set-key (kbd "M-s a") 'helm-do-grep-ag)
 (global-set-key (kbd "M-s o") 'helm-occur)
 (global-set-key (kbd "M-s s") 'helm-swoop)
-(global-set-key (kbd "M-s S") 'helm-multi-swoop)
+(global-set-key (kbd "M-s S") 'helm-multi-swoop-all)
 (global-set-key (kbd "M-s i") 'helm-semantic-or-imenu)
 (global-set-key (kbd "M-/") 'helm-dabbrev)
 (global-set-key (kbd "C-h a") 'helm-apropos)
@@ -1155,7 +1155,8 @@ faster searching
       org-cycle-open-archived-trees t
       org-hide-block-startup t
       org-ellipsis " …"
-      org-fontify-done-headline t)
+      org-fontify-done-headline t
+      org-todo-keywords '((sequence "⚑" "⚐" "|" "✔")))
 
 (setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread")
       org--todo-todo-states '("⚑")
