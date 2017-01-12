@@ -15,6 +15,16 @@ ln -s /path/to/your/safe/private.org $HOME/emacs-config/private.org # file conta
 
 Now, start emacs.
 
+** help! the packages didn't install correctly
+
+I snapshot recent elpa installations into a git repository that /worked on my machine/. Just run the following.
+#+BEGIN_SRC sh :tangle go
+rm -rf $HOME/.emacs.d/elpa
+git clone git@github.com:jwinder/emacs-elpa-snapshot.git $HOME/.emacs.d/elpa
+#+END_SRC
+
+Now, try starting emacs. Note that this repository does not contain byte-compiled files. If you would like to byte-compile each elisp file, inside of emacs run the function I have prepared: `M-x emacs-byte-compile-elpa-package-files` (might take a minute to run).
+
 ** org configs
 
 #+TITLE: jwinder emacs config
@@ -48,9 +58,9 @@ cat init.el
 #+BEGIN_SRC emacs-lisp
 (use-package afternoon-theme)
 
-(use-package s)
-
 (use-package dash)
+(use-package s)
+(use-package f)
 
 (use-package scratch)
 
@@ -185,8 +195,9 @@ cat init.el
 
 These are non-interactive library functions useful in other parts of this config
 #+BEGIN_SRC emacs-lisp
-(require 's)
 (require 'dash)
+(require 's)
+(require 'f)
 
 (defconst jw--mode-line-color "#22083397778B")
 
@@ -217,20 +228,11 @@ These are non-interactive library functions useful in other parts of this config
      (progn ,@body)
      (message msg)))
 
-(defun jw--file-lines-to-string (file)
-  (with-temp-buffer
-    (insert-file-contents file)
-    (buffer-string)))
-
-(defun jw--file-lines-to-list (file)
-  (split-string (jw--file-lines-to-string file) "\n" t))
-
 (defun jw--write-to-file (string file &optional append)
   (jw--save-current-message
     (let ((file-dir (file-name-directory file)))
-      (unless (file-exists-p file-dir) (make-directory file-dir t))
-      (when (and (file-exists-p file) (not append)) (delete-file file))
-      (append-to-file string nil file))))
+      (unless (f-exists? file-dir) (make-directory file-dir 'mk-parents)))
+    (if append (f-append string 'utf-8 file) (f-write string 'utf-8 file))))
 
 (defun jw--make-uuid ()
   (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
@@ -255,7 +257,7 @@ These are non-interactive library functions useful in other parts of this config
   For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive."
   (require 'comint)
   (let* ((prepared-cmd (string-trim command))
-         (cmd-process-name (or process-name (replace-regexp-in-string "[ \t\n\r]+" " " (s-left 100 prepared-cmd))))
+         (cmd-process-name (or process-name (s-collapse-whitespace (s-left 100 prepared-cmd))))
          (cmd-buffer-name (format "*%s*" cmd-process-name)))
     (if (string= "" prepared-cmd)
         (message "Empty command! Doing nothing.")
@@ -737,6 +739,13 @@ If the prefix arg is 4, then kill the comment on the current line."
     (let ((archive-dir (format "/tmp/emacs-elpa--%s" (jw--iso-current-time-string))))
       (copy-directory package-user-dir archive-dir)
       (delete-directory package-user-dir t))))
+
+(defun emacs-byte-compile-elpa-package-files ()
+  (interactive)
+  (-each (f-directories package-user-dir)
+    (lambda (dir)
+      (-each (f-entries dir)
+        (lambda (entry) (when (s-matches? ".*el$" entry) (byte-compile-file entry)))))))
 #+END_SRC
 
 *** random
