@@ -28,6 +28,8 @@ Now, try starting emacs. Note that this repository does not contain byte-compile
 M-x emacs-byte-compile-elpa-package-files
 #+END_SRC
 
+Try re-installing the dependencies from scratch again the next day. The breaking change might have been fixed by the package maintainers.
+
 ** org configs
 
 #+TITLE: jwinder emacs config
