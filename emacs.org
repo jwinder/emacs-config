@@ -23,7 +23,10 @@ rm -rf $HOME/.emacs.d/elpa
 git clone git@github.com:jwinder/emacs-elpa-snapshot.git $HOME/.emacs.d/elpa
 #+END_SRC
 
-Now, try starting emacs. Note that this repository does not contain byte-compiled files. If you would like to byte-compile each elisp file, inside of emacs run the function I have prepared: `M-x emacs-byte-compile-elpa-package-files` (might take a minute to run).
+Now, try starting emacs. Note that this repository does not contain byte-compiled files. If you would like to byte-compile each elisp file, inside of emacs run the function I have prepared (might take a minute to complete).
+#+BEGIN_SRC sh :tangle no
+M-x emacs-byte-compile-elpa-package-files
+#+END_SRC
 
 ** org configs
 
