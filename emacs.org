@@ -797,6 +797,11 @@ If the prefix arg is 4, then kill the comment on the current line."
 (global-set-key (kbd "M-;") 'comment-dwim-dwim)
 
 (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
+
+(define-key hs-minor-mode-map (kbd "C-c @ <left>") 'hs-hide-block)
+(define-key hs-minor-mode-map (kbd "C-c @ <right>") 'hs-show-block)
+(define-key hs-minor-mode-map (kbd "C-c @ <up>") 'hs-hide-level)
+(define-key hs-minor-mode-map (kbd "C-c @ <down>") 'hs-show-all)
 #+END_SRC
 
 hijack =C-x m= as prefix key for personal bindings
