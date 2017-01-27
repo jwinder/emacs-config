@@ -974,13 +974,11 @@ example of defining specific functions to connect to various irc servers
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
 
-(define-key helm-command-map (kbd "h") 'helm-descbinds)
-(define-key helm-command-map (kbd "s") 'helm-google-suggest) ;; originally helm-surfraw
-
+(global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-:") 'helm-eval-expression-with-eldoc)
+(global-set-key (kbd "C-,") 'helm-calcul-expression)
 (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "M-s a") 'helm-do-grep-ag)
 (global-set-key (kbd "M-s o") 'helm-occur)
@@ -991,6 +989,12 @@ example of defining specific functions to connect to various irc servers
 (global-set-key (kbd "C-h a") 'helm-apropos)
 (global-set-key (kbd "C-M-/") 'helm-company)
 (global-set-key (kbd "C-h b") 'helm-descbinds)
+(global-set-key (kbd "C-h r") 'helm-info-emacs)
+(global-set-key (kbd "C-h d") 'helm-info-at-point)
+(global-set-key (kbd "C-h i") 'helm-info)
+
+(define-key helm-command-map (kbd "h") 'helm-descbinds)
+(define-key helm-command-map (kbd "s") 'helm-google-suggest) ;; originally helm-surfraw
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 (defalias 'list-colors-display 'helm-colors)
@@ -1071,14 +1075,6 @@ faster searching
 (helm-add-action-to-source "Ag in project `M-s a'" 'helm-projectile-projects-helm-projectile-ag helm-source-projectile-projects)
 (helm-projectile-define-key helm-projectile-projects-map (kbd "M-s a") #'helm-projectile-projects-helm-projectile-ag)
 (helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") #'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
-#+END_SRC
-
-tmp fix until merged: https://github.com/bbatsov/helm-projectile/pull/66
-#+BEGIN_SRC emacs-lisp
-(defun helm-projectile-coerce-file (candidate)
-  (let ((helm-projectile-project-root (projectile-project-root)))
-    (with-current-buffer (helm-candidate-buffer)
-      (expand-file-name candidate helm-projectile-project-root))))
 #+END_SRC
 
 ** magit
