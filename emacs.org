@@ -136,6 +136,9 @@ cat init.el
 
 (use-package docker
   :config (docker-global-mode t))
+
+(use-package xah-math-input
+  :config (global-xah-math-input-mode))
 #+END_SRC
 
 *** languages
@@ -553,6 +556,12 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
       (json-pretty-print (region-beginning) (region-end))
     (json-pretty-print-buffer)))
 
+(defun math-symbol-at-point (arg)
+  (interactive "P")
+  (if arg
+      (xah-math-input-list-math-symbols)
+    (xah-math-input-change-to-symbol)))
+
 (defun cmd (command)
   (interactive "sCommand: ")
   (jw--run-cmd command))
@@ -802,6 +811,8 @@ If the prefix arg is 4, then kill the comment on the current line."
 (define-key hs-minor-mode-map (kbd "C-c @ <right>") 'hs-show-block)
 (define-key hs-minor-mode-map (kbd "C-c @ <up>") 'hs-hide-level)
 (define-key hs-minor-mode-map (kbd "C-c @ <down>") 'hs-show-all)
+
+(define-key xah-math-input-keymap (kbd "S-SPC") 'math-symbol-at-point)
 #+END_SRC
 
 hijack =C-x m= as prefix key for personal bindings
