@@ -138,7 +138,7 @@ cat init.el
   :config (docker-global-mode t))
 
 (use-package xah-math-input
-  :config (global-xah-math-input-mode))
+  :config (global-xah-math-input-mode 1))
 #+END_SRC
 
 *** languages
