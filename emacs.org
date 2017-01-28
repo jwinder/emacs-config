@@ -507,6 +507,12 @@ NOTICE: Sometimes this acts funky, e.g. after removing items from the kill ring 
       (progn (beginning-of-line) (kill-line)))
     (when cleanup-kill (kill-ring-cleanup-last-kill major-mode))))
 
+(defun unique-lines ()
+  (interactive)
+  (if (region-active-p)
+      (delete-duplicate-lines (region-beginning) (region-end))
+    (delete-duplicate-lines (point-min) (point-max))))
+
 (defun date (&optional arg)
   "Display date.
 With default prefix arg (e.g. C-u M-x date), display calendar around current date.
