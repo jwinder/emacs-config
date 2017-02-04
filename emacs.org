@@ -137,7 +137,12 @@ cat init.el
 (use-package docker
   :config (docker-global-mode t))
 
-(use-package xah-math-input)
+(use-package xah-math-input
+  :config (progn
+            (xah-math-input--add-to-hash [ ["def=" "≝"] ])
+            (xah-math-input--add-cycle ["≔" "≝"])
+            (xah-math-input--add-cycle ["∫" "∬" "∭" "⨌"])
+            (xah-math-input--add-cycle ["∮" "∯" "∰" "∱" "∲" "∳"])))
 #+END_SRC
 
 *** languages
@@ -1204,7 +1209,7 @@ faster searching
       org--blocked-todo-boxed-states '("blocked" "halted" "stalled" "paused")
       org--doing-todo-boxed-states '("doing" "going")
       org--doing-todo-states '("⚐")
-      org--delegated-todo-boxed-states '("delegated" "assigned" "pr")
+      org--delegated-todo-boxed-states '("delegated" "assigned" "pr" "waiting")
       org--done-todo-boxed-states '("done" "cancelled" "canceled" "finished" "boom" "read")
       org--done-todo-states '("✘" "✔"))
 
