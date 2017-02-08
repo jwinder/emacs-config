@@ -165,7 +165,7 @@ cat init.el
 (use-package ensime
   :pin melpa-stable
   :config (progn (setq ensime-use-helm t)
-                 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+                 ;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook) ;; not using at the moment
                  (advice-add 'ensime-sbt-test-dwim
                              :around '(lambda (original-function &rest args)
                                         (let* ((original-command (car args))
@@ -355,10 +355,11 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 #+BEGIN_SRC emacs-lisp
 (require 'frame)
 
-(defun fix-cursor-color-for-emacs-clients (frame)
-  (modify-frame-parameters frame (list (cons 'cursor-color "dark grey"))))
+(defun fix-colors-for-emacs-clients (frame)
+  (modify-frame-parameters frame (list (cons 'cursor-color "dark grey")))
+  (modify-frame-parameters frame (list (cons 'background-color "black"))))
 
-(add-hook 'after-make-frame-functions 'fix-cursor-color-for-emacs-clients)
+(add-hook 'after-make-frame-functions 'fix-colors-for-emacs-clients)
 #+END_SRC
 
 ** settings
@@ -819,12 +820,11 @@ If the prefix arg is 4, then kill the comment on the current line."
 
 (global-set-key (kbd "S-M-SPC") 'math-symbol-at-point)
 
+(require 'hideshow)
 (define-key hs-minor-mode-map (kbd "C-c @ <left>") 'hs-hide-block)
 (define-key hs-minor-mode-map (kbd "C-c @ <right>") 'hs-show-block)
 (define-key hs-minor-mode-map (kbd "C-c @ <up>") 'hs-hide-level)
 (define-key hs-minor-mode-map (kbd "C-c @ <down>") 'hs-show-all)
-
-
 #+END_SRC
 
 hijack =C-x m= as prefix key for personal bindings
@@ -1182,6 +1182,9 @@ faster searching
 (add-to-list 'org-structure-template-alist '("h" "#+HEADER: ?"))
 (add-to-list 'org-structure-template-alist '("p" "#+PROPERTY: ?"))
 (add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC ?\n\n#+END_SRC"))
+
+(add-to-list 'org-structure-template-alist '("trs" "#+BEGIN_SRC translate :src es :dest en\n?\n#+END_SRC")) ;; traducir español al inglés
+(add-to-list 'org-structure-template-alist '("tre" "#+BEGIN_SRC translate :src en :dest es\n?\n#+END_SRC")) ;; translate english to spanish
 
 (add-to-list 'org-latex-packages-alist '("" "physics"))
 (setq org-latex-remove-logfiles nil) ;; evaluating latex blocks was causing errors because ox-latex couldn't find the logfiles
