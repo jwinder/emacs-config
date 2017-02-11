@@ -73,6 +73,8 @@ cat init.el
 (use-package ob-translate)
 
 (use-package org-pomodoro)
+(use-package interleave)
+;; todo -- mess with org-ref
 
 (use-package edit-server)
 
@@ -201,6 +203,8 @@ cat init.el
 (use-package markdown-mode
   :mode (("\\.md$" . gfm-mode)
          ("\\.markdown$" . gfm-mode)))
+
+(use-package graphviz-dot-mode)
 #+END_SRC
 
 ** helper functions
@@ -1150,6 +1154,7 @@ faster searching
 
 #+BEGIN_SRC emacs-lisp
 (require 'org-pomodoro)
+(require 'dash)
 
 (defun todo ()
   (interactive)
@@ -1177,14 +1182,6 @@ faster searching
                             (local-set-key (kbd "C-c <") 'org-time-stamp)
                             (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)
                             (local-set-key [remap org-feed-update-all] 'org-feed-update-all-or-one))) ;; C-c C-x g
-
-(add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
-(add-to-list 'org-structure-template-alist '("h" "#+HEADER: ?"))
-(add-to-list 'org-structure-template-alist '("p" "#+PROPERTY: ?"))
-(add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC ?\n\n#+END_SRC"))
-
-(add-to-list 'org-structure-template-alist '("trs" "#+BEGIN_SRC translate :src es :dest en\n?\n#+END_SRC")) ;; traducir español al inglés
-(add-to-list 'org-structure-template-alist '("tre" "#+BEGIN_SRC translate :src en :dest es\n?\n#+END_SRC")) ;; translate english to spanish
 
 (add-to-list 'org-latex-packages-alist '("" "physics"))
 (setq org-latex-remove-logfiles nil) ;; evaluating latex blocks was causing errors because ox-latex couldn't find the logfiles
@@ -1267,32 +1264,46 @@ faster searching
 
 (setq org-confirm-babel-evaluate nil)
 
-(org-babel-do-load-languages 'org-babel-load-languages
-                             '((emacs-lisp . t)
-                               (http . t)
-                               (translate . t)
-                               (awk . t)
-                               (calc . t)
-                               (C . t)
-                               (dot . t)
-                               (R . t)
-                               (haskell . t)
-                               (java . t)
-                               (js . t)
-                               (latex . t)
-                               (lisp . t)
-                               (makefile . t)
-                               (matlab . t)
-                               (org . t)
-                               (perl . t)
-                               (plantuml . t)
-                               (python . t)
-                               (ruby . t)
-                               (scala . t) ;; there are conflicting versions in org & scala-mode requiring ensime
-                               (scheme . t)
-                               (shell . t)
-                               (sql . t)))
+(add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
+(add-to-list 'org-structure-template-alist '("h" "#+HEADER: ?"))
+(add-to-list 'org-structure-template-alist '("p" "#+PROPERTY: ?"))
+(add-to-list 'org-structure-template-alist '("P" ":PROPERTIES:\n?\n:END:"))
+(add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC ?\n\n#+END_SRC"))
+(add-to-list 'org-structure-template-alist '("ipdf" "#+INTERLEAVE_PDF: ?"))
 
+(defun org-babel-support-src-template-shortcut (shortcut &optional src-line)
+  (let* ((shortcut-name (if (symbolp shortcut) (symbol-name shortcut) shortcut))
+         (src-line-name (if src-line
+                            (if (symbolp src-line) (symbol-name src-line) src-line)
+                          shortcut-name))
+         (src-block-template (format "#+BEGIN_SRC %s\n?\n#+END_SRC" src-line-name)))
+    (add-to-list 'org-structure-template-alist `(,shortcut-name ,src-block-template))))
+
+(defun org-babel-support-langs (langs)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   (-map (lambda (lang) (if (listp lang) `(,(car lang) . t) `(,lang . t))) langs))
+  (-each langs
+    (lambda (lang)
+      (let* ((all-shortcuts (if (listp lang) lang (list lang)))
+             (ob-lang (car all-shortcuts)))
+        (-each all-shortcuts (lambda (shortcut) (org-babel-support-src-template-shortcut shortcut ob-lang)))))))
+
+(org-babel-support-langs
+ (list 'awk 'calc 'C 'dot '(emacs-lisp elisp) '(haskell hask) 'http 'java 'js 'latex 'lisp
+       'makefile 'matlab 'org 'perl 'plantuml '(python py) 'R '(ruby rb)
+       'scala ;; there are conflicting versions in org & scala-mode requiring ensime
+       'scheme '(shell sh) 'sql '(translate tr)))
+
+(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)) ;; "dot" src blocks don't use graphviz-dot-mode by default
+
+(org-babel-support-src-template-shortcut 'cmd)
+(org-babel-support-src-template-shortcut 'tmux "cmd :tmux")
+(org-babel-support-src-template-shortcut 'md 'markdown)
+(org-babel-support-src-template-shortcut 'gfm)
+
+(org-babel-support-src-template-shortcut 'trs "translate :src es :dest en") ;; traducir español al inglés
+(org-babel-support-src-template-shortcut 'tre "translate :src en :dest es") ;; translate english to spanish
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:http '((:pretty . "yes")))
@@ -1311,7 +1322,7 @@ faster searching
         (when in-bg (switch-to-buffer (other-buffer)))
         "Running command"))))
 
-(add-to-list 'org-src-lang-modes '("cmd"))
+(add-to-list 'org-src-lang-modes '("cmd" . sh))
 
 (define-derived-mode cmd-mode sh-mode "cmd")
 
@@ -1475,11 +1486,13 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
   (sonic-pi-play body)
   "Sent to Sonic Pi")
 
-(add-to-list 'org-src-lang-modes '("sonic-pi"))
+(add-to-list 'org-src-lang-modes '("sonic-pi" . ruby))
 
 (define-derived-mode sonic-pi-mode ruby-mode "sonic-pi")
 
 (setq org-babel-default-header-args:sonic-pi '((:results . "silent")))
+
+(org-babel-support-src-template-shortcut 'sonicpi "sonic-pi")
 #+END_SRC
 * private
 
