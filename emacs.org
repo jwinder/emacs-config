@@ -73,8 +73,8 @@ cat init.el
 (use-package ob-translate)
 
 (use-package org-pomodoro)
+(use-package org-ref)
 (use-package interleave)
-;; todo -- mess with org-ref
 
 (use-package edit-server)
 
