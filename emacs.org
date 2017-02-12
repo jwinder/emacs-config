@@ -73,7 +73,6 @@ cat init.el
 (use-package ob-translate)
 
 (use-package org-pomodoro)
-(use-package org-ref)
 (use-package interleave)
 
 (use-package edit-server)
@@ -141,7 +140,7 @@ cat init.el
 
 (use-package xah-math-input
   :config (progn
-            (xah-math-input--add-to-hash [ ["def=" "≝"] ])
+            (xah-math-input--add-to-hash [ ["def" "≝"] ["pm" "±"] ])
             (xah-math-input--add-cycle ["≔" "≝"])
             (xah-math-input--add-cycle ["∫" "∬" "∭" "⨌"])
             (xah-math-input--add-cycle ["∮" "∯" "∰" "∱" "∲" "∳"])))
@@ -267,6 +266,9 @@ These are non-interactive library functions useful in other parts of this config
   (concat (format-time-string "%Y-%m-%dT%T")
           ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5))) (format-time-string "%z"))))
 
+(defun jw--current-date-string ()
+  (format-time-string "%Y-%m-%d"))
+
 (defun jw--run-cmd (command &optional process-name before-process-creation after-process-creation)
   "A wrapper around `make-comint-in-buffer'.
   For commands that have already finished, this will clean up the process buffer and re-run the command.
@@ -371,6 +373,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 #+BEGIN_SRC emacs-lisp
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (load custom-file 'noerror)
+
+(setq enable-local-variables :all)
 
 (ansi-color-for-comint-mode-on)
 
@@ -538,6 +542,10 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
 (defun insert-iso-date ()
   (interactive)
   (insert (jw--iso-current-time-string)))
+
+(defun insert-date ()
+  (interactive)
+  (insert (jw--current-date-string)))
 
 (defun weather ()
   (interactive)
@@ -1153,6 +1161,7 @@ faster searching
 ** org
 
 #+BEGIN_SRC emacs-lisp
+(require 'org)
 (require 'org-pomodoro)
 (require 'dash)
 
