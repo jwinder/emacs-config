@@ -121,6 +121,8 @@ cat init.el
                        flycheck-display-errors-function nil)
                  (global-flycheck-mode)))
 
+(use-package yasnippet)
+
 (use-package helm)
 (use-package helm-ag)
 (use-package helm-swoop)
@@ -165,14 +167,15 @@ cat init.el
 
 (use-package ensime
   :pin melpa-stable
-  :config (progn (setq ensime-use-helm t)
-                 ;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook) ;; not using at the moment
-                 (advice-add 'ensime-sbt-test-dwim
-                             :around '(lambda (original-function &rest args)
-                                        (let* ((original-command (car args))
-                                               (only-zzz-str (if current-prefix-arg " -- ex zzz " ""))
-                                               (command (concat original-command only-zzz-str)))
-                                          (apply original-function (cons command (cdr args))))))))
+  :config (progn
+            ;; (setq ensime-use-helm t)
+            ;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook) ;; not using at the moment
+            (advice-add 'ensime-sbt-test-dwim
+                        :around '(lambda (original-function &rest args)
+                                   (let* ((original-command (car args))
+                                          (only-zzz-str (if current-prefix-arg " -- ex zzz " ""))
+                                          (command (concat original-command only-zzz-str)))
+                                     (apply original-function (cons command (cdr args))))))))
 
 (use-package ruby-mode
   :mode (("Gemfile$" . ruby-mode)
@@ -889,6 +892,21 @@ hijack =C-x m= as prefix key for personal bindings
 (eshell/alias "cat" "find-file $1")
 (eshell/alias ":q" "exit")
 (eshell/alias ":Q" "exit")
+#+END_SRC
+
+** yasnippet
+
+#+BEGIN_SRC emacs-lisp
+(defun yas-dwim (arg)
+  (interactive "P")
+  (if (equal arg 4) (yas-new-snippet)
+    (if arg (yas-visit-snippet-file)
+      (yas-insert-snippet))))
+
+(yas-global-mode 1)
+
+(global-set-key (kbd "M-?") 'yas-dwim)
+
 #+END_SRC
 
 ** rcirc
