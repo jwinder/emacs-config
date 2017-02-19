@@ -502,7 +502,7 @@ NOTICE: Sometimes this acts funky, e.g. after removing items from the kill ring 
     (jw--save-current-message
       (let ((mode (or in-major-mode (completing-read "Major mode to mimic: " (jw--all-major-modes) nil t))))
         (yank)
-        (funcall (if (stringp mode) (intern mode) mode))
+        (funcall (intern-soft mode))
         (indent-region (point-min) (point-max))
         (whitespace-cleanup)
         (kill-new (buffer-substring (point-min) (point-max)) t)))))
@@ -1021,9 +1021,6 @@ example of defining specific functions to connect to various irc servers
 
 (setq helm-ag-insert-at-point 'symbol)
 
-(setq projectile-completion-system 'helm
-      projectile-mode-line "") ;; this slowed tramp down sometimes
-
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
 
@@ -1076,25 +1073,22 @@ example of defining specific functions to connect to various irc servers
 (add-hook 'eshell-mode-hook
           '(lambda ()
              (define-key eshell-mode-map [remap eshell-pcomplete] 'helm-esh-pcomplete)
-             (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)))
+             (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)
+             ))
 
-(add-hook 'projectile-mode-hook
-          '(lambda ()
-             (setq projectile-switch-project-action 'helm-projectile)))
-
-(add-hook 'flycheck-mode-hook
-          '(lambda ()
-             (define-key flycheck-mode-map (kbd "C-c ! l") 'helm-flycheck)))
-
-(add-hook 'flyspell-mode-hook
-          '(lambda ()
-             (define-key flyspell-mode-map (kbd "C-M-i") 'helm-flyspell-correct))) ;; also works with M-<tab>
+(define-key flycheck-mode-map (kbd "C-c ! l") 'helm-flycheck)
+(define-key flyspell-mode-map (kbd "C-M-i") 'helm-flyspell-correct)
 
 (helm-mode 1)
 (helm-autoresize-mode 1)
 
 (projectile-global-mode)
 (helm-projectile-on)
+
+(setq projectile-completion-system 'helm
+      projectile-mode-line ""  ;; this slowed tramp down sometimes
+      projectile-switch-project-action 'helm-projectile)
+
 
 (add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
 
