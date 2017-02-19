@@ -92,23 +92,14 @@ cat init.el
 (use-package undo-tree
   :config (global-undo-tree-mode 1))
 
-(use-package expand-region
-  :bind (("C-=" . er/expand-region)
-         ("C-+" . er/contract-region)))
+(use-package expand-region)
 
-(use-package multiple-cursors
-  :bind (("C-*" . mc/mark-all-like-this)
-         ("C-<" . mc/mark-previous-like-this)
-         ("C->" . mc/mark-next-like-this)
-         ("C-x r t" . mc/edit-lines)))
+(use-package multiple-cursors)
 
 (use-package smartparens
   :config (progn (require 'smartparens-config)
                  (smartparens-global-mode t)
-                 (sp-use-smartparens-bindings)
-                 (define-key sp-keymap (kbd "M-<backspace>") nil)
-                 (define-key sp-keymap (kbd "C-M-p") nil)
-                 (define-key sp-keymap (kbd "C-M-n") nil)))
+                 (sp-use-smartparens-bindings)))
 
 (use-package company
   :config (progn (global-company-mode t)
@@ -801,68 +792,120 @@ If the prefix arg is 4, then kill the comment on the current line."
 #+END_SRC
 ** key bindings
 
+base-keys
+#+NAME: base-keys
+| Key           | Function                         | Scope             | Notes                |
+|---------------+----------------------------------+-------------------+----------------------|
+| C-z           | nil                              |                   | remove suspend       |
+| C-x C-z       | nil                              |                   |                      |
+| <return>      | toggle-frame-fullscreen          | ctl-x-5-map       |                      |
+| M-!           | cmd-dwim                         |                   |                      |
+| M-&           | cmd-dwim                         |                   |                      |
+| C-s           | isearch-forward-regexp           |                   |                      |
+| C-r           | isearch-backward-regexp          |                   |                      |
+| C-M-g         | goto-line                        |                   |                      |
+| C-M-9         | winner-undo                      |                   |                      |
+| C-M-0         | winner-redo                      |                   |                      |
+| t             | transpose-windows                | ctl-x-4-map       |                      |
+| s             | toggle-window-split              | ctl-x-4-map       |                      |
+| C-w           | kill-region-or-line              |                   |                      |
+| M-w           | kill-ring-save-region-or-line    |                   |                      |
+| C-a           | beginning-of-line-or-indentation |                   |                      |
+| C-o           | open-line-previous               |                   |                      |
+| C-<return>    | open-line-next                   |                   |                      |
+| C-j           | newline-and-open-line-previous   |                   |                      |
+| M-;           | comment-dwim-dwim                |                   |                      |
+| C-M-\         | indent-region-or-buffer          |                   |                      |
+| S-M-SPC       | math-symbol-at-point             |                   |                      |
+| C-=           | er/expand-region                 |                   |                      |
+| C-+           | er/contract-region               |                   |                      |
+| C-*           | mc/mark-all-like-this            |                   |                      |
+| C-<           | mc/mark-previous-like-this       |                   |                      |
+| C->           | mc/mark-next-like-this           |                   |                      |
+| C-x r t       | mc/edit-lines                    |                   |                      |
+| M-<backspace> | nil                              | sp-keymap         |                      |
+| C-M-p         | nil                              | sp-keymap         |                      |
+| C-M-n         | nil                              | sp-keymap         |                      |
+| C-c @ <left>  | hs-hide-block                    | hs-minor-mode-map |                      |
+| C-c @ <right> | hs-show-block                    | hs-minor-mode-map |                      |
+| C-c @ <up>    | hs-hide-level                    | hs-minor-mode-map |                      |
+| C-c @ <down>  | hs-show-all                      | hs-minor-mode-map |                      |
+| C-x m         | jw-command-prefix                |                   | prefix for jw-keymap |
+| C-c m         | jw-command-prefix                |                   |                      |
+| m             | jw-command-prefix                | ctl-x-4-map       |                      |
+| m             | jw-command-prefix                | ctl-x-5-map       |                      |
+| !             | cmd-dwim                         | jw-keymap         |                      |
+| q             | emacs-configs-toggle             | jw-keymap         |                      |
+| d             | date                             | jw-keymap         |                      |
+| w             | weather                          | jw-keymap         |                      |
+| i             | toggle-scratch-buffer            | jw-keymap         |                      |
+
+function to help iterate through a table of keybindings and set them
 #+BEGIN_SRC emacs-lisp
-(global-unset-key (kbd "C-z"))
-(global-unset-key (kbd "C-x C-z"))
+(defun keybindings-org-table-set-row (key &optional fn scope)
+  (let ((keymap (cond ((s-equals? scope "local") (current-local-map))
+                      ((or (s-blank-str? scope) (s-equals? scope "global")) (current-global-map))
+                      ((boundp (intern-soft scope)) (eval (intern-soft scope)))))
+        (def (if (or (s-blank-str? fn) (s-equals? fn "nil")) nil (intern-soft fn))))
+    (if keymap
+        (define-key keymap (kbd key) def)
+      (message "Cannot deduce keymap when setting function %s to key %s in map %s" fn key scope))))
 
-(define-key ctl-x-5-map [return] 'toggle-frame-fullscreen)
+(unless (boundp 'jw-all-cached-keys) (setq jw-all-cached-keys nil))
+(defun keybindings-org-table-cache-binding (rows &optional binding)
+  (-each rows (lambda (r) (add-to-list 'jw-all-cached-keys r)))
+  (when binding (set binding rows)))
 
-(global-set-key (kbd "M-!") 'cmd-dwim)
-(global-set-key (kbd "M-&") 'cmd-dwim)
+(defun keybindings-org-table-set (rows &optional binding)
+  "Sets up key bindings from an org table like:
 
-(global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+      | Key   | Function | Scope           |
+      |-------+----------+-----------------|
+      | C-c a | fn-1     |                 |
+      | C-c b | fn-2     | local           |
+      | C-c c | fn-3     | eshell-mode-map |
+      | C-c d | nil      |                 |
+      | C-c e | nil      | local           |
+      | C-c f | nil      | eshell-mode-map |
 
-(global-set-key (kbd "C-M-g") 'goto-line)
+C-c a gets set to fn-1 in the global map.
+C-c b gets set to fn-2 in the current local map (useful if invoked inside of a hook).
+C-c c gets set to fn-3 in the eshell-mode-map.
+C-c d gets unbound in the global map.
+C-c e gets unbound in the current local map.
+C-c f gets unbound in the eshell-mode-map.
 
-(global-set-key (kbd "C-M-9") 'winner-undo)
-(global-set-key (kbd "C-M-0") 'winner-redo)
+For a global binding, an empty cell or the value \"global\" can be provided in the Scope column.
 
-(define-key ctl-x-4-map "t" 'transpose-windows)
-(define-key ctl-x-4-map "s" 'toggle-window-split)
+When unsetting a keybinding, an empty table cell can be provided instead of nil in the Function column.
 
-(global-set-key (kbd "C-w") 'kill-region-or-line)
-(global-set-key (kbd "M-w") 'kill-ring-save-region-or-line)
+`binding' is optional. When provided, it will be set globally with the value of the keybindings list.
 
-(global-set-key (kbd "C-a") 'beginning-of-line-or-indentation)
-(global-set-key (kbd "C-o") 'open-line-previous)
-(global-set-key (kbd "C-<return>") 'open-line-next)
-(global-set-key (kbd "C-j") 'newline-and-open-line-previous)
-
-(global-set-key (kbd "M-;") 'comment-dwim-dwim)
-
-(global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
-
-(global-set-key (kbd "S-M-SPC") 'math-symbol-at-point)
-
-(require 'hideshow)
-(define-key hs-minor-mode-map (kbd "C-c @ <left>") 'hs-hide-block)
-(define-key hs-minor-mode-map (kbd "C-c @ <right>") 'hs-show-block)
-(define-key hs-minor-mode-map (kbd "C-c @ <up>") 'hs-hide-level)
-(define-key hs-minor-mode-map (kbd "C-c @ <down>") 'hs-show-all)
+`jw-all-cached-keys' contains every keybinding coming through this function (whether called in a hook or not).
+      "
+  (keybindings-org-table-cache-binding rows binding)
+  (-each rows
+    (lambda (row)
+      (keybindings-org-table-set-row (car row) (s-presence (cadr row)) (s-presence (nth 2 row))))))
 #+END_SRC
 
-hijack =C-x m= as prefix key for personal bindings
+#+HEADER: :var base-keys=base-keys
 #+BEGIN_SRC emacs-lisp
 (setq jw-keymap (make-sparse-keymap))
+(fset 'jw-command-prefix jw-keymap)
 
-(global-set-key (kbd "C-x m") jw-keymap)
-(global-set-key (kbd "C-c m") jw-keymap)
-(define-key ctl-x-4-map "m" jw-keymap)
-(define-key ctl-x-5-map "m" jw-keymap)
-
-(define-key jw-keymap "!" 'cmd-dwim)
-
-(define-key jw-keymap "q" 'emacs-configs-toggle)
-
-(define-key jw-keymap "d" 'date)
-(define-key jw-keymap "w" 'weather)
-
-(define-key jw-keymap "i" 'toggle-scratch-buffer)
+(keybindings-org-table-set base-keys 'jw-base-keys)
 #+END_SRC
 
 ** eshell
 
+eshell-keys
+#+NAME: eshell-keys
+| Key | Function    | Scope     |
+|-----+-------------+-----------|
+| e   | eshell-dwim | jw-keymap |
+
+#+HEADER: :var eshell-keys=eshell-keys
 #+BEGIN_SRC emacs-lisp
 (require 'em-alias)
 
@@ -879,7 +922,7 @@ hijack =C-x m= as prefix key for personal bindings
         (insert (format "cd '%s'" vc-root))
         (eshell-send-input)))))
 
-(define-key jw-keymap "e" 'eshell-dwim)
+(keybindings-org-table-set eshell-keys 'jw-eshell-keys)
 
 (custom-set-faces '(eshell-prompt ((t (:foreground "#d68f7d")))))
 
@@ -896,6 +939,13 @@ hijack =C-x m= as prefix key for personal bindings
 
 ** yasnippet
 
+yas-keys
+#+NAME: yas-keys
+| Key | Function |
+|-----+----------|
+| M-? | yas-dwim |
+
+#+HEADER: :var yas-keys=yas-keys
 #+BEGIN_SRC emacs-lisp
 (defun yas-dwim (arg)
   (interactive "P")
@@ -905,7 +955,7 @@ hijack =C-x m= as prefix key for personal bindings
 
 (yas-global-mode 1)
 
-(global-set-key (kbd "M-?") 'yas-dwim)
+(keybindings-org-table-set yas-keys 'jw-yas-keys)
 
 #+END_SRC
 
@@ -998,6 +1048,46 @@ example of defining specific functions to connect to various irc servers
 
 ** helm
 
+helm-keys
+#+NAME: helm-keys
+| Key     | Function                        | Scope               | Notes                    |
+|---------+---------------------------------+---------------------+--------------------------|
+| C-c h   | helm-command-prefix             |                     |                          |
+| C-x c   | nil                             |                     | undo default helm prefix |
+| M-x     | helm-M-x                        |                     |                          |
+| M-:     | helm-eval-expression-with-eldoc |                     |                          |
+| C-,     | helm-calcul-expression          |                     |                          |
+| C-x C-b | helm-buffers-list               |                     |                          |
+| C-x C-f | helm-find-files                 |                     |                          |
+| M-y     | helm-show-kill-ring             |                     |                          |
+| M-s a   | helm-do-grep-ag                 |                     |                          |
+| M-s o   | helm-occur                      |                     |                          |
+| M-s s   | helm-swoop                      |                     |                          |
+| M-s S   | helm-multi-swoop-all            |                     |                          |
+| M-s i   | helm-semantic-or-imenu          |                     |                          |
+| M-/     | helm-dabbrev                    |                     |                          |
+| C-h a   | helm-apropos                    |                     |                          |
+| C-M-/   | helm-company                    |                     |                          |
+| C-h b   | helm-descbinds                  |                     |                          |
+| C-h r   | helm-info-emacs                 |                     |                          |
+| C-h d   | helm-info-at-point              |                     |                          |
+| C-h i   | helm-info                       |                     |                          |
+| h       | helm-descbinds                  | helm-command-map    |                          |
+| s       | helm-google-suggest             | helm-command-map    | originally helm-surfraw  |
+| M-s a   | helm-ff-run-grep-ag             | helm-find-files-map |                          |
+| C-s     | helm-ff-run-grep-ag             | helm-find-files-map | ag instead of grep       |
+| C-c ! l | helm-flycheck                   | flycheck-mode-map   |                          |
+| C-M-i   | helm-flyspell-correct           | flyspell-mode-map   |                          |
+
+helm-eshell-hook-keys
+#+NAME: helm-eshell-hook-keys
+| Key   | Function            | Scope           |
+|-------+---------------------+-----------------|
+| <tab> | helm-esh-pcomplete  | eshell-mode-map |
+| M-p   | helm-eshell-history | eshell-mode-map |
+
+#+HEADER: :var helm-keys=helm-keys
+#+HEADER: :var helm-eshell-hook-keys=helm-eshell-hook-keys
 #+BEGIN_SRC emacs-lisp
 (require 'helm)
 (require 'helm-config)
@@ -1010,48 +1100,18 @@ example of defining specific functions to connect to various irc servers
       helm-buffer-max-length nil
       helm-ff-file-name-history-use-recentf t
       helm-quick-update t
-      helm-move-to-line-cycle-in-source nil)
-
-(setq helm-buffers-fuzzy-matching t
+      helm-move-to-line-cycle-in-source nil
+      helm-buffers-fuzzy-matching t
       helm-M-x-fuzzy-match t
       helm-recentf-fuzzy-match t
       helm-semantic-fuzzy-match t
       helm-imenu-fuzzy-match t
-      helm-locate-fuzzy-match t)
-
-(setq helm-ag-insert-at-point 'symbol)
-
-(global-set-key (kbd "C-c h") 'helm-command-prefix)
-(global-unset-key (kbd "C-x c"))
-
-(global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "M-:") 'helm-eval-expression-with-eldoc)
-(global-set-key (kbd "C-,") 'helm-calcul-expression)
-(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "M-y") 'helm-show-kill-ring)
-(global-set-key (kbd "M-s a") 'helm-do-grep-ag)
-(global-set-key (kbd "M-s o") 'helm-occur)
-(global-set-key (kbd "M-s s") 'helm-swoop)
-(global-set-key (kbd "M-s S") 'helm-multi-swoop-all)
-(global-set-key (kbd "M-s i") 'helm-semantic-or-imenu)
-(global-set-key (kbd "M-/") 'helm-dabbrev)
-(global-set-key (kbd "C-h a") 'helm-apropos)
-(global-set-key (kbd "C-M-/") 'helm-company)
-(global-set-key (kbd "C-h b") 'helm-descbinds)
-(global-set-key (kbd "C-h r") 'helm-info-emacs)
-(global-set-key (kbd "C-h d") 'helm-info-at-point)
-(global-set-key (kbd "C-h i") 'helm-info)
-
-(define-key helm-command-map (kbd "h") 'helm-descbinds)
-(define-key helm-command-map (kbd "s") 'helm-google-suggest) ;; originally helm-surfraw
+      helm-locate-fuzzy-match t
+      helm-ag-insert-at-point 'symbol)
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 (defalias 'list-colors-display 'helm-colors)
 (defalias 'proced 'helm-top)
-
-(define-key helm-find-files-map (kbd "M-s a") #'helm-ff-run-grep-ag)
-(define-key helm-find-files-map (kbd "C-s") #'helm-ff-run-grep-ag)
 
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
 (set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
@@ -1070,14 +1130,11 @@ example of defining specific functions to connect to various irc servers
  `(company-echo-common ((t :inherit 'company-echo)))
  `(company-template-field ((t :inherit 'helm-match-item))))
 
-(add-hook 'eshell-mode-hook
-          '(lambda ()
-             (define-key eshell-mode-map [remap eshell-pcomplete] 'helm-esh-pcomplete)
-             (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)
-             ))
+(keybindings-org-table-set helm-keys 'jw-helm-keys)
 
-(define-key flycheck-mode-map (kbd "C-c ! l") 'helm-flycheck)
-(define-key flyspell-mode-map (kbd "C-M-i") 'helm-flyspell-correct)
+(keybindings-org-table-cache-binding helm-eshell-hook-keys 'jw-helm-eshell-hook-keys)
+(add-hook 'eshell-mode-hook (lambda ()
+                              (keybindings-org-table-set jw-helm-eshell-hook-keys)))
 
 (helm-mode 1)
 (helm-autoresize-mode 1)
@@ -1088,7 +1145,6 @@ example of defining specific functions to connect to various irc servers
 (setq projectile-completion-system 'helm
       projectile-mode-line ""  ;; this slowed tramp down sometimes
       projectile-switch-project-action 'helm-projectile)
-
 
 (add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
 
@@ -1120,18 +1176,23 @@ faster searching
     (call-interactively 'helm-projectile-ag)))
 
 (helm-add-action-to-source "Ag in project `M-s a'" 'helm-projectile-projects-helm-projectile-ag helm-source-projectile-projects)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s a") #'helm-projectile-projects-helm-projectile-ag)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") #'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
+(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s a") 'helm-projectile-projects-helm-projectile-ag)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") 'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
 #+END_SRC
 
 ** magit
 
+magit-keys
+#+NAME: magit-keys
+| Key | Function               | Scope          |
+|-----+------------------------+----------------|
+| M-g | magit-status           |                |
+| &   | magit-git-extras-popup | magit-mode-map |
+
+#+HEADER: :var magit-keys=magit-keys
 #+BEGIN_SRC emacs-lisp
 (require 'magit)
 (require 'magit-gh-pulls)
-
-(global-set-key (kbd "M-g") 'magit-status)
-(global-magit-file-mode t)
 
 (defalias 'git-browse-at-remote 'browse-at-remote)
 (defalias 'github-browse-file 'browse-at-remote)
@@ -1166,12 +1227,31 @@ faster searching
   :max-action-columns 1)
 
 (magit-define-popup-action 'magit-dispatch-popup ?& "Extras" 'magit-git-extras-popup)
-(define-key magit-mode-map (kbd "&") 'magit-git-extras-popup)
-
+(global-magit-file-mode t)
+(keybindings-org-table-set magit-keys 'jw-magit-keys)
 #+END_SRC
 
 ** org
 
+org-keys
+#+NAME: org-keys
+| Key   | Function     | Scope     |
+|-------+--------------+-----------|
+| o     | todo         | jw-keymap |
+| a     | org-agenda   | jw-keymap |
+| c     | org-capture  | jw-keymap |
+| <tab> | org-pomodoro | jw-keymap |
+
+org-hook-keys
+#+NAME: org-hook-keys
+| Key       | Function                   | Scope |
+|-----------+----------------------------+-------|
+| C-c <     | org-time-stamp             | local |
+| C-c .     | org-time-stamp-inactive    | local |
+| C-c C-x g | org-feed-update-all-or-one | local |
+
+#+HEADER: :var org-hook-keys=org-hook-keys
+#+HEADER: :var org-keys=org-keys
 #+BEGIN_SRC emacs-lisp
 (require 'org)
 (require 'org-pomodoro)
@@ -1193,16 +1273,12 @@ faster searching
       (call-interactively 'org-feed-update)
     (org-feed-update-all)))
 
-(define-key jw-keymap "o" 'todo)
-(define-key jw-keymap "a" 'org-agenda)
-(define-key jw-keymap "c" 'org-capture)
-(define-key jw-keymap [tab] 'org-pomodoro)
+(keybindings-org-table-set org-keys 'jw-org-keys)
 
-(add-hook 'org-mode-hook '(lambda ()
-                            (text-scale-set 2)
-                            (local-set-key (kbd "C-c <") 'org-time-stamp)
-                            (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)
-                            (local-set-key [remap org-feed-update-all] 'org-feed-update-all-or-one))) ;; C-c C-x g
+(keybindings-org-table-cache-binding org-hook-keys 'jw-org-hook-keys)
+(add-hook 'org-mode-hook (lambda ()
+                           (text-scale-set 2)
+                           (keybindings-org-table-set jw-org-hook-keys)))
 
 (add-to-list 'org-latex-packages-alist '("" "physics"))
 (setq org-latex-remove-logfiles nil) ;; evaluating latex blocks was causing errors because ox-latex couldn't find the logfiles
@@ -1262,14 +1338,6 @@ faster searching
 
                                      (mapcar 'org--green-state org--done-todo-states)
                                      ))
-
-(defun org-basic-seq-todo-config-words ()
-  (interactive)
-  (insert "#+SEQ_TODO: todo doing | done"))
-
-(defun org-basic-seq-todo-config-symbols ()
-  (interactive)
-  (insert "#+SEQ_TODO: ⚑ ⚐ | ✔"))
 
 (setq org-pomodoro-format "Pomodoro %s"
       org-pomodoro-short-break-format "Short Break %s"
@@ -1389,6 +1457,23 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 ** sbt
 
+sbt-keys
+#+NAME: sbt-keys
+| Key | Function                   | Scope      |
+|-----+----------------------------+------------|
+| s   | sbt                        | sbt-keymap |
+| c   | sbt-compile                | sbt-keymap |
+| o   | sbt-test-only-current-test | sbt-keymap |
+| p   | sbt-run-previous-command   | sbt-keymap |
+
+sbt-hook-keys
+#+NAME: sbt-hook-keys
+| Key   | Function           | Scope |
+|-------+--------------------+-------|
+| C-c s | sbt-command-prefix | local |
+
+#+HEADER: :var sbt-keys=sbt-keys
+#+HEADER: :var sbt-hook-keys=sbt-hook-keys
 #+BEGIN_SRC emacs-lisp
 (defun sbt ()
   (interactive)
@@ -1427,36 +1512,55 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
       (sbt-command "test:compile")
     (sbt-command "compile")))
 
-(global-unset-key (kbd "C-c s"))
 (setq sbt-keymap (make-sparse-keymap))
-(define-key sbt-keymap "s" 'sbt)
-(define-key sbt-keymap "c" 'sbt-compile)
-(define-key sbt-keymap "o" 'sbt-test-only-current-test)
-(define-key sbt-keymap "p" 'sbt-run-previous-command)
+(fset 'sbt-command-prefix sbt-keymap)
 
+(keybindings-org-table-set sbt-keys 'jw-sbt-keys)
+
+(keybindings-org-table-cache-binding sbt-hook-keys 'jw-sbt-hook-keys)
 (defun sbt-turn-on-extra-bindings ()
   (interactive)
-  (local-set-key (kbd "C-c s") sbt-keymap))
+  (keybindings-org-table-set jw-sbt-hook-keys))
 
 (require 'magit-mode)
-
 (add-hook 'scala-mode-hook 'sbt-turn-on-extra-bindings)
 (add-hook 'sbt-mode-hook 'sbt-turn-on-extra-bindings)
 (add-hook 'magit-mode-hook 'sbt-turn-on-extra-bindings)
+#+END_SRC
 
+adding sbt shortcut to helm-project
+#+BEGIN_SRC emacs-lisp
 (require 'helm-projectile)
 
-;; sbt mode sets some local variables even when not inside of a project, e.g. `sbt:buffer-project-root', the use of `with-temp-buffer' ignores them
-(defun helm-projectile-projects-sbt (dir) (interactive) (with-temp-buffer (let ((default-directory dir)) (call-interactively 'sbt))))
-(defun helm-projectile-projects-sbt-compile (dir) (interactive) (with-temp-buffer (let ((default-directory dir)) (call-interactively 'sbt-compile))))
+;; sbt mode uses some local variables which causes issues from inside of the helm and switching between multiple projects
+;; e.g. `sbt:buffer-project-root'
+;; using with-temp-buffer to avoid that
+
+(defun helm-projectile-projects-sbt (dir)
+  (interactive)
+  (with-temp-buffer
+    (let ((default-directory dir)) (call-interactively 'sbt))))
+
+(defun helm-projectile-projects-sbt-compile (dir)
+  (interactive)
+  (with-temp-buffer (let ((default-directory dir)) (call-interactively 'sbt-compile))))
 
 (helm-add-action-to-source "Dispatch sbt `C-c s ...'" 'helm-projectile-projects-sbt helm-source-projectile-projects)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s s") #'helm-projectile-projects-sbt)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s c") #'helm-projectile-projects-sbt-compile)
+
+(helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s s") 'helm-projectile-projects-sbt)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s c") 'helm-projectile-projects-sbt-compile)
 #+END_SRC
 
 ** sonic pi
 
+sonic-pi-keys
+#+NAME: sonic-pi-keys
+| Key | Function              | Scope     |
+|-----+-----------------------+-----------|
+| M   | sonic-pi-server       | jw-keymap |
+| m   | sonic-pi-stop-or-play | jw-keymap |
+
+#+HEADER: :var sonic-pi-keys=sonic-pi-keys
 #+BEGIN_SRC emacs-lisp
 (require 'org)
 (require 'ob)
@@ -1500,8 +1604,7 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
   (interactive "P")
   (if arg (sonic-pi-stop) (sonic-pi-play)))
 
-(define-key jw-keymap "M" 'sonic-pi-server)
-(define-key jw-keymap "m" 'sonic-pi-stop-or-play)
+(keybindings-org-table-set sonic-pi-keys 'jw-sonic-pi-keys)
 
 (defun org-babel-execute:sonic-pi (body params)
   (sonic-pi-play body)
@@ -1515,6 +1618,7 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 (org-babel-support-src-template-shortcut 'sonicpi "sonic-pi")
 #+END_SRC
+
 * private
 
 load the =private= directory and the =private.org= file if they exist
