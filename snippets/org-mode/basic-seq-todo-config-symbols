@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: basic-seq-todo-config-symbols
+# key: basic-seq-todo-config-symbols_
+# --
+#+SEQ_TODO: ⚑ ⚐ | ✔

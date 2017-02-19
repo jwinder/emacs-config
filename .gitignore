@@ -1,6 +1,6 @@
-*
+/*
 !.gitignore
 !emacs.org
 !init.el
 !README.org
-!snippets
+!snippets/

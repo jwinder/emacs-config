@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: keybindings-org-table
+# key: keybindings-org-table_
+# --
+#+NAME: ${1:name}-keys
+| Key | Function | Scope | Notes |
+|-----+----------+-------+-------|
+| $0    |          |       |       |
+
+#+HEADER: :var $1-keys=$1-keys
