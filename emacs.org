@@ -18,7 +18,7 @@ Now, start emacs.
 ** help! the packages didn't install correctly
 
 I snapshot recent elpa installations into a git repository that /worked on my machine/. Just run the following.
-#+BEGIN_SRC sh :tangle go
+#+BEGIN_SRC sh :tangle no
 rm -rf $HOME/.emacs.d/elpa
 git clone git@github.com:jwinder/emacs-elpa-snapshot.git $HOME/.emacs.d/elpa
 #+END_SRC
@@ -876,13 +876,13 @@ function to set keybindings from an org table
      ;; add keys to their own variable: jw-[org-table]
      (eval `(setq ,(intern keys-var-name) rows))
 
-     ;; append keys to jw-all-keys variable
+     ;; append keys to jw-all-custom-keys variable
      (unless (boundp 'jw-all-custom-keys) (setq jw-all-custom-keys nil))
      (-each rows (lambda (row) (add-to-list 'jw-all-custom-keys row 'append)))
 
      ;; create interactive jw-[org-table]-set-bindings function to set all keys
      (eval `(defun ,keys-setter-def-symbol ()
-              ,(format "Auto-created function to set keybindings defined in the org table: %s\n\nOrg table keybindings cached in `%s'\n\nAll custom keybindings cached in `%s'."
+              ,(format "Auto-created function to set keybindings defined in the org table: %s\n\nOrg table keybindings cached in `%s'\n\nAll custom keybindings cached in `%s'"
                        org-table-name (intern keys-var-name) (symbol-name 'jw-all-custom-keys))
               (interactive)
               (-each ,(intern keys-var-name) ;; must call the dynamic jw-[org-table] var here, not the lexical rows var
