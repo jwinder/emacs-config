@@ -792,101 +792,137 @@ If the prefix arg is 4, then kill the comment on the current line."
 #+END_SRC
 ** key bindings
 
-base-keys
+base-keys (keys not in other parts of this config)
 #+NAME: base-keys
-| Key           | Function                         | Scope             | Notes                |
-|---------------+----------------------------------+-------------------+----------------------|
-| C-z           | nil                              |                   | remove suspend       |
-| C-x C-z       | nil                              |                   |                      |
-| <return>      | toggle-frame-fullscreen          | ctl-x-5-map       |                      |
-| M-!           | cmd-dwim                         |                   |                      |
-| M-&           | cmd-dwim                         |                   |                      |
-| C-s           | isearch-forward-regexp           |                   |                      |
-| C-r           | isearch-backward-regexp          |                   |                      |
-| C-M-g         | goto-line                        |                   |                      |
-| C-M-9         | winner-undo                      |                   |                      |
-| C-M-0         | winner-redo                      |                   |                      |
-| t             | transpose-windows                | ctl-x-4-map       |                      |
-| s             | toggle-window-split              | ctl-x-4-map       |                      |
-| C-w           | kill-region-or-line              |                   |                      |
-| M-w           | kill-ring-save-region-or-line    |                   |                      |
-| C-a           | beginning-of-line-or-indentation |                   |                      |
-| C-o           | open-line-previous               |                   |                      |
-| C-<return>    | open-line-next                   |                   |                      |
-| C-j           | newline-and-open-line-previous   |                   |                      |
-| M-;           | comment-dwim-dwim                |                   |                      |
-| C-M-\         | indent-region-or-buffer          |                   |                      |
-| S-M-SPC       | math-symbol-at-point             |                   |                      |
-| C-=           | er/expand-region                 |                   |                      |
-| C-+           | er/contract-region               |                   |                      |
-| C-*           | mc/mark-all-like-this            |                   |                      |
-| C-<           | mc/mark-previous-like-this       |                   |                      |
-| C->           | mc/mark-next-like-this           |                   |                      |
-| C-x r t       | mc/edit-lines                    |                   |                      |
-| M-<backspace> | nil                              | sp-keymap         |                      |
-| C-M-p         | nil                              | sp-keymap         |                      |
-| C-M-n         | nil                              | sp-keymap         |                      |
-| C-c @ <left>  | hs-hide-block                    | hs-minor-mode-map |                      |
-| C-c @ <right> | hs-show-block                    | hs-minor-mode-map |                      |
-| C-c @ <up>    | hs-hide-level                    | hs-minor-mode-map |                      |
-| C-c @ <down>  | hs-show-all                      | hs-minor-mode-map |                      |
-| C-x m         | jw-command-prefix                |                   | prefix for jw-keymap |
-| C-c m         | jw-command-prefix                |                   |                      |
-| m             | jw-command-prefix                | ctl-x-4-map       |                      |
-| m             | jw-command-prefix                | ctl-x-5-map       |                      |
-| !             | cmd-dwim                         | jw-keymap         |                      |
-| q             | emacs-configs-toggle             | jw-keymap         |                      |
-| d             | date                             | jw-keymap         |                      |
-| w             | weather                          | jw-keymap         |                      |
-| i             | toggle-scratch-buffer            | jw-keymap         |                      |
+| Key           | Function                         | Scope             | Hook | Notes                |
+|---------------+----------------------------------+-------------------+------+----------------------|
+| C-z           | nil                              |                   |      | remove suspend       |
+| C-x C-z       | nil                              |                   |      |                      |
+| <return>      | toggle-frame-fullscreen          | ctl-x-5-map       |      |                      |
+| M-!           | cmd-dwim                         |                   |      |                      |
+| M-&           | cmd-dwim                         |                   |      |                      |
+| C-s           | isearch-forward-regexp           |                   |      |                      |
+| C-r           | isearch-backward-regexp          |                   |      |                      |
+| C-M-g         | goto-line                        |                   |      |                      |
+| C-M-9         | winner-undo                      |                   |      |                      |
+| C-M-0         | winner-redo                      |                   |      |                      |
+| t             | transpose-windows                | ctl-x-4-map       |      |                      |
+| s             | toggle-window-split              | ctl-x-4-map       |      |                      |
+| C-w           | kill-region-or-line              |                   |      |                      |
+| M-w           | kill-ring-save-region-or-line    |                   |      |                      |
+| C-a           | beginning-of-line-or-indentation |                   |      |                      |
+| C-o           | open-line-previous               |                   |      |                      |
+| C-<return>    | open-line-next                   |                   |      |                      |
+| C-j           | newline-and-open-line-previous   |                   |      |                      |
+| M-;           | comment-dwim-dwim                |                   |      |                      |
+| C-M-\         | indent-region-or-buffer          |                   |      |                      |
+| S-M-SPC       | math-symbol-at-point             |                   |      |                      |
+| C-=           | er/expand-region                 |                   |      |                      |
+| C-+           | er/contract-region               |                   |      |                      |
+| C-*           | mc/mark-all-like-this            |                   |      |                      |
+| C-<           | mc/mark-previous-like-this       |                   |      |                      |
+| C->           | mc/mark-next-like-this           |                   |      |                      |
+| C-x r t       | mc/edit-lines                    |                   |      |                      |
+| M-<backspace> | nil                              | sp-keymap         |      |                      |
+| C-M-p         | nil                              | sp-keymap         |      |                      |
+| C-M-n         | nil                              | sp-keymap         |      |                      |
+| C-c @ <left>  | hs-hide-block                    | hs-minor-mode-map |      |                      |
+| C-c @ <right> | hs-show-block                    | hs-minor-mode-map |      |                      |
+| C-c @ <up>    | hs-hide-level                    | hs-minor-mode-map |      |                      |
+| C-c @ <down>  | hs-show-all                      | hs-minor-mode-map |      |                      |
+| C-x m         | jw-command-prefix                |                   |      | prefix for jw-keymap |
+| C-c m         | jw-command-prefix                |                   |      |                      |
+| m             | jw-command-prefix                | ctl-x-4-map       |      |                      |
+| m             | jw-command-prefix                | ctl-x-5-map       |      |                      |
+| !             | cmd-dwim                         | jw-keymap         |      |                      |
+| q             | emacs-configs-toggle             | jw-keymap         |      |                      |
+| d             | date                             | jw-keymap         |      |                      |
+| w             | weather                          | jw-keymap         |      |                      |
+| i             | toggle-scratch-buffer            | jw-keymap         |      |                      |
 
-function to help iterate through a table of keybindings and set them
+function to set keybindings from an org table
 #+BEGIN_SRC emacs-lisp
-(defun keybindings-org-table-set-row (key &optional fn scope)
-  (let ((keymap (cond ((s-equals? scope "local") (current-local-map))
-                      ((or (s-blank-str? scope) (s-equals? scope "global")) (current-global-map))
-                      ((boundp (intern-soft scope)) (eval (intern-soft scope)))))
-        (def (if (or (s-blank-str? fn) (s-equals? fn "nil")) nil (intern-soft fn))))
-    (if keymap
-        (define-key keymap (kbd key) def)
-      (message "Cannot deduce keymap when setting function %s to key %s in map %s" fn key scope))))
-
-(unless (boundp 'jw-all-cached-keys) (setq jw-all-cached-keys nil))
-(defun keybindings-org-table-cache-binding (rows &optional binding)
-  (-each rows (lambda (r) (add-to-list 'jw-all-cached-keys r)))
-  (when binding (set binding rows)))
-
-(defun keybindings-org-table-set (rows &optional binding)
+(defmacro keybinding-org-table (org-table)
   "Sets up key bindings from an org table like:
 
-      | Key   | Function | Scope           |
-      |-------+----------+-----------------|
-      | C-c a | fn-1     |                 |
-      | C-c b | fn-2     | local           |
-      | C-c c | fn-3     | eshell-mode-map |
-      | C-c d | nil      |                 |
-      | C-c e | nil      | local           |
-      | C-c f | nil      | eshell-mode-map |
+      | Key   | Function | Scope           | Hook          | Notes     |
+      |-------+----------+-----------------+---------------+-----------|
+      | C-c a | fn-1     |                 |               | fun notes |
+      | C-c b | fn-2     | local           | org-mode-hook |           |
+      | C-c c | fn-3     | eshell-mode-map |               |           |
+      | C-c d | nil      |                 |               |           |
+      | C-c e | nil      | local           |               |           |
+      | C-c f | nil      | eshell-mode-map |               |           |
 
-C-c a gets set to fn-1 in the global map.
-C-c b gets set to fn-2 in the current local map (useful if invoked inside of a hook).
-C-c c gets set to fn-3 in the eshell-mode-map.
-C-c d gets unbound in the global map.
-C-c e gets unbound in the current local map.
-C-c f gets unbound in the eshell-mode-map.
+- C-c a gets set to fn-1 in the global map.
+- C-c b gets set to fn-2 in the current local map, run during the org-mode-hook.
+- C-c c gets set to fn-3 in the eshell-mode-map.
+- C-c d gets unbound in the global map.
+- C-c e gets unbound in the current local map.
+- C-c f gets unbound in the eshell-mode-map.
 
-For a global binding, an empty cell or the value \"global\" can be provided in the Scope column.
+- For a global binding, an empty cell or the value \"global\" can be provided in the Scope column.
+- When unsetting a keybinding, an empty table cell can be provided instead of nil in the Function column.
+- It is safe to leave out the Scope & Hook columns if only global keybindings are necessary.
+- The ordering of the 4 columns cannot be changed (extra columns after the Hook column are ignored)."
 
-When unsetting a keybinding, an empty table cell can be provided instead of nil in the Function column.
+  (declare (indent defun))
+  `(let* ((org-table-name (symbol-name ,org-table))
+          (rows (symbol-value ,org-table))
+          (keys-var-name (format "jw-%s" org-table-name))
+          (keys-setter-def-name (format "jw-%s-set-bindings" org-table-name))
+          (keys-setter-def-symbol (intern keys-setter-def-name)))
 
-`binding' is optional. When provided, it will be set globally with the value of the keybindings list.
+     ;; add keys to their own variable: jw-[org-table]
+     (eval `(setq ,(intern keys-var-name) rows))
 
-`jw-all-cached-keys' contains every keybinding coming through this function (whether called in a hook or not).
-      "
-  (keybindings-org-table-cache-binding rows binding)
-  (-each rows
-    (lambda (row)
-      (keybindings-org-table-set-row (car row) (s-presence (cadr row)) (s-presence (nth 2 row))))))
+     ;; append keys to jw-all-keys variable
+     (unless (boundp 'jw-all-custom-keys) (setq jw-all-custom-keys nil))
+     (-each rows (lambda (row) (add-to-list 'jw-all-custom-keys row 'append)))
+
+     ;; create interactive jw-[org-table]-set-bindings function to set all keys
+     (eval `(defun ,keys-setter-def-symbol ()
+              ,(format "Auto-created function to set keybindings defined in the org table: %s\n\nOrg table keybindings cached in `%s'\n\nAll custom keybindings cached in `%s'."
+                       org-table-name (intern keys-var-name) (symbol-name 'jw-all-custom-keys))
+              (interactive)
+              (-each ,(intern keys-var-name) ;; must call the dynamic jw-[org-table] var here, not the lexical rows var
+                (lambda (row)
+                  (let* ((key (car row))
+                         (command (if (cadr row) (intern (cadr row)) nil))
+                         (scope (s-presence (nth 2 row)))
+                         (hook-name (s-presence (nth 3 row))))
+
+                    ;; yucky but the functions must be setup differently inside of hooks
+                    ;; being explicit about the various cases is best
+
+                    (cond
+                     ((and hook-name (s-equals? scope "local"))
+                      (add-hook (intern hook-name)
+                                `(lambda () (local-set-key (kbd ,key) (quote ,command)))))
+
+                     ((and hook-name (or (s-blank-str? scope) (s-equals? scope "global")))
+                      (add-hook (intern hook-name)
+                                `(lambda () (global-set-key (kbd ,key) (quote ,command)))))
+
+                     ((and hook-name (boundp (intern scope)))
+                      (add-hook (intern hook-name)
+                                `(lambda () (define-key ,(intern scope) (kbd ,key) (quote ,command)))))
+
+                     ((s-equals? scope "local") (local-set-key (kbd key) command))
+
+                     ((or (s-blank-str? scope) (s-equals? scope "global")) (global-set-key (kbd key) command))
+
+                     ((boundp (intern scope)) (define-key (eval (intern scope)) (kbd key) command))
+
+                     (t (message "Unable to set command %s to keybinding %s from org table. Silently skipping." command key))
+                     )
+                    )
+                  ))
+              ))
+
+     ;; go ahead and eval jw-[org-table]-set-bindings
+     (eval `(,keys-setter-def-symbol))
+     ))
 #+END_SRC
 
 #+HEADER: :var base-keys=base-keys
@@ -894,7 +930,7 @@ When unsetting a keybinding, an empty table cell can be provided instead of nil 
 (setq jw-keymap (make-sparse-keymap))
 (fset 'jw-command-prefix jw-keymap)
 
-(keybindings-org-table-set base-keys 'jw-base-keys)
+(keybinding-org-table 'base-keys)
 #+END_SRC
 
 ** eshell
@@ -922,7 +958,7 @@ eshell-keys
         (insert (format "cd '%s'" vc-root))
         (eshell-send-input)))))
 
-(keybindings-org-table-set eshell-keys 'jw-eshell-keys)
+(keybinding-org-table 'eshell-keys)
 
 (custom-set-faces '(eshell-prompt ((t (:foreground "#d68f7d")))))
 
@@ -955,7 +991,7 @@ yas-keys
 
 (yas-global-mode 1)
 
-(keybindings-org-table-set yas-keys 'jw-yas-keys)
+(keybinding-org-table 'yas-keys)
 
 #+END_SRC
 
@@ -1050,44 +1086,38 @@ example of defining specific functions to connect to various irc servers
 
 helm-keys
 #+NAME: helm-keys
-| Key     | Function                        | Scope               | Notes                    |
-|---------+---------------------------------+---------------------+--------------------------|
-| C-c h   | helm-command-prefix             |                     |                          |
-| C-x c   | nil                             |                     | undo default helm prefix |
-| M-x     | helm-M-x                        |                     |                          |
-| M-:     | helm-eval-expression-with-eldoc |                     |                          |
-| C-,     | helm-calcul-expression          |                     |                          |
-| C-x C-b | helm-buffers-list               |                     |                          |
-| C-x C-f | helm-find-files                 |                     |                          |
-| M-y     | helm-show-kill-ring             |                     |                          |
-| M-s a   | helm-do-grep-ag                 |                     |                          |
-| M-s o   | helm-occur                      |                     |                          |
-| M-s s   | helm-swoop                      |                     |                          |
-| M-s S   | helm-multi-swoop-all            |                     |                          |
-| M-s i   | helm-semantic-or-imenu          |                     |                          |
-| M-/     | helm-dabbrev                    |                     |                          |
-| C-h a   | helm-apropos                    |                     |                          |
-| C-M-/   | helm-company                    |                     |                          |
-| C-h b   | helm-descbinds                  |                     |                          |
-| C-h r   | helm-info-emacs                 |                     |                          |
-| C-h d   | helm-info-at-point              |                     |                          |
-| C-h i   | helm-info                       |                     |                          |
-| h       | helm-descbinds                  | helm-command-map    |                          |
-| s       | helm-google-suggest             | helm-command-map    | originally helm-surfraw  |
-| M-s a   | helm-ff-run-grep-ag             | helm-find-files-map |                          |
-| C-s     | helm-ff-run-grep-ag             | helm-find-files-map | ag instead of grep       |
-| C-c ! l | helm-flycheck                   | flycheck-mode-map   |                          |
-| C-M-i   | helm-flyspell-correct           | flyspell-mode-map   |                          |
-
-helm-eshell-hook-keys
-#+NAME: helm-eshell-hook-keys
-| Key   | Function            | Scope           |
-|-------+---------------------+-----------------|
-| <tab> | helm-esh-pcomplete  | eshell-mode-map |
-| M-p   | helm-eshell-history | eshell-mode-map |
+| Key     | Function                        | Scope               | Hook             | Notes                    |
+|---------+---------------------------------+---------------------+------------------+--------------------------|
+| C-c h   | helm-command-prefix             |                     |                  |                          |
+| C-x c   | nil                             |                     |                  | undo default helm prefix |
+| M-x     | helm-M-x                        |                     |                  |                          |
+| M-:     | helm-eval-expression-with-eldoc |                     |                  |                          |
+| C-,     | helm-calcul-expression          |                     |                  |                          |
+| C-x C-b | helm-buffers-list               |                     |                  |                          |
+| C-x C-f | helm-find-files                 |                     |                  |                          |
+| M-y     | helm-show-kill-ring             |                     |                  |                          |
+| M-s a   | helm-do-grep-ag                 |                     |                  |                          |
+| M-s o   | helm-occur                      |                     |                  |                          |
+| M-s s   | helm-swoop                      |                     |                  |                          |
+| M-s S   | helm-multi-swoop-all            |                     |                  |                          |
+| M-s i   | helm-semantic-or-imenu          |                     |                  |                          |
+| M-/     | helm-dabbrev                    |                     |                  |                          |
+| C-h a   | helm-apropos                    |                     |                  |                          |
+| C-M-/   | helm-company                    |                     |                  |                          |
+| C-h b   | helm-descbinds                  |                     |                  |                          |
+| C-h r   | helm-info-emacs                 |                     |                  |                          |
+| C-h d   | helm-info-at-point              |                     |                  |                          |
+| C-h i   | helm-info                       |                     |                  |                          |
+| h       | helm-descbinds                  | helm-command-map    |                  |                          |
+| s       | helm-google-suggest             | helm-command-map    |                  | originally helm-surfraw  |
+| M-s a   | helm-ff-run-grep-ag             | helm-find-files-map |                  |                          |
+| C-s     | helm-ff-run-grep-ag             | helm-find-files-map |                  | ag instead of grep       |
+| C-c ! l | helm-flycheck                   | flycheck-mode-map   |                  |                          |
+| C-M-i   | helm-flyspell-correct           | flyspell-mode-map   |                  |                          |
+| <tab>   | helm-esh-pcomplete              | eshell-mode-map     | eshell-mode-hook |                          |
+| M-p     | helm-eshell-history             | eshell-mode-map     | eshell-mode-hook |                          |
 
 #+HEADER: :var helm-keys=helm-keys
-#+HEADER: :var helm-eshell-hook-keys=helm-eshell-hook-keys
 #+BEGIN_SRC emacs-lisp
 (require 'helm)
 (require 'helm-config)
@@ -1130,11 +1160,7 @@ helm-eshell-hook-keys
  `(company-echo-common ((t :inherit 'company-echo)))
  `(company-template-field ((t :inherit 'helm-match-item))))
 
-(keybindings-org-table-set helm-keys 'jw-helm-keys)
-
-(keybindings-org-table-cache-binding helm-eshell-hook-keys 'jw-helm-eshell-hook-keys)
-(add-hook 'eshell-mode-hook (lambda ()
-                              (keybindings-org-table-set jw-helm-eshell-hook-keys)))
+(keybinding-org-table 'helm-keys)
 
 (helm-mode 1)
 (helm-autoresize-mode 1)
@@ -1228,29 +1254,24 @@ magit-keys
 
 (magit-define-popup-action 'magit-dispatch-popup ?& "Extras" 'magit-git-extras-popup)
 (global-magit-file-mode t)
-(keybindings-org-table-set magit-keys 'jw-magit-keys)
+
+(keybinding-org-table 'magit-keys)
 #+END_SRC
 
 ** org
 
 org-keys
 #+NAME: org-keys
-| Key   | Function     | Scope     |
-|-------+--------------+-----------|
-| o     | todo         | jw-keymap |
-| a     | org-agenda   | jw-keymap |
-| c     | org-capture  | jw-keymap |
-| <tab> | org-pomodoro | jw-keymap |
+| Key       | Function                   | Scope     | Hook          |
+|-----------+----------------------------+-----------+---------------|
+| o         | todo                       | jw-keymap |               |
+| a         | org-agenda                 | jw-keymap |               |
+| c         | org-capture                | jw-keymap |               |
+| <tab>     | org-pomodoro               | jw-keymap |               |
+| C-c <     | org-time-stamp             | local     | org-mode-hook |
+| C-c .     | org-time-stamp-inactive    | local     | org-mode-hook |
+| C-c C-x g | org-feed-update-all-or-one | local     | org-mode-hook |
 
-org-hook-keys
-#+NAME: org-hook-keys
-| Key       | Function                   | Scope |
-|-----------+----------------------------+-------|
-| C-c <     | org-time-stamp             | local |
-| C-c .     | org-time-stamp-inactive    | local |
-| C-c C-x g | org-feed-update-all-or-one | local |
-
-#+HEADER: :var org-hook-keys=org-hook-keys
 #+HEADER: :var org-keys=org-keys
 #+BEGIN_SRC emacs-lisp
 (require 'org)
@@ -1273,12 +1294,10 @@ org-hook-keys
       (call-interactively 'org-feed-update)
     (org-feed-update-all)))
 
-(keybindings-org-table-set org-keys 'jw-org-keys)
-
-(keybindings-org-table-cache-binding org-hook-keys 'jw-org-hook-keys)
 (add-hook 'org-mode-hook (lambda ()
-                           (text-scale-set 2)
-                           (keybindings-org-table-set jw-org-hook-keys)))
+                           (text-scale-set 2)))
+
+(keybinding-org-table 'org-keys)
 
 (add-to-list 'org-latex-packages-alist '("" "physics"))
 (setq org-latex-remove-logfiles nil) ;; evaluating latex blocks was causing errors because ox-latex couldn't find the logfiles
@@ -1459,21 +1478,17 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 sbt-keys
 #+NAME: sbt-keys
-| Key | Function                   | Scope      |
-|-----+----------------------------+------------|
-| s   | sbt                        | sbt-keymap |
-| c   | sbt-compile                | sbt-keymap |
-| o   | sbt-test-only-current-test | sbt-keymap |
-| p   | sbt-run-previous-command   | sbt-keymap |
-
-sbt-hook-keys
-#+NAME: sbt-hook-keys
-| Key   | Function           | Scope |
-|-------+--------------------+-------|
-| C-c s | sbt-command-prefix | local |
+| Key   | Function                   | Scope      | Hook            |
+|-------+----------------------------+------------+-----------------|
+| C-c s | sbt-command-prefix         | local      | sbt-mode-hook   |
+| C-c s | sbt-command-prefix         | local      | scala-mode-hook |
+| C-c s | sbt-command-prefix         | local      | magit-mode-hook |
+| s     | sbt                        | sbt-keymap |                 |
+| c     | sbt-compile                | sbt-keymap |                 |
+| o     | sbt-test-only-current-test | sbt-keymap |                 |
+| p     | sbt-run-previous-command   | sbt-keymap |                 |
 
 #+HEADER: :var sbt-keys=sbt-keys
-#+HEADER: :var sbt-hook-keys=sbt-hook-keys
 #+BEGIN_SRC emacs-lisp
 (defun sbt ()
   (interactive)
@@ -1515,17 +1530,7 @@ sbt-hook-keys
 (setq sbt-keymap (make-sparse-keymap))
 (fset 'sbt-command-prefix sbt-keymap)
 
-(keybindings-org-table-set sbt-keys 'jw-sbt-keys)
-
-(keybindings-org-table-cache-binding sbt-hook-keys 'jw-sbt-hook-keys)
-(defun sbt-turn-on-extra-bindings ()
-  (interactive)
-  (keybindings-org-table-set jw-sbt-hook-keys))
-
-(require 'magit-mode)
-(add-hook 'scala-mode-hook 'sbt-turn-on-extra-bindings)
-(add-hook 'sbt-mode-hook 'sbt-turn-on-extra-bindings)
-(add-hook 'magit-mode-hook 'sbt-turn-on-extra-bindings)
+(keybinding-org-table 'sbt-keys)
 #+END_SRC
 
 adding sbt shortcut to helm-project
@@ -1604,7 +1609,7 @@ sonic-pi-keys
   (interactive "P")
   (if arg (sonic-pi-stop) (sonic-pi-play)))
 
-(keybindings-org-table-set sonic-pi-keys 'jw-sonic-pi-keys)
+(keybinding-org-table 'sonic-pi-keys)
 
 (defun org-babel-execute:sonic-pi (body params)
   (sonic-pi-play body)
