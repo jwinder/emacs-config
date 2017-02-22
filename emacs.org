@@ -888,13 +888,12 @@ function to set keybindings from an org table
      (eval `(setq ,(intern keys-var-name) rows))
 
      ;; append keys to jw-all-custom-keys variable
-     (unless (boundp 'jw-all-custom-keys) (setq jw-all-custom-keys nil))
-     (-each rows (lambda (row) (add-to-list 'jw-all-custom-keys row 'append)))
+     (unless (boundp 'jw-all-keys) (setq jw-all-keys nil))
+     (-each rows (lambda (row) (add-to-list 'jw-all-keys row 'append)))
 
      ;; create interactive jw-[org-table]-set-bindings function to set all keys
      (eval `(defun ,keys-setter-def-symbol ()
-              ,(format "Auto-created function to set keybindings defined in the org table: %s\n\nOrg table keybindings cached in `%s'\n\nAll custom keybindings cached in `%s'"
-                       org-table-name (intern keys-var-name) (symbol-name 'jw-all-custom-keys))
+              ,(format "Auto-created function to set keybindings defined in the org table: %s\n\nOrg table keybindings cached in `%s'\n\nAll custom keybindings cached in `jw-all-keys'\n\nThis function is also stored in `jw-all-keys-set-bindings-functions', and `jw-all-keys-set-bindings' evaluates every function in this list." org-table-name (intern keys-var-name))
               (interactive)
               (-each ,(intern keys-var-name) ;; must call the dynamic jw-[org-table] var here, not the lexical rows var
                 (lambda (row)
@@ -930,6 +929,17 @@ function to set keybindings from an org table
                     )
                   ))
               ))
+
+     ;; append jw-[org-table]-set-bindings to jw-all-keys-set-bindings-functions variable
+     (unless (boundp 'jw-all-keys-set-bindings-functions) (setq jw-all-keys-set-bindings-functions nil))
+     (add-to-list 'jw-all-keys-set-bindings-functions `,keys-setter-def-symbol 'append)
+
+     ;; create jw-set-all-bindings to eval every function created with this macro
+     (unless (fboundp 'jw-all-keys-set-bindings)
+       (defun jw-all-keys-set-bindings ()
+         "Evaluate every function in `jw-all-keys-set-bindings-functions'."
+         (interactive)
+         (-each jw-all-keys-set-bindings-functions 'funcall)))
 
      ;; go ahead and eval jw-[org-table]-set-bindings
      (eval `(,keys-setter-def-symbol))
