@@ -365,7 +365,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 ** settings
 
 #+BEGIN_SRC emacs-lisp
-(setq custom-file (concat user-emacs-directory "custom.el"))
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror)
 
 (setq enable-local-variables :all)
@@ -432,15 +432,15 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
   (when (string-match "Shell command succeeded with no output" (current-message)) (message nil)))
 (advice-add 'shell-command-on-region :after 'shell-command--advice--ignore-message-with-no-output)
 
-(setq user-auto-save-directory (concat user-emacs-directory "auto-saves/"))
+(setq user-auto-save-directory (expand-file-name "auto-saves/" user-emacs-directory ))
 (unless (file-exists-p user-auto-save-directory) (make-directory user-auto-save-directory)) ;; auto-save won't create directories
 (setq auto-save-file-name-transforms `((".*" ,user-auto-save-directory t)))
 
 (setq undo-tree-auto-save-history t)
 
-(add-to-list 'undo-tree-history-directory-alist `("" . ,(concat user-emacs-directory "undo-tree")))
+(add-to-list 'undo-tree-history-directory-alist `("" . ,(expand-file-name "undo-tree" user-emacs-directory)))
 
-(setq user-backup-directory (concat user-emacs-directory "backups/"))
+(setq user-backup-directory (expand-file-name "backups/" user-emacs-directory))
 (unless (file-exists-p user-backup-directory) (make-directory user-backup-directory))
 
 (setq version-control t
@@ -472,13 +472,17 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (defalias 'filter-out-lines 'flush-lines)
 (defalias 'elisp-shell 'ielm)
 
+(defun font-size-normal ()
+  (interactive)
+  (jw--set-font-size "14"))
+
 (defun font-size-big ()
   (interactive)
   (jw--set-font-size "18"))
 
-(defun font-size-normal ()
-  (interactive)
-  (jw--set-font-size "14"))
+(defun font-size-set (size)
+  (interactive "sSize: ")
+  (jw--set-font-size size))
 
 (defun ns-raise-chrome ()
   (interactive)
@@ -750,11 +754,11 @@ If the prefix arg is 4, then kill the comment on the current line."
 #+BEGIN_SRC emacs-lisp
 (defun emacs-config ()
   (interactive)
-  (find-file (concat user-emacs-directory "emacs.org")))
+  (find-file (expand-file-name "emacs.org" user-emacs-directory)))
 
 (defun emacs-private-config ()
   (interactive)
-  (find-file (concat user-emacs-directory "private.org")))
+  (find-file (expand-file-name "private.org" user-emacs-directory)))
 
 (defun emacs-configs-toggle (arg)
   (interactive "P")
@@ -764,7 +768,7 @@ If the prefix arg is 4, then kill the comment on the current line."
 
 (defun emacs-reload-config ()
   (interactive)
-  (load-file (concat user-emacs-directory "init.el")))
+  (load-file (expand-file-name "init.el" user-emacs-directory)))
 
 (defun emacs-archive-packages-and-reload-config ()
   (interactive)
@@ -1649,12 +1653,12 @@ sonic-pi-keys
 
 load the =private= directory and the =private.org= file if they exist
 #+BEGIN_SRC emacs-lisp
-(let ((path (concat user-emacs-directory "private")))
+(let ((path (expand-file-name "private" user-emacs-directory)))
   (when (file-exists-p path)
     (add-to-list 'load-path path)
     (mapcar 'load-file (directory-files path t "\.el$"))))
 
-(let ((private-org (concat user-emacs-directory "private.org")))
+(let ((private-org (expand-file-name "private.org" user-emacs-directory)))
   (when (file-exists-p private-org)
     (org-babel-load-file private-org)))
 #+END_SRC
