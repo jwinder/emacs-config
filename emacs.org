@@ -1418,6 +1418,8 @@ org-keys
 (org-babel-support-src-template-shortcut 'tmux "cmd :tmux")
 (org-babel-support-src-template-shortcut 'md 'markdown)
 (org-babel-support-src-template-shortcut 'gfm)
+(org-babel-support-src-template-shortcut 'conf)
+(org-babel-support-src-template-shortcut 'text)
 
 (org-babel-support-src-template-shortcut 'trs "translate :src es :dest en") ;; traducir español al inglés
 (org-babel-support-src-template-shortcut 'tre "translate :src en :dest es") ;; translate english to spanish
