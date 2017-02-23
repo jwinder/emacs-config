@@ -148,31 +148,17 @@ cat init.el
 
 (use-package dockerfile-mode)
 
-(use-package scala-mode
-  :mode (("\\.scala$" . scala-mode)
-         ("\\.sbt$" . scala-mode))
-  :config (progn (setq scala-indent:align-forms t
-                       scala-indent:align-parameters t)))
-
+(use-package scala-mode)
 (use-package sbt-mode)
-
 (use-package ensime
-  :pin melpa-stable
-  :config (progn
-            ;; (setq ensime-use-helm t)
-            ;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook) ;; not using at the moment
-            (advice-add 'ensime-sbt-test-dwim
-                        :around '(lambda (original-function &rest args)
-                                   (let* ((original-command (car args))
-                                          (only-zzz-str (if current-prefix-arg " -- ex zzz " ""))
-                                          (command (concat original-command only-zzz-str)))
-                                     (apply original-function (cons command (cdr args))))))))
+  :pin melpa-stable)
 
 (use-package ruby-mode
   :mode (("Gemfile$" . ruby-mode)
          ("Rakefile$" . ruby-mode)
          ("Vagrantfile$" . ruby-mode)
-         ("Berksfile$" . ruby-mode)))
+         ("Berksfile$" . ruby-mode)
+         ("\\.irbrc$" . ruby-mode)))
 
 (use-package inf-ruby)
 
@@ -417,8 +403,6 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq enable-recursive-minibuffers t)
 
 (add-to-list 'auto-mode-alist '("\\.scss$" . css-mode))
-
-(when (executable-find "pry") (setq inf-ruby-default-implementation "pry"))
 
 (add-hook 'text-mode-hook 'flyspell-mode)
 
@@ -1499,10 +1483,10 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (edit-server-start)
 #+END_SRC
 
-** sbt
+** scala
 
-sbt-keys
-#+NAME: sbt-keys
+scala-keys
+#+NAME: scala-keys
 | Key   | Function                   | Scope      | Hook            |
 |-------+----------------------------+------------+-----------------|
 | C-c s | sbt-command-prefix         | local      | sbt-mode-hook   |
@@ -1513,7 +1497,7 @@ sbt-keys
 | o     | sbt-test-only-current-test | sbt-keymap |                 |
 | p     | sbt-run-previous-command   | sbt-keymap |                 |
 
-#+HEADER: :var sbt-keys=sbt-keys
+#+HEADER: :var scala-keys=scala-keys
 #+BEGIN_SRC emacs-lisp
 (defun sbt ()
   (interactive)
@@ -1555,10 +1539,27 @@ sbt-keys
 (setq sbt-keymap (make-sparse-keymap))
 (fset 'sbt-command-prefix sbt-keymap)
 
-(keybinding-org-table 'sbt-keys)
+(keybinding-org-table 'scala-keys)
+
+(add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
+(add-to-list 'auto-mode-alist '("\\.sbt$" . scala-mode))
+
+(setq scala-indent:align-forms t
+      scala-indent:align-parameters t)
+
+;; not enabling ensime at the moment
+
+;; (setq ensime-use-helm t)
+;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+;; (advice-add 'ensime-sbt-test-dwim
+;;             :around (lambda (original-function &rest args)
+;;                       (let* ((original-command (car args))
+;;                              (only-zzz-str (if current-prefix-arg " -- ex zzz " ""))
+;;                              (command (concat original-command only-zzz-str)))
+;;                         (apply original-function (cons command (cdr args))))))
 #+END_SRC
 
-adding sbt shortcut to helm-project
+adding sbt shortcut to helm projectile
 #+BEGIN_SRC emacs-lisp
 (require 'helm-projectile)
 
