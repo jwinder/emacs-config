@@ -280,6 +280,101 @@ These are non-interactive library functions useful in other parts of this config
   (call-process "tmux" nil nil nil "send-keys" "-t" tmux-session command "C-m"))
 #+END_SRC
 
+A macro to set keybindings from an org table
+#+BEGIN_SRC emacs-lisp
+(defmacro keybinding-org-table (org-table)
+  "Sets up key bindings from an org table like:
+
+      | Key   | Function | Scope           | Hook          | Notes     |
+      |-------+----------+-----------------+---------------+-----------|
+      | C-c a | fn-1     |                 |               | fun notes |
+      | C-c b | fn-2     | local           | org-mode-hook |           |
+      | C-c c | fn-3     | eshell-mode-map |               |           |
+      | C-c d | nil      |                 |               |           |
+      | C-c e | nil      | local           |               |           |
+      | C-c f | nil      | eshell-mode-map |               |           |
+
+- C-c a gets set to fn-1 in the global map.
+- C-c b gets set to fn-2 in the current local map, run during the org-mode-hook.
+- C-c c gets set to fn-3 in the eshell-mode-map.
+- C-c d gets unbound in the global map.
+- C-c e gets unbound in the current local map.
+- C-c f gets unbound in the eshell-mode-map.
+
+- For a global binding, an empty cell or the value \"global\" can be provided in the Scope column.
+- When unsetting a keybinding, an empty table cell can be provided instead of nil in the Function column.
+- It is safe to leave out the Scope & Hook columns if only global keybindings are necessary.
+- The ordering of the 4 columns cannot be changed (extra columns after the Hook column are ignored)."
+
+  (declare (indent defun))
+  `(let* ((org-table-name (symbol-name ,org-table))
+          (rows (symbol-value ,org-table))
+          (keys-var-name (format "jw-%s" org-table-name))
+          (keys-setter-def-name (format "jw-%s-set-bindings" org-table-name))
+          (keys-setter-def-symbol (intern keys-setter-def-name)))
+
+     ;; add keys to their own variable: jw-[org-table]
+     (eval `(setq ,(intern keys-var-name) rows))
+
+     ;; append keys to jw-all-custom-keys variable
+     (unless (boundp 'jw-all-keys) (setq jw-all-keys nil))
+     (-each rows (lambda (row) (add-to-list 'jw-all-keys row 'append)))
+
+     ;; create interactive jw-[org-table]-set-bindings function to set all keys
+     (eval `(defun ,keys-setter-def-symbol ()
+              ,(format "Auto-created function to set keybindings defined in the org table: %s\n\nOrg table keybindings cached in `%s'\n\nAll custom keybindings cached in `jw-all-keys'\n\nThis function is also stored in `jw-all-keys-set-bindings-functions', and `jw-all-keys-set-bindings' evaluates every function in this list." org-table-name (intern keys-var-name))
+              (interactive)
+              (-each ,(intern keys-var-name) ;; must call the dynamic jw-[org-table] var here, not the lexical rows var
+                (lambda (row)
+                  (let* ((key (car row))
+                         (command (if (cadr row) (intern (cadr row)) nil))
+                         (scope (s-presence (nth 2 row)))
+                         (hook-name (s-presence (nth 3 row))))
+
+                    ;; yucky but the functions must be setup differently inside of hooks
+                    ;; being explicit about the various cases is best
+
+                    (cond
+                     ((and hook-name (s-equals? scope "local"))
+                      (add-hook (intern hook-name)
+                                `(lambda () (local-set-key (kbd ,key) (quote ,command)))))
+
+                     ((and hook-name (or (s-blank-str? scope) (s-equals? scope "global")))
+                      (add-hook (intern hook-name)
+                                `(lambda () (global-set-key (kbd ,key) (quote ,command)))))
+
+                     ((and hook-name (boundp (intern scope)))
+                      (add-hook (intern hook-name)
+                                `(lambda () (define-key ,(intern scope) (kbd ,key) (quote ,command)))))
+
+                     ((s-equals? scope "local") (local-set-key (kbd key) command))
+
+                     ((or (s-blank-str? scope) (s-equals? scope "global")) (global-set-key (kbd key) command))
+
+                     ((boundp (intern scope)) (define-key (eval (intern scope)) (kbd key) command))
+
+                     (t (message "Unable to set command %s to keybinding %s from org table. Silently skipping." command key))
+                     )
+                    )
+                  ))
+              ))
+
+     ;; append jw-[org-table]-set-bindings to jw-all-keys-set-bindings-functions variable
+     (unless (boundp 'jw-all-keys-set-bindings-functions) (setq jw-all-keys-set-bindings-functions nil))
+     (add-to-list 'jw-all-keys-set-bindings-functions `,keys-setter-def-symbol 'append)
+
+     ;; create jw-set-all-bindings to eval every function created with this macro
+     (unless (fboundp 'jw-all-keys-set-bindings)
+       (defun jw-all-keys-set-bindings ()
+         "Evaluate every function in `jw-all-keys-set-bindings-functions'."
+         (interactive)
+         (-each jw-all-keys-set-bindings-functions 'funcall)))
+
+     ;; go ahead and eval jw-[org-table]-set-bindings
+     (eval `(,keys-setter-def-symbol))
+     ))
+#+END_SRC
+
 * customization
 ** env
 
@@ -838,101 +933,6 @@ base-keys (keys not in other parts of this config)
 | d             | date                             | jw-keymap         |      |                      |
 | w             | weather                          | jw-keymap         |      |                      |
 | i             | toggle-scratch-buffer            | jw-keymap         |      |                      |
-
-function to set keybindings from an org table
-#+BEGIN_SRC emacs-lisp
-(defmacro keybinding-org-table (org-table)
-  "Sets up key bindings from an org table like:
-
-      | Key   | Function | Scope           | Hook          | Notes     |
-      |-------+----------+-----------------+---------------+-----------|
-      | C-c a | fn-1     |                 |               | fun notes |
-      | C-c b | fn-2     | local           | org-mode-hook |           |
-      | C-c c | fn-3     | eshell-mode-map |               |           |
-      | C-c d | nil      |                 |               |           |
-      | C-c e | nil      | local           |               |           |
-      | C-c f | nil      | eshell-mode-map |               |           |
-
-- C-c a gets set to fn-1 in the global map.
-- C-c b gets set to fn-2 in the current local map, run during the org-mode-hook.
-- C-c c gets set to fn-3 in the eshell-mode-map.
-- C-c d gets unbound in the global map.
-- C-c e gets unbound in the current local map.
-- C-c f gets unbound in the eshell-mode-map.
-
-- For a global binding, an empty cell or the value \"global\" can be provided in the Scope column.
-- When unsetting a keybinding, an empty table cell can be provided instead of nil in the Function column.
-- It is safe to leave out the Scope & Hook columns if only global keybindings are necessary.
-- The ordering of the 4 columns cannot be changed (extra columns after the Hook column are ignored)."
-
-  (declare (indent defun))
-  `(let* ((org-table-name (symbol-name ,org-table))
-          (rows (symbol-value ,org-table))
-          (keys-var-name (format "jw-%s" org-table-name))
-          (keys-setter-def-name (format "jw-%s-set-bindings" org-table-name))
-          (keys-setter-def-symbol (intern keys-setter-def-name)))
-
-     ;; add keys to their own variable: jw-[org-table]
-     (eval `(setq ,(intern keys-var-name) rows))
-
-     ;; append keys to jw-all-custom-keys variable
-     (unless (boundp 'jw-all-keys) (setq jw-all-keys nil))
-     (-each rows (lambda (row) (add-to-list 'jw-all-keys row 'append)))
-
-     ;; create interactive jw-[org-table]-set-bindings function to set all keys
-     (eval `(defun ,keys-setter-def-symbol ()
-              ,(format "Auto-created function to set keybindings defined in the org table: %s\n\nOrg table keybindings cached in `%s'\n\nAll custom keybindings cached in `jw-all-keys'\n\nThis function is also stored in `jw-all-keys-set-bindings-functions', and `jw-all-keys-set-bindings' evaluates every function in this list." org-table-name (intern keys-var-name))
-              (interactive)
-              (-each ,(intern keys-var-name) ;; must call the dynamic jw-[org-table] var here, not the lexical rows var
-                (lambda (row)
-                  (let* ((key (car row))
-                         (command (if (cadr row) (intern (cadr row)) nil))
-                         (scope (s-presence (nth 2 row)))
-                         (hook-name (s-presence (nth 3 row))))
-
-                    ;; yucky but the functions must be setup differently inside of hooks
-                    ;; being explicit about the various cases is best
-
-                    (cond
-                     ((and hook-name (s-equals? scope "local"))
-                      (add-hook (intern hook-name)
-                                `(lambda () (local-set-key (kbd ,key) (quote ,command)))))
-
-                     ((and hook-name (or (s-blank-str? scope) (s-equals? scope "global")))
-                      (add-hook (intern hook-name)
-                                `(lambda () (global-set-key (kbd ,key) (quote ,command)))))
-
-                     ((and hook-name (boundp (intern scope)))
-                      (add-hook (intern hook-name)
-                                `(lambda () (define-key ,(intern scope) (kbd ,key) (quote ,command)))))
-
-                     ((s-equals? scope "local") (local-set-key (kbd key) command))
-
-                     ((or (s-blank-str? scope) (s-equals? scope "global")) (global-set-key (kbd key) command))
-
-                     ((boundp (intern scope)) (define-key (eval (intern scope)) (kbd key) command))
-
-                     (t (message "Unable to set command %s to keybinding %s from org table. Silently skipping." command key))
-                     )
-                    )
-                  ))
-              ))
-
-     ;; append jw-[org-table]-set-bindings to jw-all-keys-set-bindings-functions variable
-     (unless (boundp 'jw-all-keys-set-bindings-functions) (setq jw-all-keys-set-bindings-functions nil))
-     (add-to-list 'jw-all-keys-set-bindings-functions `,keys-setter-def-symbol 'append)
-
-     ;; create jw-set-all-bindings to eval every function created with this macro
-     (unless (fboundp 'jw-all-keys-set-bindings)
-       (defun jw-all-keys-set-bindings ()
-         "Evaluate every function in `jw-all-keys-set-bindings-functions'."
-         (interactive)
-         (-each jw-all-keys-set-bindings-functions 'funcall)))
-
-     ;; go ahead and eval jw-[org-table]-set-bindings
-     (eval `(,keys-setter-def-symbol))
-     ))
-#+END_SRC
 
 #+HEADER: :var base-keys=base-keys
 #+BEGIN_SRC emacs-lisp
