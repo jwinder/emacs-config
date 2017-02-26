@@ -71,6 +71,7 @@ cat init.el
 
 (use-package ob-http)
 (use-package ob-translate)
+(use-package ob-async)
 
 (use-package org-pomodoro)
 (use-package interleave)
@@ -1380,6 +1381,7 @@ org-keys
                   `(org-date ((t (:underline nil)))))
 
 (setq org-confirm-babel-evaluate nil)
+(add-to-list 'org-ctrl-c-ctrl-c-hook 'ob-async-org-babel-execute-src-block)
 
 (add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
 (add-to-list 'org-structure-template-alist '("h" "#+HEADER: ?"))
@@ -1429,6 +1431,7 @@ org-keys
 
 (defconst org-babel-header-args:cmd '((bg . :any) (tmux . :any)))
 
+;; warning: cmd does not work with the :async header since ob-cmd is never provided (which org-babel-do-load-languages requires)
 (defun org-babel-execute:cmd (body params)
   (let* ((bg-option (assoc :bg params))
          (in-bg (and bg-option (not (string= (cdr bg-option) "no"))))
@@ -1639,6 +1642,7 @@ sonic-pi-keys
 
 (keybinding-org-table 'sonic-pi-keys)
 
+;; warning: sonic-pi does not work with the :async header since ob-sonic-pi is never provided (which org-babel-do-load-languages requires)
 (defun org-babel-execute:sonic-pi (body params)
   (sonic-pi-play body)
   "Sent to Sonic Pi")
