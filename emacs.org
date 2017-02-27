@@ -1328,7 +1328,13 @@ org-keys
       org-hide-block-startup t
       org-ellipsis " …"
       org-fontify-done-headline t
-      org-todo-keywords '((sequence "⚑" "⚐" "|" "✔")))
+      org-todo-keywords '((sequence "⚑" "⚐" "|" "✔"))
+      org-startup-with-inline-images t
+      org-confirm-babel-evaluate nil
+      org-confirm-shell-link-function nil
+      org-confirm-elisp-link-function nil)
+
+(add-to-list 'org-ctrl-c-ctrl-c-hook 'ob-async-org-babel-execute-src-block)
 
 (setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread")
       org--todo-todo-states '("⚑")
@@ -1380,14 +1386,12 @@ org-keys
                   `(org-link ((t (:underline nil))))
                   `(org-date ((t (:underline nil)))))
 
-(setq org-confirm-babel-evaluate nil)
-(add-to-list 'org-ctrl-c-ctrl-c-hook 'ob-async-org-babel-execute-src-block)
-
 (add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
 (add-to-list 'org-structure-template-alist '("h" "#+HEADER: ?"))
 (add-to-list 'org-structure-template-alist '("p" "#+PROPERTY: ?"))
 (add-to-list 'org-structure-template-alist '("P" ":PROPERTIES:\n?\n:END:"))
 (add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC ?\n\n#+END_SRC"))
+(add-to-list 'org-structure-template-alist '("call" "#+CALL: ?"))
 (add-to-list 'org-structure-template-alist '("ipdf" "#+INTERLEAVE_PDF: ?"))
 
 (defun org-babel-support-src-template-shortcut (shortcut &optional src-line)
@@ -1422,6 +1426,7 @@ org-keys
 (org-babel-support-src-template-shortcut 'gfm)
 (org-babel-support-src-template-shortcut 'conf)
 (org-babel-support-src-template-shortcut 'text)
+(org-babel-support-src-template-shortcut 'json)
 
 (org-babel-support-src-template-shortcut 'trs "translate :src es :dest en") ;; traducir español al inglés
 (org-babel-support-src-template-shortcut 'tre "translate :src en :dest es") ;; translate english to spanish
