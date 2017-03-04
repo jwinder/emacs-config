@@ -1111,6 +1111,8 @@ helm-keys
 | M-s s   | helm-swoop                      |                     |                  |                          |
 | M-s S   | helm-multi-swoop-all            |                     |                  |                          |
 | M-s i   | helm-semantic-or-imenu          |                     |                  |                          |
+| C-x r l | helm-bookmarks                  |                     |                  |                          |
+| C-x r j | helm-register                   |                     |                  |                          |
 | M-/     | helm-dabbrev                    |                     |                  |                          |
 | C-h a   | helm-apropos                    |                     |                  |                          |
 | C-M-/   | helm-company                    |                     |                  |                          |
@@ -1332,7 +1334,8 @@ org-keys
       org-startup-with-inline-images t
       org-confirm-babel-evaluate nil
       org-confirm-shell-link-function nil
-      org-confirm-elisp-link-function nil)
+      org-confirm-elisp-link-function nil
+      org-id-link-to-org-use-id t)
 
 (add-to-list 'org-ctrl-c-ctrl-c-hook 'ob-async-org-babel-execute-src-block)
 
