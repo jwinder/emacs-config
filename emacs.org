@@ -81,10 +81,6 @@ cat init.el
 (use-package htmlize)
 
 (use-package magit)
-
-(use-package magit-gh-pulls
-  :config (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls))
-
 (use-package browse-at-remote)
 
 (use-package gist
@@ -1227,44 +1223,64 @@ magit-keys
 | M-g | magit-status           |                |
 | &   | magit-git-extras-popup | magit-mode-map |
 
+[[https:github.com/vermiculus/magithub][magithub]] might be a nice replacement for most of these functions, but I haven't gotten it to work too well yet
 #+HEADER: :var magit-keys=magit-keys
 #+BEGIN_SRC emacs-lisp
 (require 'magit)
-(require 'magit-gh-pulls)
 
 (defalias 'git-browse-at-remote 'browse-at-remote)
 (defalias 'github-browse-file 'browse-at-remote)
 
-(defun github-hub-cmd (cmd)
+(defun github-hub-cmd (command)
   (if (executable-find "hub")
-      (shell-command (format "hub %s" cmd))
+      (shell-command (format "hub %s" command))
     (message "Executable \"hub\" required for this command. Check it out at hub.github.com!")))
 
-(defun github-issues ()
+(defun github-hub-cmd-async (command)
+  (if (executable-find "hub")
+      (cmd (format "hub %s" command))
+    (message "Executable \"hub\" required for this command. Check it out at hub.github.com!")))
+
+(defun github-browse-issues ()
   (interactive)
   (github-hub-cmd "browse -- issues"))
 
-(defun github-pulls ()
+(defun github-browse-pulls ()
   (interactive)
   (github-hub-cmd "browse -- pulls"))
 
-(defun github-compare ()
+(defun github-browse-compare ()
   (interactive)
   (github-hub-cmd "browse -- compare"))
+
+(defun github-create-pull-request ()
+  (interactive)
+  (github-hub-cmd-async "pull-request"))
+
+(defun github-create-issue ()
+  (interactive)
+  (github-hub-cmd-async "issue create"))
+
+(defun github-create-repository ()
+  (interactive)
+  (github-hub-cmd-async "create"))
 
 (magit-define-popup magit-git-extras-popup
   "Popup console for extra git commands."
   'magit-commands
-  :actions '("Actions"
-             (?P "Github pulls popup" magit-gh-pulls-popup)
-             (?b "Browse at remote" git-browse-at-remote)
+  :actions '("Create on Github"
+             (?P "Pull Request" github-create-pull-request)
+             (?I "Issue" github-create-issue)
+             (?R "Repository" github-create-repository)
              "Browse on Github"
-             (?i "Issues" github-issues)
-             (?p "Pulls" github-pulls)
-             (?c "Compare" github-compare))
+             (?r "File/Repository" git-browse-at-remote)
+             (?i "Issues" github-browse-issues)
+             (?p "Pulls" github-browse-pulls)
+             (?c "Compare" github-browse-compare))
   :max-action-columns 1)
 
 (magit-define-popup-action 'magit-dispatch-popup ?& "Extras" 'magit-git-extras-popup)
+
 (global-magit-file-mode t)
 
 (keybinding-org-table 'magit-keys)
