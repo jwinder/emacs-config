@@ -890,6 +890,8 @@ base-keys (keys not in other parts of this config)
 |---------------+----------------------------------+-------------------+------+----------------------|
 | C-z           | nil                              |                   |      | remove suspend       |
 | C-x C-z       | nil                              |                   |      |                      |
+| C-h           | nil                              |                   |      | remove original help |
+| C-M-?         | help-command                     |                   |      |                      |
 | <return>      | toggle-frame-fullscreen          | ctl-x-5-map       |      |                      |
 | M-!           | cmd-dwim                         |                   |      |                      |
 | M-&           | cmd-dwim                         |                   |      |                      |
@@ -1109,7 +1111,7 @@ helm-keys
 | M-s S   | helm-multi-swoop-all            |                     |                  |                          |
 | M-s i   | helm-semantic-or-imenu          |                     |                  |                          |
 | C-x r l | helm-bookmarks                  |                     |                  |                          |
-| C-x r j | helm-register                   |                     |                  |                          |
+| C-x r j | helm-register-jump-dwim         |                     |                  |                          |
 | M-/     | helm-dabbrev                    |                     |                  |                          |
 | C-h a   | helm-apropos                    |                     |                  |                          |
 | C-M-/   | helm-company                    |                     |                  |                          |
@@ -1145,12 +1147,15 @@ helm-keys
       helm-recentf-fuzzy-match t
       helm-semantic-fuzzy-match t
       helm-imenu-fuzzy-match t
-      helm-locate-fuzzy-match t
       helm-ag-insert-at-point 'symbol)
 
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 (defalias 'list-colors-display 'helm-colors)
 (defalias 'proced 'helm-top)
+
+(defun helm-register-jump-dwim (arg)
+  (interactive "P")
+  (if arg (helm-register) (call-interactively 'jump-to-register)))
 
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
 (set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
