@@ -544,6 +544,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 *** common
 
 #+BEGIN_SRC emacs-lisp
+(defalias 'life-is-too-much 'save-buffers-kill-terminal)
 (defalias 'filter-lines 'keep-lines)
 (defalias 'filter-out-lines 'flush-lines)
 (defalias 'elisp-shell 'ielm)
@@ -854,7 +855,7 @@ If the prefix arg is 4, then kill the comment on the current line."
 (defun emacs-archive-packages-and-die ()
   (interactive)
   (emacs-archive-packages)
-  (save-buffers-kill-terminal))
+  (life-is-too-much))
 
 (defun emacs-archive-packages ()
   (when (file-exists-p package-user-dir)
@@ -1432,7 +1433,7 @@ org-keys
         (-each all-shortcuts (lambda (shortcut) (org-babel-support-src-template-shortcut shortcut ob-lang)))))))
 
 (org-babel-support-langs
- (list 'awk 'calc 'C 'dot '(emacs-lisp elisp) '(haskell hask) 'http 'java 'js 'latex 'lisp
+ (list 'awk 'calc 'C 'dot '(emacs-lisp elisp el) '(haskell hask) 'http 'java 'js 'latex 'lisp
        'makefile 'matlab 'org 'perl 'plantuml '(python py) 'R '(ruby rb)
        'scala ;; there are conflicting versions in org & scala-mode requiring ensime
        'scheme '(shell sh) 'sql '(translate tr)))
