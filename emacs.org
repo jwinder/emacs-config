@@ -973,13 +973,11 @@ eshell-keys
   (interactive)
   (if (eq major-mode 'eshell-mode)
       (switch-to-buffer (other-buffer))
-    (let ((vc-root (jw--vc-root-dir)))
+    (let ((dir (or (jw--vc-root-dir) (jw--pwd))))
       (eshell)
-      (eshell-kill-input)
-      (goto-char (point-max))
-      (when (and vc-root (not (string= vc-root (jw--pwd))))
-        (insert (format "cd '%s'" vc-root))
-        (eshell-send-input)))))
+      (eshell/cd dir)
+      (eshell-reset))))
+
 
 (keybinding-org-table 'eshell-keys)
 
