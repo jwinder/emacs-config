@@ -239,6 +239,9 @@ These are non-interactive library functions useful in other parts of this config
 
 (defalias 'jw--git-root-dir 'jw--vc-root-dir)
 
+(defun jw--git-config-get (key)
+  (s-presence (s-trim (shell-command-to-string (format "git config --get %s 2>/dev/null" key)))))
+
 (defun jw--iso-current-time-string ()
   (concat (format-time-string "%Y-%m-%dT%T")
           ((lambda (x) (concat (substring x 0 3) ":" (substring x 3 5))) (format-time-string "%z"))))
@@ -1460,8 +1463,6 @@ org-keys
 
 (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)) ;; "dot" src blocks don't use graphviz-dot-mode by default
 
-(org-babel-support-src-template-shortcut 'cmd)
-(org-babel-support-src-template-shortcut 'tmux "cmd :tmux")
 (org-babel-support-src-template-shortcut 'md 'markdown)
 (org-babel-support-src-template-shortcut 'gfm)
 (org-babel-support-src-template-shortcut 'conf)
@@ -1473,7 +1474,10 @@ org-keys
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:http '((:pretty . "yes")))
+#+END_SRC
 
+support =cmd= function in org-babel
+#+BEGIN_SRC emacs-lisp
 (defconst org-babel-header-args:cmd '((bg . :any) (tmux . :any)))
 
 ;; warning: cmd does not work with the :async header since ob-cmd is never provided (which org-babel-do-load-languages requires)
@@ -1494,6 +1498,21 @@ org-keys
 (define-derived-mode cmd-mode sh-mode "cmd")
 
 (setq org-babel-default-header-args:cmd '((:results . "silent")))
+
+(org-babel-support-src-template-shortcut 'cmd)
+(org-babel-support-src-template-shortcut 'tmux "cmd :tmux")
+#+END_SRC
+
+support =gist= and =gist+raw= org links
+#+BEGIN_SRC emacs-lisp
+(defun org-gist-link-follow (ref &optional raw)
+  (let ((url-segment (if (s-contains? "/" ref) ref
+                       (concat (or (jw--git-config-get "github.user") (jw--git-config-get "user.name")) "/" ref)))
+        (raw-segment (if raw "raw" "")))
+    (browse-url (format "https://gist.github.com/%s/%s" url-segment raw-segment))))
+
+(add-to-list 'org-link-parameters '("gist" :follow (lambda (ref) (org-gist-link-follow ref))))
+(add-to-list 'org-link-parameters '("gist+raw" :follow (lambda (ref) (org-gist-link-follow ref 'raw))))
 #+END_SRC
 
 hacky way of using org tables for markdown tables [[http://stackoverflow.com/questions/14275122/editing-markdown-pipe-tables-in-emacs/26297700#26297700][copied from stackoverflow]]
