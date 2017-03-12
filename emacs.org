@@ -1379,6 +1379,8 @@ org-keys
 
 (add-to-list 'org-ctrl-c-ctrl-c-hook 'ob-async-org-babel-execute-src-block)
 
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+
 (setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread")
       org--todo-todo-states '("⚑")
       org--blocked-todo-boxed-states '("blocked" "halted" "stalled" "paused")
