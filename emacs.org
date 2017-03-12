@@ -1161,6 +1161,9 @@ helm-keys
       helm-imenu-fuzzy-match t
       helm-ag-insert-at-point 'symbol)
 
+(when (eq system-type 'darwin)
+  (setq helm-man-format-switches "%s"))
+
 (defalias 'kill-ring-show 'helm-show-kill-ring)
 (defalias 'list-colors-display 'helm-colors)
 (defalias 'proced 'helm-top)
