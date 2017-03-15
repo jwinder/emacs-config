@@ -1316,7 +1316,7 @@ org-keys
 #+NAME: org-keys
 | Key       | Function                   | Scope     | Hook          |
 |-----------+----------------------------+-----------+---------------|
-| o         | todo                       | jw-keymap |               |
+| o         | jw-todo                    | jw-keymap |               |
 | a         | org-agenda                 | jw-keymap |               |
 | c         | org-capture                | jw-keymap |               |
 | <tab>     | org-pomodoro               | jw-keymap |               |
@@ -1328,16 +1328,16 @@ org-keys
 #+BEGIN_SRC emacs-lisp
 (require 'org)
 (require 'org-pomodoro)
-(require 'dash)
 
-(defun todo ()
+(unless (boundp 'jw-org-todo-file)
+  (setq jw-org-todo-file (f-expand "todo.org" user-emacs-directory)))
+
+(defun jw-todo ()
   (interactive)
-  (if (boundp 'jw-org-todo-file)
-      (if (string= (buffer-name) (file-name-nondirectory jw-org-todo-file))
-          (switch-to-buffer (other-buffer))
-        (progn (find-file jw-org-todo-file)
-               (cd (getenv "HOME"))))
-    (message "Please set `jw-org-todo-file' to your todo org file location!")))
+  (if (s-equals? (buffer-name) (f-filename jw-org-todo-file))
+      (switch-to-buffer (other-buffer))
+    (find-file jw-org-todo-file)
+    (cd (getenv "HOME"))))
 
 (defun org-feed-update-all-or-one (arg)
   "When called with a prefix argument, interactively call `org-feed-update'. Otherwise call `org-feed-update-all'."
