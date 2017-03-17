@@ -453,6 +453,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (ansi-color-for-comint-mode-on)
 
+(show-paren-mode t)
+
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (setq create-lockfiles nil)
