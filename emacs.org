@@ -1742,5 +1742,6 @@ load the =private= directory and the =private.org= file if they exist
 (scratch-buffer)
 (cd (getenv "HOME"))
 (fullscreen)
-(server-start)
+(unless (server-running-p) (server-start))
+
 #+END_SRC
