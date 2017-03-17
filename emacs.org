@@ -1477,6 +1477,7 @@ org-keys
 (org-babel-support-src-template-shortcut 'tre "translate :src en :dest es") ;; translate english to spanish
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
+      org-babel-default-header-args:shell '((:results . "output"))
       org-babel-default-header-args:http '((:pretty . "yes")))
 #+END_SRC
 
