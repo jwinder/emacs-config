@@ -1467,6 +1467,7 @@ org-keys
 
 (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)) ;; "dot" src blocks don't use graphviz-dot-mode by default
 
+(org-babel-support-src-template-shortcut 'bash)
 (org-babel-support-src-template-shortcut 'md 'markdown)
 (org-babel-support-src-template-shortcut 'gfm)
 (org-babel-support-src-template-shortcut 'conf)
@@ -1478,6 +1479,7 @@ org-keys
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
+      org-babel-default-header-args:bash '((:results . "output"))
       org-babel-default-header-args:http '((:pretty . "yes")))
 #+END_SRC
 
