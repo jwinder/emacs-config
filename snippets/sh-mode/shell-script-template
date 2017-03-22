@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: shell command template
+# name: shell script template
 # key: keybinding-org-table_
 # --
 #!/usr/bin/env bash
@@ -14,30 +14,43 @@ IFS=$'\n\t'
 usage() { grep '^#/' "\$0" | cut -c4- ; exit 0 ; }
 expr "$*" : ".*--help" > /dev/null && usage
 
+log_debug_on=true
+
+iso_date() { local d=\`date -u +"%Y-%m-%dT%H:%M:%SZ"\`;  echo "$d"; }
+
 readonly LOGS_DIR="/tmp/shell-script-logs"
 readonly LOG_FILE="$LOGS_DIR/$(basename "\$0").log"
 mkdir -p $LOGS_DIR
-info()    { echo "[INFO]    $@" | tee -a "$LOG_FILE" >&2 ; }
-warning() { echo "[WARNING] $@" | tee -a "$LOG_FILE" >&2 ; }
-error()   { echo "[ERROR]   $@" | tee -a "$LOG_FILE" >&2 ; }
-fatal()   { echo "[FATAL]   $@" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
+debug() { if [ "$log_debug_on" = true ] ; then echo "[DEBUG] [$(iso_date)]  $@" | tee -a "$LOG_FILE" >&2 ; fi ; }
+info()  { echo "[INFO]  [$(iso_date)]  $@" | tee -a "$LOG_FILE" >&2 ; }
+warn()  { echo "[WARN]  [$(iso_date)]  $@" | tee -a "$LOG_FILE" >&2 ; }
+error() { echo "[ERROR] [$(iso_date)]  $@" | tee -a "$LOG_FILE" >&2 ; }
+fatal() { echo "[FATAL] [$(iso_date)]  $@" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
 
 cleanup() {
+    debug "starting cleanup"
+
     # Remove temporary files
     # Restart services
     # ...
+
+    debug "finishing cleanup"
 }
 
-run() {
+main() {
+    debug "starting main function"
+
     # main script runs here
+
+    debug "finishing main function"
 }
 
 # run this way if this script can be run from another script
 # trap cleanup EXIT
-# run
+# main
 
 # run this way to verify the script is executed directly
 if [[ "\${BASH_SOURCE[0]}" = "\$0" ]]; then
     trap cleanup EXIT
-    run
+    main
 fi
