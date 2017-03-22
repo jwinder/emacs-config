@@ -1,0 +1,43 @@
+# -*- mode: snippet -*-
+# name: shell command template
+# key: keybinding-org-table_
+# --
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+#/ Usage:
+#/ Description:
+#/ Examples:
+#/ Options:
+#/   --help: Display this help message
+usage() { grep '^#/' "\$0" | cut -c4- ; exit 0 ; }
+expr "$*" : ".*--help" > /dev/null && usage
+
+readonly LOGS_DIR="/tmp/shell-script-logs"
+readonly LOG_FILE="$LOGS_DIR/$(basename "\$0").log"
+mkdir -p $LOGS_DIR
+info()    { echo "[INFO]    $@" | tee -a "$LOG_FILE" >&2 ; }
+warning() { echo "[WARNING] $@" | tee -a "$LOG_FILE" >&2 ; }
+error()   { echo "[ERROR]   $@" | tee -a "$LOG_FILE" >&2 ; }
+fatal()   { echo "[FATAL]   $@" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
+
+cleanup() {
+    # Remove temporary files
+    # Restart services
+    # ...
+}
+
+run() {
+    # main script runs here
+}
+
+# run this way if this script can be run from another script
+# trap cleanup EXIT
+# run
+
+# run this way to verify the script is executed directly
+if [[ "\${BASH_SOURCE[0]}" = "\$0" ]]; then
+    trap cleanup EXIT
+    run
+fi
