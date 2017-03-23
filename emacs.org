@@ -1347,6 +1347,12 @@ org-keys
       (call-interactively 'org-feed-update)
     (org-feed-update-all)))
 
+(defun org-id (arg)
+  "Ensure an org-id exists and copy to kill ring. With prefix arg, force creation of a new org-id."
+  (interactive "P")
+  (org-id-get-create arg)
+  (org-id-copy))
+
 (add-hook 'org-mode-hook (lambda ()
                            (text-scale-set 2)))
 
@@ -1376,7 +1382,7 @@ org-keys
       org-confirm-babel-evaluate nil
       org-confirm-shell-link-function nil
       org-confirm-elisp-link-function nil
-      org-id-link-to-org-use-id t)
+      org-id-link-to-org-use-id 'create-if-interactive)
 
 (add-to-list 'org-ctrl-c-ctrl-c-hook 'ob-async-org-babel-execute-src-block)
 
