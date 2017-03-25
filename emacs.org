@@ -128,6 +128,9 @@ cat init.el
 (use-package docker
   :config (docker-global-mode t))
 
+(use-package dumb-jump
+  :config (setq dumb-jump-selector 'helm))
+
 (use-package xah-math-input
   :config (progn
             (xah-math-input--add-to-hash [ ["def" "≝"] ["pm" "±"] ])
@@ -935,6 +938,8 @@ base-keys (keys not in other parts of this config)
 | C-<           | mc/mark-previous-like-this                |                   |      |                      |
 | C->           | mc/mark-next-like-this                    |                   |      |                      |
 | C-x r t       | mc/edit-lines                             |                   |      |                      |
+| M-s j         | dumb-jump-go                              |                   |      |                      |
+| M-s J         | dumb-jump-go-other-window                 |                   |      |                      |
 | M-<backspace> | nil                                       | sp-keymap         |      |                      |
 | C-M-p         | nil                                       | sp-keymap         |      |                      |
 | C-M-n         | nil                                       | sp-keymap         |      |                      |
