@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: shell script template
-# key: keybinding-org-table_
+# key: shell-script-template_
 # --
 #!/usr/bin/env bash
 set -euo pipefail

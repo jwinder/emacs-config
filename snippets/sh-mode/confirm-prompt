@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: confirm prompt
+# key: confirm-prompt_
+# --
+# example usage: confirm "pwd" && pwd
+confirm() {
+    read -p "Run \${1}? [Y/n] " response
+    case $response in
+        [nN][oO]|[nN])
+            false
+            ;;
+        *)
+            true
+            ;;
+    esac
+}
