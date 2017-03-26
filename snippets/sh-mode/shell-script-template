@@ -31,7 +31,7 @@ debug() { if [ "$log_debug_on" = true ] ; then printf "[DEBUG] [$(iso_date)]  $@
 info()  { printf "[INFO]  [$(iso_date)]  $@\n" | tee -a "$LOG_FILE" >&2 ; }
 warn()  { printf "[WARN]  [$(iso_date)]  $@\n" | tee -a "$LOG_FILE" >&2 ; }
 error() { printf "[ERROR] [$(iso_date)]  $@\n" | tee -a "$LOG_FILE" >&2 ; }
-fatal() { prinft "[FATAL] [$(iso_date)]  $@\n" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
+fatal() { printf "[FATAL] [$(iso_date)]  $@\n" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
 
 main() {
     debug "starting main function"
