@@ -512,6 +512,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (put 'narrow-to-region 'disabled nil)
 
+(setq calc-angle-mode 'rad)
+
 (defun shell-command--advice--ignore-message-with-no-output (&rest args)
   (when (string-match "Shell command succeeded with no output" (current-message)) (message nil)))
 (advice-add 'shell-command-on-region :after 'shell-command--advice--ignore-message-with-no-output)
