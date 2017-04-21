@@ -979,15 +979,16 @@ eshell-keys
 #+BEGIN_SRC emacs-lisp
 (require 'em-alias)
 
-(defun eshell-dwim ()
-  "Toggle eshell. If in a version control repository, then cd to the root of the repository."
-  (interactive)
+(defun eshell-dwim (arg)
+  "Toggle eshell. If in a version control repository, then cd to the root of the repository unless a prefix arg is provided."
+  (interactive "P")
   (if (eq major-mode 'eshell-mode)
       (switch-to-buffer (other-buffer))
     (let ((dir (or (jw--vc-root-dir) (jw--pwd))))
       (eshell)
-      (eshell/cd dir)
-      (eshell-reset))))
+      (unless arg
+        (eshell/cd dir)
+        (eshell-reset)))))
 
 
 (keybinding-org-table 'eshell-keys)
