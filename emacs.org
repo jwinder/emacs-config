@@ -1473,7 +1473,7 @@ org-keys
         (-each all-shortcuts (lambda (shortcut) (org-babel-support-src-template-shortcut shortcut ob-lang)))))))
 
 (org-babel-support-langs
- (list 'awk 'calc 'C 'dot '(emacs-lisp elisp el) '(haskell hask) 'http 'java 'js 'latex 'lisp
+ (list 'awk 'calc 'C 'dot '(emacs-lisp elisp el) '(haskell hask hs) 'http 'java 'js 'latex 'lisp
        'makefile 'matlab 'org 'perl 'plantuml '(python py) 'R '(ruby rb)
        'scala ;; there are conflicting versions in org & scala-mode requiring ensime
        'scheme '(shell sh) 'sql '(translate tr)))
@@ -1493,6 +1493,7 @@ org-keys
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
       org-babel-default-header-args:bash '((:results . "output"))
+      org-babel-default-header-args:js '((:results . "output")) ;; doesn't work with "value" for some reason, it just prints "undefined"
       org-babel-default-header-args:http '((:pretty . "yes")))
 #+END_SRC
 
