@@ -193,6 +193,7 @@ These are non-interactive library functions useful in other parts of this config
 (require 'dash)
 (require 's)
 (require 'f)
+(require 'vc)
 
 (defconst jw--mode-line-color "#22083397778B")
 
@@ -236,11 +237,12 @@ These are non-interactive library functions useful in other parts of this config
   (file-truename default-directory))
 
 (defun jw--vc-root-dir ()
-  (require 'vc)
   (let ((vc-root-dir (ignore-errors (vc-call-backend (vc-responsible-backend (jw--pwd)) 'root (jw--pwd)))))
     (if vc-root-dir (file-truename vc-root-dir) nil)))
 
-(defalias 'jw--git-root-dir 'jw--vc-root-dir)
+(defun jw--git-root-dir ()
+  (let ((git-root-dir (ignore-errors (vc-find-root (jw--pwd) ".git"))))
+    (if git-root-dir (file-truename git-root-dir) nil)))
 
 (defun jw--git-config-get (key)
   (s-presence (s-trim (shell-command-to-string (format "git config --get %s 2>/dev/null" key)))))
@@ -829,6 +831,10 @@ If the prefix arg is 4, then kill the comment on the current line."
 (defun set-transparency (value)
   (interactive "n0 - 100 (percent): ")
   (set-frame-parameter (selected-frame) 'alpha value))
+
+(defun display-current-prefix-arg (arg)
+  (interactive "P")
+  (message "%s" arg))
 #+END_SRC
 
 *** contact
@@ -977,6 +983,7 @@ eshell-keys
 
 #+HEADER: :var eshell-keys=eshell-keys
 #+BEGIN_SRC emacs-lisp
+(require 'vc)
 (require 'em-alias)
 
 (defun eshell-dwim (arg)
@@ -990,11 +997,31 @@ eshell-keys
         (eshell/cd dir)
         (eshell-reset)))))
 
+(defun eshell--git-prompt-string ()
+  (if (jw--git-root-dir)
+      (let* ((git-branch-name (car (vc-git-branches)))
+             (git-is-clean (s-blank? (shell-command-to-string "git diff --shortstat 2> /dev/null | tail -n1")))
+             (git-is-clean-marker (if git-is-clean "✔" "✘"))
+             (git-is-clean-color (if git-is-clean "green" "red1"))
+             (git-branch-name-string (propertize git-branch-name 'face '(:foreground "yellow3")))
+             (git-is-clean-string (propertize git-is-clean-marker 'face `(:foreground ,git-is-clean-color)))
+             )
+        (format "%s %s" git-branch-name-string git-is-clean-string))
+    ""))
+
+(defun eshell--prompt-function ()
+  (let ((dir-string (propertize (abbreviate-file-name (eshell/pwd)) 'face '(:foreground "CornflowerBlue")))
+        (git-string (eshell--git-prompt-string))
+        (prompt-string (propertize (if (= (user-uid) 0) "#" "»") 'face '(:foreground "red3")))
+        (right-pad-string (propertize " " 'face '(:foreground nil))))
+    (s-collapse-whitespace (format "%s %s %s %s" dir-string git-string prompt-string right-pad-string))))
+
+(setq eshell-prompt-function 'eshell--prompt-function)
+(setq eshell-prompt-regexp "^[^#$»\n]* [#$»] ")
 
 (keybinding-org-table 'eshell-keys)
 
-(custom-set-faces '(eshell-prompt ((t (:foreground "#d68f7d")))))
-
+(eshell/alias "l" "ls -alh")
 (eshell/alias "d" "dired $1")
 (eshell/alias "e" "find-file $1")
 (eshell/alias "emacs" "find-file $1")
@@ -1004,8 +1031,10 @@ eshell-keys
 (eshell/alias "cat" "find-file $1")
 (eshell/alias ":q" "exit")
 (eshell/alias ":Q" "exit")
+
 #+END_SRC
 
+*** ⚑ change eshell-dwim to be able to open multiple eshells, tagging their name with the current dir
 ** yasnippet
 
 yas-keys
