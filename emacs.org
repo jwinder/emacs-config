@@ -977,27 +977,64 @@ base-keys (keys not in other parts of this config)
 
 eshell-keys
 #+NAME: eshell-keys
-| Key | Function    | Scope     |
-|-----+-------------+-----------|
-| e   | eshell-dwim | jw-keymap |
+| Key | Function | Scope     |
+|-----+----------+-----------|
+| e   | eshell-e | jw-keymap |
+| E   | eshell-E | jw-keymap |
 
 #+HEADER: :var eshell-keys=eshell-keys
 #+BEGIN_SRC emacs-lisp
-(require 'vc)
-(require 'em-alias)
-
-(defun eshell-dwim (arg)
-  "Toggle eshell. If in a version control repository, then cd to the root of the repository unless a prefix arg is provided."
+(defun eshell-e (arg)
+  "A wrapper for `eshell', except that this function provides ordered cycling through all eshells creating using prefix arguments."
   (interactive "P")
-  (if (eq major-mode 'eshell-mode)
-      (switch-to-buffer (other-buffer))
-    (let ((dir (or (jw--vc-root-dir) (jw--pwd))))
-      (eshell)
-      (unless arg
-        (eshell/cd dir)
-        (eshell-reset)))))
+  (eshell--exec arg nil))
+
+(defun eshell-E (arg)
+  "Similar to `eshell-e' except the cycling function is reversed."
+  (interactive "P")
+  (eshell--exec arg t))
+
+(defun eshell-cleanup-eshells (arg)
+  "Kill all eshells. If a prefix arg is provided, then leave the original eshell alive."
+  (interactive "P")
+  (-each (eshell--buffers-list)
+    (lambda (buffer)
+      (unless (and arg (s-equals? "*eshell*" (buffer-name buffer)))
+        (kill-buffer buffer)))))
+
+(defun eshell--exec (prefix-arg cycle-backward)
+  (let ((eshells (eshell--buffer-names-list)))
+    (if (or prefix-arg
+            (not (eq major-mode 'eshell-mode))
+            (not eshells))
+        (eshell prefix-arg)
+      (eshell--cycle-to-next eshells cycle-backward))))
+
+(defun eshell--extract-buffer-name-digit (buffer)
+  (string-to-number (or (car (s-match "[[:digit:]]+" (buffer-name buffer))) "-1")))
+
+(defun eshell--buffers-list-ordering (b1 b2)
+  (< (eshell--extract-buffer-name-digit b1) (eshell--extract-buffer-name-digit b2)))
+
+(defun eshell--buffers-list ()
+  (-sort
+   'eshell--buffers-list-ordering
+   (-filter
+    (lambda (buffer) (eq (buffer-local-value 'major-mode buffer) 'eshell-mode))
+    (buffer-list))))
+
+(defun eshell--buffer-names-list ()
+  (-map (lambda (b) (buffer-name b)) (eshell--buffers-list)))
+
+(defun eshell--cycle-to-next (eshells cycle-backward)
+  (let* ((num-eshells (length eshells))
+         (idx (or (-elem-index (buffer-name) eshells) num-eshells))
+         (next-idx (mod (if cycle-backward (- idx 1) (+ idx 1)) num-eshells))
+         (next-eshell (nth next-idx eshells)))
+    (switch-to-buffer next-eshell)))
 
 (defun eshell--git-prompt-string ()
+  (require 'vc)
   (if (jw--git-root-dir)
       (let* ((git-branch-name (car (vc-git-branches)))
              (git-is-clean (s-blank? (shell-command-to-string "git diff --shortstat 2> /dev/null | tail -n1")))
@@ -1021,6 +1058,7 @@ eshell-keys
 
 (keybinding-org-table 'eshell-keys)
 
+(require 'em-alias)
 (eshell/alias "l" "ls -alh")
 (eshell/alias "d" "dired $1")
 (eshell/alias "e" "find-file $1")
@@ -1032,9 +1070,17 @@ eshell-keys
 (eshell/alias ":q" "exit")
 (eshell/alias ":Q" "exit")
 
+(defun eshell/which--advice--add-login-shell-which-output (eshell/which-function &rest names)
+  (eshell-printn "\neshell/which:")
+  (apply eshell/which-function names)
+  (let* ((login-shell-program (jw--login-shell))
+         (raw-result (shell-command-to-string (format "%s -l -i -c \"which %s\"" login-shell-program (s-join " " names))))
+         (login-shell-which-result (format "\n%s's which:\n%s" login-shell-program raw-result)))
+    (eshell-printn login-shell-which-result)))
+
+(advice-add 'eshell/which :around 'eshell/which--advice--add-login-shell-which-output)
 #+END_SRC
 
-*** ⚑ change eshell-dwim to be able to open multiple eshells, tagging their name with the current dir
 ** yasnippet
 
 yas-keys
