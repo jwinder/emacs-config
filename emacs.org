@@ -1056,13 +1056,6 @@ eshell-keys
 (setq eshell-prompt-function 'eshell--prompt-function)
 (setq eshell-prompt-regexp "^[^#$»\n]* [#$»] ")
 
-(defun eshell/ansi (&rest args)
-  (interactive)
-  (ansi-term (jw--login-shell))
-  (when args
-    (insert (s-join " " args))
-    (term-send-input)))
-
 (keybinding-org-table 'eshell-keys)
 
 (require 'em-alias)
@@ -1091,6 +1084,36 @@ eshell-keys
     (eshell-printn login-shell-which-result)))
 
 (advice-add 'eshell/which :around 'eshell/which--advice--add-login-shell-which-output)
+
+#+END_SRC
+
+ansi-term additions
+#+BEGIN_SRC emacs-lisp
+(defun eshell/ansi (&rest args)
+  (interactive)
+  (ansi-term (jw--login-shell))
+  (when args
+    (insert (s-join " " args))
+    (term-send-input)))
+
+(setq ansi-term-kill-on-exit t)
+
+(defun ansi-term-life-is-too-much ()
+  (interactive)
+  (if (not ansi-term-kill-on-exit)
+      (bury-buffer)
+    (kill-buffer (current-buffer))))
+
+(defun ansi-term--exit-hook ()
+  (let ((process (get-buffer-process (current-buffer))))
+    (when process
+      (set-process-sentinel
+       process
+       (lambda (proc change)
+         (when (string-match "\\(?:finished\\|exited\\)" change)
+           (ansi-term-life-is-too-much)))))))
+
+(add-hook 'term-mode-hook 'ansi-term--exit-hook)
 #+END_SRC
 
 ** yasnippet
