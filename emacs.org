@@ -1056,6 +1056,13 @@ eshell-keys
 (setq eshell-prompt-function 'eshell--prompt-function)
 (setq eshell-prompt-regexp "^[^#$»\n]* [#$»] ")
 
+(defun eshell/ansi (&rest args)
+  (interactive)
+  (ansi-term (jw--login-shell))
+  (when args
+    (insert (s-join " " args))
+    (term-send-input)))
+
 (keybinding-org-table 'eshell-keys)
 
 (require 'em-alias)
@@ -1069,6 +1076,11 @@ eshell-keys
 (eshell/alias "cat" "find-file $1")
 (eshell/alias ":q" "exit")
 (eshell/alias ":Q" "exit")
+
+(add-to-list 'eshell-mode-hook (lambda ()
+                                 (add-to-list 'eshell-visual-commands "htop")
+                                 (add-to-list 'eshell-visual-subcommands '("git" "log" "diff" "show"))
+                                 (add-to-list 'eshell-visual-subcommands '("g" "log" "diff" "show"))))
 
 (defun eshell/which--advice--add-login-shell-which-output (eshell/which-function &rest names)
   (eshell-printn "\neshell/which:")
