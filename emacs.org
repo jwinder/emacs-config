@@ -254,7 +254,16 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--current-date-string ()
   (format-time-string "%Y-%m-%d"))
 
-(defun jw--run-cmd (command &optional process-name before-process-creation after-process-creation)
+(defun jw--do-when-process-finishes (process fn)
+  "Invoke function `fn' after process `process' finishes or exits, having the current buffer focus on the process buffer for `process'."
+  (when process
+    (set-process-sentinel process
+                          `(lambda (proc change)
+                             (when (string-match "\\(?:finished\\|exited\\)" change)
+                               (switch-to-buffer (process-buffer proc))
+                               (funcall ,fn))))))
+
+(defun jw--run-cmd (command &optional process-name before-process-creation after-process-creation after-process-finish)
   "A wrapper around `make-comint-in-buffer'.
   For commands that have already finished, this will clean up the process buffer and re-run the command.
   For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive."
@@ -277,6 +286,7 @@ These are non-interactive library functions useful in other parts of this config
             (when before-process-creation (funcall before-process-creation))
             (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
             (when after-process-creation (funcall after-process-creation))
+            (when after-process-finish (jw--do-when-process-finishes (get-process cmd-process-name) `(lambda () (funcall ,after-process-finish))))
             (switch-to-buffer process-buffer)))))))
 
 (defun jw--run-cmd-tmux (command tmux-session)
@@ -515,6 +525,9 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (put 'narrow-to-region 'disabled nil)
 
 (setq calc-angle-mode 'rad)
+
+;; comint doesn't recognize a password prompt in one of my scripts. consider reporting this as a bug.
+(setq comint-password-prompt-regexp (concat comint-password-prompt-regexp "\\|^.*Password:\\s *\\'"))
 
 (defun shell-command--advice--ignore-message-with-no-output (&rest args)
   (when (string-match "Shell command succeeded with no output" (current-message)) (message nil)))
@@ -1105,13 +1118,9 @@ ansi-term additions
     (kill-buffer (current-buffer))))
 
 (defun ansi-term--exit-hook ()
-  (let ((process (get-buffer-process (current-buffer))))
-    (when process
-      (set-process-sentinel
-       process
-       (lambda (proc change)
-         (when (string-match "\\(?:finished\\|exited\\)" change)
-           (ansi-term-life-is-too-much)))))))
+  (jw--do-when-process-finishes (get-buffer-process (current-buffer))
+                                (lambda ()
+                                  (ansi-term-life-is-too-much))))
 
 (add-hook 'term-mode-hook 'ansi-term--exit-hook)
 #+END_SRC
