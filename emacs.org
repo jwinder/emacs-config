@@ -437,7 +437,7 @@ A macro to set keybindings from an org table
 (set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
 (set-face-attribute 'header-line nil :background "#005858" :foreground "white")
 
-(setq-default mode-line-format '(" ✔ " mode-line-buffer-identification (vc-mode vc-mode) " " mode-line-misc-info))
+(setq-default mode-line-format '(" " mode-line-buffer-identification (vc-mode vc-mode) mode-line-misc-info))
 
 (setq inhibit-startup-message t
       initial-scratch-message ""
