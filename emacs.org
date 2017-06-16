@@ -255,18 +255,23 @@ These are non-interactive library functions useful in other parts of this config
   (format-time-string "%Y-%m-%d"))
 
 (defun jw--do-when-process-finishes (process fn)
-  "Invoke function `fn' after process `process' finishes or exits, having the current buffer focus on the process buffer for `process'."
+  "Invoke function `fn' after process `process' finishes or exits. `fn' is a one-arg function providing the finished process."
   (when process
     (set-process-sentinel process
                           `(lambda (proc change)
                              (when (string-match "\\(?:finished\\|exited\\)" change)
-                               (switch-to-buffer (process-buffer proc))
-                               (funcall ,fn))))))
+                               (funcall ,fn proc))))))
 
 (defun jw--run-cmd (command &optional process-name before-process-creation after-process-creation after-process-finish)
   "A wrapper around `make-comint-in-buffer'.
-  For commands that have already finished, this will clean up the process buffer and re-run the command.
-  For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive."
+
+For commands that have already finished, this will clean up the process buffer and re-run the command.
+For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive.
+
+`process-name' can be used to override the automatic naming of the process & buffer (from the `command').
+`before-process-creation' is an optional zero-arg function that is run before the process is started.
+`after-process-creation' is an optional one-arg function (providing the process an arg) that is run after the process is started.
+`after-process-finish' is an optional one-arg function (providing the process as an arg) that is run after the process finishes."
   (require 'comint)
   (let* ((prepared-cmd (string-trim command))
          (cmd-process-name (or process-name (s-collapse-whitespace (s-left 100 prepared-cmd))))
@@ -285,8 +290,9 @@ These are non-interactive library functions useful in other parts of this config
           (let ((process-buffer (get-buffer-create cmd-buffer-name)))
             (when before-process-creation (funcall before-process-creation))
             (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
-            (when after-process-creation (funcall after-process-creation))
-            (when after-process-finish (jw--do-when-process-finishes (get-process cmd-process-name) `(lambda () (funcall ,after-process-finish))))
+            (let ((proc (get-buffer-process process-buffer)))
+              (when after-process-creation (funcall after-process-creation proc))
+              (when after-process-finish (jw--do-when-process-finishes proc `(lambda (proc) (funcall ,after-process-finish proc)))))
             (switch-to-buffer process-buffer)))))))
 
 (defun jw--run-cmd-tmux (command tmux-session)
@@ -1118,9 +1124,11 @@ ansi-term additions
     (kill-buffer (current-buffer))))
 
 (defun ansi-term--exit-hook ()
-  (jw--do-when-process-finishes (get-buffer-process (current-buffer))
-                                (lambda ()
-                                  (ansi-term-life-is-too-much))))
+  (let ((ansi-process (get-buffer-process (current-buffer))))
+    (jw--do-when-process-finishes ansi-process
+                                  (lambda (proc)
+                                    (switch-to-buffer (process-buffer proc))
+                                    (ansi-term-life-is-too-much)))))
 
 (add-hook 'term-mode-hook 'ansi-term--exit-hook)
 #+END_SRC
@@ -1819,8 +1827,8 @@ sonic-pi-keys
   (interactive)
   (sonic-pi-server-cleanup-process-buffer)
   (jw--run-cmd "sonic-pi run-server" "sonic pi" nil
-               '(lambda ()
-                  (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t))))
+               (lambda (proc)
+                 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t))))
 
 (defun sonic-pi-server-start-if-needed ()
   (unless (sonic-pi-server-running-p)
