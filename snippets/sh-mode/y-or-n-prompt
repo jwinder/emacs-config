@@ -1,9 +1,9 @@
 # -*- mode: snippet -*-
-# name: confirm prompt
-# key: confirm-prompt_
+# name: y-or-n prompt
+# key: y-or-n-prompt_
 # --
-# example usage: confirm "pwd" && pwd
-confirm() {
+# example usage: y_or_n "pwd" && pwd
+y_or_n() {
     read -p "Run \${1}? [Y/n] " response
     case $response in
         [nN][oO]|[nN])
