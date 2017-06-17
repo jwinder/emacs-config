@@ -904,10 +904,9 @@ If the prefix arg is 4, then kill the comment on the current line."
   (life-is-too-much))
 
 (defun emacs-archive-packages ()
-  (when (file-exists-p package-user-dir)
+  (when (f-exists? package-user-dir)
     (let ((archive-dir (format "/tmp/emacs-elpa--%s" (jw--iso-current-time-string))))
-      (copy-directory package-user-dir archive-dir)
-      (delete-directory package-user-dir t))))
+      (f-move package-user-dir archive-dir))))
 
 (defun emacs-byte-compile-elpa-package-files ()
   (interactive)
