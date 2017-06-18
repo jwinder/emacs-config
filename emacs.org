@@ -1051,6 +1051,11 @@ eshell-keys
          (next-eshell (nth next-idx eshells)))
     (switch-to-buffer next-eshell)))
 
+(defun eshell--last-command-status-prompt-string ()
+  (if (= 0 eshell-last-command-status)
+      ""
+    (propertize (format "-%s-\n" eshell-last-command-status) 'face '(:foreground "red3"))))
+
 (defun eshell--git-prompt-string ()
   (require 'vc)
   (if (jw--git-root-dir)
@@ -1059,17 +1064,18 @@ eshell-keys
              (git-is-clean-marker (if git-is-clean "✔" "✘"))
              (git-is-clean-color (if git-is-clean "green" "red1"))
              (git-branch-name-string (propertize git-branch-name 'face '(:foreground "yellow3")))
-             (git-is-clean-string (propertize git-is-clean-marker 'face `(:foreground ,git-is-clean-color)))
-             )
+             (git-is-clean-string (propertize git-is-clean-marker 'face `(:foreground ,git-is-clean-color))))
         (format "%s %s" git-branch-name-string git-is-clean-string))
     ""))
 
 (defun eshell--prompt-function ()
-  (let ((dir-string (propertize (abbreviate-file-name (eshell/pwd)) 'face '(:foreground "CornflowerBlue")))
-        (git-string (eshell--git-prompt-string))
-        (prompt-string (propertize (if (= (user-uid) 0) "#" "»") 'face '(:foreground "red3")))
-        (right-pad-string (propertize " " 'face '(:foreground nil))))
-    (s-collapse-whitespace (format "%s %s %s %s" dir-string git-string prompt-string right-pad-string))))
+  (let* ((last-status-string (eshell--last-command-status-prompt-string))
+         (dir-string (propertize (abbreviate-file-name (eshell/pwd)) 'face '(:foreground "CornflowerBlue")))
+         (git-string (eshell--git-prompt-string))
+         (prompt-string (propertize (if (= (user-uid) 0) "#" "»") 'face '(:foreground "red3")))
+         (right-pad-string (propertize " " 'face '(:foreground nil)))
+         (prompt-string (s-collapse-whitespace (format "%s %s %s %s" dir-string git-string prompt-string right-pad-string))))
+    (concat last-status-string prompt-string)))
 
 (setq eshell-prompt-function 'eshell--prompt-function)
 (setq eshell-prompt-regexp "^[^#$»\n]* [#$»] ")
