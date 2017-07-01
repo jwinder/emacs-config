@@ -150,8 +150,8 @@ cat init.el
 
 (use-package scala-mode)
 (use-package sbt-mode)
-(use-package ensime
-  :pin melpa-stable)
+;; (use-package ensime
+;;   :pin melpa-stable)
 
 (use-package ruby-mode
   :mode (("Gemfile$" . ruby-mode)
@@ -719,12 +719,16 @@ C-u M-x `cmd-dwim' will run a shell command and print the response in the echo a
 C-u 4 M-x `cmd-dwim' will run a shell command and insert the response at point.
 C-u 8 M-x `cmd-dwim' will send a shell command to the default tmux session using `cmd-tmux'.
 
-Interactively, if a region is selected, the region will be used as the shell command.
-Otherwise, the shell command is read from prompt."
+Interactively:
+ - If a region is selected, the region will be used as the shell command.
+ - If the point is on a line beginning with a dollar sign (e.g. \"$ whoami\"), the entire line will be used as the shell command.
+ - Otherwise, the shell command is read from prompt."
   (interactive "P")
   (let ((prepared-cmd (or command (if (region-active-p)
                                       (buffer-substring-no-properties (region-beginning) (region-end))
-                                    (read-shell-command "Command: ")))))
+                                    (if (s-starts-with? "$" (s-trim (or (thing-at-point 'line t) "")))
+                                        (s-trim-left (s-chop-prefix "$" (s-trim (thing-at-point 'line t))))
+                                      (read-shell-command "Command: "))))))
     (if arg
         (case arg
           (4 (insert (shell-command-to-string prepared-cmd)))
@@ -1605,7 +1609,7 @@ org-keys
 (org-babel-support-langs
  (list 'awk 'calc 'C 'dot '(emacs-lisp elisp el) '(haskell hask hs) 'http 'java 'js 'latex 'lisp
        'makefile 'matlab 'org 'perl 'plantuml '(python py) 'R '(ruby rb)
-       'scala ;; there are conflicting versions in org & scala-mode requiring ensime
+       ;; 'scala ;; there are conflicting versions in org & scala-mode requiring ensime
        'scheme '(shell sh) 'sql '(translate tr)))
 
 (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)) ;; "dot" src blocks don't use graphviz-dot-mode by default
