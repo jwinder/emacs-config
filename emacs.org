@@ -720,8 +720,8 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
 
 M-x `cmd-dwim' will run an async shell command in a new buffer.
 C-u M-x `cmd-dwim' will run a shell command and print the response in the echo area.
-C-u 4 M-x `cmd-dwim' will run a shell command and insert the response in the buffer on the next line.
-C-u 8 M-x `cmd-dwim' will send a shell command to the default tmux session using `cmd-tmux'.
+C-u C-u M-x `cmd-dwim' will run a shell command and insert the response in the buffer on the next line.
+C-u C-u C-u M-x `cmd-dwim' will send a shell command to the default tmux session using `cmd-tmux'.
 
 Interactively:
  - If a region is selected, the region will be used as the shell command.
@@ -734,9 +734,9 @@ Interactively:
                                         (s-trim-left (s-chop-prefix "$" (s-trim (thing-at-point 'line t))))
                                       (read-shell-command "Command: "))))))
     (if arg
-        (case arg
-          (4 (save-excursion (open-line-next) (insert (s-trim (shell-command-to-string prepared-cmd)))))
-          (8 (cmd-tmux prepared-cmd))
+        (case (prefix-numeric-value arg)
+          (16 (save-excursion (open-line-next) (insert (s-trim (shell-command-to-string prepared-cmd)))))
+          (64 (cmd-tmux prepared-cmd))
           (t (message (string-trim (shell-command-to-string prepared-cmd)))))
       (cmd prepared-cmd))))
 
