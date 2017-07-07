@@ -1530,8 +1530,6 @@ org-keys
       org-confirm-elisp-link-function nil
       org-id-link-to-org-use-id 'create-if-interactive)
 
-(add-to-list 'org-ctrl-c-ctrl-c-hook 'ob-async-org-babel-execute-src-block)
-
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
 (setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread")
