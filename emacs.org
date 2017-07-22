@@ -1634,7 +1634,7 @@ org-keys
       org-babel-default-header-args:http '((:pretty . "yes")))
 #+END_SRC
 
-support =cmd= function in org-babel
+support =cmd= function in org-babel and =cmd= org link
 #+BEGIN_SRC emacs-lisp
 (defconst org-babel-header-args:cmd '((bg . :any) (tmux . :any)))
 
@@ -1647,7 +1647,7 @@ support =cmd= function in org-babel
     (if tmux-option
         (progn (cmd-tmux body tmux-session) (format "Sent to tmux session: %s" tmux-session))
       (progn
-        (cmd-dwim nil body)
+        (cmd body)
         (when in-bg (switch-to-buffer (other-buffer)))
         "Running command"))))
 
@@ -1659,6 +1659,9 @@ support =cmd= function in org-babel
 
 (org-babel-support-src-template-shortcut 'cmd)
 (org-babel-support-src-template-shortcut 'tmux "cmd :tmux")
+
+(add-to-list 'org-link-parameters '("cmd" :follow (lambda (ref) (cmd ref))))
+(add-to-list 'org-link-parameters '("cmd+tmux" :follow (lambda (ref) (cmd-tmux ref))))
 #+END_SRC
 
 support =gist= and =gist+raw= org links
