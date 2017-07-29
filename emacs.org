@@ -1725,7 +1725,7 @@ scala-keys
 | s     | sbt                        | sbt-keymap |                 |
 | c     | sbt-compile                | sbt-keymap |                 |
 | o     | sbt-test-only-current-test | sbt-keymap |                 |
-| p     | sbt-run-previous-command   | sbt-keymap |                 |
+| l     | sbt-run-previous-command   | sbt-keymap |                 |
 
 #+HEADER: :var scala-keys=scala-keys
 #+BEGIN_SRC emacs-lisp
