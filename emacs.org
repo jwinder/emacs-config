@@ -133,7 +133,7 @@ cat init.el
 
 (use-package xah-math-input
   :config (progn
-            (xah-math-input--add-to-hash [ ["def" "≝"] ["pm" "±"] ["cdot" "·"] ["wedge" "∧"]])
+            (xah-math-input--add-to-hash [ ["def" "≝"] ["pm" "±"] ["cdot" "·"] ["wedge" "∧"] ["doublesharp" "𝄪"]])
             (xah-math-input--add-cycle ["≔" "≝"])
             (xah-math-input--add-cycle ["∫" "∬" "∭" "⨌"])
             (xah-math-input--add-cycle ["∮" "∯" "∰" "∱" "∲" "∳"])))
