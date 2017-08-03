@@ -1622,6 +1622,7 @@ org-keys
 (org-babel-support-src-template-shortcut 'conf)
 (org-babel-support-src-template-shortcut 'text)
 (org-babel-support-src-template-shortcut 'json)
+(org-babel-support-src-template-shortcut 'scala) ;; since this is commented out above
 
 (org-babel-support-src-template-shortcut 'trs "translate :src es :dest en") ;; traducir español al inglés
 (org-babel-support-src-template-shortcut 'tre "translate :src en :dest es") ;; translate english to spanish
