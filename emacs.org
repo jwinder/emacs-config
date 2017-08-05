@@ -254,6 +254,12 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--current-date-string ()
   (format-time-string "%Y-%m-%d"))
 
+(defun jw--http-get-request-to-string (url)
+  (with-current-buffer (url-retrieve-synchronously url)
+    (goto-char url-http-end-of-headers)
+    (delete-region (point-min) (point))
+    (s-trim (buffer-string))))
+
 (defun jw--do-when-process-finishes (process fn)
   "Invoke function `fn' after process `process' finishes or exits. `fn' is a one-arg function providing the finished process."
   (when process
@@ -1896,8 +1902,17 @@ exercism-io keys
 
 (keybinding-org-table 'exercism-io-keys)
 
-(defun exercism-io-read-track ()
-  (read-string "Track (cpp, ruby, etc): "))
+(setq exercism-io--cached-track-list nil)
+(defun exercism-io--get-track-list ()
+  (or exercism-io--cached-track-list
+      (let* ((json (json-read-from-string (jw--http-get-request-to-string "http://x.exercism.io/tracks")))
+             (tracks-json-array (alist-get 'tracks json))
+             (track-ids (-map (lambda (track-json) (alist-get 'id track-json)) tracks-json-array)))
+        (setq exercism-io--cached-track-list track-ids)
+        exercism-io--cached-track-list)))
+
+(defun exercism-io--read-track ()
+  (completing-read "Track: " (exercism-io--get-track-list) nil t))
 
 (defun exercism-io-cmd (cmd)
   (interactive "sCommand: ")
@@ -1914,7 +1929,7 @@ exercism-io keys
 (defun exercism-io-fetch (arg)
   (interactive "P")
   (if arg
-      (exercism-io-cmd-sync (format "fetch %s" (exercism-io-read-track)))
+      (exercism-io-cmd-sync (format "fetch %s" (exercism-io--read-track)))
     (exercism-io-cmd-sync "fetch")))
 
 (defun exercism-io-submit-this-file ()
@@ -1931,11 +1946,11 @@ exercism-io keys
 
 (defun exercism-io-list ()
   (interactive)
-  (exercism-io-cmd (format "list %s" (exercism-io-read-track))))
+  (exercism-io-cmd (format "list %s" (exercism-io--read-track))))
 
 (defun exercism-io-status ()
   (interactive)
-  (exercism-io-cmd (format "status %s" (exercism-io-read-track))))
+  (exercism-io-cmd (format "status %s" (exercism-io--read-track))))
 
 (defun exercism-io-configure ()
   (interactive)
