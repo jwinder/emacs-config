@@ -1918,10 +1918,6 @@ exercism-io keys
   (interactive "sCommand: ")
   (cmd (format "exercism %s" cmd)))
 
-(defun exercism-io-cmd-sync (cmd)
-  (interactive "sCommand: ")
-  (shell-command (format "exercism %s" cmd)))
-
 (defun exercism-io-help ()
   (interactive)
   (exercism-io-cmd "--help"))
@@ -1929,12 +1925,12 @@ exercism-io keys
 (defun exercism-io-fetch (arg)
   (interactive "P")
   (if arg
-      (exercism-io-cmd-sync (format "fetch %s" (exercism-io--read-track)))
-    (exercism-io-cmd-sync "fetch")))
+      (exercism-io-cmd (format "fetch %s" (exercism-io--read-track)))
+    (exercism-io-cmd "fetch")))
 
 (defun exercism-io-submit-this-file ()
   (interactive)
-  (exercism-io-cmd-sync (format "submit %s" (buffer-file-name))))
+  (exercism-io-cmd (format "submit %s" (buffer-file-name))))
 
 (defun exercism-io-tracks ()
   (interactive)
