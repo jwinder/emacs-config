@@ -51,7 +51,6 @@ cat init.el
 
 #+BEGIN_SRC emacs-lisp
 (defconst jw-config-author-name "Joe Winder")
-(defconst jw-config-author-email "jsph.winder@gmail.com")
 (defconst jw-config-author-url "http://jwinder.github.io")
 (defconst jw-config-github-url "https://github.com/jwinder/emacs-config")
 #+END_SRC
@@ -137,6 +136,8 @@ cat init.el
             (xah-math-input--add-cycle ["≔" "≝"])
             (xah-math-input--add-cycle ["∫" "∬" "∭" "⨌"])
             (xah-math-input--add-cycle ["∮" "∯" "∰" "∱" "∲" "∳"])))
+
+(use-package ess)
 #+END_SRC
 
 *** languages
