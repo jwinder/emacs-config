@@ -1374,8 +1374,9 @@ faster searching
 
 (defun helm-projectile-projects-helm-projectile-ag (dir)
   (interactive)
-  (let ((default-directory dir))
-    (call-interactively 'helm-projectile-ag)))
+  (with-temp-buffer
+    (let ((default-directory dir))
+      (call-interactively 'helm-projectile-ag))))
 
 (helm-add-action-to-source "Ag in project `M-s a'" 'helm-projectile-projects-helm-projectile-ag helm-source-projectile-projects)
 (helm-projectile-define-key helm-projectile-projects-map (kbd "M-s a") 'helm-projectile-projects-helm-projectile-ag)
