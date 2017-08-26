@@ -8,11 +8,11 @@ This is a very basic outline for a write-up.
 
 To convert this org file to latex pdf in the same directory:
 
-elisp:org-latex-export-to-pdf or YY
+elisp:org-latex-export-to-pdf or C-c C-e l p
 
 To create the latex pdf & immediately open:
 
-[[elisp:(find-file%20(org-latex-export-to-pdf))]] or Y
+[[elisp:(find-file%20(org-latex-export-to-pdf))]] or C-c C-e l o
 
 dependencies: latex, pip install matplotlib
 
