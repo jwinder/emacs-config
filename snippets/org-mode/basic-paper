@@ -1,0 +1,72 @@
+# -*- mode: snippet -*-
+# name: basic-paper
+# key: basic-paper_
+# --
+* readme                                                                                  :noexport:
+
+This is a very basic outline for a write-up.
+
+To convert this org file to latex pdf in the same directory:
+
+elisp:org-latex-export-to-pdf or YY
+
+To create the latex pdf & immediately open:
+
+[[elisp:(find-file%20(org-latex-export-to-pdf))]] or Y
+
+dependencies: latex, pip install matplotlib
+
+* Configs                                                                                 :noexport:
+
+#+TITLE: title of paper
+#+SUBTITLE: class & section #
+#+AUTHOR: name
+
+#+LaTeX_CLASS: article
+#+LaTeX_HEADER: \usepackage{biblatex} \usepackage{physics} \usepackage{siunitx} \usepackage{parskip}
+#+OPTIONS: toc:nil num:nil
+
+* Experiment
+
+paragraph one
+
+paragraph two
+
+* Math Example
+
+#+BEGIN_SRC latex
+\begin{align*}
+\dv{x}(x^2) = 2x
+\end{align*}
+#+END_SRC
+
+* Table Example
+
+#+NAME: example-table
+| Date       |  Time | Distance |
+|------------+-------+----------|
+| 09/02/2010 | 15:13 |      2.5 |
+| 09/01/2010 | 14:00 |      2.4 |
+
+* Graph Example
+
+#+BEGIN_CENTER
+[[./example-graph.png]]
+#+END_CENTER
+
+** code                                                                                   :noexport:
+
+#+BEGIN_SRC python :results silent
+import matplotlib.pyplot as plt
+import numpy as np
+
+t = np.arange(0.0, 2.0, 0.01)
+s = 1 + np.sin(2*np.pi*t)
+plt.plot(t, s)
+
+plt.xlabel('time (s)')
+plt.ylabel('voltage (mV)')
+plt.title('About as simple as it gets, folks')
+plt.grid(True)
+plt.savefig("example-graph.png")
+#+END_SRC
