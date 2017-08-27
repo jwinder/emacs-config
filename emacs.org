@@ -1161,6 +1161,8 @@ yas-keys
 
 (keybinding-org-table 'yas-keys)
 
+
+(setq yas-indent-line nil)
 #+END_SRC
 
 ** rcirc
