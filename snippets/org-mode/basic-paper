@@ -41,7 +41,7 @@ Example using raw latex source blocks:
 \end{align*}
 #+END_SRC
 
-Here is an inline math examples. Let \( y(x) = x^2 \). Evaluate \( \dv{y}{x} \) at \( x = 5 \).
+Here is an inline math examples. Let \\( y(x) = x^2 \\). Evaluate \\( \dv{y}{x} \\) at \\( x = 5 \\).
 
 The derivative: \[ y'(x) = \dv{x}(x^2) = 2x \]
 
