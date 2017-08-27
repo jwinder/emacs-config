@@ -16,7 +16,7 @@ To create the latex pdf & immediately open:
 
 dependencies: latex, pip install matplotlib
 
-* Configs                                                                                 :noexport:
+* configs                                                                                 :noexport:
 
 #+TITLE: title of paper
 #+SUBTITLE: class & section #
@@ -26,7 +26,7 @@ dependencies: latex, pip install matplotlib
 #+LaTeX_HEADER: \usepackage{biblatex} \usepackage{physics} \usepackage{siunitx} \usepackage{parskip}
 #+OPTIONS: toc:nil num:nil
 
-* Experiment
+* Heading Example
 
 paragraph one
 
@@ -34,39 +34,52 @@ paragraph two
 
 * Math Example
 
+Example using raw latex source blocks:
 #+BEGIN_SRC latex
 \begin{align*}
 \dv{x}(x^2) = 2x
 \end{align*}
 #+END_SRC
 
-* Table Example
+Here is an inline math examples. Let \( y(x) = x^2 \). Evaluate \( \dv{y}{x} \) at \( x = 5 \).
 
-#+NAME: example-table
+The derivative: \[ y'(x) = \dv{x}(x^2) = 2x \]
+
+The answer: \[ y'(5) = 2(5) = 10 \]
+
+* Table Examples
+
+#+ATTR_LATEX: :align c|c|c
 | Date       |  Time | Distance |
 |------------+-------+----------|
 | 09/02/2010 | 15:13 |      2.5 |
 | 09/01/2010 | 14:00 |      2.4 |
 
+#+ATTR_LATEX: :mode math :environment bmatrix :math-suffix \times
+| a | b |
+| c | d |
+
+#+ATTR_LATEX: :mode math :environment bmatrix
+| 1 | 2 |
+| 3 | 4 |
+
 * Graph Example
 
-#+BEGIN_CENTER
-[[./example-graph.png]]
-#+END_CENTER
-
-** code                                                                                   :noexport:
-
-#+BEGIN_SRC python :results silent
-import matplotlib.pyplot as plt
+#+BEGIN_SRC python :session :results value file :exports results
+import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
+import matplotlib.pyplot as plt
 
-t = np.arange(0.0, 2.0, 0.01)
-s = 1 + np.sin(2*np.pi*t)
-plt.plot(t, s)
+filename = '/tmp/example-bar-graph.png'
+objects = ('Python', 'C++', 'Java', 'Perl', 'Scala', 'Lisp')
+y_pos = np.arange(len(objects))
+performance = [10,8,6,4,2,1]
 
-plt.xlabel('time (s)')
-plt.ylabel('voltage (mV)')
-plt.title('About as simple as it gets, folks')
-plt.grid(True)
-plt.savefig("example-graph.png")
+plt.bar(y_pos, performance, align='center', alpha=0.5)
+plt.xticks(y_pos, objects)
+plt.ylabel('Usage')
+plt.title('Programming language usage')
+plt.savefig(filename)
+
+filename
 #+END_SRC
