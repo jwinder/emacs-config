@@ -1815,6 +1815,15 @@ adding sbt shortcut to helm projectile
 (helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s c") 'helm-projectile-projects-sbt-compile)
 #+END_SRC
 
+remove flycheck from *.sbt files
+#+BEGIN_SRC emacs-lisp
+(defun disable-flycheck-scala-in-sbt-files ()
+  (when (s-equals? "sbt" (file-name-extension buffer-file-name))
+    (flycheck-mode -1)))
+
+(add-hook 'scala-mode-hook 'disable-flycheck-scala-in-sbt-files)
+#+END_SRC
+
 ** sonic pi
 
 sonic-pi-keys
