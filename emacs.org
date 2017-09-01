@@ -1507,6 +1507,7 @@ org-keys
 
 (add-to-list 'org-latex-packages-alist '("" "physics"))
 (setq org-latex-remove-logfiles nil) ;; evaluating latex blocks was causing errors because ox-latex couldn't find the logfiles
+(setq org-latex-caption-above nil)
 
 (setq org-use-speed-commands t
       org-enforce-todo-dependencies t
