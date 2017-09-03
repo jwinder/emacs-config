@@ -140,6 +140,9 @@ cat init.el
 
 (use-package ess
   :config (setq save-abbrevs 'silently)) ;; ess R sets some abbrevs when installed
+
+(use-package ledger-mode
+  :mode (("\\.lgr$" . ledger-mode)))
 #+END_SRC
 
 *** languages
@@ -1611,7 +1614,7 @@ org-keys
         (-each all-shortcuts (lambda (shortcut) (org-babel-support-src-template-shortcut shortcut ob-lang)))))))
 
 (org-babel-support-langs
- (list 'awk 'calc 'C 'dot '(emacs-lisp elisp el) '(haskell hask hs) 'http 'java 'js 'latex 'lisp
+ (list 'awk 'calc 'C 'dot '(emacs-lisp elisp el) '(haskell hask hs) 'http 'java 'js 'latex 'ledger 'lisp
        'makefile 'matlab 'org 'perl 'plantuml '(python py) 'R '(ruby rb)
        ;; 'scala ;; there are conflicting versions in org & scala-mode requiring ensime
        'scheme '(shell sh) 'sql '(translate tr)))
