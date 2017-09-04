@@ -548,6 +548,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq calc-angle-mode 'rad)
 
+(setq tramp-default-method "ssh")
+
 ;; comint doesn't recognize a password prompt in one of my scripts. consider reporting this as a bug.
 (setq comint-password-prompt-regexp (concat comint-password-prompt-regexp "\\|^.*Password:\\s *\\'"))
 
