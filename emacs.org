@@ -1823,7 +1823,7 @@ adding sbt shortcut to helm projectile
 remove flycheck from *.sbt files
 #+BEGIN_SRC emacs-lisp
 (defun disable-flycheck-scala-in-sbt-files ()
-  (when (s-equals? "sbt" (file-name-extension buffer-file-name))
+  (when (and buffer-file-name (s-equals? "sbt" (file-name-extension buffer-file-name)))
     (flycheck-mode -1)))
 
 (add-hook 'scala-mode-hook 'disable-flycheck-scala-in-sbt-files)
