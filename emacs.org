@@ -658,6 +658,13 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
       (calendar (if (equal arg 4) arg nil))
     (message (current-time-string))))
 
+(defun computer-power-status ()
+  "Alternative to the default battery functions, which currently don't extract the information correctly on macOS."
+  (interactive)
+  (case system-type
+    ('darwin (shell-command "pmset -g ps"))
+    (t (message "This is only setup for macOS."))))
+
 (defun iso-date ()
   (interactive)
   (message (jw--iso-current-time-string)))
@@ -992,6 +999,7 @@ base-keys (keys not in other parts of this config)
 | q             | emacs-configs-toggle                      | jw-keymap         |      |                      |
 | d             | date                                      | jw-keymap         |      |                      |
 | w             | weather                                   | jw-keymap         |      |                      |
+| b             | computer-power-status                     | jw-keymap         |      |                      |
 | i             | toggle-scratch-buffer                     | jw-keymap         |      |                      |
 
 #+HEADER: :var base-keys=base-keys
