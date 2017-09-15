@@ -464,9 +464,6 @@ A macro to set keybindings from an org table
 (setq inhibit-startup-message t
       initial-scratch-message ""
       initial-major-mode 'org-mode)
-
-(add-hook 'minibuffer-setup-hook '(lambda ()
-                                    (set (make-local-variable 'face-remapping-alist) '((default :height 1.3)))))
 #+END_SRC
 
 fix for cursor color in clients falling back to the default theme [[http:emacs.stackexchange.com/a/14575][copied from stackoverflow]]
@@ -1460,9 +1457,6 @@ org-keys
   (interactive "P")
   (org-id-get-create arg)
   (org-id-copy))
-
-(add-hook 'org-mode-hook (lambda ()
-                           (text-scale-set 2)))
 
 (keybinding-org-table 'org-keys)
 
