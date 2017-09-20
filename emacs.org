@@ -640,6 +640,15 @@ NOTICE: Sometimes this acts funky, e.g. after removing items from the kill ring 
       (progn (beginning-of-line) (kill-line)))
     (when cleanup-kill (kill-ring-cleanup-last-kill major-mode))))
 
+(defun kill-file-or-name (arg)
+  "Kill ring save the current file name. With prefix arg, save the fully qualified path + file name. If the buffer is not visiting a file, use the buffer name."
+  (interactive "P")
+  (if buffer-file-name
+      (if arg
+          (kill-new buffer-file-name)
+        (kill-new (f-filename buffer-file-name)))
+    (kill-new (buffer-name))))
+
 (defun unique-lines ()
   (interactive)
   (if (region-active-p)
@@ -679,25 +688,14 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
   (jw--run-cmd "curl wttr.in" "weather"))
 
 (defun scratch-buffer ()
-  "My hacky way to back the scratch buffer by a file."
+  "Save the scratch buffer in a file."
   (interactive)
-  (let* ((bname "*scratch*")
-         (existing-buffer (get-buffer bname))
-         (filename (f-expand "scratch.org" user-emacs-directory)))
-    (when (and existing-buffer (not (buffer-file-name existing-buffer)))
-      (kill-buffer existing-buffer))
-    (if (get-buffer bname)
-        (switch-to-buffer bname)
-      (progn
-        (unless (f-exists? filename) (f-touch filename))
-        (find-file filename)
-        (rename-buffer bname)
-        (set-buffer-modified-p nil)
-        (cd (getenv "HOME"))))))
+  (find-file (f-expand "scratch.org" user-emacs-directory))
+  (when (get-buffer "*scratch*") (kill-buffer "*scratch*")))
 
 (defun toggle-scratch-buffer ()
   (interactive)
-  (if (string= (buffer-name) "*scratch*")
+  (if (string= (buffer-name) "scratch.org")
       (progn
         (save-buffer)
         (switch-to-buffer (other-buffer)))
