@@ -483,6 +483,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror)
 
+(setq jw-org-scratch-file (f-expand "scratch.org" user-emacs-directory))
+
 (setq enable-local-variables :all)
 
 (ansi-color-for-comint-mode-on)
@@ -640,7 +642,7 @@ NOTICE: Sometimes this acts funky, e.g. after removing items from the kill ring 
       (progn (beginning-of-line) (kill-line)))
     (when cleanup-kill (kill-ring-cleanup-last-kill major-mode))))
 
-(defun kill-file-or-name (arg)
+(defun kill-save-file-or-buffer-name (arg)
   "Kill ring save the current file name. With prefix arg, save the fully qualified path + file name. If the buffer is not visiting a file, use the buffer name."
   (interactive "P")
   (if buffer-file-name
@@ -690,12 +692,12 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
 (defun scratch-buffer ()
   "Save the scratch buffer in a file."
   (interactive)
-  (find-file (f-expand "scratch.org" user-emacs-directory))
+  (find-file jw-org-scratch-file)
   (when (get-buffer "*scratch*") (kill-buffer "*scratch*")))
 
 (defun toggle-scratch-buffer ()
   (interactive)
-  (if (string= (buffer-name) "scratch.org")
+  (if (s-equals? (buffer-name) (f-filename jw-org-scratch-file))
       (progn
         (save-buffer)
         (switch-to-buffer (other-buffer)))
@@ -1422,6 +1424,7 @@ org-keys
 |-----------+----------------------------+-----------+---------------|
 | o         | jw-todo                    | jw-keymap |               |
 | a         | org-agenda                 | jw-keymap |               |
+| A         | jw-org-agenda              | jw-keymap |               |
 | c         | org-capture                | jw-keymap |               |
 | <tab>     | org-pomodoro               | jw-keymap |               |
 | C-c <     | org-time-stamp             | local     | org-mode-hook |
@@ -1442,6 +1445,14 @@ org-keys
       (switch-to-buffer (other-buffer))
     (find-file jw-org-todo-file)
     (cd (getenv "HOME"))))
+
+(setq jw-org-agenda-pre-hook nil)
+
+(defun jw-org-agenda (arg)
+  "Enriched `org-agenda' that runs `jw-org-agenda-pre-hook' before `org-agenda' is opened. `org-agenda-mode-hook' can be used for a post-hook"
+  (interactive "P")
+  (run-hooks 'jw-org-agenda-pre-hook)
+  (org-agenda arg))
 
 (defun org-feed-update-all-or-one (arg)
   "When called with a prefix argument, interactively call `org-feed-update'. Otherwise call `org-feed-update-all'."
@@ -1483,7 +1494,8 @@ org-keys
       org-confirm-babel-evaluate nil
       org-confirm-shell-link-function nil
       org-confirm-elisp-link-function nil
-      org-id-link-to-org-use-id 'create-if-interactive)
+      org-id-link-to-org-use-id 'create-if-interactive
+      org-agenda-window-setup 'only-window)
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
