@@ -946,58 +946,59 @@ If the prefix arg is 4, then kill the comment on the current line."
 
 base-keys (keys not in other parts of this config)
 #+NAME: base-keys
-| Key           | Function                                  | Scope             | Hook | Notes                |
-|---------------+-------------------------------------------+-------------------+------+----------------------|
-| C-z           | nil                                       |                   |      | remove suspend       |
-| C-x C-z       | nil                                       |                   |      |                      |
-| C-h           | nil                                       |                   |      | remove original help |
-| C-M-?         | help-command                              |                   |      |                      |
-| <return>      | toggle-frame-fullscreen                   | ctl-x-5-map       |      |                      |
-| M-!           | cmd-dwim                                  |                   |      |                      |
-| M-&           | cmd-dwim                                  |                   |      |                      |
-| C-s           | isearch-forward-regexp                    |                   |      |                      |
-| C-r           | isearch-backward-regexp                   |                   |      |                      |
-| C-M-g         | goto-line                                 |                   |      |                      |
-| C-M-9         | winner-undo                               |                   |      |                      |
-| C-M-0         | winner-redo                               |                   |      |                      |
-| t             | transpose-windows                         | ctl-x-4-map       |      |                      |
-| s             | toggle-window-split                       | ctl-x-4-map       |      |                      |
-| C-w           | kill-region-or-line                       |                   |      |                      |
-| M-w           | kill-ring-save-region-or-line             |                   |      |                      |
-| C-a           | beginning-of-line-or-indentation          |                   |      |                      |
-| C-o           | open-line-previous                        |                   |      |                      |
-| C-<return>    | open-line-next                            |                   |      |                      |
-| C-j           | newline-and-open-line-previous            |                   |      |                      |
-| C-x 2         | split-window-down-last-buffer-or-scratch  |                   |      |                      |
-| C-x 3         | split-window-right-last-buffer-or-scratch |                   |      |                      |
-| M-;           | comment-dwim-dwim                         |                   |      |                      |
-| C-M-\         | indent-region-or-buffer                   |                   |      |                      |
-| S-M-SPC       | math-symbol-at-point                      |                   |      |                      |
-| C-=           | er/expand-region                          |                   |      |                      |
-| C-+           | er/contract-region                        |                   |      |                      |
-| C-*           | mc/mark-all-like-this                     |                   |      |                      |
-| C-<           | mc/mark-previous-like-this                |                   |      |                      |
-| C->           | mc/mark-next-like-this                    |                   |      |                      |
-| C-x r t       | mc/edit-lines                             |                   |      |                      |
-| M-s j         | dumb-jump-go                              |                   |      |                      |
-| M-s J         | dumb-jump-go-other-window                 |                   |      |                      |
-| M-<backspace> | nil                                       | sp-keymap         |      |                      |
-| C-M-p         | nil                                       | sp-keymap         |      |                      |
-| C-M-n         | nil                                       | sp-keymap         |      |                      |
-| C-c @ <left>  | hs-hide-block                             | hs-minor-mode-map |      |                      |
-| C-c @ <right> | hs-show-block                             | hs-minor-mode-map |      |                      |
-| C-c @ <up>    | hs-hide-level                             | hs-minor-mode-map |      |                      |
-| C-c @ <down>  | hs-show-all                               | hs-minor-mode-map |      |                      |
-| C-x m         | jw-keymap                                 |                   |      |                      |
-| C-c m         | jw-keymap                                 |                   |      |                      |
-| m             | jw-keymap                                 | ctl-x-4-map       |      |                      |
-| m             | jw-keymap                                 | ctl-x-5-map       |      |                      |
-| !             | cmd-dwim                                  | jw-keymap         |      |                      |
-| q             | emacs-configs-toggle                      | jw-keymap         |      |                      |
-| d             | date                                      | jw-keymap         |      |                      |
-| w             | weather                                   | jw-keymap         |      |                      |
-| b             | computer-power-status                     | jw-keymap         |      |                      |
-| i             | toggle-scratch-buffer                     | jw-keymap         |      |                      |
+| Key           | Function                                  | Scope             | Hook | Notes                     |
+|---------------+-------------------------------------------+-------------------+------+---------------------------|
+| C-z           | nil                                       |                   |      | remove suspend            |
+| C-x C-z       | nil                                       |                   |      |                           |
+| C-h           | nil                                       |                   |      | remove original help      |
+| C-M-?         | help-command                              |                   |      |                           |
+| <return>      | toggle-frame-fullscreen                   | ctl-x-5-map       |      |                           |
+| M-!           | cmd-dwim                                  |                   |      |                           |
+| M-&           | cmd-dwim                                  |                   |      |                           |
+| C-s           | isearch-forward-regexp                    |                   |      |                           |
+| C-r           | isearch-backward-regexp                   |                   |      |                           |
+| C-M-g         | goto-line                                 |                   |      |                           |
+| C-M-9         | winner-undo                               |                   |      |                           |
+| C-M-0         | winner-redo                               |                   |      |                           |
+| t             | transpose-windows                         | ctl-x-4-map       |      |                           |
+| s             | toggle-window-split                       | ctl-x-4-map       |      |                           |
+| C-w           | kill-region-or-line                       |                   |      |                           |
+| M-w           | kill-ring-save-region-or-line             |                   |      |                           |
+| C-a           | beginning-of-line-or-indentation          |                   |      |                           |
+| C-o           | open-line-previous                        |                   |      |                           |
+| C-<return>    | open-line-next                            |                   |      |                           |
+| C-j           | newline-and-open-line-previous            |                   |      |                           |
+| C-x 2         | split-window-down-last-buffer-or-scratch  |                   |      |                           |
+| C-x 3         | split-window-right-last-buffer-or-scratch |                   |      |                           |
+| M-;           | comment-dwim-dwim                         |                   |      |                           |
+| C-M-\         | indent-region-or-buffer                   |                   |      |                           |
+| M-/           | dabbrev-expand                            |                   |      | helm-dabbrev doesn't work |
+| S-M-SPC       | math-symbol-at-point                      |                   |      |                           |
+| C-=           | er/expand-region                          |                   |      |                           |
+| C-+           | er/contract-region                        |                   |      |                           |
+| C-*           | mc/mark-all-like-this                     |                   |      |                           |
+| C-<           | mc/mark-previous-like-this                |                   |      |                           |
+| C->           | mc/mark-next-like-this                    |                   |      |                           |
+| C-x r t       | mc/edit-lines                             |                   |      |                           |
+| M-s j         | dumb-jump-go                              |                   |      |                           |
+| M-s J         | dumb-jump-go-other-window                 |                   |      |                           |
+| M-<backspace> | nil                                       | sp-keymap         |      |                           |
+| C-M-p         | nil                                       | sp-keymap         |      |                           |
+| C-M-n         | nil                                       | sp-keymap         |      |                           |
+| C-c @ <left>  | hs-hide-block                             | hs-minor-mode-map |      |                           |
+| C-c @ <right> | hs-show-block                             | hs-minor-mode-map |      |                           |
+| C-c @ <up>    | hs-hide-level                             | hs-minor-mode-map |      |                           |
+| C-c @ <down>  | hs-show-all                               | hs-minor-mode-map |      |                           |
+| C-x m         | jw-keymap                                 |                   |      |                           |
+| C-c m         | jw-keymap                                 |                   |      |                           |
+| m             | jw-keymap                                 | ctl-x-4-map       |      |                           |
+| m             | jw-keymap                                 | ctl-x-5-map       |      |                           |
+| !             | cmd-dwim                                  | jw-keymap         |      |                           |
+| q             | emacs-configs-toggle                      | jw-keymap         |      |                           |
+| d             | date                                      | jw-keymap         |      |                           |
+| w             | weather                                   | jw-keymap         |      |                           |
+| b             | computer-power-status                     | jw-keymap         |      |                           |
+| i             | toggle-scratch-buffer                     | jw-keymap         |      |                           |
 
 #+HEADER: :var base-keys=base-keys
 #+BEGIN_SRC emacs-lisp
@@ -1284,7 +1285,6 @@ helm-keys
 | M-s i   | helm-semantic-or-imenu          |                     |                  |                          |
 | C-x r l | helm-bookmarks                  |                     |                  |                          |
 | C-x r j | helm-register-jump-dwim         |                     |                  |                          |
-| M-/     | helm-dabbrev                    |                     |                  |                          |
 | C-h a   | helm-apropos                    |                     |                  |                          |
 | C-M-/   | helm-company                    |                     |                  |                          |
 | C-h b   | helm-descbinds                  |                     |                  |                          |
