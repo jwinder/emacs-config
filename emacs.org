@@ -1495,7 +1495,8 @@ org-keys
       org-confirm-shell-link-function nil
       org-confirm-elisp-link-function nil
       org-id-link-to-org-use-id 'create-if-interactive
-      org-agenda-window-setup 'only-window)
+      org-agenda-window-setup 'only-window
+      org-agenda-span 'month)
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
