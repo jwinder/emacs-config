@@ -545,7 +545,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (put 'narrow-to-region 'disabled nil)
 
-(setq calc-angle-mode 'rad)
+;; (setq calc-angle-mode 'rad)
+(setq calc-angle-mode 'deg)
 
 (setq tramp-default-method "ssh")
 
