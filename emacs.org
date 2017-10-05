@@ -1500,13 +1500,13 @@ org-keys
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
-(setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread")
+(setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread" "question")
       org--todo-todo-states '("⚑")
       org--blocked-todo-boxed-states '("blocked" "halted" "stalled" "paused")
       org--doing-todo-boxed-states '("doing" "going")
       org--doing-todo-states '("⚐")
       org--delegated-todo-boxed-states '("delegated" "assigned" "pr" "waiting")
-      org--done-todo-boxed-states '("done" "cancelled" "canceled" "finished" "boom" "read")
+      org--done-todo-boxed-states '("done" "cancelled" "canceled" "finished" "boom" "read" "answered")
       org--done-todo-states '("✘" "✔"))
 
 (defun org--red-box-state (s) `(,s :background "DarkRed" :foreground white :box (:style released-button)))
