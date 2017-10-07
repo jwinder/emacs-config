@@ -1426,7 +1426,7 @@ org-keys
 | o         | jw-todo                    | jw-keymap |               |
 | a         | org-agenda                 | jw-keymap |               |
 | A         | jw-org-agenda              | jw-keymap |               |
-| c         | org-capture                | jw-keymap |               |
+| c         | helm-org-capture-templates | jw-keymap |               |
 | <tab>     | org-pomodoro               | jw-keymap |               |
 | C-c <     | org-time-stamp             | local     | org-mode-hook |
 | C-c .     | org-time-stamp-inactive    | local     | org-mode-hook |
