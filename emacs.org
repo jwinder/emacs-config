@@ -1282,7 +1282,7 @@ helm-keys
 | M-s a   | helm-do-grep-ag                 |                     |                  |                          |
 | M-s o   | helm-occur                      |                     |                  |                          |
 | M-s s   | helm-swoop                      |                     |                  |                          |
-| M-s S   | helm-multi-swoop-all            |                     |                  |                          |
+| M-s M-s | helm-multi-swoop-all            |                     |                  |                          |
 | M-s i   | helm-semantic-or-imenu          |                     |                  |                          |
 | C-x r l | helm-bookmarks                  |                     |                  |                          |
 | C-x r j | helm-register-jump-dwim         |                     |                  |                          |
