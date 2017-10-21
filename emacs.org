@@ -540,8 +540,6 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (add-hook 'text-mode-hook 'flyspell-mode)
 
-(add-hook 'prog-mode-hook 'hs-minor-mode)
-
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (put 'narrow-to-region 'disabled nil)
@@ -760,6 +758,13 @@ Interactively:
           (t (message (string-trim (shell-command-to-string prepared-cmd)))))
       (cmd prepared-cmd))))
 
+(jw--define-menu cmd-menu 'cmd-menu
+  :actions '("command type menu M-&"
+             (?! "sh cmd async    M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
+             (?: "elisp evaluate  M-:" helm-eval-expression-with-eldoc)
+             (?* "calc evaluate   M-*" helm-calcul-expression))
+  :max-action-columns 1)
+
 (defun transpose-windows (arg)
   (interactive "p")
   (let ((selector (if (>= arg 0) 'next-window 'previous-window)))
@@ -948,55 +953,55 @@ If the prefix arg is 4, then kill the comment on the current line."
 
 base-keys (keys not in other parts of this config)
 #+NAME: base-keys
-| Key           | Function                                  | Scope             | Hook | Notes                     |
-|---------------+-------------------------------------------+-------------------+------+---------------------------|
-| C-z           | nil                                       |                   |      | remove suspend            |
-| C-x C-z       | nil                                       |                   |      |                           |
-| C-h           | nil                                       |                   |      | remove original help      |
-| C-M-?         | help-command                              |                   |      |                           |
-| <return>      | toggle-frame-fullscreen                   | ctl-x-5-map       |      |                           |
-| M-!           | cmd-dwim                                  |                   |      |                           |
-| M-&           | cmd-dwim                                  |                   |      |                           |
-| C-s           | isearch-forward-regexp                    |                   |      |                           |
-| C-r           | isearch-backward-regexp                   |                   |      |                           |
-| C-M-g         | goto-line                                 |                   |      |                           |
-| C-M-9         | winner-undo                               |                   |      |                           |
-| C-M-0         | winner-redo                               |                   |      |                           |
-| t             | transpose-windows                         | ctl-x-4-map       |      |                           |
-| s             | toggle-window-split                       | ctl-x-4-map       |      |                           |
-| C-w           | kill-region-or-line                       |                   |      |                           |
-| M-w           | kill-ring-save-region-or-line             |                   |      |                           |
-| C-a           | beginning-of-line-or-indentation          |                   |      |                           |
-| C-o           | open-line-previous                        |                   |      |                           |
-| C-<return>    | open-line-next                            |                   |      |                           |
-| C-j           | newline-and-open-line-previous            |                   |      |                           |
-| C-x 2         | split-window-down-last-buffer-or-scratch  |                   |      |                           |
-| C-x 3         | split-window-right-last-buffer-or-scratch |                   |      |                           |
-| M-;           | comment-dwim-dwim                         |                   |      |                           |
-| C-M-\         | indent-region-or-buffer                   |                   |      |                           |
-| M-/           | dabbrev-expand                            |                   |      | helm-dabbrev doesn't work |
-| S-M-SPC       | math-symbol-at-point                      |                   |      |                           |
-| C-=           | er/expand-region                          |                   |      |                           |
-| C-+           | er/contract-region                        |                   |      |                           |
-| C-*           | mc/mark-all-like-this                     |                   |      |                           |
-| C-<           | mc/mark-previous-like-this                |                   |      |                           |
-| C->           | mc/mark-next-like-this                    |                   |      |                           |
-| C-x r t       | mc/edit-lines                             |                   |      |                           |
-| M-s j         | dumb-jump-go                              |                   |      |                           |
-| M-s J         | dumb-jump-go-other-window                 |                   |      |                           |
-| M-<backspace> | nil                                       | sp-keymap         |      |                           |
-| C-M-p         | nil                                       | sp-keymap         |      |                           |
-| C-M-n         | nil                                       | sp-keymap         |      |                           |
-| C-x m         | jw-keymap                                 |                   |      |                           |
-| C-c m         | jw-keymap                                 |                   |      |                           |
-| m             | jw-keymap                                 | ctl-x-4-map       |      |                           |
-| m             | jw-keymap                                 | ctl-x-5-map       |      |                           |
-| !             | cmd-dwim                                  | jw-keymap         |      |                           |
-| q             | emacs-configs-toggle                      | jw-keymap         |      |                           |
-| d             | date                                      | jw-keymap         |      |                           |
-| w             | weather                                   | jw-keymap         |      |                           |
-| b             | computer-power-status                     | jw-keymap         |      |                           |
-| i             | toggle-scratch-buffer                     | jw-keymap         |      |                           |
+| Key           | Function                                  | Scope       | Hook | Notes                     |
+|---------------+-------------------------------------------+-------------+------+---------------------------|
+| C-z           | nil                                       |             |      | remove suspend            |
+| C-x C-z       | nil                                       |             |      |                           |
+| C-h           | nil                                       |             |      | remove original help      |
+| C-M-?         | help-command                              |             |      |                           |
+| <return>      | toggle-frame-fullscreen                   | ctl-x-5-map |      |                           |
+| M-!           | cmd-dwim                                  |             |      |                           |
+| M-&           | cmd-menu                                  |             |      |                           |
+| C-s           | isearch-forward-regexp                    |             |      |                           |
+| C-r           | isearch-backward-regexp                   |             |      |                           |
+| C-M-g         | goto-line                                 |             |      |                           |
+| C-M-9         | winner-undo                               |             |      |                           |
+| C-M-0         | winner-redo                               |             |      |                           |
+| t             | transpose-windows                         | ctl-x-4-map |      |                           |
+| s             | toggle-window-split                       | ctl-x-4-map |      |                           |
+| C-w           | kill-region-or-line                       |             |      |                           |
+| M-w           | kill-ring-save-region-or-line             |             |      |                           |
+| C-a           | beginning-of-line-or-indentation          |             |      |                           |
+| C-o           | open-line-previous                        |             |      |                           |
+| C-<return>    | open-line-next                            |             |      |                           |
+| C-j           | newline-and-open-line-previous            |             |      |                           |
+| C-x 2         | split-window-down-last-buffer-or-scratch  |             |      |                           |
+| C-x 3         | split-window-right-last-buffer-or-scratch |             |      |                           |
+| M-;           | comment-dwim-dwim                         |             |      |                           |
+| C-M-\         | indent-region-or-buffer                   |             |      |                           |
+| M-/           | dabbrev-expand                            |             |      | helm-dabbrev doesn't work |
+| S-M-SPC       | math-symbol-at-point                      |             |      |                           |
+| C-=           | er/expand-region                          |             |      |                           |
+| C-+           | er/contract-region                        |             |      |                           |
+| C-*           | mc/mark-all-like-this                     |             |      |                           |
+| C-<           | mc/mark-previous-like-this                |             |      |                           |
+| C->           | mc/mark-next-like-this                    |             |      |                           |
+| C-x r t       | mc/edit-lines                             |             |      |                           |
+| M-s j         | dumb-jump-go                              |             |      |                           |
+| M-s J         | dumb-jump-go-other-window                 |             |      |                           |
+| M-<backspace> | nil                                       | sp-keymap   |      |                           |
+| C-M-p         | nil                                       | sp-keymap   |      |                           |
+| C-M-n         | nil                                       | sp-keymap   |      |                           |
+| C-x m         | jw-keymap                                 |             |      |                           |
+| C-c m         | jw-keymap                                 |             |      |                           |
+| m             | jw-keymap                                 | ctl-x-4-map |      |                           |
+| m             | jw-keymap                                 | ctl-x-5-map |      |                           |
+| !             | cmd-dwim                                  | jw-keymap   |      |                           |
+| q             | emacs-configs-toggle                      | jw-keymap   |      |                           |
+| d             | date                                      | jw-keymap   |      |                           |
+| w             | weather                                   | jw-keymap   |      |                           |
+| b             | computer-power-status                     | jw-keymap   |      |                           |
+| i             | toggle-scratch-buffer                     | jw-keymap   |      |                           |
 
 #+HEADER: :var base-keys=base-keys
 #+BEGIN_SRC emacs-lisp
@@ -1272,7 +1277,7 @@ helm-keys
 | C-x c   | nil                             |                     |                  | undo default helm prefix |
 | M-x     | helm-M-x                        |                     |                  |                          |
 | M-:     | helm-eval-expression-with-eldoc |                     |                  |                          |
-| C-,     | helm-calcul-expression          |                     |                  |                          |
+| M-*     | helm-calcul-expression          |                     |                  |                          |
 | C-x C-b | helm-buffers-list               |                     |                  |                          |
 | C-x C-f | helm-find-files                 |                     |                  |                          |
 | M-y     | helm-show-kill-ring             |                     |                  |                          |
