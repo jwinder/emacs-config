@@ -997,6 +997,7 @@ base-keys (keys not in other parts of this config)
 | m             | jw-keymap                                 | ctl-x-4-map |      |                           |
 | m             | jw-keymap                                 | ctl-x-5-map |      |                           |
 | !             | cmd-dwim                                  | jw-keymap   |      |                           |
+| &             | cmd-menu                                  | jw-keymap   |      |                           |
 | q             | emacs-configs-toggle                      | jw-keymap   |      |                           |
 | d             | date                                      | jw-keymap   |      |                           |
 | w             | weather                                   | jw-keymap   |      |                           |
