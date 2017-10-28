@@ -35,7 +35,6 @@ Try re-installing the dependencies from scratch again the next day. The breaking
 #+TITLE: jwinder emacs config
 
 #+AUTHOR: Joe Winder
-#+EMAIL: jsph.winder@gmail.com
 
 #+LANGUAGE: en
 
