@@ -1686,9 +1686,6 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 ** scala
 
-- todo -- the sbt command should prompt for a path to an sbt project if currently not in an sbt project
-- todo -- also, maybe add some rich functionality to invoke `sbt-new` if wanted
-
 scala-keys
 #+NAME: scala-keys
 | Key   | Function                   | Scope      |
