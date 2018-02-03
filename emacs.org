@@ -59,21 +59,21 @@ cat init.el
 *** common
 
 #+BEGIN_SRC emacs-lisp
-(use-package afternoon-theme)
+(use-package afternoon-theme :pin melpa)
 
-(use-package dash)
-(use-package f)
-(use-package s
+(use-package dash :pin melpa)
+(use-package f :pin melpa)
+(use-package s :pin melpa
   :config (progn
             (defalias 's-empty? 's-blank?)
             (defalias 's-nonempty? 's-present?)
             (defalias 's-nonempty-or-nil 's-presence)))
 
-(use-package scratch)
+(use-package scratch :pin melpa)
 
 (use-package ob-http)
 (use-package ob-translate)
-(use-package ob-async)
+(use-package ob-async :pin melpa)
 
 (use-package org-pomodoro)
 (use-package interleave)
@@ -83,12 +83,12 @@ cat init.el
 (use-package htmlize)
 
 (use-package magit)
-(use-package browse-at-remote)
+(use-package browse-at-remote :pin melpa)
 
 (use-package gist
   :config (setq gist-view-gist t))
 
-(use-package undo-tree
+(use-package undo-tree :pin melpa
   :config (global-undo-tree-mode 1))
 
 (use-package expand-region)
@@ -115,13 +115,13 @@ cat init.el
 
 (use-package helm)
 (use-package helm-ag)
-(use-package helm-swoop)
+;; (use-package helm-swoop) ;; https://github.com/ShingoFukuyama/helm-swoop/issues/123
 (use-package helm-projectile)
 (use-package helm-flycheck)
-(use-package helm-flyspell)
+(use-package helm-flyspell :pin melpa)
 (use-package helm-descbinds)
 (use-package helm-company)
-(use-package helm-google)
+(use-package helm-google :pin melpa)
 
 (use-package wgrep
   :config (setq wgrep-auto-save-buffer t))
@@ -134,7 +134,7 @@ cat init.el
 (use-package dumb-jump
   :config (setq dumb-jump-selector 'helm))
 
-(use-package xah-math-input
+(use-package xah-math-input :pin melpa
   :config (progn
             (xah-math-input--add-to-hash [ ["def" "≝"] ["pm" "±"] ["cdot" "·"] ["wedge" "∧"] ["doublesharp" "𝄪"]])
             (xah-math-input--add-cycle ["≔" "≝"])
@@ -156,15 +156,6 @@ cat init.el
 
 (use-package scala-mode)
 (use-package sbt-mode)
-;; (use-package ensime
-;;   :pin melpa-stable)
-
-(use-package ruby-mode
-  :mode (("Gemfile$" . ruby-mode)
-         ("Rakefile$" . ruby-mode)
-         ("Vagrantfile$" . ruby-mode)
-         ("Berksfile$" . ruby-mode)
-         ("\\.irbrc$" . ruby-mode)))
 
 (use-package inf-ruby)
 
@@ -536,6 +527,11 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq enable-recursive-minibuffers t)
 
 (add-to-list 'auto-mode-alist '("\\.scss$" . css-mode))
+(add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Rakefile$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("Berksfile$" . ruby-mode))
+(add-to-list 'auto-mode-alist '("\\.irbrc$" . ruby-mode))
 
 (add-hook 'text-mode-hook 'flyspell-mode)
 
@@ -1283,8 +1279,8 @@ helm-keys
 | M-y     | helm-show-kill-ring             |                     |                  |                          |
 | M-s a   | helm-do-grep-ag                 |                     |                  |                          |
 | M-s o   | helm-occur                      |                     |                  |                          |
-| M-s s   | helm-swoop                      |                     |                  |                          |
-| M-s M-s | helm-multi-swoop-all            |                     |                  |                          |
+| M-s s   | nil                             |                     |                  | should be helm-swoop     |
+| M-s M-s | nil                             |                     |                  | helm-multi-swoop-all     |
 | M-s i   | helm-semantic-or-imenu          |                     |                  |                          |
 | C-x r l | helm-bookmarks                  |                     |                  |                          |
 | C-x r j | helm-register-jump-dwim         |                     |                  |                          |
@@ -1308,7 +1304,7 @@ helm-keys
 (require 'helm)
 (require 'helm-config)
 (require 'helm-dabbrev)
-(require 'helm-swoop)
+;; (require 'helm-swoop)
 
 (setq helm-split-window-in-side-p t
       helm-ff-search-library-in-sexp t
@@ -1337,7 +1333,7 @@ helm-keys
 
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
 (set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
-(set-face-attribute 'helm-swoop-target-line-face nil :background "goldenrod")
+;; (set-face-attribute 'helm-swoop-target-line-face nil :background "goldenrod")
 
 (require 'company)
 (custom-set-faces ;; give company dropdown helm colors
@@ -1757,17 +1753,6 @@ scala-keys
 
 (setq scala-indent:align-forms t
       scala-indent:align-parameters t)
-
-;; not enabling ensime at the moment
-
-;; (setq ensime-use-helm t)
-;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-;; (advice-add 'ensime-sbt-test-dwim
-;;             :around (lambda (original-function &rest args)
-;;                       (let* ((original-command (car args))
-;;                              (only-zzz-str (if current-prefix-arg " -- ex zzz " ""))
-;;                              (command (concat original-command only-zzz-str)))
-;;                         (apply original-function (cons command (cdr args))))))
 #+END_SRC
 
 adding sbt shortcut to helm projectile
