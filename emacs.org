@@ -1793,40 +1793,16 @@ sonic-pi-keys
 #+NAME: sonic-pi-keys
 | Key | Function              | Scope     |
 |-----+-----------------------+-----------|
-| M   | sonic-pi-server       | jw-keymap |
 | m   | sonic-pi-stop-or-play | jw-keymap |
 
 #+HEADER: :var sonic-pi-keys=sonic-pi-keys
 #+BEGIN_SRC emacs-lisp
 (require 'org)
 (require 'ob)
-(require 'subr-x) ;; string-trim
-
-(defun sonic-pi-server-running-p ()
-  (string= (string-trim (shell-command-to-string "sonic-pi check-server")) "Sonic Pi is running"))
-
-(defun sonic-pi-server-cleanup-process-buffer ()
-  (interactive)
-  (when (and (not (sonic-pi-server-running-p)) (get-buffer "*sonic pi*"))
-    (kill-buffer "*sonic pi*")))
-
-(defun sonic-pi-server ()
-  (interactive)
-  (sonic-pi-server-cleanup-process-buffer)
-  (jw--run-cmd "sonic-pi run-server" "sonic pi" nil
-               (lambda (proc)
-                 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer t t))))
-
-(defun sonic-pi-server-start-if-needed ()
-  (unless (sonic-pi-server-running-p)
-    (message "Sonic Pi server not running anywhere. Starting up...")
-    (save-window-excursion
-      (sonic-pi-server)
-      (sleep-for 2.5))))
 
 (defun sonic-pi-play (&optional ruby)
+  "Sends snippet of ruby code to Sonic Pi GUI application via a custom shell script."
   (interactive)
-  (sonic-pi-server-start-if-needed)
   (let ((prepared-ruby (or ruby (if (region-active-p)
                                     (buffer-substring-no-properties (point) (mark))
                                   (buffer-substring-no-properties (point-min) (point-max))))))
