@@ -115,7 +115,6 @@ cat init.el
 
 (use-package helm)
 (use-package helm-ag)
-;; (use-package helm-swoop) ;; https://github.com/ShingoFukuyama/helm-swoop/issues/123
 (use-package helm-projectile)
 (use-package helm-flycheck)
 (use-package helm-flyspell :pin melpa)
@@ -1277,10 +1276,8 @@ helm-keys
 | C-x C-b | helm-buffers-list               |                     |                  |                          |
 | C-x C-f | helm-find-files                 |                     |                  |                          |
 | M-y     | helm-show-kill-ring             |                     |                  |                          |
-| M-s a   | helm-do-grep-ag                 |                     |                  |                          |
+| M-s s   | helm-do-grep-ag                 |                     |                  |                          |
 | M-s o   | helm-occur                      |                     |                  |                          |
-| M-s s   | nil                             |                     |                  | should be helm-swoop     |
-| M-s M-s | nil                             |                     |                  | helm-multi-swoop-all     |
 | M-s i   | helm-semantic-or-imenu          |                     |                  |                          |
 | C-x r l | helm-bookmarks                  |                     |                  |                          |
 | C-x r j | helm-register-jump-dwim         |                     |                  |                          |
@@ -1292,7 +1289,7 @@ helm-keys
 | C-h i   | helm-info                       |                     |                  |                          |
 | h       | helm-descbinds                  | helm-command-map    |                  |                          |
 | s       | helm-google-suggest             | helm-command-map    |                  | originally helm-surfraw  |
-| M-s a   | helm-ff-run-grep-ag             | helm-find-files-map |                  |                          |
+| M-s s   | helm-ff-run-grep-ag             | helm-find-files-map |                  |                          |
 | C-s     | helm-ff-run-grep-ag             | helm-find-files-map |                  | ag instead of grep       |
 | C-c ! l | helm-flycheck                   | flycheck-mode-map   |                  |                          |
 | C-M-i   | helm-flyspell-correct           | flyspell-mode-map   |                  |                          |
@@ -1304,7 +1301,6 @@ helm-keys
 (require 'helm)
 (require 'helm-config)
 (require 'helm-dabbrev)
-;; (require 'helm-swoop)
 
 (setq helm-split-window-in-side-p t
       helm-ff-search-library-in-sexp t
@@ -1333,7 +1329,6 @@ helm-keys
 
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
 (set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
-;; (set-face-attribute 'helm-swoop-target-line-face nil :background "goldenrod")
 
 (require 'company)
 (custom-set-faces ;; give company dropdown helm colors
@@ -1391,7 +1386,7 @@ faster searching
       (call-interactively 'helm-projectile-ag))))
 
 (helm-add-action-to-source "Ag in project `M-s a'" 'helm-projectile-projects-helm-projectile-ag helm-source-projectile-projects)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s a") 'helm-projectile-projects-helm-projectile-ag)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s s") 'helm-projectile-projects-helm-projectile-ag)
 (helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") 'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
 #+END_SRC
 
