@@ -15,21 +15,6 @@ ln -s /path/to/your/safe/private.org $HOME/emacs-config/private.org # file conta
 
 Now, start emacs.
 
-** help! the packages didn't install correctly
-
-I snapshot recent elpa installations into a git repository that /worked on my machine/. Just run the following.
-#+BEGIN_SRC sh :tangle no
-rm -rf $HOME/.emacs.d/elpa
-git clone git@github.com:jwinder/emacs-elpa-snapshot.git $HOME/.emacs.d/elpa
-#+END_SRC
-
-Now, try starting emacs. Note that this repository does not contain byte-compiled files. If you would like to byte-compile each elisp file, inside of emacs run the function I have prepared (might take a minute to complete).
-#+BEGIN_SRC sh :tangle no
-M-x emacs-byte-compile-elpa-package-files
-#+END_SRC
-
-Try re-installing the dependencies from scratch again the next day. The breaking change might have been fixed by the package maintainers.
-
 ** org configs
 
 #+TITLE: jwinder emacs config
@@ -39,12 +24,6 @@ Try re-installing the dependencies from scratch again the next day. The breaking
 #+LANGUAGE: en
 
 #+SEQ_TODO: ⚑ ⚐ | ✔
-
-** contents of init.el
-
-#+BEGIN_SRC sh :tangle no :results code
-cat init.el
-#+END_SRC
 
 ** personal info
 
