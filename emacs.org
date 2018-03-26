@@ -1293,6 +1293,7 @@ helm-keys
       helm-recentf-fuzzy-match t
       helm-semantic-fuzzy-match t
       helm-imenu-fuzzy-match t
+      helm-move-to-line-cycle-in-source t
       helm-ag-insert-at-point 'symbol)
 
 (when (eq system-type 'darwin)
