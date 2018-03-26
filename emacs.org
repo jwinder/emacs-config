@@ -1307,6 +1307,17 @@ helm-keys
   (interactive "P")
   (if arg (helm-register) (call-interactively 'jump-to-register)))
 
+;; helm-occur to follow the source lines much like helm-swoop
+(defvar helm-occur-follow-sources-dwim-record ())
+(add-to-list 'helm-occur-follow-sources-dwim-record 'helm-source-occur)
+
+(defun helm-occur-follow-sources-dwim ()
+  (mapc (lambda (source)
+          (when (memq source helm-occur-follow-sources-dwim-record)
+            (helm-attrset 'follow 1 (symbol-value source))))
+        helm-sources))
+(add-hook 'helm-before-initialize-hook 'helm-occur-follow-sources-dwim)
+
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
 (set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
 
