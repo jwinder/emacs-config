@@ -1293,7 +1293,6 @@ helm-keys
       helm-recentf-fuzzy-match t
       helm-semantic-fuzzy-match t
       helm-imenu-fuzzy-match t
-      helm-move-to-line-cycle-in-source t
       helm-ag-insert-at-point 'symbol)
 
 (when (eq system-type 'darwin)
@@ -1306,17 +1305,6 @@ helm-keys
 (defun helm-register-jump-dwim (arg)
   (interactive "P")
   (if arg (helm-register) (call-interactively 'jump-to-register)))
-
-;; helm-occur to follow the source lines much like helm-swoop
-(defvar helm-occur-follow-sources-dwim-record ())
-(add-to-list 'helm-occur-follow-sources-dwim-record 'helm-source-occur)
-
-(defun helm-occur-follow-sources-dwim ()
-  (mapc (lambda (source)
-          (when (memq source helm-occur-follow-sources-dwim-record)
-            (helm-attrset 'follow 1 (symbol-value source))))
-        helm-sources))
-(add-hook 'helm-before-initialize-hook 'helm-occur-follow-sources-dwim)
 
 (set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
 (set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
@@ -1379,6 +1367,21 @@ faster searching
 (helm-add-action-to-source "Ag in project `M-s a'" 'helm-projectile-projects-helm-projectile-ag helm-source-projectile-projects)
 (helm-projectile-define-key helm-projectile-projects-map (kbd "M-s s") 'helm-projectile-projects-helm-projectile-ag)
 (helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") 'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
+#+END_SRC
+
+make helm-occur act more like helm-swoop
+#+BEGIN_SRC emacs-lisp
+(defvar helm-occur-follow-sources-dwim-record ())
+(add-to-list 'helm-occur-follow-sources-dwim-record 'helm-source-occur)
+
+(defun helm-occur-follow-sources-dwim ()
+  (mapc (lambda (source)
+          (when (memq source helm-occur-follow-sources-dwim-record)
+            (helm-attrset 'follow 1 (symbol-value source))))
+        helm-sources))
+(add-hook 'helm-before-initialize-hook 'helm-occur-follow-sources-dwim)
+
+
 #+END_SRC
 
 ** magit
