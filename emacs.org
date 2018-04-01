@@ -38,6 +38,9 @@ Now, start emacs.
 *** common
 
 #+BEGIN_SRC emacs-lisp
+(use-package quelpa :pin melpa)
+(use-package quelpa-use-package :pin melpa)
+
 (use-package afternoon-theme :pin melpa)
 
 (use-package dash :pin melpa)
@@ -65,7 +68,8 @@ Now, start emacs.
 (use-package gist
   :config (setq gist-view-gist t))
 
-(use-package undo-tree :pin melpa
+(use-package undo-tree
+  :quelpa (undo-tree :fetcher github :repo "emacsorphanage/undo-tree")
   :config (global-undo-tree-mode 1))
 
 (use-package expand-region)
