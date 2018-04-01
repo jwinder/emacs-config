@@ -57,8 +57,6 @@ Now, start emacs.
 (use-package org-pomodoro)
 (use-package interleave)
 
-(use-package edit-server)
-
 (use-package htmlize)
 
 (use-package magit)
