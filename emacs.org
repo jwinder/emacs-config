@@ -1652,21 +1652,6 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 #+END_SRC
 
-** edit server
-
-#+BEGIN_SRC emacs-lisp
-(require 'edit-server)
-
-(add-to-list 'edit-server-url-major-mode-alist '("github\\.com" . gfm-mode))
-(add-to-list 'edit-server-url-major-mode-alist '("trello\\.com" . gfm-mode))
-(add-to-list 'edit-server-url-major-mode-alist '("slack\\.com" . markdown-mode))
-(add-to-list 'edit-server-url-major-mode-alist '("reddit\\.com" . markdown-mode))
-
-(add-hook 'edit-server-done-hook 'ns-raise-chrome)
-
-(edit-server-start)
-#+END_SRC
-
 ** scala
 
 scala-keys
