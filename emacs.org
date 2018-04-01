@@ -1367,21 +1367,6 @@ faster searching
 (helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") 'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
 #+END_SRC
 
-make helm-occur act more like helm-swoop
-#+BEGIN_SRC emacs-lisp
-(defvar helm-occur-follow-sources-dwim-record ())
-(add-to-list 'helm-occur-follow-sources-dwim-record 'helm-source-occur)
-
-(defun helm-occur-follow-sources-dwim ()
-  (mapc (lambda (source)
-          (when (memq source helm-occur-follow-sources-dwim-record)
-            (helm-attrset 'follow 1 (symbol-value source))))
-        helm-sources))
-(add-hook 'helm-before-initialize-hook 'helm-occur-follow-sources-dwim)
-
-
-#+END_SRC
-
 ** magit
 
 magit-keys
