@@ -38,9 +38,6 @@ Now, start emacs.
 *** common
 
 #+BEGIN_SRC emacs-lisp
-(use-package quelpa :pin melpa)
-(use-package quelpa-use-package :pin melpa)
-
 (use-package afternoon-theme :pin melpa)
 
 (use-package dash :pin melpa)
@@ -67,10 +64,6 @@ Now, start emacs.
 
 (use-package gist
   :config (setq gist-view-gist t))
-
-(use-package undo-tree
-  :quelpa (undo-tree :fetcher github :repo "emacsorphanage/undo-tree")
-  :config (global-undo-tree-mode 1))
 
 (use-package expand-region)
 
@@ -534,10 +527,6 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq user-auto-save-directory (expand-file-name "auto-saves/" user-emacs-directory ))
 (unless (file-exists-p user-auto-save-directory) (make-directory user-auto-save-directory)) ;; auto-save won't create directories
 (setq auto-save-file-name-transforms `((".*" ,user-auto-save-directory t)))
-
-(setq undo-tree-auto-save-history t)
-
-(add-to-list 'undo-tree-history-directory-alist `("" . ,(expand-file-name "undo-tree" user-emacs-directory)))
 
 (setq user-backup-directory (expand-file-name "backups/" user-emacs-directory))
 (unless (file-exists-p user-backup-directory) (make-directory user-backup-directory))
