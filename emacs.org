@@ -48,7 +48,9 @@ Now, start emacs.
             (defalias 's-nonempty? 's-present?)
             (defalias 's-nonempty-or-nil 's-presence)))
 
-(use-package scratch :pin melpa)
+(use-package scratch :pin melpa
+  :config (progn
+            (defalias 'tmp-scratch-buffer 'scratch)))
 
 (use-package ob-http)
 (use-package ob-translate)
@@ -973,6 +975,7 @@ base-keys (keys not in other parts of this config)
 | w             | weather                                   | jw-keymap   |      |                           |
 | b             | computer-power-status                     | jw-keymap   |      |                           |
 | i             | toggle-scratch-buffer                     | jw-keymap   |      |                           |
+| I             | tmp-scratch-buffer                        | jw-keymap   |      |                           |
 
 #+HEADER: :var base-keys=base-keys
 #+BEGIN_SRC emacs-lisp
