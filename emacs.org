@@ -931,7 +931,7 @@ base-keys (keys not in other parts of this config)
 | C-M-?         | help-command                              |             |      |                           |
 | <return>      | toggle-frame-fullscreen                   | ctl-x-5-map |      |                           |
 | M-!           | cmd-dwim                                  |             |      |                           |
-| M-&           | cmd-menu                                  |             |      |                           |
+| M-&           | cmd-dwim                                  |             |      |                           |
 | C-s           | isearch-forward-regexp                    |             |      |                           |
 | C-r           | isearch-backward-regexp                   |             |      |                           |
 | C-M-g         | goto-line                                 |             |      |                           |
@@ -968,7 +968,7 @@ base-keys (keys not in other parts of this config)
 | C-c m         | jw-keymap                                 |             |      |                           |
 | m             | jw-keymap                                 | ctl-x-4-map |      |                           |
 | m             | jw-keymap                                 | ctl-x-5-map |      |                           |
-| !             | cmd-dwim                                  | jw-keymap   |      |                           |
+| !             | cmd-menu                                  | jw-keymap   |      |                           |
 | &             | cmd-menu                                  | jw-keymap   |      |                           |
 | q             | emacs-configs-toggle                      | jw-keymap   |      |                           |
 | d             | date                                      | jw-keymap   |      |                           |
