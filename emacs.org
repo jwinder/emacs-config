@@ -159,7 +159,7 @@ Now, start emacs.
   :mode (("\\.md$" . gfm-mode)
          ("\\.markdown$" . gfm-mode)))
 
-(use-package graphviz-dot-mode)
+;; (use-package graphviz-dot-mode) ;; does not work after emacs 26.1 upgrade
 #+END_SRC
 
 ** helper functions
