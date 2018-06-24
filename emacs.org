@@ -1321,6 +1321,15 @@ helm-keys
       projectile-mode-line ""  ;; this slowed tramp down sometimes
       projectile-switch-project-action 'helm-projectile)
 
+(defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
+
+(defun projectile-clear-known-projects--advice--ask-y-or-n (original-function)
+  (if (yes-or-no-p "This will REMOVE all projects from projectile. Are you sure?")
+      (apply original-function)
+    (message "Did NOT clear the projectile projects.")))
+
+(advice-add 'projectile-clear-known-projects :around 'projectile-clear-known-projects--advice--ask-y-or-n)
+
 (add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
 
 #+END_SRC
