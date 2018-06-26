@@ -1335,6 +1335,25 @@ helm-keys
 
 #+END_SRC
 
+fix for `helm-list-emacs-process` adding unwanted header to top of bufffer
+`list-processes--refresh` calls `tabulated-list-init-header` which adds a header
+originally this function was inside of `:init` and added a header to the unwanted buffer
+#+BEGIN_SRC emacs-lisp
+(setq helm-source-emacs-process
+  (helm-build-sync-source "Emacs Process"
+    :candidates (lambda ()
+                  (list-processes--refresh)
+                  (mapcar #'process-name (process-list)))
+    :persistent-action (lambda (elm)
+                         (delete-process (get-process elm))
+                         (helm-delete-current-selection))
+    :persistent-help "Kill Process"
+    :action (helm-make-actions "Kill Process"
+                               (lambda (_elm)
+                                 (cl-loop for p in (helm-marked-candidates)
+                                          do (delete-process (get-process p)))))))
+#+END_SRC
+
 faster searching
 #+BEGIN_SRC emacs-lisp
 (defun helm-grep-ag-use-ag ()
