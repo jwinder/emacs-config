@@ -432,6 +432,13 @@ A macro to set keybindings from an org table
 
 (setq-default mode-line-format '(" " mode-line-buffer-identification (vc-mode vc-mode) " " mode-line-misc-info))
 
+(setq frame-title-format nil)
+
+(when (eq system-type 'darwin)
+  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  (add-to-list 'default-frame-alist '(ns-appearance . dark))
+  (setq ns-use-proxy-icon nil))
+
 (setq inhibit-startup-message t
       initial-scratch-message ""
       initial-major-mode 'org-mode)
