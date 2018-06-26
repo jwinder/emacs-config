@@ -120,8 +120,9 @@ Now, start emacs.
             (xah-math-input--add-cycle ["∫" "∬" "∭" "⨌"])
             (xah-math-input--add-cycle ["∮" "∯" "∰" "∱" "∲" "∳"])))
 
-(use-package ess
-  :config (setq save-abbrevs 'silently)) ;; ess R sets some abbrevs when installed
+;; not working well after emacs 26 upgrade
+;; (use-package ess
+;;   :config (setq save-abbrevs 'silently)) ;; ess R sets some abbrevs when installed
 #+END_SRC
 
 *** languages
