@@ -1104,7 +1104,7 @@ eshell-keys
   (eshell-printn "\neshell/which:")
   (apply eshell/which-function names)
   (let* ((login-shell-program (jw--login-shell))
-         (raw-result (shell-command-to-string (format "%s -l -i -c \"which %s\"" login-shell-program (s-join " " names))))
+         (raw-result (shell-command-to-string (format "%s -c \"which %s\"" login-shell-program (s-join " " names))))
          (login-shell-which-result (format "\n%s's which:\n%s" login-shell-program raw-result)))
     (eshell-printn login-shell-which-result)))
 
