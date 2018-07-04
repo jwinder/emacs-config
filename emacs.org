@@ -737,7 +737,7 @@ Interactively:
       (cmd prepared-cmd))))
 
 (jw--define-menu cmd-menu 'cmd-menu
-  :actions '("command type menu M-&"
+  :actions '("Command menu (C-c m !)"
              (?! "sh cmd async    M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
              (?: "elisp evaluate  M-:" helm-eval-expression-with-eldoc)
              (?* "calc evaluate   M-*" helm-calcul-expression))
