@@ -107,8 +107,7 @@ Now, start emacs.
 
 (use-package wgrep-helm)
 
-(use-package docker
-  :config (docker-global-mode t))
+(use-package docker)
 
 (use-package dumb-jump
   :config (setq dumb-jump-selector 'helm))
@@ -969,6 +968,7 @@ base-keys (keys not in other parts of this config)
 | C-x r t       | mc/edit-lines                             |             |      |                           |
 | M-s j         | dumb-jump-go                              |             |      |                           |
 | M-s J         | dumb-jump-go-other-window                 |             |      |                           |
+| C-c d         | docker                                    |             |      |                           |
 | M-<backspace> | nil                                       | sp-keymap   |      |                           |
 | C-M-p         | nil                                       | sp-keymap   |      |                           |
 | C-M-n         | nil                                       | sp-keymap   |      |                           |
