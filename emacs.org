@@ -1296,11 +1296,9 @@ helm-keys
       helm-ff-file-name-history-use-recentf t
       helm-quick-update t
       helm-move-to-line-cycle-in-source nil
-      helm-buffers-fuzzy-matching t
-      helm-M-x-fuzzy-match t
-      helm-recentf-fuzzy-match t
-      helm-semantic-fuzzy-match t
-      helm-imenu-fuzzy-match t
+      helm-mode-fuzzy-match t
+      helm-completion-in-region-fuzzy-match t
+      helm-case-fold-search t
       helm-ag-insert-at-point 'symbol)
 
 (when (eq system-type 'darwin)
