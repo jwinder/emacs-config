@@ -984,6 +984,7 @@ base-keys (keys not in other parts of this config)
 | b             | computer-power-status                     | jw-keymap   |      |                           |
 | i             | toggle-scratch-buffer                     | jw-keymap   |      |                           |
 | I             | tmp-scratch-buffer                        | jw-keymap   |      |                           |
+| C-c p         | projectile-command-map                    |             |      |                           |
 
 #+HEADER: :var base-keys=base-keys
 #+BEGIN_SRC emacs-lisp
