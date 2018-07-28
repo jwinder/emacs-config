@@ -1341,9 +1341,7 @@ helm-keys
 
 #+END_SRC
 
-fix for `helm-list-emacs-process` adding unwanted header to top of bufffer
-`list-processes--refresh` calls `tabulated-list-init-header` which adds a header
-originally this function was inside of `:init` and added a header to the unwanted buffer
+fix for header issue, merged into helm here https://github.com/emacs-helm/helm/pull/2071
 #+BEGIN_SRC emacs-lisp
 (setq helm-source-emacs-process
   (helm-build-sync-source "Emacs Process"
