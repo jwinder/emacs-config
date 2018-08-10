@@ -785,14 +785,26 @@ Interactively:
     (if (equal previous-point (point))
         (beginning-of-line))))
 
+(defun indent-region-or-buffer--org-mode (arg)
+  "Do not indent the entire buffer, only indent active regions.
+   My org files can get pretty big, and I tend to indent certain parts of them manually as I see fit."
+  (save-excursion
+    (when (region-active-p)
+      (indent-region (region-beginning) (region-end)))))
+
+(defun indent-region-or-buffer--default (arg)
+  (save-excursion
+    (if (region-active-p)
+        (indent-region (region-beginning) (region-end))
+      (indent-region (point-min) (point-max))))
+  (when arg (whitespace-cleanup)))
+
 (defun indent-region-or-buffer (arg)
   (interactive "P")
   (jw--save-current-message
-    (save-excursion
-      (if (region-active-p)
-          (indent-region (region-beginning) (region-end))
-        (indent-region (point-min) (point-max))))
-    (when arg (whitespace-cleanup))))
+    (if (equal major-mode 'org-mode)
+        (indent-region-or-buffer--org-mode arg)
+      (indent-region-or-buffer--default arg))))
 
 (defun comment-dwim-dwim (&optional arg)
   "When the region is active, then toggle comments over it.
