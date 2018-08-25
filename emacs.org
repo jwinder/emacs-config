@@ -1353,24 +1353,6 @@ helm-keys
 
 #+END_SRC
 
-fix for header issue, merged into helm here https://github.com/emacs-helm/helm/pull/2071
-#+BEGIN_SRC emacs-lisp
-(setq helm-source-emacs-process
-  (helm-build-sync-source "Emacs Process"
-    :init (lambda ()
-            (let (tabulated-list-use-header-line)
-              (list-processes--refresh)))
-    :candidates (lambda () (mapcar #'process-name (process-list)))
-    :persistent-action (lambda (elm)
-                         (delete-process (get-process elm))
-                         (helm-delete-current-selection))
-    :persistent-help "Kill Process"
-    :action (helm-make-actions "Kill Process"
-                               (lambda (_elm)
-                                 (cl-loop for p in (helm-marked-candidates)
-                                          do (delete-process (get-process p)))))))
-#+END_SRC
-
 faster searching
 #+BEGIN_SRC emacs-lisp
 (defun helm-grep-ag-use-ag ()
