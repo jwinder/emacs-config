@@ -1399,19 +1399,6 @@ make company-complete dropdown look more like helm
 
 ** org
 
-org-keys
-#+NAME: org-keys
-| Key       | Function                   | Scope     | Hook          |
-|-----------+----------------------------+-----------+---------------|
-| o         | jw-todo                    | jw-keymap |               |
-| a         | org-agenda                 | jw-keymap |               |
-| A         | jw-org-agenda              | jw-keymap |               |
-| c         | helm-org-capture-templates | jw-keymap |               |
-| <tab>     | org-pomodoro               | jw-keymap |               |
-| C-c <     | org-time-stamp             | local     | org-mode-hook |
-| C-c .     | org-time-stamp-inactive    | local     | org-mode-hook |
-| C-c C-x g | org-feed-update-all-or-one | local     | org-mode-hook |
-
 ob-scala copied from [[https://github.com/jwiegley/org-mode/blob/master/lisp/ob-scala.el][org-mode's github]] since scala-mode's ob-scala requires ensime
 #+BEGIN_SRC emacs-lisp
 ;;; ob-scala.el --- org-babel functions for Scala evaluation
@@ -1533,10 +1520,21 @@ supported in Scala."
 
 (provide 'ob-scala)
 
-
-
 ;;; ob-scala.el ends here
 #+END_SRC
+
+org-keys
+#+NAME: org-keys
+| Key       | Function                   | Scope     | Hook          |
+|-----------+----------------------------+-----------+---------------|
+| o         | jw-todo                    | jw-keymap |               |
+| a         | org-agenda                 | jw-keymap |               |
+| A         | jw-org-agenda              | jw-keymap |               |
+| c         | jw-org-capture             | jw-keymap |               |
+| <tab>     | org-pomodoro               | jw-keymap |               |
+| C-c <     | org-time-stamp             | local     | org-mode-hook |
+| C-c .     | org-time-stamp-inactive    | local     | org-mode-hook |
+| C-c C-x g | org-feed-update-all-or-one | local     | org-mode-hook |
 
 #+HEADER: :var org-keys=org-keys
 #+BEGIN_SRC emacs-lisp
@@ -1573,6 +1571,12 @@ supported in Scala."
   (interactive "P")
   (org-id-get-create arg)
   (org-id-copy))
+
+(defun jw-org-capture (arg)
+  (interactive "P")
+  (if arg
+      (org-capture '(16))
+    (helm-org-capture-templates)))
 
 (keybinding-org-table 'org-keys)
 
