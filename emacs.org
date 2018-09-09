@@ -857,21 +857,17 @@ If the prefix arg is 4, then kill the comment on the current line."
     (when (string-match pattern (buffer-name buffer))
       (kill-buffer buffer))))
 
-(defalias 'toggle-fullscreen 'toggle-frame-fullscreen)
-
-(defun fullscreen ()
-  (interactive)
-  (unless (frame-parameter (selected-frame) 'fullscreen)
-    (toggle-frame-fullscreen)))
-
-(defun fullscreen-off ()
-  (interactive)
-  (when (frame-parameter (selected-frame) 'fullscreen)
-    (toggle-frame-fullscreen)))
-
 (defun set-transparency (value)
   (interactive "n0 - 100 (percent): ")
   (set-frame-parameter (selected-frame) 'alpha value))
+
+(defun transparency-on ()
+  (interactive)
+  (set-transparency 75))
+
+(defun transparency-off ()
+  (interactive)
+  (set-transparency 100))
 
 (defun display-current-prefix-arg (arg)
   (interactive "P")
@@ -948,7 +944,8 @@ base-keys (keys not in other parts of this config)
 | C-x C-z       | nil                                       |             |      |                           |
 | C-h           | nil                                       |             |      | remove original help      |
 | C-M-?         | help-command                              |             |      |                           |
-| <return>      | toggle-frame-fullscreen                   | ctl-x-5-map |      |                           |
+| <return>      | toggle-frame-maximized                    | ctl-x-5-map |      |                           |
+| S-<return>    | toggle-frame-fullscreen                   | ctl-x-5-map |      |                           |
 | M-!           | cmd-dwim                                  |             |      |                           |
 | M-&           | cmd-dwim                                  |             |      |                           |
 | C-s           | isearch-forward-regexp                    |             |      |                           |
@@ -2025,8 +2022,9 @@ load the =private= directory and the =private.org= file if they exist
 
 #+BEGIN_SRC emacs-lisp
 (scratch-buffer)
+(transparency-on)
 (cd (getenv "HOME"))
-(fullscreen)
+(toggle-frame-maximized)
 (unless (server-running-p) (server-start))
 
 #+END_SRC
