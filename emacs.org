@@ -246,7 +246,7 @@ These are non-interactive library functions useful in other parts of this config
 
 (setq jw--run-cmd-shell "bash")
 
-(defun jw--run-cmd (command &optional process-name before-process-creation after-process-creation after-process-finish)
+(defun jw--run-cmd (command &optional process-name before-process-creation after-process-creation after-process-finish delete-tmp-script-after)
   "A wrapper around `make-comint-in-buffer'.
 
 For commands that have already finished, this will clean up the process buffer and re-run the command.
@@ -278,7 +278,8 @@ For long running processes, this will always toggle back and forth between the p
             (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
             (let ((proc (get-buffer-process process-buffer)))
               (when after-process-creation (funcall after-process-creation proc))
-              (when after-process-finish (jw--do-when-process-finishes proc `(lambda (proc) (funcall ,after-process-finish proc)))))
+              (when after-process-finish (jw--do-when-process-finishes proc `(lambda (proc) (funcall ,after-process-finish proc))))
+              (when delete-tmp-script-after (jw--do-when-process-finishes proc `(lambda (proc) (f-delete ,tmp-script-abs-filename 'force)))))
             (switch-to-buffer process-buffer)))))))
 
 (defun jw--run-cmd-tmux (command tmux-session)
