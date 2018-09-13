@@ -1072,7 +1072,7 @@ eshell-keys
   (if (jw--git-root-dir)
       ;; vc-git-branches returns (list nil) instead of nil when there is no branch name instead of just nil (i.e. after a git-init)
       (let* ((git-branch-name (or (car (vc-git-branches)) "(in the beginning there was darkness)"))
-             (git-is-clean (s-blank? (shell-command-to-string "git diff --shortstat 2> /dev/null | tail -n1")))
+             (git-is-clean (s-blank? (shell-command-to-string "git status --porcelain")))
              (git-is-clean-marker (if git-is-clean "✔" "✘"))
              (git-is-clean-color (if git-is-clean "green" "red1"))
              (git-branch-name-string (propertize git-branch-name 'face '(:foreground "yellow3")))
