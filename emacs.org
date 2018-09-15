@@ -1351,7 +1351,7 @@ helm-keys
 
 #+END_SRC
 
-faster searching
+helm ag changes
 #+BEGIN_SRC emacs-lisp
 (defun helm-grep-ag-use-ag ()
   "Default `helm-do-grep-ag' to ag (silver searcher) with possibly opinionated flags."
@@ -1360,16 +1360,7 @@ faster searching
     (setq helm-grep-ag-command "ag -i --nogroup --nocolor --line-numbers %s %s %s")
     (setq helm-ag-base-command "ag -i --nogroup --nocolor --line-numbers")))
 
-(defun helm-grep-ag-use-rg ()
-  "Default `helm-do-grep-ag' to rg (ripgrep) with possibly opinionated flags."
-  (interactive)
-  (when (executable-find "rg")
-    (setq helm-grep-ag-command "rg -i --no-heading --line-number %s %s %s")
-    ;; (setq helm-ag-base-command "rg -i --no-heading --line-number") ;; does not work, helm-projectile-ag tries to add flags that rg doesn't recognize
-    ))
-
 (helm-grep-ag-use-ag)
-(helm-grep-ag-use-rg)
 
 (defun helm-projectile-projects-helm-projectile-ag (dir)
   (interactive)
