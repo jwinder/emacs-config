@@ -78,8 +78,7 @@ Now, start emacs.
 
 (use-package smartparens
   :config (progn (require 'smartparens-config)
-                 (smartparens-global-mode t)
-                 (sp-use-smartparens-bindings)))
+                 (smartparens-global-mode t)))
 
 (use-package company
   :config (progn (global-company-mode t)
@@ -96,7 +95,7 @@ Now, start emacs.
 
 (use-package helm)
 (use-package helm-ag)
-(use-package helm-projectile)
+;; (use-package helm-projectile)
 (use-package helm-flycheck)
 (use-package helm-flyspell :pin melpa)
 (use-package helm-descbinds)
@@ -1338,6 +1337,20 @@ helm-keys
       projectile-mode-line ""  ;; this slowed tramp down sometimes
       projectile-switch-project-action 'helm-projectile)
 
+(when (executable-find "ag")
+  (setq helm-grep-ag-command "ag -i --nogroup --nocolor --line-numbers %s %s %s")
+  (setq helm-ag-base-command "ag -i --nogroup --nocolor --line-numbers"))
+
+(defun helm-projectile-projects-helm-projectile-ag (dir)
+  (interactive)
+  (with-temp-buffer
+    (let ((default-directory dir))
+      (call-interactively 'helm-projectile-ag))))
+
+(helm-add-action-to-source "Ag in project `M-s a'" 'helm-projectile-projects-helm-projectile-ag helm-source-projectile-projects)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s s") 'helm-projectile-projects-helm-projectile-ag)
+(helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") 'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
+
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
 
 (defun projectile-clear-known-projects--advice--ask-y-or-n (original-function)
@@ -1351,42 +1364,19 @@ helm-keys
 
 #+END_SRC
 
-helm ag changes
-#+BEGIN_SRC emacs-lisp
-(defun helm-grep-ag-use-ag ()
-  "Default `helm-do-grep-ag' to ag (silver searcher) with possibly opinionated flags."
-  (interactive)
-  (when (executable-find "ag")
-    (setq helm-grep-ag-command "ag -i --nogroup --nocolor --line-numbers %s %s %s")
-    (setq helm-ag-base-command "ag -i --nogroup --nocolor --line-numbers")))
-
-(helm-grep-ag-use-ag)
-
-(defun helm-projectile-projects-helm-projectile-ag (dir)
-  (interactive)
-  (with-temp-buffer
-    (let ((default-directory dir))
-      (call-interactively 'helm-projectile-ag))))
-
-(helm-add-action-to-source "Ag in project `M-s a'" 'helm-projectile-projects-helm-projectile-ag helm-source-projectile-projects)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s s") 'helm-projectile-projects-helm-projectile-ag)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") 'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
-#+END_SRC
-
 make company-complete dropdown look more like helm
 #+BEGIN_SRC emacs-lisp
 (require 'company)
-(custom-set-faces
- `(company-tooltip ((t (:background ,jw--mode-line-color))))
- `(company-scrollbar-bg ((t (:background "black"))))
- `(company-scrollbar-fg ((t (:background "#005858"))))
- `(company-tooltip-selection ((t (:inherit 'helm-selection))))
- `(company-tooltip-common ((t (:inherit 'helm-match))))
- `(company-tooltip-common-selection ((t (:inherit 'helm-match))))
- `(company-tooltip-annotation ((t (:inherit 'helm-bookmark-file))))
- `(company-preview-common ((t :inherit 'company-echo)))
- `(company-echo-common ((t :inherit 'company-echo)))
- `(company-template-field ((t :inherit 'helm-match-item))))
+(custom-set-faces `(company-tooltip ((t (:background ,jw--mode-line-color))))
+                  `(company-scrollbar-bg ((t (:background "black"))))
+                  `(company-scrollbar-fg ((t (:background "#005858"))))
+                  `(company-tooltip-selection ((t (:inherit 'helm-selection))))
+                  `(company-tooltip-common ((t (:inherit 'helm-match))))
+                  `(company-tooltip-common-selection ((t (:inherit 'helm-match))))
+                  `(company-tooltip-annotation ((t (:inherit 'helm-bookmark-file))))
+                  `(company-preview-common ((t :inherit 'company-echo)))
+                  `(company-echo-common ((t :inherit 'company-echo)))
+                  `(company-template-field ((t :inherit 'helm-match-item))))
 #+END_SRC
 
 ** org
