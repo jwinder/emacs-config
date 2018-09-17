@@ -95,11 +95,10 @@ Now, start emacs.
 
 (use-package helm)
 (use-package helm-ag)
-;; (use-package helm-projectile)
+(use-package helm-projectile)
 (use-package helm-flycheck)
 (use-package helm-flyspell :pin melpa)
 (use-package helm-descbinds)
-(use-package helm-google :pin melpa)
 
 (use-package wgrep
   :config (setq wgrep-auto-save-buffer t))
@@ -1285,7 +1284,6 @@ helm-keys
 | C-h d   | helm-info-at-point              |                     |                  |                          |
 | C-h i   | helm-info                       |                     |                  |                          |
 | h       | helm-descbinds                  | helm-command-map    |                  |                          |
-| s       | helm-google-suggest             | helm-command-map    |                  | originally helm-surfraw  |
 | M-s s   | helm-ff-run-grep-ag             | helm-find-files-map |                  |                          |
 | C-s     | helm-ff-run-grep-ag             | helm-find-files-map |                  | ag instead of grep       |
 | C-c ! l | helm-flycheck                   | flycheck-mode-map   |                  |                          |
