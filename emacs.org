@@ -1364,6 +1364,11 @@ helm-keys
 
 #+END_SRC
 
+undo [[https://github.com/emacs-helm/helm/commit/0d0a9d238850ce675d894b250a70074b5bda0c11][commit]] that opens autocomplete in new window
+#+BEGIN_SRC emacs-lisp
+(setq helm-show-completion-display-function #'helm-show-completion-default-display-function)
+#+END_SRC
+
 make company-complete dropdown look more like helm
 #+BEGIN_SRC emacs-lisp
 (require 'company)
