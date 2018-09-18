@@ -1307,7 +1307,9 @@ helm-keys
       helm-mode-fuzzy-match t
       helm-completion-in-region-fuzzy-match t
       helm-case-fold-search t
-      helm-ag-insert-at-point 'symbol)
+      helm-ag-insert-at-point 'symbol
+      helm-show-completion-display-function nil ;; do not use separate window for completion selection
+      )
 
 (when (eq system-type 'darwin)
   (setq helm-man-format-switches "%s"))
@@ -1360,11 +1362,6 @@ helm-keys
 
 (add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
 
-#+END_SRC
-
-undo [[https://github.com/emacs-helm/helm/commit/0d0a9d238850ce675d894b250a70074b5bda0c11][commit]] that opens autocomplete in new window
-#+BEGIN_SRC emacs-lisp
-(setq helm-show-completion-display-function #'helm-show-completion-default-display-function)
 #+END_SRC
 
 make company-complete dropdown look more like helm
