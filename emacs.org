@@ -284,6 +284,12 @@ For long running processes, this will always toggle back and forth between the p
   "Create session `tmux-session' if needed, and send `command' to it."
   (call-process "tmux" nil nil nil "new-session" "-d" "-s" tmux-session) ;; this does nothing if the session already exists
   (call-process "tmux" nil nil nil "send-keys" "-t" tmux-session command "C-m"))
+
+(defun jw--sql-pretty-print (begin end)
+  "Formats SQL on region between `begin' and `end' using underlying sql-formatter-cli."
+  (if (executable-find "sql-formatter-cli")
+      (shell-command-on-region begin end "sql-formatter-cli" nil 'replace)
+    (message "Formatter not found. Please run: npm install -g sql-formatter-cli")))
 #+END_SRC
 
 A macro to set keybindings from an org table
@@ -533,7 +539,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq comint-password-prompt-regexp (concat comint-password-prompt-regexp "\\|^.*Password:\\s *\\'"))
 
 (defun shell-command--advice--ignore-message-with-no-output (&rest args)
-  (when (string-match "Shell command succeeded with no output" (current-message)) (message nil)))
+  (when (and (current-message) (string-match "Shell command succeeded with no output" (current-message))) (message nil)))
 (advice-add 'shell-command-on-region :after 'shell-command--advice--ignore-message-with-no-output)
 
 (setq user-auto-save-directory (expand-file-name "auto-saves/" user-emacs-directory ))
@@ -692,6 +698,12 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
   (if (region-active-p)
       (json-pretty-print (region-beginning) (region-end))
     (json-pretty-print-buffer)))
+
+(defun sql-prettify ()
+  (interactive)
+  (if (region-active-p)
+      (jw--sql-pretty-print (region-beginning) (region-end))
+    (jw--sql-pretty-print (point-min) (point-max)))))
 
 (defun math-symbol-at-point (arg)
   (interactive "P")
