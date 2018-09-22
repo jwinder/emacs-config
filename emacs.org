@@ -74,7 +74,13 @@ Now, start emacs.
 
 (use-package expand-region)
 
-(use-package multiple-cursors)
+(use-package multiple-cursors
+  :config (progn
+            (defun mc/prompt-for-inclusion-in-whitelist (original-command)
+              "Rewrite of `mc/prompt-for-inclusion-in-whitelist' to not ask yes/no for every newly seen command."
+              (add-to-list 'mc/cmds-to-run-for-all original-command)
+              (mc/save-lists)
+              t)))
 
 (use-package smartparens
   :config (progn (require 'smartparens-config)
