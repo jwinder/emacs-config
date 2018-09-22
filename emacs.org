@@ -92,6 +92,7 @@ Now, start emacs.
                  (global-flycheck-mode)))
 
 (use-package yasnippet)
+(use-package yasnippet-snippets)
 
 (use-package helm)
 (use-package helm-ag)
