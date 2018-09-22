@@ -704,7 +704,7 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar d
   (interactive)
   (if (region-active-p)
       (jw--sql-pretty-print (region-beginning) (region-end))
-    (jw--sql-pretty-print (point-min) (point-max)))))
+    (jw--sql-pretty-print (point-min) (point-max))))
 
 (defun math-symbol-at-point (arg)
   (interactive "P")
