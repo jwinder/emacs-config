@@ -650,13 +650,12 @@ NOTICE: Sometimes this acts funky, e.g. after removing items from the kill ring 
     (delete-duplicate-lines (point-min) (point-max))))
 
 (defun date (&optional arg)
-  "Display date.
-With default prefix arg (e.g. C-u M-x date), display calendar around current date.
-With prefix arg of 4 (e.g. C-u 4 M-x date), prompt for year/month for calendar display."
+  "Display current date time.
+With default prefix arg (e.g. C-u M-x date), also display calendar around current date.
+With prefix arg of 4 (e.g. C-u 4 M-x date), also prompt for year/month for calendar display."
   (interactive "P")
-  (if arg
-      (calendar (if (equal arg 4) arg nil))
-    (message (current-time-string))))
+  (when arg (calendar (if (equal arg 4) arg nil)))
+  (message (current-time-string)))
 
 (defun computer-power-status ()
   "Alternative to the default battery functions, which currently don't extract the information correctly on macOS."
