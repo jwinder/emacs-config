@@ -565,8 +565,6 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq backup-directory-alist `(("." . ,user-backup-directory)))
 
-(setq delete-by-moving-to-trash t)
-
 (when (eq system-type 'gnu/linux)
   (setq interprogram-paste-function 'x-cut-buffer-or-selection-value
         browse-url-browser-function 'browse-url-generic
@@ -575,8 +573,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (when (eq system-type 'darwin)
   (setq ns-command-modifier 'meta
         browse-url-browser-function 'browse-url-default-macosx-browser
-        ispell-program-name "aspell"
-        trash-directory "~/.Trash"))
+        ispell-program-name "aspell"))
 #+END_SRC
 
 ** functions
