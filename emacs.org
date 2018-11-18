@@ -988,7 +988,7 @@ base-keys (keys not in other parts of this config)
 | S-M-SPC       | math-symbol-at-point                      |             |      |                           |
 | C-=           | er/expand-region                          |             |      |                           |
 | C-+           | er/contract-region                        |             |      |                           |
-| C-*           | mc/mark-all-like-this                     |             |      |                           |
+| C-?           | mc/mark-all-like-this                     |             |      |                           |
 | C-<           | mc/mark-previous-like-this                |             |      |                           |
 | C->           | mc/mark-next-like-this                    |             |      |                           |
 | C-x r t       | mc/edit-lines                             |             |      |                           |
