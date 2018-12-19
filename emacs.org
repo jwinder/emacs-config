@@ -1382,6 +1382,45 @@ helm-keys
 
 #+END_SRC
 
+hacky fix for helm-ff M-D shortcut
+should be fixed in next bugfix release of helm
+https://github.com/emacs-helm/helm/commit/ac9cd9bdd7f7f02886edc3057d9d756981a37bcd#diff-c30ab41edecc9d4b288cf5765f90e290
+#+BEGIN_SRC emacs-lisp
+(defun helm-exit-and-execute-action (action)
+  "Exit current helm session and execute ACTION.
+Argument ACTION is a function called with one arg (candidate)
+and part of the actions of current source.
+
+Use this on commands invoked from key-bindings, but not
+on action functions invoked as action from the action menu,
+i.e functions called with RET."
+  (setq helm-saved-action action)
+  (setq helm-saved-selection (or (helm-get-selection) ""))
+  (setq helm--executing-helm-action t)
+  ;; When toggling minibuffer and header-line, we want next action
+  ;; inherit this setting.
+  (helm-set-local-variable 'helm-echo-input-in-header-line
+                           (with-helm-buffer helm-echo-input-in-header-line))
+  ;; Ensure next action use same display function as initial helm-buffer when
+  ;; helm-actions-inherit-frame-settings is non nil.
+  (when (and helm-actions-inherit-frame-settings
+             helm--buffer-in-new-frame-p)
+    (helm-set-local-variable 'helm-display-function
+                             (with-helm-buffer helm-display-function)
+                             'helm--last-frame-parameters
+                             (with-helm-buffer
+                               (helm--get-frame-parameters)))
+    ;; The helm-buffer keeps `helm-display-function' and
+    ;; `helm--get-frame-parameters' values during 0.5 seconds, just
+    ;; the time to execute the possible helm action with those values.
+    ;; If no helm based action run within 0.5 seconds, the next helm
+    ;; session will have to resolve again those variable values.
+    (run-with-idle-timer 0.5 nil
+      (lambda () (helm-set-local-variable 'helm-display-function nil
+                                          'helm--last-frame-parameters nil))))
+  (helm-exit-minibuffer))
+#+END_SRC
+
 make company-complete dropdown look more like helm
 #+BEGIN_SRC emacs-lisp
 (require 'company)
