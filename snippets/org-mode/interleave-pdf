@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: interleave-pdf
+# key: interleave-pdf_
+# --
+#+INTERLEAVE_PDF: $0

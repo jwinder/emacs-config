@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: property
+# key: property_
+# --
+#+PROPERTY: $0

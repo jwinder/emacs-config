@@ -1186,8 +1186,10 @@ yas-keys
 
 (keybinding-org-table 'yas-keys)
 
-
 (setq yas-indent-line nil)
+
+(setq yas-dynamic-snippets-dir (f-expand "snippets-dynamic" user-emacs-directory))
+(add-to-list 'yas-snippet-dirs yas-dynamic-snippets-dir)
 #+END_SRC
 
 ** rcirc
@@ -1536,48 +1538,35 @@ org-keys
                   `(org-link ((t (:underline nil))))
                   `(org-date ((t (:underline nil)))))
 
-(add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
-(add-to-list 'org-structure-template-alist '("h" "#+HEADER: ?"))
-(add-to-list 'org-structure-template-alist '("p" "#+PROPERTY: ?"))
-(add-to-list 'org-structure-template-alist '("P" ":PROPERTIES:\n?\n:END:"))
-(add-to-list 'org-structure-template-alist '("S" "#+BEGIN_SRC ?\n\n#+END_SRC"))
-(add-to-list 'org-structure-template-alist '("call" "#+CALL: ?"))
-(add-to-list 'org-structure-template-alist '("ipdf" "#+INTERLEAVE_PDF: ?"))
-
-(defun org-babel-support-src-template-shortcut (shortcut &optional src-line)
-  (let* ((shortcut-name (if (symbolp shortcut) (symbol-name shortcut) shortcut))
-         (src-line-name (if src-line
-                            (if (symbolp src-line) (symbol-name src-line) src-line)
-                          shortcut-name))
-         (src-block-template (format "#+BEGIN_SRC %s\n?\n#+END_SRC" src-line-name)))
-    (add-to-list 'org-structure-template-alist `(,shortcut-name ,src-block-template))))
+(defun org-babel-src-yasnippet (yas-shortcut &optional ob-lang-override)
+  (let* ((yas-shortcut-string (if (symbolp yas-shortcut) (symbol-name yas-shortcut) (yas-shortcut)))
+         (ob-lang-string (if ob-lang-override
+                             (if (symbolp ob-lang-override) (symbol-name ob-lang-override) ob-lang-override)
+                           yas-shortcut-string))
+         (yas-file-location (f-expand (format "org-mode/%s" yas-shortcut-string) yas-dynamic-snippets-dir))
+         (yas-file-contents-format-string "# -*- mode: snippet -*-\n# name: %s\n# key: %s_\n# --\n#+BEGIN_SRC %s\n$0\n#+END_SRC")
+         (yas-file-contents (format yas-file-contents-format-string yas-shortcut-string yas-shortcut-string ob-lang-string)))
+    (jw--write-to-file yas-file-contents yas-file-location)))
 
 (defun org-babel-support-langs (langs)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   (-map (lambda (lang) (if (listp lang) `(,(car lang) . t) `(,lang . t))) langs))
-  (-each langs
-    (lambda (lang)
-      (let* ((all-shortcuts (if (listp lang) lang (list lang)))
-             (ob-lang (car all-shortcuts)))
-        (-each all-shortcuts (lambda (shortcut) (org-babel-support-src-template-shortcut shortcut ob-lang)))))))
+  (org-babel-do-load-languages 'org-babel-load-languages (-map (lambda (lang) `(,lang . t)) langs))
+  (-each langs (lambda (lang) (org-babel-src-yasnippet lang))))
 
 (org-babel-support-langs
- (list 'awk 'calc 'C 'dot '(emacs-lisp elisp el) '(haskell hask hs) 'http 'java 'js 'latex 'ledger 'lisp
-       'makefile 'matlab 'org 'perl 'plantuml '(python py) 'R '(ruby rb)
-       'scheme '(shell sh) 'sql '(translate tr)))
+ (list 'awk 'calc 'C 'dot 'emacs-lisp 'haskell 'http 'java 'js 'latex 'lisp
+       'makefile 'matlab 'org 'perl 'plantuml 'python 'R 'ruby 'scheme 'shell 'sql 'translate))
 
 (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)) ;; "dot" src blocks don't use graphviz-dot-mode by default
 
-(org-babel-support-src-template-shortcut 'bash)
-(org-babel-support-src-template-shortcut 'md 'markdown)
-(org-babel-support-src-template-shortcut 'gfm)
-(org-babel-support-src-template-shortcut 'conf)
-(org-babel-support-src-template-shortcut 'text)
-(org-babel-support-src-template-shortcut 'json)
+(org-babel-src-yasnippet 'bash)
+(org-babel-src-yasnippet 'markdown)
+(org-babel-src-yasnippet 'gfm)
+(org-babel-src-yasnippet 'conf)
+(org-babel-src-yasnippet 'text)
+(org-babel-src-yasnippet 'json)
 
-(org-babel-support-src-template-shortcut 'trs "translate :src es :dest en") ;; traducir español al inglés
-(org-babel-support-src-template-shortcut 'tre "translate :src en :dest es") ;; translate english to spanish
+(org-babel-src-yasnippet 'translate-spanish-to-english "translate :src es :dest en")
+(org-babel-src-yasnippet 'translate-english-to-spanish "translate :src en :dest es")
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
@@ -1610,8 +1599,8 @@ support =cmd= function in org-babel and =cmd= org link
 
 (setq org-babel-default-header-args:cmd '((:results . "silent")))
 
-(org-babel-support-src-template-shortcut 'cmd)
-(org-babel-support-src-template-shortcut 'tmux "cmd :tmux")
+(org-babel-src-yasnippet 'cmd)
+(org-babel-src-yasnippet 'tmux "cmd :tmux")
 
 (add-to-list 'org-link-parameters '("cmd" :follow (lambda (ref) (cmd ref))))
 (add-to-list 'org-link-parameters '("cmd+tmux" :follow (lambda (ref) (cmd-tmux ref))))
@@ -1737,8 +1726,8 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 
 (add-to-list 'org-src-lang-modes '("ammonite" . scala))
 
-(org-babel-support-src-template-shortcut 'amm "ammonite")
-(org-babel-support-src-template-shortcut 'scala "ammonite") ;; default ob-scala requires brew scala & ensime, which I don't use.
+(org-babel-src-yasnippet 'ammonite)
+(org-babel-src-yasnippet 'scala "ammonite") ;; default ob-scala requires brew scala & ensime, which I don't use.
 #+END_SRC
 
 adding sbt shortcut to helm projectile
@@ -1815,7 +1804,7 @@ sonic-pi-keys
 
 (setq org-babel-default-header-args:sonic-pi '((:results . "silent")))
 
-(org-babel-support-src-template-shortcut 'sonicpi "sonic-pi")
+(org-babel-src-yasnippet 'sonic-pi)
 #+END_SRC
 
 * private
@@ -1835,10 +1824,10 @@ load the =private= directory and the =private.org= file if they exist
 * finally
 
 #+BEGIN_SRC emacs-lisp
+(yas-reload-all)
 (scratch-buffer)
 (transparency-on)
 (cd (getenv "HOME"))
 (toggle-frame-maximized)
 (unless (server-running-p) (server-start))
-
 #+END_SRC
