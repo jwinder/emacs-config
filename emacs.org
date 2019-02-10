@@ -235,6 +235,9 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--current-date-string ()
   (format-time-string "%Y-%m-%d"))
 
+(defun jw--symbol-name (symbol-or-string)
+  (if (symbolp symbol-or-string) (symbol-name symbol-or-string) symbol-or-string))
+
 (defun jw--http-get-request-to-string (url)
   (with-current-buffer (url-retrieve-synchronously url)
     (goto-char url-http-end-of-headers)
@@ -1190,6 +1193,14 @@ yas-keys
 
 (setq yas-dynamic-snippets-dir (f-expand "snippets-dynamic" user-emacs-directory))
 (add-to-list 'yas-snippet-dirs yas-dynamic-snippets-dir)
+
+(defun yas-write-dynamic-snippet (mode shortcut contents)
+  (let* ((mode-string (jw--symbol-name mode))
+         (shortcut-string (jw--symbol-name shortcut))
+         (file-location (f-expand (format "%s/%s" mode-string shortcut-string) yas-dynamic-snippets-dir))
+         (file-contents-format-string "# -*- mode: snippet -*-\n# name: %s\n# key: %s_\n# --\n%s")
+         (file-contents (format file-contents-format-string shortcut-string shortcut-string contents)))
+    (jw--write-to-file file-contents file-location)))
 #+END_SRC
 
 ** rcirc
@@ -1538,15 +1549,10 @@ org-keys
                   `(org-link ((t (:underline nil))))
                   `(org-date ((t (:underline nil)))))
 
-(defun org-babel-src-yasnippet (yas-shortcut &optional ob-lang-override)
-  (let* ((yas-shortcut-string (if (symbolp yas-shortcut) (symbol-name yas-shortcut) (yas-shortcut)))
-         (ob-lang-string (if ob-lang-override
-                             (if (symbolp ob-lang-override) (symbol-name ob-lang-override) ob-lang-override)
-                           yas-shortcut-string))
-         (yas-file-location (f-expand (format "org-mode/%s" yas-shortcut-string) yas-dynamic-snippets-dir))
-         (yas-file-contents-format-string "# -*- mode: snippet -*-\n# name: %s\n# key: %s_\n# --\n#+BEGIN_SRC %s\n$0\n#+END_SRC")
-         (yas-file-contents (format yas-file-contents-format-string yas-shortcut-string yas-shortcut-string ob-lang-string)))
-    (jw--write-to-file yas-file-contents yas-file-location)))
+(defun org-babel-src-yasnippet (ob-lang &optional ob-src-header-override)
+  (let* ((yas-src-shortcut (concat "src-" (jw--symbol-name ob-lang)))
+         (ob-src-string (format "#+BEGIN_SRC %s\n$0\n#+END_SRC" (jw--symbol-name (or ob-src-header-override ob-lang)))))
+    (yas-write-dynamic-snippet 'org-mode yas-src-shortcut ob-src-string)))
 
 (defun org-babel-support-langs (langs)
   (org-babel-do-load-languages 'org-babel-load-languages (-map (lambda (lang) `(,lang . t)) langs))
@@ -1565,8 +1571,8 @@ org-keys
 (org-babel-src-yasnippet 'text)
 (org-babel-src-yasnippet 'json)
 
-(org-babel-src-yasnippet 'translate-spanish-to-english "translate :src es :dest en")
-(org-babel-src-yasnippet 'translate-english-to-spanish "translate :src en :dest es")
+(org-babel-src-yasnippet "translate :src es :dest en")
+(org-babel-src-yasnippet "translate :src en :dest es")
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
