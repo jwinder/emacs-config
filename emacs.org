@@ -684,6 +684,7 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), also prompt for year/month for calen
   "Save the scratch buffer in a file."
   (interactive)
   (find-file jw-org-scratch-file)
+  (cd (getenv "HOME"))
   (when (get-buffer "*scratch*") (kill-buffer "*scratch*")))
 
 (defun toggle-scratch-buffer ()
