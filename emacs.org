@@ -1492,6 +1492,7 @@ org-keys
       org-ellipsis " …"
       org-fontify-done-headline t
       org-todo-keywords '((sequence "⚑" "⚐" "|" "✔"))
+      org-agenda-todo-list-sublevels nil
       org-startup-with-inline-images t
       org-confirm-babel-evaluate nil
       org-confirm-shell-link-function nil
