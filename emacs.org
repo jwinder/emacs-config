@@ -588,6 +588,12 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (defalias 'filter-out-lines 'flush-lines)
 (defalias 'elisp-shell 'ielm)
 
+(defun life-might-be-too-much (arg)
+  (interactive "P")
+  (if (or arg (yes-or-no-p "Is life too much? "))
+      (life-is-too-much)
+    (message "Life continues.")))
+
 (defun font-size-normal ()
   (interactive)
   (jw--set-font-size "14"))
@@ -963,6 +969,7 @@ base-keys (keys not in other parts of this config)
 |---------------+-------------------------------------------+-------------+------+---------------------------|
 | C-z           | nil                                       |             |      | remove suspend            |
 | C-x C-z       | nil                                       |             |      |                           |
+| C-x C-c       | life-might-be-too-much                    |             |      |                           |
 | C-h           | nil                                       |             |      | remove original help      |
 | C-M-?         | help-command                              |             |      |                           |
 | <return>      | toggle-frame-maximized                    | ctl-x-5-map |      |                           |
