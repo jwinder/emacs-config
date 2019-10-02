@@ -1710,8 +1710,8 @@ scala-keys
 (defun sbt-test-only-current-test (only-zzz)
   (interactive "P")
   (if only-zzz
-      (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- showtimes -- ex zzz"))
-    (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- showtimes"))))
+      (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz"))
+    (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer)))))
 
 (defun sbt-compile (test-compile)
   (interactive "P")
