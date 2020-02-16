@@ -1778,51 +1778,6 @@ remove flycheck from *.sbt files
 (add-hook 'scala-mode-hook 'disable-flycheck-scala-in-sbt-files)
 #+END_SRC
 
-** sonic pi
-
-sonic-pi-keys
-#+NAME: sonic-pi-keys
-| Key | Function              | Scope     |
-|-----+-----------------------+-----------|
-| m   | sonic-pi-stop-or-play | jw-keymap |
-
-#+HEADER: :var sonic-pi-keys=sonic-pi-keys
-#+BEGIN_SRC emacs-lisp
-(require 'org)
-(require 'ob)
-
-(defun sonic-pi-play (&optional ruby)
-  "Sends snippet of ruby code to Sonic Pi GUI application via a custom shell script."
-  (interactive)
-  (let ((prepared-ruby (or ruby (if (region-active-p)
-                                    (buffer-substring-no-properties (point) (mark))
-                                  (buffer-substring-no-properties (point-min) (point-max))))))
-    (shell-command (format "echo '%s' | sonic-pi" prepared-ruby))))
-
-(defun sonic-pi-stop ()
-  (interactive)
-  (shell-command "sonic-pi stop"))
-
-(defun sonic-pi-stop-or-play (arg)
-  (interactive "P")
-  (if arg (sonic-pi-stop) (sonic-pi-play)))
-
-(keybinding-org-table 'sonic-pi-keys)
-
-;; warning: sonic-pi does not work with the :async header since ob-sonic-pi is never provided (which org-babel-do-load-languages requires)
-(defun org-babel-execute:sonic-pi (body params)
-  (sonic-pi-play body)
-  "Sent to Sonic Pi")
-
-(add-to-list 'org-src-lang-modes '("sonic-pi" . ruby))
-
-(define-derived-mode sonic-pi-mode ruby-mode "sonic-pi")
-
-(setq org-babel-default-header-args:sonic-pi '((:results . "silent")))
-
-(org-babel-src-yasnippet 'sonic-pi)
-#+END_SRC
-
 * private
 
 load the =private= directory and the =private.org= file if they exist
