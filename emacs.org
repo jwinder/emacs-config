@@ -143,6 +143,8 @@ Now, start emacs.
 
 (use-package inf-ruby)
 
+(use-package typescript-mode)
+
 (use-package go-mode
   :config (add-hook 'before-save-hook 'gofmt-before-save))
 
@@ -1391,6 +1393,7 @@ helm-keys
 (helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") 'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
+(defalias 'projectile-purge-everything 'projectile-clear-known-projects)
 
 (defun projectile-clear-known-projects--advice--ask-y-or-n (original-function)
   (if (yes-or-no-p "This will REMOVE ALL projects from projectile. Are you sure?")
@@ -1718,6 +1721,8 @@ scala-keys
   (if test-compile
       (sbt-command "test:compile")
     (sbt-command "compile")))
+
+(add-to-list 'sbt:program-options "-no-colors") ;; remove a lot of extra spacing with new sbt prompt changes
 
 (setq sbt-keymap (make-sparse-keymap))
 (fset 'sbt-command-prefix sbt-keymap)
