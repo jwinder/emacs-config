@@ -1517,8 +1517,8 @@ org-keys
       org--blocked-todo-boxed-states '("blocked" "halted" "stalled" "paused")
       org--doing-todo-boxed-states '("doing" "going")
       org--doing-todo-states '("⚐")
-      org--delegated-todo-boxed-states '("delegated" "assigned" "pr" "waiting" "deploying")
-      org--done-todo-boxed-states '("done" "cancelled" "canceled" "finished" "boom" "read" "answered")
+      org--delegated-todo-boxed-states '("delegated" "assigned" "pr" "waiting" "deploying" "note")
+      org--done-todo-boxed-states '("done" "cancelled" "canceled" "finished" "boom" "read" "answered" "noted")
       org--done-todo-states '("✘" "✔"))
 
 (defun org--red-box-state (s) `(,s :background "DarkRed" :foreground white :box (:style released-button)))
