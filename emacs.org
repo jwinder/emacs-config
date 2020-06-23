@@ -112,6 +112,9 @@ Now, start emacs.
 
 (use-package wgrep-helm)
 
+(use-package undo-tree
+  :config (global-undo-tree-mode))
+
 (use-package docker)
 
 (use-package dumb-jump
