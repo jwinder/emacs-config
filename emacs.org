@@ -53,7 +53,6 @@ Now, start emacs.
             (defalias 'tmp-scratch-buffer 'scratch)))
 
 (use-package ob-http)
-(use-package ob-translate)
 (use-package ob-async :pin melpa)
 
 (use-package org-pomodoro)
@@ -118,7 +117,8 @@ Now, start emacs.
 (use-package docker)
 
 (use-package dumb-jump
-  :config (setq dumb-jump-selector 'helm))
+  ;; :config (setq dumb-jump-selector 'helm) ;; broke with last update due to out of date function call
+  )
 
 (use-package xah-math-input :pin melpa
   :config (progn
@@ -1579,7 +1579,7 @@ org-keys
 
 (org-babel-support-langs
  (list 'awk 'calc 'C 'dot 'emacs-lisp 'haskell 'http 'java 'js 'latex 'lisp
-       'makefile 'matlab 'org 'perl 'plantuml 'python 'R 'ruby 'scheme 'shell 'sql 'translate))
+       'makefile 'matlab 'org 'perl 'plantuml 'python 'R 'ruby 'scheme 'shell 'sql))
 
 (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)) ;; "dot" src blocks don't use graphviz-dot-mode by default
 
@@ -1589,9 +1589,6 @@ org-keys
 (org-babel-src-yasnippet 'conf)
 (org-babel-src-yasnippet 'text)
 (org-babel-src-yasnippet 'json)
-
-(org-babel-src-yasnippet "translate :src es :dest en")
-(org-babel-src-yasnippet "translate :src en :dest es")
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
