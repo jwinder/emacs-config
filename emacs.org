@@ -490,6 +490,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
+(setq history-delete-duplicates t)
+
 (setq create-lockfiles nil)
 
 (setq save-silently t)
