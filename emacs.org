@@ -111,7 +111,7 @@ Now, start emacs.
 
 (use-package wgrep-helm)
 
-(use-package undo-tree
+(use-package undo-tree :pin melpa
   :config (global-undo-tree-mode))
 
 (use-package docker)
@@ -1522,7 +1522,7 @@ org-keys
       org--blocked-todo-boxed-states '("blocked" "halted" "stalled" "paused")
       org--doing-todo-boxed-states '("doing" "going")
       org--doing-todo-states '("⚐")
-      org--delegated-todo-boxed-states '("delegated" "assigned" "pr" "waiting" "deploying" "note")
+      org--delegated-todo-boxed-states '("delegated" "assigned" "pr" "waiting" "deploying" "note" "idea")
       org--done-todo-boxed-states '("done" "cancelled" "canceled" "finished" "boom" "read" "answered" "noted")
       org--done-todo-states '("✘" "✔"))
 
