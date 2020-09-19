@@ -1509,6 +1509,7 @@ org-keys
       org-todo-keywords '((sequence "⚑" "⚐" "|" "✔"))
       org-agenda-todo-list-sublevels nil
       org-startup-with-inline-images t
+      org-startup-folded t
       org-confirm-babel-evaluate nil
       org-confirm-shell-link-function nil
       org-confirm-elisp-link-function nil
