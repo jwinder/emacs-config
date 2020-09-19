@@ -25,14 +25,6 @@ Now, start emacs.
 
 #+SEQ_TODO: ⚑ ⚐ | ✔
 
-** personal info
-
-#+BEGIN_SRC emacs-lisp
-(defconst jw-config-author-name "Joe Winder")
-(defconst jw-config-author-url "http://jwinder.github.io")
-(defconst jw-config-github-url "https://github.com/jwinder/emacs-config")
-#+END_SRC
-
 * dependencies
 ** packages
 *** common
@@ -137,7 +129,9 @@ Now, start emacs.
 #+BEGIN_SRC emacs-lisp
 (use-package yaml-mode)
 
-(use-package markdown-mode)
+(use-package markdown-mode
+  :mode (("\\.md$" . gfm-mode)
+         ("\\.markdown$" . gfm-mode)))
 
 (use-package dockerfile-mode)
 
@@ -164,10 +158,6 @@ Now, start emacs.
 
 (use-package groovy-mode
   :mode ("Jenkinsfile$" . groovy-mode))
-
-(use-package markdown-mode
-  :mode (("\\.md$" . gfm-mode)
-         ("\\.markdown$" . gfm-mode)))
 
 ;; (use-package graphviz-dot-mode) ;; does not work after emacs 26.1 upgrade
 #+END_SRC
@@ -906,22 +896,6 @@ If the prefix arg is 4, then kill the comment on the current line."
 (defun display-current-prefix-arg (arg)
   (interactive "P")
   (message "%s" arg))
-#+END_SRC
-
-*** contact
-
-#+BEGIN_SRC emacs-lisp
-(defun config-insert-author ()
-  (interactive)
-  (insert jw-config-author-name))
-
-(defun config-goto-homepage ()
-  (interactive)
-  (browse-url jw-config-author-url))
-
-(defun config-goto-github ()
-  (interactive)
-  (browse-url jw-config-github-url))
 #+END_SRC
 
 *** emacs
