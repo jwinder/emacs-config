@@ -19,7 +19,7 @@ Now, start emacs.
 
 #+TITLE: jwinder emacs config
 
-#+AUTHOR: Joe Winder
+#+AUTHOR: jwinder
 
 #+LANGUAGE: en
 
@@ -27,7 +27,6 @@ Now, start emacs.
 
 * dependencies
 ** packages
-*** common
 
 #+BEGIN_SRC emacs-lisp
 (use-package afternoon-theme :pin melpa)
@@ -44,13 +43,7 @@ Now, start emacs.
   :config (progn
             (defalias 'tmp-scratch-buffer 'scratch)))
 
-(use-package ob-http)
-(use-package ob-async :pin melpa)
-
 (use-package org-pomodoro)
-(use-package interleave)
-
-(use-package htmlize)
 
 (use-package magit
   :config (global-magit-file-mode t))
@@ -77,13 +70,7 @@ Now, start emacs.
   :config (progn (require 'smartparens-config)
                  (smartparens-global-mode t)))
 
-(use-package company
-  :config (progn (global-company-mode t)
-                 (setq company-idle-delay nil
-                       company-tooltip-idle-delay nil)))
-
 (use-package flycheck
-  :pin melpa-stable
   :config (progn (setq flycheck-standard-error-navigation nil
                        flycheck-display-errors-function nil)
                  (global-flycheck-mode)))
@@ -95,7 +82,6 @@ Now, start emacs.
 (use-package helm-ag)
 (use-package helm-projectile)
 (use-package helm-flycheck)
-(use-package helm-flyspell :pin melpa)
 (use-package helm-descbinds)
 
 (use-package wgrep
@@ -106,27 +92,8 @@ Now, start emacs.
 (use-package undo-tree :pin melpa
   :config (global-undo-tree-mode))
 
-(use-package docker)
+(use-package dumb-jump)
 
-(use-package dumb-jump
-  ;; :config (setq dumb-jump-selector 'helm) ;; broke with last update due to out of date function call
-  )
-
-(use-package xah-math-input :pin melpa
-  :config (progn
-            (xah-math-input--add-to-hash [ ["def" "≝"] ["pm" "±"] ["cdot" "·"] ["wedge" "∧"] ["doublesharp" "𝄪"]])
-            (xah-math-input--add-cycle ["≔" "≝"])
-            (xah-math-input--add-cycle ["∫" "∬" "∭" "⨌"])
-            (xah-math-input--add-cycle ["∮" "∯" "∰" "∱" "∲" "∳"])))
-
-;; not working well after emacs 26 upgrade
-;; (use-package ess
-;;   :config (setq save-abbrevs 'silently)) ;; ess R sets some abbrevs when installed
-#+END_SRC
-
-*** languages
-
-#+BEGIN_SRC emacs-lisp
 (use-package yaml-mode)
 
 (use-package markdown-mode
@@ -158,8 +125,6 @@ Now, start emacs.
 
 (use-package groovy-mode
   :mode ("Jenkinsfile$" . groovy-mode))
-
-;; (use-package graphviz-dot-mode) ;; does not work after emacs 26.1 upgrade
 #+END_SRC
 
 ** helper functions
@@ -660,13 +625,6 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), also prompt for year/month for calen
   (when arg (calendar (if (equal arg 4) arg nil)))
   (message (current-time-string)))
 
-(defun computer-power-status ()
-  "Alternative to the default battery functions, which currently don't extract the information correctly on macOS."
-  (interactive)
-  (case system-type
-    ('darwin (shell-command "pmset -g ps"))
-    (t (message "This is only setup for macOS."))))
-
 (defun iso-date ()
   (interactive)
   (message (jw--iso-current-time-string)))
@@ -678,10 +636,6 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), also prompt for year/month for calen
 (defun insert-date ()
   (interactive)
   (insert (jw--current-date-string)))
-
-(defun weather ()
-  (interactive)
-  (jw--run-cmd "curl wttr.in" "weather"))
 
 (defun scratch-buffer ()
   "Save the scratch buffer in a file."
@@ -717,12 +671,6 @@ With prefix arg of 4 (e.g. C-u 4 M-x date), also prompt for year/month for calen
   (if (region-active-p)
       (jw--sql-pretty-print (region-beginning) (region-end))
     (jw--sql-pretty-print (point-min) (point-max))))
-
-(defun math-symbol-at-point (arg)
-  (interactive "P")
-  (if arg
-      (xah-math-input-list-math-symbols)
-    (xah-math-input-change-to-symbol)))
 
 (defun cmd (command)
   (interactive "sCommand: ")
@@ -975,9 +923,7 @@ base-keys (keys not in other parts of this config)
 | M-;           | comment-dwim-dwim                         |             |      |                           |
 | C-M-\         | indent-region-or-buffer                   |             |      |                           |
 | M-/           | dabbrev-expand                            |             |      | helm-dabbrev doesn't work |
-| C-M-/         | company-complete                          |             |      |                           |
 | M-g           | magit-status                              |             |      |                           |
-| S-M-SPC       | math-symbol-at-point                      |             |      |                           |
 | C-=           | er/expand-region                          |             |      |                           |
 | C-+           | er/contract-region                        |             |      |                           |
 | C-?           | mc/mark-all-like-this                     |             |      |                           |
@@ -986,7 +932,6 @@ base-keys (keys not in other parts of this config)
 | C-x r t       | mc/edit-lines                             |             |      |                           |
 | M-s j         | dumb-jump-go                              |             |      |                           |
 | M-s J         | dumb-jump-go-other-window                 |             |      |                           |
-| C-c d         | docker                                    |             |      |                           |
 | M-<backspace> | nil                                       | sp-keymap   |      |                           |
 | C-M-p         | nil                                       | sp-keymap   |      |                           |
 | C-M-n         | nil                                       | sp-keymap   |      |                           |
@@ -998,8 +943,6 @@ base-keys (keys not in other parts of this config)
 | &             | cmd-menu                                  | jw-keymap   |      |                           |
 | q             | emacs-configs-toggle                      | jw-keymap   |      |                           |
 | d             | date                                      | jw-keymap   |      |                           |
-| w             | weather                                   | jw-keymap   |      |                           |
-| b             | computer-power-status                     | jw-keymap   |      |                           |
 | i             | toggle-scratch-buffer                     | jw-keymap   |      |                           |
 | I             | tmp-scratch-buffer                        | jw-keymap   |      |                           |
 | C-c p         | projectile-command-map                    |             |      |                           |
@@ -1233,7 +1176,6 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 
 (defun rcirc-hook--initial-config ()
   (jw--save-current-message
-    (turn-on-flyspell)
     (rcirc-track-minor-mode t)
     (rcirc-omit-mode)
     (cd (getenv "HOME"))))
@@ -1307,7 +1249,6 @@ helm-keys
 | M-s s   | helm-ff-run-grep-ag             | helm-find-files-map |                  |                          |
 | C-s     | helm-ff-run-grep-ag             | helm-find-files-map |                  | ag instead of grep       |
 | C-c ! l | helm-flycheck                   | flycheck-mode-map   |                  |                          |
-| C-M-i   | helm-flyspell-correct           | flyspell-mode-map   |                  |                          |
 | <tab>   | helm-esh-pcomplete              | eshell-mode-map     | eshell-mode-hook |                          |
 | M-p     | helm-eshell-history             | eshell-mode-map     | eshell-mode-hook |                          |
 
@@ -1383,21 +1324,6 @@ helm-keys
 
 (add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
 
-#+END_SRC
-
-make company-complete dropdown look more like helm
-#+BEGIN_SRC emacs-lisp
-(require 'company)
-(custom-set-faces `(company-tooltip ((t (:background ,jw--mode-line-color))))
-                  `(company-scrollbar-bg ((t (:background "black"))))
-                  `(company-scrollbar-fg ((t (:background "#005858"))))
-                  `(company-tooltip-selection ((t (:inherit 'helm-selection))))
-                  `(company-tooltip-common ((t (:inherit 'helm-match))))
-                  `(company-tooltip-common-selection ((t (:inherit 'helm-match))))
-                  `(company-tooltip-annotation ((t (:inherit 'helm-bookmark-file))))
-                  `(company-preview-common ((t :inherit 'company-echo)))
-                  `(company-echo-common ((t :inherit 'company-echo)))
-                  `(company-template-field ((t :inherit 'helm-match-item))))
 #+END_SRC
 
 ** org
@@ -1555,10 +1481,8 @@ org-keys
   (-each langs (lambda (lang) (org-babel-src-yasnippet lang))))
 
 (org-babel-support-langs
- (list 'awk 'calc 'C 'dot 'emacs-lisp 'haskell 'http 'java 'js 'latex 'lisp
+ (list 'awk 'calc 'C 'dot 'emacs-lisp 'haskell 'java 'js 'latex 'lisp
        'makefile 'matlab 'org 'perl 'plantuml 'python 'R 'ruby 'scheme 'shell 'sql))
-
-(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)) ;; "dot" src blocks don't use graphviz-dot-mode by default
 
 (org-babel-src-yasnippet 'bash)
 (org-babel-src-yasnippet 'markdown)
@@ -1572,7 +1496,7 @@ org-keys
       org-babel-default-header-args:bash '((:results . "output"))
       org-babel-default-header-args:js '((:results . "output")) ;; doesn't work with "value" for some reason, it just prints "undefined"
       org-babel-default-header-args:python '((:results . "output")) ;; doesn't work with "value" for some reason, it just prints "None"
-      org-babel-default-header-args:http '((:pretty . "yes")))
+      )
 #+END_SRC
 
 support =cmd= function in org-babel and =cmd= org link
