@@ -1481,7 +1481,7 @@ org-keys
   (-each langs (lambda (lang) (org-babel-src-yasnippet lang))))
 
 (org-babel-support-langs
- (list 'awk 'calc 'C 'dot 'emacs-lisp 'haskell 'java 'js 'latex 'lisp
+ (list 'awk 'calc 'C 'emacs-lisp 'haskell 'java 'js 'latex 'lisp
        'makefile 'matlab 'org 'perl 'plantuml 'python 'R 'ruby 'scheme 'shell 'sql))
 
 (org-babel-src-yasnippet 'bash)
@@ -1489,7 +1489,7 @@ org-keys
 (org-babel-src-yasnippet 'gfm)
 (org-babel-src-yasnippet 'conf)
 (org-babel-src-yasnippet 'text)
-(org-babel-src-yasnippet 'json)
+(org-babel-src-yasnippet 'json 'js)
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
@@ -1652,7 +1652,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (add-to-list 'org-src-lang-modes '("ammonite" . scala))
 
 (org-babel-src-yasnippet 'ammonite)
-(org-babel-src-yasnippet 'scala "ammonite") ;; default ob-scala requires brew scala & ensime, which I don't use.
+(org-babel-src-yasnippet 'scala 'ammonite) ;; default ob-scala requires brew scala & ensime, which I don't use.
 #+END_SRC
 
 adding sbt shortcut to helm projectile
