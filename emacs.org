@@ -1400,8 +1400,8 @@ org-keys
       org-refile-allow-creating-parent-nodes '(confirm)
       org-tags-column -100
       org-src-preserve-indentation t
-      org-src-tab-acts-natively t
-      org-src-window-setup 'reorganize-frame
+      org-src-tab-acts-natively nil
+      org-src-window-setup 'current-window
       org-cycle-open-archived-trees t
       org-hide-block-startup t
       org-ellipsis " …"
