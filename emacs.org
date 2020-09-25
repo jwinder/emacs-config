@@ -1482,7 +1482,7 @@ org-keys
 
 (org-babel-support-langs
  (list 'awk 'calc 'C 'emacs-lisp 'haskell 'java 'js 'latex 'lisp
-       'makefile 'matlab 'org 'perl 'plantuml 'python 'R 'ruby 'scheme 'shell 'sql))
+       'makefile 'org 'perl 'python 'R 'ruby 'scheme 'shell 'sql))
 
 (org-babel-src-yasnippet 'bash)
 (org-babel-src-yasnippet 'markdown)
