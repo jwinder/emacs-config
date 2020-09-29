@@ -45,8 +45,7 @@ Now, start emacs.
 
 (use-package org-pomodoro)
 
-(use-package magit
-  :config (global-magit-file-mode t))
+(use-package magit)
 
 (use-package browse-at-remote :pin melpa
   :config (progn
@@ -1133,6 +1132,17 @@ yas-keys
          (file-contents-format-string "# -*- mode: snippet -*-\n# name: %s\n# key: %s_\n# --\n%s")
          (file-contents (format file-contents-format-string shortcut-string shortcut-string contents)))
     (jw--write-to-file file-contents file-location)))
+#+END_SRC
+
+** magit
+
+#+BEGIN_SRC emacs-lisp
+(require 's)
+
+;; https://magit.vc/manual/magit/MacOS-Performance.html
+(setq magit-git-executable (s-trim (shell-command-to-string "which git")))
+
+(global-magit-file-mode t)
 #+END_SRC
 
 ** rcirc
