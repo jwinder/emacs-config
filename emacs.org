@@ -1281,6 +1281,7 @@ helm-keys
       helm-case-fold-search t
       helm-ag-insert-at-point 'symbol
       helm-show-completion-display-function nil ;; do not use separate window for completion selection
+      helm-ff-keep-cached-candidates nil
       )
 
 (when (eq system-type 'darwin)
