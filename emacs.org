@@ -361,6 +361,7 @@ A macro to set keybindings from an org table
 
 #+BEGIN_SRC emacs-lisp
 (require 'eshell)
+(require 'esh-mode)
 
 (defun jw-env-set ()
   (interactive)
