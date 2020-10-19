@@ -69,18 +69,12 @@ Now, start emacs.
   :config (progn (require 'smartparens-config)
                  (smartparens-global-mode t)))
 
-(use-package flycheck
-  :config (progn (setq flycheck-standard-error-navigation nil
-                       flycheck-display-errors-function nil)
-                 (global-flycheck-mode)))
-
 (use-package yasnippet)
 (use-package yasnippet-snippets)
 
 (use-package helm)
 (use-package helm-ag)
 (use-package helm-projectile)
-(use-package helm-flycheck)
 (use-package helm-descbinds)
 
 (use-package wgrep
@@ -495,7 +489,6 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (add-to-list 'auto-mode-alist '("Vagrantfile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("Berksfile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.irbrc$" . ruby-mode))
-(add-hook 'ruby-mode-hook (lambda () (flycheck-mode -1)))
 
 (add-hook 'text-mode-hook 'flyspell-mode)
 
@@ -1260,7 +1253,6 @@ helm-keys
 | h       | helm-descbinds                  | helm-command-map    |                  |                          |
 | M-s s   | helm-ff-run-grep-ag             | helm-find-files-map |                  |                          |
 | C-s     | helm-ff-run-grep-ag             | helm-find-files-map |                  | ag instead of grep       |
-| C-c ! l | helm-flycheck                   | flycheck-mode-map   |                  |                          |
 | <tab>   | helm-esh-pcomplete              | eshell-mode-map     | eshell-mode-hook |                          |
 | M-p     | helm-eshell-history             | eshell-mode-map     | eshell-mode-hook |                          |
 
@@ -1689,15 +1681,6 @@ adding sbt shortcut to helm projectile
 
 (helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s s") 'helm-projectile-projects-sbt)
 (helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s c") 'helm-projectile-projects-sbt-compile)
-#+END_SRC
-
-remove flycheck from *.sbt files
-#+BEGIN_SRC emacs-lisp
-(defun disable-flycheck-scala-in-sbt-files ()
-  (when (and buffer-file-name (s-equals? "sbt" (file-name-extension buffer-file-name)))
-    (flycheck-mode -1)))
-
-(add-hook 'scala-mode-hook 'disable-flycheck-scala-in-sbt-files)
 #+END_SRC
 
 * private
