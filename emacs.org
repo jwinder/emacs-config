@@ -98,8 +98,6 @@ Now, start emacs.
 (use-package scala-mode)
 (use-package sbt-mode)
 
-(use-package inf-ruby)
-
 (use-package typescript-mode)
 
 (use-package go-mode
