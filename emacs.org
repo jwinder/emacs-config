@@ -915,7 +915,6 @@ base-keys (keys not in other parts of this config)
 | C-x 3         | split-window-right-last-buffer-or-scratch |                |      |                           |
 | M-;           | comment-dwim-dwim                         |                |      |                           |
 | C-M-\         | indent-region-or-buffer                   |                |      |                           |
-| M-/           | dabbrev-expand                            |                |      | helm-dabbrev doesn't work |
 | M-g           | magit-status                              |                |      |                           |
 | C-=           | er/expand-region                          |                |      |                           |
 | C-+           | er/contract-region                        |                |      |                           |
