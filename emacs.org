@@ -1557,7 +1557,6 @@ counsel-keys
 | M-s s   | counsel-ag                |                       |                  |       |
 | M-s r   | counsel-rg                |                       |                  |       |
 | M-y     | counsel-yank-pop          |                       |                  |       |
-| !       | ivy-dispatching-done      | ivy-minibuffer-map    |                  |       |
 | C-M-? b | counsel-descbinds         |                       |                  |       |
 | C-M-? f | counsel-describe-function |                       |                  |       |
 | C-M-? v | counsel-describe-variable |                       |                  |       |
@@ -1573,6 +1572,11 @@ counsel-keys
 (setq ivy-use-virtual-buffers t)
 (setq ivy-count-format "")
 ;; (setq ivy-use-selectable-prompt t) ;; todojoe -- what does this do?
+
+;; ivy-read-action-function can be switched so that actions are selected by cursor
+;; but then they can no longer be selected by key...
+
+(setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
 
 (counsel-projectile-mode)
 
