@@ -695,13 +695,12 @@ Interactively:
           (t (message (string-trim (shell-command-to-string prepared-cmd)))))
       (cmd prepared-cmd))))
 
-;; todojoe do i need this?
-;; (jw--define-menu cmd-menu 'cmd-menu
-;;   :actions '("Command menu (C-c m !)"
-;;              (?! "sh cmd async    M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
-;;              (?: "elisp evaluate  M-:" helm-eval-expression-with-eldoc)
-;;              (?* "calc evaluate   M-*" helm-calcul-expression))
-;;   :max-action-columns 1)
+(jw--define-menu cmd-menu 'cmd-menu
+  :actions '("Command menu (C-c m !)"
+             (?! "sh cmd async    M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
+             (?: "elisp evaluate  M-:" eval-expression)
+             (?* "calculator   M-*" calculator))
+  :max-action-columns 1)
 
 (defun transpose-windows (arg)
   (interactive "p")
@@ -1589,9 +1588,6 @@ counsel-keys
  '(("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky") ;; counsel-projectile defaults magit to v, but I like g
    ("js" counsel-projectile-switch-project--jw-sbt-action "sbt")
    ("jc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")))
-
-;; todojoe -- wgrep'ing
-;; todojoe -- how to show more key hints from hydra in M-o?
 #+END_SRC
 
 * private
