@@ -1553,7 +1553,9 @@ counsel-keys
 | C-x C-f | counsel-find-file         |                       |                  |       |
 | C-x b   | counsel-switch-buffer     |                       |                  |       |
 | M-s o   | swiper-thing-at-point     |                       |                  |       |
+| M-s g   | counsel-grep              |                       |                  |       |
 | M-s s   | counsel-ag                |                       |                  |       |
+| M-s r   | counsel-rg                |                       |                  |       |
 | M-y     | counsel-yank-pop          |                       |                  |       |
 | C-M-? b | counsel-descbinds         |                       |                  |       |
 | C-M-? f | counsel-describe-function |                       |                  |       |
