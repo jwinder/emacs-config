@@ -72,15 +72,11 @@ Now, start emacs.
 (use-package yasnippet)
 (use-package yasnippet-snippets)
 
-(use-package helm)
-(use-package helm-ag)
-(use-package helm-projectile)
-(use-package helm-descbinds)
+(use-package counsel :pin melpa) ;; brings in ivy & swiper
+(use-package counsel-projectile :pin melpa)
 
 (use-package wgrep
   :config (setq wgrep-auto-save-buffer t))
-
-(use-package wgrep-helm)
 
 (use-package undo-tree :pin melpa
   :config (global-undo-tree-mode))
@@ -699,12 +695,13 @@ Interactively:
           (t (message (string-trim (shell-command-to-string prepared-cmd)))))
       (cmd prepared-cmd))))
 
-(jw--define-menu cmd-menu 'cmd-menu
-  :actions '("Command menu (C-c m !)"
-             (?! "sh cmd async    M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
-             (?: "elisp evaluate  M-:" helm-eval-expression-with-eldoc)
-             (?* "calc evaluate   M-*" helm-calcul-expression))
-  :max-action-columns 1)
+;; todojoe do i need this?
+;; (jw--define-menu cmd-menu 'cmd-menu
+;;   :actions '("Command menu (C-c m !)"
+;;              (?! "sh cmd async    M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
+;;              (?: "elisp evaluate  M-:" helm-eval-expression-with-eldoc)
+;;              (?* "calc evaluate   M-*" helm-calcul-expression))
+;;   :max-action-columns 1)
 
 (defun transpose-windows (arg)
   (interactive "p")
@@ -893,6 +890,7 @@ base-keys (keys not in other parts of this config)
 | C-x C-c       | life-might-be-too-much                    |             |      |                           |
 | C-h           | nil                                       |             |      | remove original help      |
 | C-M-?         | help-command                              |             |      |                           |
+| C-M-? p       | list-processes                            |             |      |                           |
 | <return>      | toggle-frame-maximized                    | ctl-x-5-map |      |                           |
 | S-<return>    | toggle-frame-fullscreen                   | ctl-x-5-map |      |                           |
 | M-!           | cmd-dwim                                  |             |      |                           |
@@ -937,7 +935,6 @@ base-keys (keys not in other parts of this config)
 | d             | date                                      | jw-keymap   |      |                           |
 | i             | toggle-scratch-buffer                     | jw-keymap   |      |                           |
 | I             | tmp-scratch-buffer                        | jw-keymap   |      |                           |
-| C-c p         | projectile-command-map                    |             |      |                           |
 
 #+HEADER: :var base-keys=base-keys
 #+BEGIN_SRC emacs-lisp
@@ -1222,111 +1219,6 @@ example of defining specific functions to connect to various irc servers
 (defun twitch-irc-connect ()
   (interactive)
   (rcirc-connect-dwim "irc.chat.twitch.tv" 6667 "nick" "username" "full name" nil "your password"))
-#+END_SRC
-
-** helm
-
-helm-keys
-#+NAME: helm-keys
-| Key     | Function                        | Scope               | Hook             | Notes                    |
-|---------+---------------------------------+---------------------+------------------+--------------------------|
-| C-c h   | helm-command-prefix             |                     |                  |                          |
-| C-x c   | nil                             |                     |                  | undo default helm prefix |
-| M-x     | helm-M-x                        |                     |                  |                          |
-| M-:     | helm-eval-expression-with-eldoc |                     |                  |                          |
-| M-*     | helm-calcul-expression          |                     |                  |                          |
-| C-x C-b | helm-buffers-list               |                     |                  |                          |
-| C-x C-f | helm-find-files                 |                     |                  |                          |
-| M-y     | helm-show-kill-ring             |                     |                  |                          |
-| M-s s   | helm-do-grep-ag                 |                     |                  |                          |
-| M-s o   | helm-occur                      |                     |                  |                          |
-| M-s i   | helm-semantic-or-imenu          |                     |                  |                          |
-| C-x r l | helm-bookmarks                  |                     |                  |                          |
-| C-x r j | helm-register-jump-dwim         |                     |                  |                          |
-| C-h a   | helm-apropos                    |                     |                  |                          |
-| C-h b   | helm-descbinds                  |                     |                  |                          |
-| C-h r   | helm-info-emacs                 |                     |                  |                          |
-| C-h d   | helm-info-at-point              |                     |                  |                          |
-| C-h i   | helm-info                       |                     |                  |                          |
-| h       | helm-descbinds                  | helm-command-map    |                  |                          |
-| M-s s   | helm-ff-run-grep-ag             | helm-find-files-map |                  |                          |
-| C-s     | helm-ff-run-grep-ag             | helm-find-files-map |                  | ag instead of grep       |
-| <tab>   | helm-esh-pcomplete              | eshell-mode-map     | eshell-mode-hook |                          |
-| M-p     | helm-eshell-history             | eshell-mode-map     | eshell-mode-hook |                          |
-
-#+HEADER: :var helm-keys=helm-keys
-#+BEGIN_SRC emacs-lisp
-(require 'helm)
-(require 'helm-config)
-(require 'helm-dabbrev)
-
-(setq helm-split-window-in-side-p t
-      helm-ff-search-library-in-sexp t
-      helm-scroll-amount 8
-      helm-buffer-max-length nil
-      helm-ff-file-name-history-use-recentf t
-      helm-quick-update t
-      helm-move-to-line-cycle-in-source nil
-      helm-mode-fuzzy-match t
-      helm-completion-in-region-fuzzy-match t
-      helm-case-fold-search t
-      helm-ag-insert-at-point 'symbol
-      helm-show-completion-display-function nil ;; do not use separate window for completion selection
-      helm-ff-keep-cached-candidates nil
-      )
-
-(when (eq system-type 'darwin)
-  (setq helm-man-format-switches "%s"))
-
-(defalias 'kill-ring-show 'helm-show-kill-ring)
-(defalias 'list-colors-display 'helm-colors)
-(defalias 'proced 'helm-top)
-
-(defun helm-register-jump-dwim (arg)
-  (interactive "P")
-  (if arg (helm-register) (call-interactively 'jump-to-register)))
-
-(set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
-(set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
-
-(keybinding-org-table 'helm-keys)
-
-(helm-mode 1)
-(helm-autoresize-mode 1)
-
-(projectile-global-mode)
-(helm-projectile-on)
-
-(setq projectile-completion-system 'helm
-      projectile-mode-line ""  ;; this slowed tramp down sometimes
-      projectile-switch-project-action 'helm-projectile)
-
-(when (executable-find "ag")
-  (setq helm-grep-ag-command "ag -i --nogroup --nocolor --line-numbers %s %s %s")
-  (setq helm-ag-base-command "ag -i --nogroup --nocolor --line-numbers"))
-
-(defun helm-projectile-projects-helm-projectile-ag (dir)
-  (interactive)
-  (with-temp-buffer
-    (let ((default-directory dir))
-      (call-interactively 'helm-projectile-ag))))
-
-(helm-add-action-to-source "Ag in project `M-s a'" 'helm-projectile-projects-helm-projectile-ag helm-source-projectile-projects)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s s") 'helm-projectile-projects-helm-projectile-ag)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") 'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
-
-(defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
-(defalias 'projectile-purge-everything 'projectile-clear-known-projects)
-
-(defun projectile-clear-known-projects--advice--ask-y-or-n (original-function)
-  (if (yes-or-no-p "This will REMOVE ALL projects from projectile. Are you sure?")
-      (apply original-function)
-    (message "Did NOT clear the projectile projects.")))
-
-(advice-add 'projectile-clear-known-projects :around 'projectile-clear-known-projects--advice--ask-y-or-n)
-
-(add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
-
 #+END_SRC
 
 ** org
@@ -1652,27 +1544,54 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (org-babel-src-yasnippet 'scala 'ammonite) ;; default ob-scala requires brew scala & ensime, which I don't use.
 #+END_SRC
 
-adding sbt shortcut to helm projectile
+** ivy counsel
+
+counsel-keys
+#+NAME: counsel-keys
+| Key     | Function                  | Scope                 | Hook             | Notes |
+|---------+---------------------------+-----------------------+------------------+-------|
+| M-x     | counsel-M-x               |                       |                  |       |
+| C-x C-f | counsel-find-file         |                       |                  |       |
+| C-x b   | counsel-switch-buffer     |                       |                  |       |
+| M-s o   | swiper-thing-at-point     |                       |                  |       |
+| M-s s   | counsel-ag                |                       |                  |       |
+| M-y     | counsel-yank-pop          |                       |                  |       |
+| C-M-? b | counsel-descbinds         |                       |                  |       |
+| C-M-? f | counsel-describe-function |                       |                  |       |
+| C-M-? v | counsel-describe-variable |                       |                  |       |
+| C-M-? l | counsel-find-library      |                       |                  |       |
+| M-p     | counsel-esh-history       | eshell-mode-map       | eshell-mode-hook |       |
+| C-l     | counsel-up-directory      | counsel-find-file-map |                  |       |
+| C-c p   | projectile-command-map    |                       |                  |       |
+
+#+HEADER: :var counsel-keys=counsel-keys
 #+BEGIN_SRC emacs-lisp
-(require 'helm-projectile)
+(ivy-mode 1)
 
-;; sbt mode uses some local variables which causes issues from inside of the helm and switching between multiple projects
-;; e.g. `sbt:buffer-project-root'
-;; using with-temp-buffer to avoid that
+(setq ivy-use-virtual-buffers t)
+(setq ivy-count-format "")
+;; (setq ivy-use-selectable-prompt t) ;; todojoe -- what does this do?
 
-(defun helm-projectile-projects-sbt (dir)
-  (interactive)
-  (with-temp-buffer
-    (let ((default-directory dir)) (call-interactively 'jw-sbt))))
+(counsel-projectile-mode)
 
-(defun helm-projectile-projects-sbt-compile (dir)
-  (interactive)
-  (with-temp-buffer (let ((default-directory dir)) (call-interactively 'sbt-compile))))
+(keybinding-org-table 'counsel-keys)
 
-(helm-add-action-to-source "Dispatch sbt `C-c s ...'" 'helm-projectile-projects-sbt helm-source-projectile-projects)
+(defun counsel-projectile-switch-project--jw-sbt-action (project)
+  (let ((projectile-switch-project-action 'jw-sbt))
+    (counsel-projectile-switch-project-by-name project)))
 
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s s") 'helm-projectile-projects-sbt)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s c") 'helm-projectile-projects-sbt-compile)
+(defun counsel-projectile-switch-project--sbt-compile-action (project)
+  (let ((projectile-switch-project-action (lambda () (sbt-compile ivy-current-prefix-arg))))
+    (counsel-projectile-switch-project-by-name project)))
+
+(ivy-set-actions
+ 'counsel-projectile-switch-project
+ '(("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky") ;; counsel-projectile defaults magit to v, but I like g
+   ("js" counsel-projectile-switch-project--jw-sbt-action "sbt")
+   ("jc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")))
+
+;; todojoe -- wgrep'ing
+;; todojoe -- how to show more key hints from hydra in M-o?
 #+END_SRC
 
 * private
