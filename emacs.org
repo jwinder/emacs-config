@@ -1575,7 +1575,7 @@ counsel-keys
 (ivy-mode 1)
 
 (setq ivy-use-virtual-buffers t)
-(setq ivy-count-format "")
+(setq ivy-count-format "%d/%d ")
 ;; (setq ivy-use-selectable-prompt t) ;; todojoe -- what does this do?
 
 ;; ivy-read-action-function can be switched so that actions are selected by cursor
