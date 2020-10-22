@@ -1556,7 +1556,10 @@ counsel-keys
 |---------+---------------------------+-----------------------+------------------+-------|
 | M-x     | counsel-M-x               |                       |                  |       |
 | C-x C-f | counsel-find-file         |                       |                  |       |
+| C-x F   | counsel-file-jump         |                       |                  |       |
 | C-x b   | counsel-switch-buffer     |                       |                  |       |
+| C-x C-r | ivy-resume                |                       |                  |       |
+| C-s     | swiper-thing-at-point     |                       |                  |       |
 | M-s o   | swiper-thing-at-point     |                       |                  |       |
 | M-s g   | counsel-grep              |                       |                  |       |
 | M-s s   | counsel-ag                |                       |                  |       |
@@ -1569,6 +1572,7 @@ counsel-keys
 | M-p     | counsel-esh-history       | eshell-mode-map       | eshell-mode-hook |       |
 | C-l     | counsel-up-directory      | counsel-find-file-map |                  |       |
 | C-c p   | projectile-command-map    |                       |                  |       |
+| C-l     | counsel-up-directory      | counsel-find-file-map |                  |       |
 
 #+HEADER: :var counsel-keys=counsel-keys
 #+BEGIN_SRC emacs-lisp
