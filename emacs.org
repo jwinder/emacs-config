@@ -832,10 +832,6 @@ If the prefix arg is 4, then kill the comment on the current line."
 (defun display-current-prefix-arg (arg)
   (interactive "P")
   (message "%s" arg))
-
-(defun delete-process-i(p)
-  (interactive `(,(completing-read "Kill process: " (mapcar 'process-name (process-list)) () t)))
-  (delete-process p))
 #+END_SRC
 
 *** emacs
@@ -893,7 +889,6 @@ base-keys (keys not in other parts of this config)
 | C-x C-c       | life-might-be-too-much                    |                |      |                           |
 | C-h           | nil                                       |                |      | remove original help      |
 | C-M-?         | help-command                              |                |      |                           |
-| C-M-? p       | delete-process-i                          |                |      |                           |
 | <return>      | toggle-frame-maximized                    | ctl-x-5-map    |      |                           |
 | S-<return>    | toggle-frame-fullscreen                   | ctl-x-5-map    |      |                           |
 | M-!           | cmd-dwim                                  |                |      |                           |
@@ -1570,6 +1565,7 @@ counsel-keys
 | C-M-? f | counsel-describe-function |                       |                  |       |
 | C-M-? v | counsel-describe-variable |                       |                  |       |
 | C-M-? l | counsel-find-library      |                       |                  |       |
+| C-M-? p | counsel-list-processes    |                       |                  |       |
 | M-p     | counsel-esh-history       | eshell-mode-map       | eshell-mode-hook |       |
 | C-l     | counsel-up-directory      | counsel-find-file-map |                  |       |
 
