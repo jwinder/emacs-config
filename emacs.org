@@ -1555,6 +1555,8 @@ counsel-keys
 | Key     | Function                  | Scope                 | Hook             | Notes |
 |---------+---------------------------+-----------------------+------------------+-------|
 | M-x     | counsel-M-x               |                       |                  |       |
+| C-o     | ivy-dispatching-done      | ivy-minibuffer-map    |                  |       |
+| M-o     | ivy-dispatching-done-ivy  | ivy-minibuffer-map    |                  |       |
 | C-x C-f | counsel-find-file         |                       |                  |       |
 | C-x F   | counsel-file-jump         |                       |                  |       |
 | C-x b   | counsel-switch-buffer     |                       |                  |       |
@@ -1580,6 +1582,11 @@ counsel-keys
 (setq ivy-use-virtual-buffers t)
 (setq ivy-count-format "%d/%d ")
 (setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
+
+(defun ivy-dispatching-done-ivy ()
+  (interactive)
+  (let ((ivy-read-action-function #'ivy-read-action-ivy))
+    (ivy-dispatching-done)))
 
 (keybinding-org-table 'counsel-keys)
 
