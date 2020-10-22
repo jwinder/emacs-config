@@ -1561,8 +1561,6 @@ counsel-keys
 | C-x F   | counsel-file-jump         |                       |                  |       |
 | C-x b   | counsel-switch-buffer     |                       |                  |       |
 | C-x C-r | ivy-resume                |                       |                  |       |
-| C-s     | swiper-isearch            |                       |                  |       |
-| C-r     | swiper-isearch-backward   |                       |                  |       |
 | M-s o   | swiper-thing-at-point     |                       |                  |       |
 | M-s g   | counsel-grep              |                       |                  |       |
 | M-s s   | counsel-ag                |                       |                  |       |
