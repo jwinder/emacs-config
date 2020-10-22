@@ -1588,9 +1588,10 @@ counsel-keys
 
 (keybinding-org-table 'counsel-keys)
 
-(defun counsel-find-file--cmd-dwim-action (file) (let ((default-directory ivy--directory)) (call-interactively 'cmd-dwim)))
+(defun counsel-find-file--cmd-dwim-action (file) (let ((default-directory ivy--directory)) (cmd-dwim ivy-current-prefix-arg)))
 (defun counsel-find-file--magit-status-action (file) (let ((default-directory ivy--directory)) (magit-status)))
 (defun counsel-find-file--eshell-action (file) (let ((default-directory ivy--directory)) (eshell)))
+(defun counsel-find-file--dired-action (file) (dired ivy--directory))
 (defun counsel-find-file--counsel-ag-action (file) (counsel-ag nil ivy--directory))
 (defun counsel-find-file--counsel-rg-action (file) (counsel-rg nil ivy--directory))
 (defun counsel-find-file--jw-sbt-action (file) (let ((default-directory ivy--directory)) (jw-sbt)))
@@ -1599,6 +1600,7 @@ counsel-keys
 (ivy-add-actions
  'counsel-find-file
  '(("!" counsel-find-file--cmd-dwim-action "cmd-dwim in pwd")
+   ("D" counsel-find-file--dired-action "dired in pwd")
    ("g" counsel-find-file--magit-status-action "magit-status in pwd")
    ("xe" counsel-find-file--eshell-action "eshell in pwd")
    ("ss" counsel-find-file--counsel-ag-action "ag in pwd")
