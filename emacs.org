@@ -1572,7 +1572,6 @@ counsel-keys
 | C-M-? l | counsel-find-library      |                       |                  |       |
 | M-p     | counsel-esh-history       | eshell-mode-map       | eshell-mode-hook |       |
 | C-l     | counsel-up-directory      | counsel-find-file-map |                  |       |
-| C-c p   | projectile-command-map    |                       |                  |       |
 
 #+HEADER: :var counsel-keys=counsel-keys
 #+BEGIN_SRC emacs-lisp
@@ -1580,11 +1579,7 @@ counsel-keys
 
 (setq ivy-use-virtual-buffers t)
 (setq ivy-count-format "%d/%d ")
-(setq projectile-completion-system 'ivy)
-
 (setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
-
-(counsel-projectile-mode)
 
 (keybinding-org-table 'counsel-keys)
 
@@ -1607,6 +1602,22 @@ counsel-keys
    ("sr" counsel-find-file--counsel-rg-action "rg in pwd")
    ("scs" counsel-find-file--jw-sbt-action "sbt in pwd")
    ("scc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
+#+END_SRC
+
+** projectile
+
+projectile-keys
+#+NAME: projectile-keys
+| Key   | Function               |
+|-------+------------------------|
+| C-c p | projectile-command-map |
+
+#+HEADER: :var projectile-keys=projectile-keys
+#+BEGIN_SRC emacs-lisp
+(setq projectile-completion-system 'ivy)
+(counsel-projectile-mode)
+
+(keybinding-org-table 'projectile-keys)
 
 (defun counsel-projectile-switch-project--jw-sbt-action (project)
   (let ((projectile-switch-project-action 'jw-sbt))
@@ -1621,6 +1632,16 @@ counsel-keys
  '(("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky") ;; counsel-projectile defaults magit to v, but I like g
    ("scs" counsel-projectile-switch-project--jw-sbt-action "sbt")
    ("scc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")))
+
+(defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
+(defalias 'projectile-purge-everything 'projectile-clear-known-projects)
+
+(defun projectile-clear-known-projects--advice--ask-y-or-n (original-function)
+  (if (yes-or-no-p "This will REMOVE ALL projects from projectile. Are you sure?")
+      (apply original-function)
+    (message "Did NOT clear the projectile projects.")))
+
+(advice-add 'projectile-clear-known-projects :around 'projectile-clear-known-projects--advice--ask-y-or-n)
 #+END_SRC
 
 * private
