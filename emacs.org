@@ -1560,6 +1560,7 @@ counsel-keys
 | C-x b   | counsel-switch-buffer     |                       |                  |       |
 | C-x C-r | ivy-resume                |                       |                  |       |
 | C-s     | swiper-isearch            |                       |                  |       |
+| C-r     | swiper-isearch-backward   |                       |                  |       |
 | M-s o   | swiper-thing-at-point     |                       |                  |       |
 | M-s g   | counsel-grep              |                       |                  |       |
 | M-s s   | counsel-ag                |                       |                  |       |
@@ -1622,6 +1623,10 @@ counsel-keys
    ("scs" counsel-projectile-switch-project--jw-sbt-action "sbt")
    ("scc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")))
 #+END_SRC
+
+#+RESULTS:
+| ivy-switch-buffer | ((f ivy--find-file-action find file) (j ivy--switch-buffer-other-window-action other window) (k ivy--kill-buffer-action kill) (r ivy--rename-buffer-action rename) (x counsel-open-buffer-file-externally open externally)) | t | ((i ivy--action-insert insert) (w ivy--action-copy copy)) | swiper-isearch | ((w swiper-action-copy copy)) | swiper | ((w swiper-action-copy copy)) | counsel-describe-variable | ((I counsel-info-lookup-symbol info) (d counsel--find-symbol definition)) | counsel-describe-function | ((I counsel-info-lookup-symbol info) (d counsel--find-symbol definition)) | counsel-describe-symbol | ((I counsel-info-lookup-symbol info) (d counsel--find-symbol definition)) | counsel-M-x | ((d counsel--find-symbol definition) (h #[257 \301!!\207 [counsel-describe-function-function intern] 4 |
+
 
 * private
 
