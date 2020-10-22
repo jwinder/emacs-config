@@ -1580,6 +1580,7 @@ counsel-keys
 
 (setq ivy-use-virtual-buffers t)
 (setq ivy-count-format "%d/%d ")
+(setq projectile-completion-system 'ivy)
 
 (setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
 
