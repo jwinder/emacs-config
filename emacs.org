@@ -1581,6 +1581,13 @@ counsel-keys
 (setq ivy-count-format "%d/%d ")
 (setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
 
+(require 'cl)
+(defun ivy-remove-action (cmd key)
+  (setq ivy--actions-list
+        (plist-put ivy--actions-list cmd
+                   (cl-remove-if (lambda (action) (equal key (car action)))
+                                 (plist-get ivy--actions-list cmd)))))
+
 (defun ivy-dispatching-done-ivy ()
   (interactive)
   (let ((ivy-read-action-function #'ivy-read-action-ivy))
@@ -1596,6 +1603,8 @@ counsel-keys
 (defun counsel-find-file--counsel-rg-action (file) (counsel-rg nil ivy--directory))
 (defun counsel-find-file--jw-sbt-action (file) (let ((default-directory ivy--directory)) (jw-sbt)))
 (defun counsel-find-file--sbt-compile-action (file) (let ((default-directory ivy--directory)) (sbt-compile ivy-current-prefix-arg)))
+
+(ivy-remove-action 'counsel-find-file "x")
 
 (ivy-add-actions
  'counsel-find-file
