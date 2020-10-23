@@ -39,10 +39,6 @@ Now, start emacs.
             (defalias 's-nonempty? 's-present?)
             (defalias 's-nonempty-or-nil 's-presence)))
 
-(use-package scratch :pin melpa
-  :config (progn
-            (defalias 'tmp-scratch-buffer 'scratch)))
-
 (use-package org-pomodoro)
 
 (use-package magit)
@@ -931,7 +927,6 @@ base-keys (keys not in other parts of this config)
 | q             | emacs-configs-toggle                      | jw-keymap      |      |                           |
 | d             | date                                      | jw-keymap      |      |                           |
 | i             | toggle-scratch-buffer                     | jw-keymap      |      |                           |
-| I             | tmp-scratch-buffer                        | jw-keymap      |      |                           |
 | C-x C-q       | wdired-change-to-wdired-mode              | dired-mode-map |      |                           |
 | w             | wdired-change-to-wdired-mode              | dired-mode-map |      |                           |
 
