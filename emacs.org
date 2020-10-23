@@ -1571,6 +1571,7 @@ counsel-keys
 (setq ivy-use-virtual-buffers t)
 (setq ivy-count-format "%d/%d ")
 (setq ivy-initial-inputs-alist nil)
+(setq ivy-use-selectable-prompt t)
 (setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
 
 (defun ivy-dispatching-done-ivy ()
