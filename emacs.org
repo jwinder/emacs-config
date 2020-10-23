@@ -1565,7 +1565,7 @@ counsel-keys
 | C-M-? f | counsel-describe-function |                       |                  |       |
 | C-M-? v | counsel-describe-variable |                       |                  |       |
 | C-M-? l | counsel-find-library      |                       |                  |       |
-| C-M-? p | counsel-list-processes    |                       |                  |       |
+| C-c h p | counsel-list-processes    |                       |                  |       |
 | M-p     | counsel-esh-history       | eshell-mode-map       | eshell-mode-hook |       |
 | C-l     | counsel-up-directory      | counsel-find-file-map |                  |       |
 
@@ -1577,13 +1577,6 @@ counsel-keys
 (setq ivy-count-format "%d/%d ")
 (setq ivy-initial-inputs-alist nil)
 (setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
-
-(require 'cl)
-(defun ivy-remove-action (cmd key)
-  (setq ivy--actions-list
-        (plist-put ivy--actions-list cmd
-                   (cl-remove-if (lambda (action) (equal key (car action)))
-                                 (plist-get ivy--actions-list cmd)))))
 
 (defun ivy-dispatching-done-ivy ()
   (interactive)
@@ -1601,18 +1594,16 @@ counsel-keys
 (defun counsel-find-file--jw-sbt-action (file) (let ((default-directory ivy--directory)) (jw-sbt)))
 (defun counsel-find-file--sbt-compile-action (file) (let ((default-directory ivy--directory)) (sbt-compile ivy-current-prefix-arg)))
 
-(ivy-remove-action 'counsel-find-file "x")
-
 (ivy-add-actions
  'counsel-find-file
  '(("!" counsel-find-file--cmd-dwim-action "cmd-dwim in pwd")
    ("D" counsel-find-file--dired-action "dired in pwd")
    ("g" counsel-find-file--magit-status-action "magit-status in pwd")
-   ("xe" counsel-find-file--eshell-action "eshell in pwd")
    ("ss" counsel-find-file--counsel-ag-action "ag in pwd")
    ("sr" counsel-find-file--counsel-rg-action "rg in pwd")
-   ("scs" counsel-find-file--jw-sbt-action "sbt in pwd")
-   ("scc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
+   ("C-cme" counsel-find-file--eshell-action "eshell in pwd")
+   ("C-css" counsel-find-file--jw-sbt-action "sbt in pwd")
+   ("C-csc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
 #+END_SRC
 
 ** projectile
@@ -1640,9 +1631,10 @@ projectile-keys
 
 (ivy-add-actions
  'counsel-projectile-switch-project
- '(("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky") ;; counsel-projectile defaults magit to v, but I like g
-   ("scs" counsel-projectile-switch-project--jw-sbt-action "sbt")
-   ("scc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")))
+ '(("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
+   ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
+   ("C-css" counsel-projectile-switch-project--jw-sbt-action "sbt")
+   ("C-csc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")))
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
 (defalias 'projectile-purge-everything 'projectile-clear-known-projects)
