@@ -39,10 +39,6 @@ Now, start emacs.
             (defalias 's-nonempty? 's-present?)
             (defalias 's-nonempty-or-nil 's-presence)))
 
-(use-package scratch :pin melpa
-  :config (progn
-            (defalias 'tmp-scratch-buffer 'scratch)))
-
 (use-package org-pomodoro)
 
 (use-package magit)
@@ -72,15 +68,11 @@ Now, start emacs.
 (use-package yasnippet)
 (use-package yasnippet-snippets)
 
-(use-package helm)
-(use-package helm-ag)
-(use-package helm-projectile)
-(use-package helm-descbinds)
+(use-package counsel :pin melpa) ;; brings in ivy & swiper
+(use-package counsel-projectile :pin melpa)
 
 (use-package wgrep
   :config (setq wgrep-auto-save-buffer t))
-
-(use-package wgrep-helm)
 
 (use-package undo-tree :pin melpa
   :config (global-undo-tree-mode))
@@ -702,8 +694,8 @@ Interactively:
 (jw--define-menu cmd-menu 'cmd-menu
   :actions '("Command menu (C-c m !)"
              (?! "sh cmd async    M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
-             (?: "elisp evaluate  M-:" helm-eval-expression-with-eldoc)
-             (?* "calc evaluate   M-*" helm-calcul-expression))
+             (?: "elisp evaluate  M-:" eval-expression)
+             (?* "calculator   M-*" calculator))
   :max-action-columns 1)
 
 (defun transpose-windows (arg)
@@ -886,58 +878,57 @@ If the prefix arg is 4, then kill the comment on the current line."
 
 base-keys (keys not in other parts of this config)
 #+NAME: base-keys
-| Key           | Function                                  | Scope       | Hook | Notes                     |
-|---------------+-------------------------------------------+-------------+------+---------------------------|
-| C-z           | nil                                       |             |      | remove suspend            |
-| C-x C-z       | nil                                       |             |      |                           |
-| C-x C-c       | life-might-be-too-much                    |             |      |                           |
-| C-h           | nil                                       |             |      | remove original help      |
-| C-M-?         | help-command                              |             |      |                           |
-| <return>      | toggle-frame-maximized                    | ctl-x-5-map |      |                           |
-| S-<return>    | toggle-frame-fullscreen                   | ctl-x-5-map |      |                           |
-| M-!           | cmd-dwim                                  |             |      |                           |
-| M-&           | cmd-dwim                                  |             |      |                           |
-| C-s           | isearch-forward-regexp                    |             |      |                           |
-| C-r           | isearch-backward-regexp                   |             |      |                           |
-| C-M-g         | goto-line                                 |             |      |                           |
-| C-M-9         | winner-undo                               |             |      |                           |
-| C-M-0         | winner-redo                               |             |      |                           |
-| t             | transpose-windows                         | ctl-x-4-map |      |                           |
-| s             | toggle-window-split                       | ctl-x-4-map |      |                           |
-| C-w           | kill-region-or-line                       |             |      |                           |
-| M-w           | kill-ring-save-region-or-line             |             |      |                           |
-| C-a           | beginning-of-line-or-indentation          |             |      |                           |
-| C-o           | open-line-previous                        |             |      |                           |
-| C-<return>    | open-line-next                            |             |      |                           |
-| C-j           | newline-and-open-line-previous            |             |      |                           |
-| C-x 2         | split-window-down-last-buffer-or-scratch  |             |      |                           |
-| C-x 3         | split-window-right-last-buffer-or-scratch |             |      |                           |
-| M-;           | comment-dwim-dwim                         |             |      |                           |
-| C-M-\         | indent-region-or-buffer                   |             |      |                           |
-| M-/           | dabbrev-expand                            |             |      | helm-dabbrev doesn't work |
-| M-g           | magit-status                              |             |      |                           |
-| C-=           | er/expand-region                          |             |      |                           |
-| C-+           | er/contract-region                        |             |      |                           |
-| C-?           | mc/mark-all-like-this                     |             |      |                           |
-| C-<           | mc/mark-previous-like-this                |             |      |                           |
-| C->           | mc/mark-next-like-this                    |             |      |                           |
-| C-x r t       | mc/edit-lines                             |             |      |                           |
-| M-s j         | dumb-jump-go                              |             |      |                           |
-| M-s J         | dumb-jump-go-other-window                 |             |      |                           |
-| M-<backspace> | nil                                       | sp-keymap   |      |                           |
-| C-M-p         | nil                                       | sp-keymap   |      |                           |
-| C-M-n         | nil                                       | sp-keymap   |      |                           |
-| C-x m         | jw-keymap                                 |             |      |                           |
-| C-c m         | jw-keymap                                 |             |      |                           |
-| m             | jw-keymap                                 | ctl-x-4-map |      |                           |
-| m             | jw-keymap                                 | ctl-x-5-map |      |                           |
-| !             | cmd-menu                                  | jw-keymap   |      |                           |
-| &             | cmd-menu                                  | jw-keymap   |      |                           |
-| q             | emacs-configs-toggle                      | jw-keymap   |      |                           |
-| d             | date                                      | jw-keymap   |      |                           |
-| i             | toggle-scratch-buffer                     | jw-keymap   |      |                           |
-| I             | tmp-scratch-buffer                        | jw-keymap   |      |                           |
-| C-c p         | projectile-command-map                    |             |      |                           |
+| Key           | Function                                  | Scope          | Hook | Notes                     |
+|---------------+-------------------------------------------+----------------+------+---------------------------|
+| C-z           | nil                                       |                |      | remove suspend            |
+| C-x C-z       | nil                                       |                |      |                           |
+| C-x C-c       | life-might-be-too-much                    |                |      |                           |
+| C-h           | nil                                       |                |      | remove original help      |
+| C-M-?         | help-command                              |                |      |                           |
+| <return>      | toggle-frame-maximized                    | ctl-x-5-map    |      |                           |
+| S-<return>    | toggle-frame-fullscreen                   | ctl-x-5-map    |      |                           |
+| M-!           | cmd-dwim                                  |                |      |                           |
+| M-&           | cmd-dwim                                  |                |      |                           |
+| C-s           | isearch-forward-regexp                    |                |      |                           |
+| C-r           | isearch-backward-regexp                   |                |      |                           |
+| C-M-g         | goto-line                                 |                |      |                           |
+| C-M-9         | winner-undo                               |                |      |                           |
+| C-M-0         | winner-redo                               |                |      |                           |
+| t             | transpose-windows                         | ctl-x-4-map    |      |                           |
+| s             | toggle-window-split                       | ctl-x-4-map    |      |                           |
+| C-w           | kill-region-or-line                       |                |      |                           |
+| M-w           | kill-ring-save-region-or-line             |                |      |                           |
+| C-a           | beginning-of-line-or-indentation          |                |      |                           |
+| C-o           | open-line-previous                        |                |      |                           |
+| C-<return>    | open-line-next                            |                |      |                           |
+| C-j           | newline-and-open-line-previous            |                |      |                           |
+| C-x 2         | split-window-down-last-buffer-or-scratch  |                |      |                           |
+| C-x 3         | split-window-right-last-buffer-or-scratch |                |      |                           |
+| M-;           | comment-dwim-dwim                         |                |      |                           |
+| C-M-\         | indent-region-or-buffer                   |                |      |                           |
+| M-g           | magit-status                              |                |      |                           |
+| C-=           | er/expand-region                          |                |      |                           |
+| C-+           | er/contract-region                        |                |      |                           |
+| C-?           | mc/mark-all-like-this                     |                |      |                           |
+| C-<           | mc/mark-previous-like-this                |                |      |                           |
+| C->           | mc/mark-next-like-this                    |                |      |                           |
+| C-x r t       | mc/edit-lines                             |                |      |                           |
+| M-s j         | dumb-jump-go                              |                |      |                           |
+| M-s J         | dumb-jump-go-other-window                 |                |      |                           |
+| M-<backspace> | nil                                       | sp-keymap      |      |                           |
+| C-M-p         | nil                                       | sp-keymap      |      |                           |
+| C-M-n         | nil                                       | sp-keymap      |      |                           |
+| C-x m         | jw-keymap                                 |                |      |                           |
+| C-c m         | jw-keymap                                 |                |      |                           |
+| m             | jw-keymap                                 | ctl-x-4-map    |      |                           |
+| m             | jw-keymap                                 | ctl-x-5-map    |      |                           |
+| !             | cmd-menu                                  | jw-keymap      |      |                           |
+| &             | cmd-menu                                  | jw-keymap      |      |                           |
+| q             | emacs-configs-toggle                      | jw-keymap      |      |                           |
+| d             | date                                      | jw-keymap      |      |                           |
+| i             | toggle-scratch-buffer                     | jw-keymap      |      |                           |
+| C-x C-q       | wdired-change-to-wdired-mode              | dired-mode-map |      |                           |
+| w             | wdired-change-to-wdired-mode              | dired-mode-map |      |                           |
 
 #+HEADER: :var base-keys=base-keys
 #+BEGIN_SRC emacs-lisp
@@ -1222,111 +1213,6 @@ example of defining specific functions to connect to various irc servers
 (defun twitch-irc-connect ()
   (interactive)
   (rcirc-connect-dwim "irc.chat.twitch.tv" 6667 "nick" "username" "full name" nil "your password"))
-#+END_SRC
-
-** helm
-
-helm-keys
-#+NAME: helm-keys
-| Key     | Function                        | Scope               | Hook             | Notes                    |
-|---------+---------------------------------+---------------------+------------------+--------------------------|
-| C-c h   | helm-command-prefix             |                     |                  |                          |
-| C-x c   | nil                             |                     |                  | undo default helm prefix |
-| M-x     | helm-M-x                        |                     |                  |                          |
-| M-:     | helm-eval-expression-with-eldoc |                     |                  |                          |
-| M-*     | helm-calcul-expression          |                     |                  |                          |
-| C-x C-b | helm-buffers-list               |                     |                  |                          |
-| C-x C-f | helm-find-files                 |                     |                  |                          |
-| M-y     | helm-show-kill-ring             |                     |                  |                          |
-| M-s s   | helm-do-grep-ag                 |                     |                  |                          |
-| M-s o   | helm-occur                      |                     |                  |                          |
-| M-s i   | helm-semantic-or-imenu          |                     |                  |                          |
-| C-x r l | helm-bookmarks                  |                     |                  |                          |
-| C-x r j | helm-register-jump-dwim         |                     |                  |                          |
-| C-h a   | helm-apropos                    |                     |                  |                          |
-| C-h b   | helm-descbinds                  |                     |                  |                          |
-| C-h r   | helm-info-emacs                 |                     |                  |                          |
-| C-h d   | helm-info-at-point              |                     |                  |                          |
-| C-h i   | helm-info                       |                     |                  |                          |
-| h       | helm-descbinds                  | helm-command-map    |                  |                          |
-| M-s s   | helm-ff-run-grep-ag             | helm-find-files-map |                  |                          |
-| C-s     | helm-ff-run-grep-ag             | helm-find-files-map |                  | ag instead of grep       |
-| <tab>   | helm-esh-pcomplete              | eshell-mode-map     | eshell-mode-hook |                          |
-| M-p     | helm-eshell-history             | eshell-mode-map     | eshell-mode-hook |                          |
-
-#+HEADER: :var helm-keys=helm-keys
-#+BEGIN_SRC emacs-lisp
-(require 'helm)
-(require 'helm-config)
-(require 'helm-dabbrev)
-
-(setq helm-split-window-in-side-p t
-      helm-ff-search-library-in-sexp t
-      helm-scroll-amount 8
-      helm-buffer-max-length nil
-      helm-ff-file-name-history-use-recentf t
-      helm-quick-update t
-      helm-move-to-line-cycle-in-source nil
-      helm-mode-fuzzy-match t
-      helm-completion-in-region-fuzzy-match t
-      helm-case-fold-search t
-      helm-ag-insert-at-point 'symbol
-      helm-show-completion-display-function nil ;; do not use separate window for completion selection
-      helm-ff-keep-cached-candidates nil
-      )
-
-(when (eq system-type 'darwin)
-  (setq helm-man-format-switches "%s"))
-
-(defalias 'kill-ring-show 'helm-show-kill-ring)
-(defalias 'list-colors-display 'helm-colors)
-(defalias 'proced 'helm-top)
-
-(defun helm-register-jump-dwim (arg)
-  (interactive "P")
-  (if arg (helm-register) (call-interactively 'jump-to-register)))
-
-(set-face-attribute 'helm-source-header nil :height 1.0 :weight 'normal :family (jw--font-name) :box '(:style released-button))
-(set-face-attribute 'helm-candidate-number nil :background jw--mode-line-color :foreground "goldenrod")
-
-(keybinding-org-table 'helm-keys)
-
-(helm-mode 1)
-(helm-autoresize-mode 1)
-
-(projectile-global-mode)
-(helm-projectile-on)
-
-(setq projectile-completion-system 'helm
-      projectile-mode-line ""  ;; this slowed tramp down sometimes
-      projectile-switch-project-action 'helm-projectile)
-
-(when (executable-find "ag")
-  (setq helm-grep-ag-command "ag -i --nogroup --nocolor --line-numbers %s %s %s")
-  (setq helm-ag-base-command "ag -i --nogroup --nocolor --line-numbers"))
-
-(defun helm-projectile-projects-helm-projectile-ag (dir)
-  (interactive)
-  (with-temp-buffer
-    (let ((default-directory dir))
-      (call-interactively 'helm-projectile-ag))))
-
-(helm-add-action-to-source "Ag in project `M-s a'" 'helm-projectile-projects-helm-projectile-ag helm-source-projectile-projects)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "M-s s") 'helm-projectile-projects-helm-projectile-ag)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-s") 'helm-projectile-projects-helm-projectile-ag) ;; hijack grep's keybinding
-
-(defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
-(defalias 'projectile-purge-everything 'projectile-clear-known-projects)
-
-(defun projectile-clear-known-projects--advice--ask-y-or-n (original-function)
-  (if (yes-or-no-p "This will REMOVE ALL projects from projectile. Are you sure?")
-      (apply original-function)
-    (message "Did NOT clear the projectile projects.")))
-
-(advice-add 'projectile-clear-known-projects :around 'projectile-clear-known-projects--advice--ask-y-or-n)
-
-(add-to-list 'helm-dabbrev-major-mode-assoc '(scala-mode . sbt-mode))
-
 #+END_SRC
 
 ** org
@@ -1652,27 +1538,108 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (org-babel-src-yasnippet 'scala 'ammonite) ;; default ob-scala requires brew scala & ensime, which I don't use.
 #+END_SRC
 
-adding sbt shortcut to helm projectile
+** ivy counsel
+
+counsel-keys
+#+NAME: counsel-keys
+| Key     | Function                  | Scope                 | Hook             | Notes |
+|---------+---------------------------+-----------------------+------------------+-------|
+| M-x     | counsel-M-x               |                       |                  |       |
+| C-o     | ivy-dispatching-done      | ivy-minibuffer-map    |                  |       |
+| M-o     | ivy-dispatching-done-ivy  | ivy-minibuffer-map    |                  |       |
+| C-x C-f | counsel-find-file         |                       |                  |       |
+| C-x F   | counsel-file-jump         |                       |                  |       |
+| C-x b   | counsel-switch-buffer     |                       |                  |       |
+| C-x C-r | ivy-resume                |                       |                  |       |
+| M-s o   | swiper-thing-at-point     |                       |                  |       |
+| M-s g   | counsel-grep              |                       |                  |       |
+| M-s s   | counsel-ag                |                       |                  |       |
+| M-s r   | counsel-rg                |                       |                  |       |
+| C-M-y   | counsel-yank-pop          |                       |                  |       |
+| C-M-? b | counsel-descbinds         |                       |                  |       |
+| C-M-? f | counsel-describe-function |                       |                  |       |
+| C-M-? v | counsel-describe-variable |                       |                  |       |
+| C-M-? l | counsel-find-library      |                       |                  |       |
+| C-c h p | counsel-list-processes    |                       |                  |       |
+| M-p     | counsel-esh-history       | eshell-mode-map       | eshell-mode-hook |       |
+| C-l     | counsel-up-directory      | counsel-find-file-map |                  |       |
+
+#+HEADER: :var counsel-keys=counsel-keys
 #+BEGIN_SRC emacs-lisp
-(require 'helm-projectile)
+(ivy-mode 1)
 
-;; sbt mode uses some local variables which causes issues from inside of the helm and switching between multiple projects
-;; e.g. `sbt:buffer-project-root'
-;; using with-temp-buffer to avoid that
+(setq ivy-use-virtual-buffers t)
+(setq ivy-count-format "%d/%d ")
+(setq ivy-initial-inputs-alist nil)
+(setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
 
-(defun helm-projectile-projects-sbt (dir)
+(defun ivy-dispatching-done-ivy ()
   (interactive)
-  (with-temp-buffer
-    (let ((default-directory dir)) (call-interactively 'jw-sbt))))
+  (let ((ivy-read-action-function #'ivy-read-action-ivy))
+    (ivy-dispatching-done)))
 
-(defun helm-projectile-projects-sbt-compile (dir)
-  (interactive)
-  (with-temp-buffer (let ((default-directory dir)) (call-interactively 'sbt-compile))))
+(keybinding-org-table 'counsel-keys)
 
-(helm-add-action-to-source "Dispatch sbt `C-c s ...'" 'helm-projectile-projects-sbt helm-source-projectile-projects)
+(defun counsel-find-file--cmd-dwim-action (file) (let ((default-directory ivy--directory)) (cmd-dwim ivy-current-prefix-arg)))
+(defun counsel-find-file--magit-status-action (file) (let ((default-directory ivy--directory)) (magit-status)))
+(defun counsel-find-file--eshell-action (file) (let ((default-directory ivy--directory)) (eshell)))
+(defun counsel-find-file--dired-action (file) (dired ivy--directory))
+(defun counsel-find-file--counsel-ag-action (file) (counsel-ag nil ivy--directory))
+(defun counsel-find-file--counsel-rg-action (file) (counsel-rg nil ivy--directory))
+(defun counsel-find-file--jw-sbt-action (file) (let ((default-directory ivy--directory)) (jw-sbt)))
+(defun counsel-find-file--sbt-compile-action (file) (let ((default-directory ivy--directory)) (sbt-compile ivy-current-prefix-arg)))
 
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s s") 'helm-projectile-projects-sbt)
-(helm-projectile-define-key helm-projectile-projects-map (kbd "C-c s c") 'helm-projectile-projects-sbt-compile)
+(ivy-add-actions
+ 'counsel-find-file
+ '(("!" counsel-find-file--cmd-dwim-action "cmd-dwim in pwd")
+   ("D" counsel-find-file--dired-action "dired in pwd")
+   ("g" counsel-find-file--magit-status-action "magit-status in pwd")
+   ("ss" counsel-find-file--counsel-ag-action "ag in pwd")
+   ("sr" counsel-find-file--counsel-rg-action "rg in pwd")
+   ("C-cme" counsel-find-file--eshell-action "eshell in pwd")
+   ("C-css" counsel-find-file--jw-sbt-action "sbt in pwd")
+   ("C-csc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
+#+END_SRC
+
+** projectile
+
+projectile-keys
+#+NAME: projectile-keys
+| Key   | Function               |
+|-------+------------------------|
+| C-c p | projectile-command-map |
+
+#+HEADER: :var projectile-keys=projectile-keys
+#+BEGIN_SRC emacs-lisp
+(setq projectile-completion-system 'ivy)
+(counsel-projectile-mode)
+
+(keybinding-org-table 'projectile-keys)
+
+(defun counsel-projectile-switch-project--jw-sbt-action (project)
+  (let ((projectile-switch-project-action 'jw-sbt))
+    (counsel-projectile-switch-project-by-name project)))
+
+(defun counsel-projectile-switch-project--sbt-compile-action (project)
+  (let ((projectile-switch-project-action (lambda () (sbt-compile ivy-current-prefix-arg))))
+    (counsel-projectile-switch-project-by-name project)))
+
+(ivy-add-actions
+ 'counsel-projectile-switch-project
+ '(("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
+   ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
+   ("C-css" counsel-projectile-switch-project--jw-sbt-action "sbt")
+   ("C-csc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")))
+
+(defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
+(defalias 'projectile-purge-everything 'projectile-clear-known-projects)
+
+(defun projectile-clear-known-projects--advice--ask-y-or-n (original-function)
+  (if (yes-or-no-p "This will REMOVE ALL projects from projectile. Are you sure?")
+      (apply original-function)
+    (message "Did NOT clear the projectile projects.")))
+
+(advice-add 'projectile-clear-known-projects :around 'projectile-clear-known-projects--advice--ask-y-or-n)
 #+END_SRC
 
 * private
