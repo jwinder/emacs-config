@@ -1593,10 +1593,10 @@ counsel-keys
 (ivy-add-actions
  'counsel-find-file
  '(("!" counsel-find-file--cmd-dwim-action "cmd-dwim in pwd")
-   ("D" counsel-find-file--dired-action "dired in pwd")
    ("g" counsel-find-file--magit-status-action "magit-status in pwd")
    ("ss" counsel-find-file--counsel-ag-action "ag in pwd")
    ("sr" counsel-find-file--counsel-rg-action "rg in pwd")
+   ("C-xd" counsel-find-file--dired-action "dired in pwd")
    ("C-cme" counsel-find-file--eshell-action "eshell in pwd")
    ("C-css" counsel-find-file--jw-sbt-action "sbt in pwd")
    ("C-csc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
@@ -1628,6 +1628,7 @@ projectile-keys
 (ivy-add-actions
  'counsel-projectile-switch-project
  '(("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
+   ("C-xd" counsel-projectile-switch-project-action-dired "open project in dired")
    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
    ("C-css" counsel-projectile-switch-project--jw-sbt-action "sbt")
    ("C-csc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")))
