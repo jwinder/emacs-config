@@ -1552,6 +1552,10 @@ counsel-keys
 | C-x b   | counsel-switch-buffer     |                       |                  |       |
 | C-x C-r | ivy-resume                |                       |                  |       |
 | M-s o   | swiper-thing-at-point     |                       |                  |       |
+| C-s     | swiper-isearch            |                       |                  |       |
+| C-r     | swiper-isearch-backward   |                       |                  |       |
+| C-s     | ivy-next-line             | swiper-map            |                  |       |
+| C-r     | ivy-previous-line         | swiper-map            |                  |       |
 | M-s g   | counsel-grep              |                       |                  |       |
 | M-s s   | counsel-ag                |                       |                  |       |
 | M-s r   | counsel-rg                |                       |                  |       |
