@@ -1289,7 +1289,7 @@ org-keys
       org-hide-block-startup t
       org-ellipsis " …"
       org-fontify-done-headline t
-      org-todo-keywords '((sequence "⚑" "⚐" "|" "✔"))
+      org-todo-keywords '((sequence "⚑" "⚐" "|" "✔" "✘"))
       org-agenda-todo-list-sublevels nil
       org-startup-with-inline-images t
       org-startup-folded t
@@ -1552,8 +1552,8 @@ counsel-keys
 | C-x b   | counsel-switch-buffer     |                       |                  |       |
 | C-x C-r | ivy-resume                |                       |                  |       |
 | M-s o   | swiper-thing-at-point     |                       |                  |       |
-| C-s     | swiper-isearch            |                       |                  |       |
-| C-r     | swiper-isearch-backward   |                       |                  |       |
+| C-s     | swiper                    |                       |                  |       |
+| C-r     | swiper-backward           |                       |                  |       |
 | C-s     | ivy-next-line             | swiper-map            |                  |       |
 | C-r     | ivy-previous-line         | swiper-map            |                  |       |
 | M-s g   | counsel-grep              |                       |                  |       |
