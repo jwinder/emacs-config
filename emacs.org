@@ -15,14 +15,6 @@ $ ln -s /custom/path/private.org $HOME/emacs-config/private.org # file containin
 
 Now, start emacs.
 
-Once emacs is loaded, configurations can be byte-recompiled using the following helper functions:
-#+BEGIN_SRC emacs-lisp :tangle no
-(emacs-byte-compile-elpa-package-files)
-(emacs-byte-compile-init-files)
-#+END_SRC
-
-To install the latest packages, remove the emacs =elpa= directory and restart.
-
 ** org configs
 
 #+TITLE: jwinder emacs config
@@ -883,13 +875,6 @@ If the prefix arg is 4, then kill the comment on the current line."
 (defun emacs-byte-compile-elpa-package-files ()
   (interactive)
   (byte-recompile-directory package-user-dir 0 'force))
-
-(defun emacs-byte-compile-init-files ()
-  (interactive)
-  (byte-recompile-file user-init-file 'force 0 'reload)
-  (byte-recompile-file jw--init-file 'force 0 'reload)
-  (when (file-exists-p jw--init-private-file)
-    (byte-recompile-file jw--init-private-file 'force 0 'reload)))
 #+END_SRC
 
 ** key bindings
