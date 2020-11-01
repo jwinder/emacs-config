@@ -121,6 +121,12 @@ These are non-interactive library functions useful in other parts of this config
 
 (defconst jw--mode-line-color "#22083397778B")
 
+(defconst jw--init-org-file (expand-file-name "emacs.org" user-emacs-directory))
+(defconst jw--init-file (expand-file-name "emacs.el" user-emacs-directory))
+(defconst jw--init-private-org-file (expand-file-name "private.org" user-emacs-directory))
+(defconst jw--init-private-file (expand-file-name "private.el" user-emacs-directory))
+(defconst jw--init-private-dir (expand-file-name "private" user-emacs-directory))
+
 (defun jw--font-name (&optional size)
   (if size (concat "Monaco " size) "Monaco"))
 
@@ -835,11 +841,11 @@ If the prefix arg is 4, then kill the comment on the current line."
 #+BEGIN_SRC emacs-lisp
 (defun emacs-config ()
   (interactive)
-  (find-file (expand-file-name "emacs.org" user-emacs-directory)))
+  (find-file jw--init-org-file))
 
 (defun emacs-private-config ()
   (interactive)
-  (find-file (expand-file-name "private.org" user-emacs-directory)))
+  (find-file jw--init-private-org-file))
 
 (defun emacs-configs-toggle (arg)
   (interactive "P")
@@ -849,7 +855,7 @@ If the prefix arg is 4, then kill the comment on the current line."
 
 (defun emacs-reload-config ()
   (interactive)
-  (load-file (expand-file-name "init.el" user-emacs-directory)))
+  (load-file user-init-file))
 
 (defun emacs-archive-packages-and-reload-config ()
   (interactive)
@@ -868,10 +874,14 @@ If the prefix arg is 4, then kill the comment on the current line."
 
 (defun emacs-byte-compile-elpa-package-files ()
   (interactive)
-  (-each (f-directories package-user-dir)
-    (lambda (dir)
-      (-each (f-entries dir)
-        (lambda (entry) (when (s-matches? ".*el$" entry) (byte-compile-file entry)))))))
+  (byte-recompile-directory package-user-dir 0 'force))
+
+(defun emacs-byte-compile-init-file ()
+  (interactive)
+  (byte-recompile-file user-init-file 'force 0 'reload)
+  (byte-recompile-file jw--init-file 'force 0 'reload)
+  (when (file-exists-p jw--init-private-file)
+    (byte-recompile-file jw--init-private-file 'force 0 'reload)))
 #+END_SRC
 
 ** key bindings
@@ -1653,14 +1663,12 @@ projectile-keys
 
 load the =private= directory and the =private.org= file if they exist
 #+BEGIN_SRC emacs-lisp
-(let ((path (expand-file-name "private" user-emacs-directory)))
-  (when (file-exists-p path)
-    (add-to-list 'load-path path)
-    (mapcar 'load-file (directory-files path t "\.el$"))))
+(when (file-exists-p jw--init-private-dir)
+  (add-to-list 'load-path jw--init-private-dir)
+  (mapcar 'load-file (directory-files jw--init-private-dir t "\.el$")))
 
-(let ((private-org (expand-file-name "private.org" user-emacs-directory)))
-  (when (file-exists-p private-org)
-    (org-babel-load-file private-org)))
+(when (file-exists-p jw--init-private-org-file)
+  (org-babel-load-file jw--init-private-org-file))
 #+END_SRC
 
 * finally
