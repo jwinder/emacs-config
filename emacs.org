@@ -850,27 +850,29 @@ If the prefix arg is 4, then kill the comment on the current line."
 (defun emacs-configs-toggle (arg)
   (interactive "P")
   (if arg
-      (if (string= (buffer-name) "private.org") (switch-to-buffer (other-buffer)) (emacs-private-config))
-    (if (string= (buffer-name) "emacs.org") (switch-to-buffer (other-buffer)) (emacs-config))))
+      (if (string= (buffer-name) (file-name-nondirectory jw--init-private-org-file))
+          (switch-to-buffer (other-buffer))
+        (emacs-private-config))
+    (if (string= (buffer-name) (file-name-nondirectory jw--init-org-file))
+        (switch-to-buffer (other-buffer))
+      (emacs-config))))
 
 (defun emacs-reload-config ()
   (interactive)
   (load-file user-init-file))
 
-(defun emacs-archive-packages-and-reload-config ()
+(defun emacs-archive-packages (&optional rm-elpa-dir)
   (interactive)
-  (emacs-archive-packages)
-  (emacs-reload-config))
+  (when (f-exists? package-user-dir)
+    (let ((archive-dir (format "/tmp/emacs-elpa--%s" (jw--iso-current-time-string))))
+      (if rm-elpa-dir
+          (f-move package-user-dir archive-dir)
+        (f-copy package-user-dir archive-dir)))))
 
 (defun emacs-archive-packages-and-die ()
   (interactive)
-  (emacs-archive-packages)
+  (emacs-archive-packages 'rm-elpa-dir)
   (life-is-too-much))
-
-(defun emacs-archive-packages ()
-  (when (f-exists? package-user-dir)
-    (let ((archive-dir (format "/tmp/emacs-elpa--%s" (jw--iso-current-time-string))))
-      (f-move package-user-dir archive-dir))))
 
 (defun emacs-byte-compile-elpa-package-files ()
   (interactive)
