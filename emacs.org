@@ -1,19 +1,27 @@
 * introduction
 ** getting started
 
-I prefer to clone this repository as =$HOME/emacs-config= and symlink it to =$HOME/.emacs.d=
+I prefer to clone this repository as =$HOME/emacs-config= and symlink it to =$HOME/.emacs.d=:
 #+BEGIN_SRC sh :tangle no
-git clone git@github.com:jwinder/emacs-config.git $HOME/emacs-config
-ln -s $HOME/emacs-config $HOME/.emacs.d
+$ git clone git@github.com:jwinder/emacs-config.git $HOME/emacs-config
+$ ln -s $HOME/emacs-config $HOME/.emacs.d
 #+END_SRC
 
-You can also create symlinks to a =private= directory or =private.org= file in a safe place, containing private or personal settings. This works well for irc passwords, tramp helpers, etc.
+Custom settings can be placed inside of a =private= directory of elisp files, or a =private.org= file of elisp code blocks.
 #+BEGIN_SRC sh :tangle no
-ln -s /path/to/your/safe/directory $HOME/emacs-config/private # directory of elisp files
-ln -s /path/to/your/safe/private.org $HOME/emacs-config/private.org # file containing elisp segments
+$ ln -s /custom/path/private $HOME/emacs-config/private # directory containing .el files
+$ ln -s /custom/path/private.org $HOME/emacs-config/private.org # file containing elisp blocks
 #+END_SRC
 
 Now, start emacs.
+
+Once emacs is loaded, configurations can be byte-recompiled using the following helper functions:
+#+BEGIN_SRC emacs-lisp :tangle no
+(emacs-byte-compile-elpa-package-files)
+(emacs-byte-compile-init-files)
+#+END_SRC
+
+To install the latest packages, remove the emacs =elpa= directory and restart.
 
 ** org configs
 
@@ -876,7 +884,7 @@ If the prefix arg is 4, then kill the comment on the current line."
   (interactive)
   (byte-recompile-directory package-user-dir 0 'force))
 
-(defun emacs-byte-compile-init-file ()
+(defun emacs-byte-compile-init-files ()
   (interactive)
   (byte-recompile-file user-init-file 'force 0 'reload)
   (byte-recompile-file jw--init-file 'force 0 'reload)
@@ -1376,6 +1384,9 @@ org-keys
 (org-babel-support-langs
  (list 'awk 'calc 'C 'emacs-lisp 'haskell 'java 'js 'latex 'lisp
        'makefile 'org 'perl 'python 'R 'ruby 'scheme 'shell 'sql))
+
+(add-to-list 'org-src-lang-modes '("elisp" . emacs-lisp))
+(org-babel-src-yasnippet 'elisp 'emacs-lisp)
 
 (org-babel-src-yasnippet 'bash)
 (org-babel-src-yasnippet 'markdown)
