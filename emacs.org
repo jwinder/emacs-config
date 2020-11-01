@@ -422,6 +422,9 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 ** settings
 
 #+BEGIN_SRC emacs-lisp
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(load custom-file 'noerror)
+
 (setq jw-org-scratch-file (f-expand "scratch.org" user-emacs-directory))
 
 (setq enable-local-variables :all)
