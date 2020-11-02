@@ -1558,6 +1558,7 @@ counsel-keys
 | C-x C-f | counsel-find-file         |                       |                  |       |
 | C-x F   | counsel-file-jump         |                       |                  |       |
 | C-x b   | counsel-switch-buffer     |                       |                  |       |
+| C-x E   | counsel-kmacro            |                       |                  |       |
 | C-x C-r | ivy-resume                |                       |                  |       |
 | M-s o   | swiper-thing-at-point     |                       |                  |       |
 | C-s     | swiper                    |                       |                  |       |
