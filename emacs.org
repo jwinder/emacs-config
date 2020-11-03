@@ -1631,6 +1631,10 @@ projectile-keys
 
 (keybinding-org-table 'projectile-keys)
 
+(defun counsel-projectile-switch-project--cmd-dwim-action (project)
+  (let ((projectile-switch-project-action (lambda () (cmd-dwim ivy-current-prefix-arg))))
+    (counsel-projectile-switch-project-by-name project)))
+
 (defun counsel-projectile-switch-project--jw-sbt-action (project)
   (let ((projectile-switch-project-action 'jw-sbt))
     (counsel-projectile-switch-project-by-name project)))
@@ -1641,7 +1645,8 @@ projectile-keys
 
 (ivy-add-actions
  'counsel-projectile-switch-project
- '(("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
+ '(("!" counsel-projectile-switch-project--cmd-dwim-action "cmd-dwim in project root")
+   ("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
    ("C-xd" counsel-projectile-switch-project-action-dired "open project in dired")
    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
    ("C-css" counsel-projectile-switch-project--jw-sbt-action "sbt")
