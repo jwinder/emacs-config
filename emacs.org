@@ -29,11 +29,11 @@ Now, start emacs.
 ** packages
 
 #+BEGIN_SRC emacs-lisp
-(use-package afternoon-theme :pin melpa)
+(use-package afternoon-theme)
 
-(use-package dash :pin melpa)
-(use-package f :pin melpa)
-(use-package s :pin melpa
+(use-package dash)
+(use-package f)
+(use-package s
   :config (progn
             (defalias 's-empty? 's-blank?)
             (defalias 's-nonempty? 's-present?)
@@ -41,9 +41,9 @@ Now, start emacs.
 
 (use-package org-pomodoro)
 
-(use-package magit)
+(use-package magit :pin melpa-stable)
 
-(use-package browse-at-remote :pin melpa
+(use-package browse-at-remote
   :config (progn
             (defalias 'git-browse-at-remote 'browse-at-remote)
             (defalias 'github-browse-file 'browse-at-remote)))
@@ -68,8 +68,8 @@ Now, start emacs.
 (use-package yasnippet)
 (use-package yasnippet-snippets)
 
-(use-package counsel :pin melpa) ;; brings in ivy & swiper
-(use-package counsel-projectile :pin melpa)
+(use-package counsel) ;; brings in ivy & swiper
+(use-package counsel-projectile)
 
 (use-package wgrep
   :config (setq wgrep-auto-save-buffer t))
