@@ -1555,7 +1555,7 @@ counsel-keys
 | M-x     | counsel-M-x               |                       |                  |       |
 | C-o     | ivy-dispatching-done      | ivy-minibuffer-map    |                  |       |
 | M-o     | ivy-dispatching-done-ivy  | ivy-minibuffer-map    |                  |       |
-| C-x C-f | counsel-find-file         |                       |                  |       |
+| C-x C-f | counsel-find-file-dwim    |                       |                  |       |
 | C-x F   | counsel-file-jump         |                       |                  |       |
 | C-x b   | counsel-switch-buffer     |                       |                  |       |
 | C-x E   | counsel-kmacro            |                       |                  |       |
@@ -1587,6 +1587,16 @@ counsel-keys
       ivy-use-selectable-prompt t
       ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
 (setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
+
+(defun counsel-find-file-dwim (arg)
+  (interactive "P")
+  (if (thing-at-point 'url)
+      (browse-url (thing-at-point 'url))
+    (if (region-active-p)
+        (counsel-find-file (buffer-substring-no-properties (region-beginning) (region-end)))
+      (if arg
+          (counsel-find-file (thing-at-point 'filename))
+        (counsel-find-file)))))
 
 (defun swiper-dwim (arg)
   (interactive "P")
