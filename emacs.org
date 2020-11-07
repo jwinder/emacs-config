@@ -1590,12 +1590,12 @@ counsel-keys
 
 (defun counsel-find-file-dwim (arg)
   (interactive "P")
-  (if (thing-at-point 'url)
-      (browse-url (thing-at-point 'url))
-    (if (region-active-p)
-        (counsel-find-file (buffer-substring-no-properties (region-beginning) (region-end)))
-      (if arg
-          (counsel-find-file (thing-at-point 'filename))
+  (if (region-active-p)
+      (counsel-find-file (buffer-substring-no-properties (region-beginning) (region-end)))
+    (if arg
+        (counsel-find-file (thing-at-point 'filename))
+      (if (thing-at-point 'url)
+          (browse-url (thing-at-point 'url))
         (counsel-find-file)))))
 
 (defun swiper-dwim (arg)
