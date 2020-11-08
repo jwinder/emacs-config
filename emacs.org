@@ -1588,29 +1588,23 @@ counsel-keys
       ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
 (setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
 
-(defun counsel-find-file-dwim (arg)
-  (interactive "P")
+(defun counsel-find-file-dwim ()
+  (interactive)
   (if (region-active-p)
       (counsel-find-file (buffer-substring-no-properties (region-beginning) (region-end)))
-    (if arg
-        (counsel-find-file (thing-at-point 'filename))
-      (counsel-find-file))))
+    (counsel-find-file)))
 
-(defun swiper-dwim (arg)
-  (interactive "P")
+(defun swiper-dwim ()
+  (interactive)
   (if (region-active-p)
       (swiper (buffer-substring-no-properties (region-beginning) (region-end)))
-    (if arg
-        (swiper-thing-at-point)
-      (swiper))))
+    (swiper)))
 
-(defun swiper-backward-dwim (arg)
-  (interactive "P")
+(defun swiper-backward-dwim ()
+  (interactive)
   (if (region-active-p)
       (swiper-backward (buffer-substring-no-properties (region-beginning) (region-end)))
-    (if arg
-        (swiper-thing-at-point)
-      (swiper-backward))))
+    (swiper-backward)))
 
 (defun ivy-dispatching-done-ivy ()
   (interactive)
