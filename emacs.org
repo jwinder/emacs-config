@@ -7,7 +7,7 @@ $ git clone git@github.com:jwinder/emacs-config.git $HOME/emacs-config
 $ ln -s $HOME/emacs-config $HOME/.emacs.d
 #+END_SRC
 
-Custom settings can be placed inside of a =private= directory of elisp files, or a =private.org= file of elisp code blocks.
+Optionally, custom settings can be placed inside of a =private= directory of elisp files, or a =private.org= file of elisp code blocks.
 #+BEGIN_SRC sh :tangle no
 $ ln -s /custom/path/private $HOME/emacs-config/private # directory containing .el files
 $ ln -s /custom/path/private.org $HOME/emacs-config/private.org # file containing elisp blocks
