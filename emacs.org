@@ -429,6 +429,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq enable-local-variables :all)
 
+(setq vc-follow-symlinks t)
+
 (ansi-color-for-comint-mode-on)
 
 (show-paren-mode t)
