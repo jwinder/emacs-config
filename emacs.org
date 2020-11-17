@@ -1288,7 +1288,7 @@ org-keys
       org-tags-column -100
       org-src-preserve-indentation t
       org-src-tab-acts-natively nil
-      org-src-window-setup 'current-window
+      org-src-window-setup 'split-window-below
       org-cycle-open-archived-trees t
       org-hide-block-startup t
       org-ellipsis " …"
