@@ -92,9 +92,6 @@ Now, start emacs.
 (use-package go-mode
   :config (add-hook 'before-save-hook 'gofmt-before-save))
 
-(use-package haskell-mode
-  :config (add-hook 'haskell-mode-hook 'turn-on-haskell-indent))
-
 (use-package coffee-mode
   :config (setq coffee-tab-width 2))
 
@@ -1371,7 +1368,7 @@ org-keys
   (-each langs (lambda (lang) (org-babel-src-yasnippet lang))))
 
 (org-babel-support-langs
- (list 'awk 'calc 'C 'emacs-lisp 'haskell 'java 'js 'latex 'lisp
+ (list 'awk 'calc 'C 'emacs-lisp 'java 'js 'latex 'lisp
        'makefile 'org 'perl 'python 'R 'ruby 'scheme 'shell 'sql))
 
 (add-to-list 'org-src-lang-modes '("elisp" . emacs-lisp))
