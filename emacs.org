@@ -1223,16 +1223,17 @@ example of defining specific functions to connect to various irc servers
 
 org-keys
 #+NAME: org-keys
-| Key       | Function                   | Scope     | Hook          |
-|-----------+----------------------------+-----------+---------------|
-| o         | jw-todo                    | jw-keymap |               |
-| a         | org-agenda                 | jw-keymap |               |
-| A         | jw-org-agenda              | jw-keymap |               |
-| c         | org-capture                | jw-keymap |               |
-| <tab>     | org-pomodoro               | jw-keymap |               |
-| C-c <     | org-time-stamp             | local     | org-mode-hook |
-| C-c .     | org-time-stamp-inactive    | local     | org-mode-hook |
-| C-c C-x g | org-feed-update-all-or-one | local     | org-mode-hook |
+| Key       | Function                       | Scope     | Hook          |
+|-----------+--------------------------------+-----------+---------------|
+| o         | jw-todo                        | jw-keymap |               |
+| a         | org-agenda                     | jw-keymap |               |
+| A         | jw-org-agenda                  | jw-keymap |               |
+| c         | org-capture                    | jw-keymap |               |
+| '         | jw-toggle-org-src-window-setup | jw-keymap |               |
+| <tab>     | org-pomodoro                   | jw-keymap |               |
+| C-c <     | org-time-stamp                 | local     | org-mode-hook |
+| C-c .     | org-time-stamp-inactive        | local     | org-mode-hook |
+| C-c C-x g | org-feed-update-all-or-one     | local     | org-mode-hook |
 
 #+HEADER: :var org-keys=org-keys
 #+BEGIN_SRC emacs-lisp
@@ -1288,7 +1289,6 @@ org-keys
       org-tags-column -100
       org-src-preserve-indentation t
       org-src-tab-acts-natively nil
-      org-src-window-setup 'split-window-below
       org-cycle-open-archived-trees t
       org-hide-block-startup t
       org-ellipsis " …"
@@ -1302,6 +1302,19 @@ org-keys
       org-confirm-elisp-link-function nil
       org-id-link-to-org-use-id 'create-if-interactive
       org-agenda-window-setup 'only-window)
+
+(setq org-src-window-setup 'current-window)
+
+(defun jw-toggle-org-src-window-setup ()
+  (interactive)
+  (pcase org-src-window-setup
+    (`current-window
+     (setq org-src-window-setup 'split-window-below)
+     (message "Set org-src-window-setup to split-window-below"))
+    (_
+     (setq org-src-window-setup 'current-window)
+     (message "Set org-src-window-setup to current-window"))
+    ))
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
