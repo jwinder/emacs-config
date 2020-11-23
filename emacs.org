@@ -26,6 +26,13 @@ Now, start emacs.
 #+SEQ_TODO: ⚑ ⚐ | ✔
 
 * dependencies
+** elpa gpg key fix
+
+This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can this go away in future emacs versions?
+#+BEGIN_SRC emacs-lisp
+(use-package gnu-elpa-keyring-update)
+#+END_SRC
+
 ** packages
 
 #+BEGIN_SRC emacs-lisp
@@ -73,6 +80,9 @@ Now, start emacs.
 
 (use-package wgrep
   :config (setq wgrep-auto-save-buffer t))
+
+(use-package undo-tree
+  :config (global-undo-tree-mode))
 
 (use-package dumb-jump)
 
