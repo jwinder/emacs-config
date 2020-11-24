@@ -934,8 +934,6 @@ base-keys (keys not in other parts of this config)
 | C-M-n         | nil                                       | sp-keymap      |      |                           |
 | C-x m         | jw-keymap                                 |                |      |                           |
 | C-c m         | jw-keymap                                 |                |      |                           |
-| m             | jw-keymap                                 | ctl-x-4-map    |      |                           |
-| m             | jw-keymap                                 | ctl-x-5-map    |      |                           |
 | !             | cmd-menu                                  | jw-keymap      |      |                           |
 | &             | cmd-menu                                  | jw-keymap      |      |                           |
 | q             | emacs-configs-toggle                      | jw-keymap      |      |                           |
@@ -1233,17 +1231,17 @@ example of defining specific functions to connect to various irc servers
 
 org-keys
 #+NAME: org-keys
-| Key       | Function                       | Scope     | Hook          |
-|-----------+--------------------------------+-----------+---------------|
-| o         | jw-todo                        | jw-keymap |               |
-| a         | org-agenda                     | jw-keymap |               |
-| A         | jw-org-agenda                  | jw-keymap |               |
-| c         | org-capture                    | jw-keymap |               |
-| '         | jw-toggle-org-src-window-setup | jw-keymap |               |
-| <tab>     | org-pomodoro                   | jw-keymap |               |
-| C-c <     | org-time-stamp                 | local     | org-mode-hook |
-| C-c .     | org-time-stamp-inactive        | local     | org-mode-hook |
-| C-c C-x g | org-feed-update-all-or-one     | local     | org-mode-hook |
+| Key       | Function                       | Scope       | Hook          |
+|-----------+--------------------------------+-------------+---------------|
+| o         | jw-todo                        | jw-keymap   |               |
+| a         | org-agenda                     | jw-keymap   |               |
+| A         | jw-org-agenda                  | jw-keymap   |               |
+| c         | org-capture                    | jw-keymap   |               |
+| '         | jw-toggle-org-src-window-setup | ctl-x-4-map |               |
+| <tab>     | org-pomodoro                   | jw-keymap   |               |
+| C-c <     | org-time-stamp                 | local       | org-mode-hook |
+| C-c .     | org-time-stamp-inactive        | local       | org-mode-hook |
+| C-c C-x g | org-feed-update-all-or-one     | local       | org-mode-hook |
 
 #+HEADER: :var org-keys=org-keys
 #+BEGIN_SRC emacs-lisp
