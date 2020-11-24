@@ -810,18 +810,6 @@ If the prefix arg is 4, then kill the comment on the current line."
     (newline-and-indent)
     (unless was-at-end-of-line (open-line-previous))))
 
-(defun split-window-down-last-buffer-or-scratch (arg)
-  (interactive "P")
-  (split-window-vertically)
-  (other-window 1 nil)
-  (if arg (scratch-buffer) (switch-to-buffer (other-buffer))))
-
-(defun split-window-right-last-buffer-or-scratch (arg)
-  (interactive "P")
-  (split-window-horizontally)
-  (other-window 1 nil)
-  (if arg (scratch-buffer) (switch-to-buffer (other-buffer))))
-
 (defun kill-matching-buffers-silently (pattern)
   (interactive "sKill buffers matching: ")
   (dolist (buffer (buffer-list))
@@ -916,8 +904,6 @@ base-keys (keys not in other parts of this config)
 | C-o           | open-line-previous                        |                |      |                           |
 | C-<return>    | open-line-next                            |                |      |                           |
 | C-j           | newline-and-open-line-previous            |                |      |                           |
-| C-x 2         | split-window-down-last-buffer-or-scratch  |                |      |                           |
-| C-x 3         | split-window-right-last-buffer-or-scratch |                |      |                           |
 | M-;           | comment-dwim-dwim                         |                |      |                           |
 | C-M-\         | indent-region-or-buffer                   |                |      |                           |
 | M-g           | magit-status                              |                |      |                           |
