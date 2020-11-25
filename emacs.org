@@ -795,6 +795,60 @@ If the prefix arg is 4, then kill the comment on the current line."
 (defun display-current-prefix-arg (arg)
   (interactive "P")
   (message "%s" arg))
+
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+
+(defun rotate-windows (count)
+  "Rotate your windows.
+Dedicated windows are left untouched. Giving a negative prefix
+argument makes the windows rotate backwards."
+  (interactive "p")
+  (let* ((non-dedicated-windows (remove-if 'window-dedicated-p (window-list)))
+         (num-windows (length non-dedicated-windows))
+         (i 0)
+         (step (+ num-windows count)))
+    (cond ((not (> num-windows 1))
+           (message "You can't rotate a single window!"))
+          (t
+           (dotimes (counter (- num-windows 1))
+             (let* ((next-i (% (+ step i) num-windows))
+
+                    (w1 (elt non-dedicated-windows i))
+                    (w2 (elt non-dedicated-windows next-i))
+
+                    (b1 (window-buffer w1))
+                    (b2 (window-buffer w2))
+
+                    (s1 (window-start w1))
+                    (s2 (window-start w2)))
+               (set-window-buffer w1 b2)
+               (set-window-buffer w2 b1)
+               (set-window-start w1 s2)
+               (set-window-start w2 s1)
+               (setq i next-i)))))))
 #+END_SRC
 
 *** emacs
@@ -844,51 +898,54 @@ If the prefix arg is 4, then kill the comment on the current line."
 
 base-keys (keys not in other parts of this config)
 #+NAME: base-keys
-| Key           | Function                                  | Scope          | Hook | Notes                     |
-|---------------+-------------------------------------------+----------------+------+---------------------------|
-| C-z           | nil                                       |                |      | remove suspend            |
-| C-x C-z       | nil                                       |                |      |                           |
-| C-x C-c       | life-might-be-too-much                    |                |      |                           |
-| C-h           | nil                                       |                |      | remove original help      |
-| C-M-?         | help-command                              |                |      |                           |
-| <return>      | toggle-frame-maximized                    | ctl-x-5-map    |      |                           |
-| S-<return>    | toggle-frame-fullscreen                   | ctl-x-5-map    |      |                           |
-| M-!           | cmd-dwim                                  |                |      |                           |
-| M-&           | cmd-dwim                                  |                |      |                           |
-| C-s           | isearch-forward-regexp                    |                |      |                           |
-| C-r           | isearch-backward-regexp                   |                |      |                           |
-| C-M-g         | goto-line                                 |                |      |                           |
-| C-M-9         | winner-undo                               |                |      |                           |
-| C-M-0         | winner-redo                               |                |      |                           |
-| C-w           | kill-region-or-line                       |                |      |                           |
-| M-w           | kill-ring-save-region-or-line             |                |      |                           |
-| C-a           | beginning-of-line-or-indentation          |                |      |                           |
-| C-o           | open-line-previous                        |                |      |                           |
-| C-<return>    | open-line-next                            |                |      |                           |
-| C-j           | newline-and-open-line-previous            |                |      |                           |
-| M-;           | comment-dwim-dwim                         |                |      |                           |
-| C-M-\         | indent-region-or-buffer                   |                |      |                           |
-| M-g           | magit-status                              |                |      |                           |
-| C-=           | er/expand-region                          |                |      |                           |
-| C-+           | er/contract-region                        |                |      |                           |
-| C-?           | mc/mark-all-like-this                     |                |      |                           |
-| C-<           | mc/mark-previous-like-this                |                |      |                           |
-| C->           | mc/mark-next-like-this                    |                |      |                           |
-| C-x r t       | mc/edit-lines                             |                |      |                           |
-| M-s j         | dumb-jump-go                              |                |      |                           |
-| M-s J         | dumb-jump-go-other-window                 |                |      |                           |
-| M-<backspace> | nil                                       | sp-keymap      |      |                           |
-| C-M-p         | nil                                       | sp-keymap      |      |                           |
-| C-M-n         | nil                                       | sp-keymap      |      |                           |
-| C-x m         | jw-keymap                                 |                |      |                           |
-| C-c m         | jw-keymap                                 |                |      |                           |
-| !             | cmd-menu                                  | jw-keymap      |      |                           |
-| &             | cmd-menu                                  | jw-keymap      |      |                           |
-| q             | emacs-configs-toggle                      | jw-keymap      |      |                           |
-| d             | date                                      | jw-keymap      |      |                           |
-| i             | toggle-scratch-buffer                     | jw-keymap      |      |                           |
-| C-x C-q       | wdired-change-to-wdired-mode              | dired-mode-map |      |                           |
-| w             | wdired-change-to-wdired-mode              | dired-mode-map |      |                           |
+| Key           | Function                         | Scope          | Hook | Notes                |
+|---------------+----------------------------------+----------------+------+----------------------|
+| C-z           | nil                              |                |      | remove suspend       |
+| C-x C-z       | nil                              |                |      |                      |
+| C-x C-c       | life-might-be-too-much           |                |      |                      |
+| C-h           | nil                              |                |      | remove original help |
+| C-M-?         | help-command                     |                |      |                      |
+| <return>      | toggle-frame-maximized           | ctl-x-5-map    |      |                      |
+| S-<return>    | toggle-frame-fullscreen          | ctl-x-5-map    |      |                      |
+| M-!           | cmd-dwim                         |                |      |                      |
+| M-&           | cmd-dwim                         |                |      |                      |
+| C-s           | isearch-forward-regexp           |                |      |                      |
+| C-r           | isearch-backward-regexp          |                |      |                      |
+| C-M-g         | goto-line                        |                |      |                      |
+| C-M-9         | winner-undo                      |                |      |                      |
+| C-M-0         | winner-redo                      |                |      |                      |
+| C-w           | kill-region-or-line              |                |      |                      |
+| M-w           | kill-ring-save-region-or-line    |                |      |                      |
+| C-a           | beginning-of-line-or-indentation |                |      |                      |
+| C-o           | open-line-previous               |                |      |                      |
+| C-<return>    | open-line-next                   |                |      |                      |
+| C-j           | newline-and-open-line-previous   |                |      |                      |
+| M-;           | comment-dwim-dwim                |                |      |                      |
+| C-M-\         | indent-region-or-buffer          |                |      |                      |
+| M-g           | magit-status                     |                |      |                      |
+| C-=           | er/expand-region                 |                |      |                      |
+| C-+           | er/contract-region               |                |      |                      |
+| C-?           | mc/mark-all-like-this            |                |      |                      |
+| C-<           | mc/mark-previous-like-this       |                |      |                      |
+| C->           | mc/mark-next-like-this           |                |      |                      |
+| C-x r t       | mc/edit-lines                    |                |      |                      |
+| M-s j         | dumb-jump-go                     |                |      |                      |
+| M-s J         | dumb-jump-go-other-window        |                |      |                      |
+| M-<backspace> | nil                              | sp-keymap      |      |                      |
+| C-M-p         | nil                              | sp-keymap      |      |                      |
+| C-M-n         | nil                              | sp-keymap      |      |                      |
+| C-x m         | jw-keymap                        |                |      |                      |
+| C-c m         | jw-keymap                        |                |      |                      |
+| !             | cmd-menu                         | jw-keymap      |      |                      |
+| &             | cmd-menu                         | jw-keymap      |      |                      |
+| q             | emacs-configs-toggle             | jw-keymap      |      |                      |
+| d             | date                             | jw-keymap      |      |                      |
+| i             | toggle-scratch-buffer            | jw-keymap      |      |                      |
+| C-x C-q       | wdired-change-to-wdired-mode     | dired-mode-map |      |                      |
+| w             | wdired-change-to-wdired-mode     | dired-mode-map |      |                      |
+| "2"           | toggle-window-split              | ctl-x-4-map    |      |                      |
+| "3"           | toggle-window-split              | ctl-x-4-map    |      |                      |
+| "1"           | rotate-windows                   | ctl-x-4-map    |      |                      |
 
 #+HEADER: :var base-keys=base-keys
 #+BEGIN_SRC emacs-lisp
