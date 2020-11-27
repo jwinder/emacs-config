@@ -1610,6 +1610,7 @@ counsel-keys
       ivy-count-format "%d/%d "
       ivy-initial-inputs-alist nil
       ivy-use-selectable-prompt t
+      ivy-magic-tilde nil
       ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
 (setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
 
