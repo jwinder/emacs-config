@@ -1586,8 +1586,8 @@ counsel-keys
 | C-x E   | counsel-kmacro            |                       |                  |       |
 | C-x C-r | ivy-resume                |                       |                  |       |
 | M-s o   | swiper-thing-at-point     |                       |                  |       |
-| C-s     | swiper-dwim               |                       |                  |       |
-| C-r     | swiper-backward-dwim      |                       |                  |       |
+| C-s     | swiper                    |                       |                  |       |
+| C-r     | swiper-backward           |                       |                  |       |
 | C-s     | ivy-next-line             | swiper-map            |                  |       |
 | C-r     | ivy-previous-line         | swiper-map            |                  |       |
 | M-s g   | counsel-grep              |                       |                  |       |
@@ -1619,18 +1619,6 @@ counsel-keys
   (if (region-active-p)
       (counsel-find-file (buffer-substring-no-properties (region-beginning) (region-end)))
     (counsel-find-file)))
-
-(defun swiper-dwim ()
-  (interactive)
-  (if (region-active-p)
-      (swiper (buffer-substring-no-properties (region-beginning) (region-end)))
-    (swiper)))
-
-(defun swiper-backward-dwim ()
-  (interactive)
-  (if (region-active-p)
-      (swiper-backward (buffer-substring-no-properties (region-beginning) (region-end)))
-    (swiper-backward)))
 
 (defun ivy-dispatching-done-ivy ()
   (interactive)
