@@ -46,6 +46,13 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
             (defalias 's-nonempty? 's-present?)
             (defalias 's-nonempty-or-nil 's-presence)))
 
+(use-package helpful
+  :config (progn
+            (defalias 'describe-key 'helpful-key)
+            (defalias 'describe-function 'helpful-callable)
+            (defalias 'describe-variable 'helpful-variable)
+            (defalias 'describe-symbol 'helpful-symbol)))
+
 (use-package org-pomodoro)
 
 (use-package magit :pin melpa-stable)
