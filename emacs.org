@@ -319,6 +319,8 @@ A macro to set keybindings from an org table
                     ;; yucky but the functions must be setup differently inside of hooks
                     ;; being explicit about the various cases is best
 
+                    ;; todo -- check if (fboundp 'key) is true. if so, use [remap key] instead of (kbd key)?
+
                     (cond
                      ((and hook-name (s-equals? scope "local"))
                       (add-hook (intern hook-name)
