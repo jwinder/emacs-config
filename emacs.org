@@ -473,7 +473,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq tab-width 2)
 (setq js-indent-level 2)
 
-(delete-selection-mode nil)
+(delete-selection-mode t)
 
 (winner-mode t)
 
