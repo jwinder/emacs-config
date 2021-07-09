@@ -1248,6 +1248,7 @@ org-keys
 | Key       | Function                       | Scope       | Hook          |
 |-----------+--------------------------------+-------------+---------------|
 | o         | jw-todo                        | jw-keymap   |               |
+| O         | jw-todo-backup                 | jw-keymap   |               |
 | a         | org-agenda                     | jw-keymap   |               |
 | A         | jw-org-agenda                  | jw-keymap   |               |
 | c         | org-capture                    | jw-keymap   |               |
@@ -1271,6 +1272,10 @@ org-keys
       (switch-to-buffer (other-buffer))
     (find-file jw-org-todo-file)
     (cd (getenv "HOME"))))
+
+(defun jw-todo-backup ()
+  (interactive)
+  (cmd "todo-backup"))
 
 (setq jw-org-agenda-pre-hook nil)
 
