@@ -1122,9 +1122,8 @@ yas-keys
 #+BEGIN_SRC emacs-lisp
 (defun yas-dwim (arg)
   (interactive "P")
-  (if (equal arg 4) (yas-new-snippet)
-    (if arg (yas-visit-snippet-file)
-      (yas-insert-snippet))))
+  (if arg (yas-visit-snippet-file)
+    (yas-insert-snippet)))
 
 (yas-global-mode 1)
 
