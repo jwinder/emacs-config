@@ -108,6 +108,7 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
 
 (use-package go-mode
   :config (add-hook 'before-save-hook 'gofmt-before-save))
+(use-package ob-go)
 
 (use-package coffee-mode
   :config (setq coffee-tab-width 2))
@@ -1408,7 +1409,7 @@ org-keys
 
 (org-babel-support-langs
  (list 'awk 'calc 'C 'emacs-lisp 'java 'js 'latex 'lisp
-       'makefile 'org 'perl 'python 'R 'ruby 'scheme 'shell 'sql))
+       'makefile 'org 'perl 'python 'R 'ruby 'scheme 'shell 'sql 'go))
 
 (add-to-list 'org-src-lang-modes '("elisp" . emacs-lisp))
 (org-babel-src-yasnippet 'elisp 'emacs-lisp)
