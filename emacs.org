@@ -583,8 +583,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
     (ns-do-applescript "tell application \"Google Chrome\" to activate")))
 
 (defun kill-ring-cleanup-last-kill (&optional in-major-mode)
-  "Cleans whitespace and reindents the text in the head of the kill ring as if in the major mode.
-NOTICE: Sometimes this acts funky, e.g. after removing items from the kill ring via helm."
+  "Cleans whitespace and reindents the text in the head of the kill ring as if in the major mode."
   (interactive)
   (with-temp-buffer
     (jw--save-current-message
