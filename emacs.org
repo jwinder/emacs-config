@@ -53,8 +53,6 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
             (defalias 'describe-variable 'helpful-variable)
             (defalias 'describe-symbol 'helpful-symbol)))
 
-(use-package org-pomodoro)
-
 (use-package magit :pin melpa-stable)
 
 (use-package browse-at-remote
@@ -1252,7 +1250,6 @@ org-keys
 | A         | jw-org-agenda                  | jw-keymap   |               |
 | c         | org-capture                    | jw-keymap   |               |
 | '         | jw-toggle-org-src-window-setup | ctl-x-4-map |               |
-| <tab>     | org-pomodoro                   | jw-keymap   |               |
 | C-c <     | org-time-stamp                 | local       | org-mode-hook |
 | C-c .     | org-time-stamp-inactive        | local       | org-mode-hook |
 | C-c C-x g | org-feed-update-all-or-one     | local       | org-mode-hook |
@@ -1260,7 +1257,6 @@ org-keys
 #+HEADER: :var org-keys=org-keys
 #+BEGIN_SRC emacs-lisp
 (require 'org)
-(require 'org-pomodoro)
 
 (unless (boundp 'jw-org-todo-file)
   (setq jw-org-todo-file (f-expand "todo.org" user-emacs-directory)))
@@ -1382,15 +1378,7 @@ org-keys
                                      (mapcar 'org--green-state org--done-todo-states)
                                      ))
 
-(setq org-pomodoro-format "Pomodoro %s"
-      org-pomodoro-short-break-format "Short Break %s"
-      org-pomodoro-long-break-format "Long Break %s"
-      org-pomodoro-ask-upon-killing nil
-      org-pomodoro-short-break-sound-p nil
-      org-pomodoro-long-break-sound-p nil)
-
 (custom-set-faces `(org-headline-done ((t (:inherit shadow))))
-                  `(org-pomodoro-mode-line ((t (:foreground "#2aa198"))))
                   `(org-link ((t (:underline nil))))
                   `(org-date ((t (:underline nil)))))
 
