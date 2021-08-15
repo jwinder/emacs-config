@@ -1145,7 +1145,9 @@ yas-keys
 (require 's)
 
 ;; https://magit.vc/manual/magit/MacOS-Performance.html
-(setq magit-git-executable (s-trim (shell-command-to-string "which git")))
+;; reset the executable to be my env's git
+;; magit tries to set this before jw-env is called, pointing it to a different git
+(setq magit-git-executable (executable-find "git"))
 #+END_SRC
 
 ** rcirc
