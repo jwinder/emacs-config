@@ -53,7 +53,7 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
             (defalias 'describe-variable 'helpful-variable)
             (defalias 'describe-symbol 'helpful-symbol)))
 
-(use-package magit :pin melpa-stable)
+(use-package magit :pin melpa-stable) ;; brings in magit/transient replacement for magit-define-popup
 
 (use-package browse-at-remote
   :config (progn
@@ -156,11 +156,6 @@ These are non-interactive library functions useful in other parts of this config
 
 (defun jw--all-major-modes ()
   (sort (-distinct (mapcar 'cdr (-filter '(lambda (entry) (and (cdr entry) (atom (cdr entry)))) auto-mode-alist))) 's-less-p))
-
-(defmacro jw--define-menu (name doc &rest args)
-  (declare (indent defun))
-  (require 'magit-popup)
-  `(progn (magit-define-popup ,name ,doc ,@args)))
 
 (defmacro jw--save-current-message (&rest body)
   "Saves `current-message', executes the body, then `message' the saved message to the echo area. Any `message' calls within the body will likely not be seen."
@@ -715,12 +710,13 @@ Interactively:
           (t (message (string-trim (shell-command-to-string prepared-cmd)))))
       (cmd prepared-cmd))))
 
-(jw--define-menu cmd-menu 'cmd-menu
-  :actions '("Command menu (C-c m !)"
-             (?! "sh cmd async    M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
-             (?: "elisp evaluate  M-:" eval-expression)
-             (?* "calculator   M-*" calculator))
-  :max-action-columns 1)
+(transient-define-prefix cmd-menu
+  "Run commands"
+  ["Run command"
+   ("!" "sh cmd async    M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
+   (":" "elisp evaluate  M-:" eval-expression)
+   ("*" "calculator      M-*" calculator)
+   ])
 
 (defun beginning-of-line-or-indentation ()
   (interactive)
@@ -1150,8 +1146,6 @@ yas-keys
 
 ;; https://magit.vc/manual/magit/MacOS-Performance.html
 (setq magit-git-executable (s-trim (shell-command-to-string "which git")))
-
-(global-magit-file-mode t)
 #+END_SRC
 
 ** rcirc
