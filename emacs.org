@@ -89,7 +89,13 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
 (use-package undo-tree
   :config (global-undo-tree-mode))
 
-(use-package dumb-jump)
+(use-package dumb-jump
+  ;; todo emacs 28.1 -- dumb-jump xref backend and use M-. instead of M-s j
+  ;; :config (lambda ()
+  ;;           (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+  ;;           (setq xref-show-definitions-function #'xref-show-definitions-completing-read) ;; requires xref 1.1.0 on emacs 28.1
+  ;;           )
+  )
 
 (use-package yaml-mode)
 
@@ -845,8 +851,6 @@ argument makes the windows rotate backwards."
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-x r t") 'mc/edit-lines)
-(global-set-key (kbd "M-s j") 'dumb-jump-go) ;; todo -- this is obsolete
-(global-set-key (kbd "M-s J") 'dumb-jump-go-other-window)
 (define-key sp-keymap (kbd "M-<backspace>") nil)
 (define-key sp-keymap (kbd "C-M-p") nil)
 (define-key sp-keymap (kbd "C-M-n") nil)
@@ -855,6 +859,10 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-4-map (kbd "2") 'toggle-window-split)
 (define-key ctl-x-4-map (kbd "3") 'toggle-window-split)
 (define-key ctl-x-4-map (kbd "1") 'rotate-windows)
+
+;; todo emacs 28.1 -- remove these and use the default xref keybindings
+(global-set-key (kbd "M-s j") 'dumb-jump-go)
+(global-set-key (kbd "M-s J") 'dumb-jump-go-other-window)
 #+END_SRC
 
 ** eshell
