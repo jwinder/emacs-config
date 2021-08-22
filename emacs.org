@@ -261,103 +261,6 @@ For long running processes, this will always toggle back and forth between the p
     (message "Formatter not found. Please run: npm install -g sql-formatter-cli")))
 #+END_SRC
 
-A macro to set keybindings from an org table
-#+BEGIN_SRC emacs-lisp
-(defmacro keybinding-org-table (org-table)
-  "Sets up key bindings from an org table like:
-
-      | Key   | Function | Scope           | Hook          | Notes     |
-      |-------+----------+-----------------+---------------+-----------|
-      | C-c a | fn-1     |                 |               | fun notes |
-      | C-c b | fn-2     | local           | org-mode-hook |           |
-      | C-c c | fn-3     | eshell-mode-map |               |           |
-      | C-c d | nil      |                 |               |           |
-      | C-c e | nil      | local           |               |           |
-      | C-c f | nil      | eshell-mode-map |               |           |
-
-- C-c a gets set to fn-1 in the global map.
-- C-c b gets set to fn-2 in the current local map, run during the org-mode-hook.
-- C-c c gets set to fn-3 in the eshell-mode-map.
-- C-c d gets unbound in the global map.
-- C-c e gets unbound in the current local map.
-- C-c f gets unbound in the eshell-mode-map.
-
-- For a global binding, an empty cell or the value \"global\" can be provided in the Scope column.
-- When unsetting a keybinding, an empty table cell can be provided instead of nil in the Function column.
-- It is safe to leave out the Scope & Hook columns if only global keybindings are necessary.
-- The ordering of the 4 columns cannot be changed (extra columns after the Hook column are ignored)."
-
-  (declare (indent defun))
-  `(let* ((org-table-name (symbol-name ,org-table))
-          (rows (symbol-value ,org-table))
-          (keys-var-name (format "jw-%s" org-table-name))
-          (keys-setter-def-name (format "jw-%s-set-bindings" org-table-name))
-          (keys-setter-def-symbol (intern keys-setter-def-name)))
-
-     ;; add keys to their own variable: jw-[org-table]
-     (eval `(setq ,(intern keys-var-name) rows))
-
-     ;; append keys to jw-all-custom-keys variable
-     (unless (boundp 'jw-all-keys) (setq jw-all-keys nil))
-     (-each rows (lambda (row) (add-to-list 'jw-all-keys row 'append)))
-
-     ;; create interactive jw-[org-table]-set-bindings function to set all keys
-     (eval `(defun ,keys-setter-def-symbol ()
-              ,(format "Auto-created function to set keybindings defined in the org table: %s\n\nOrg table keybindings cached in `%s'\n\nAll custom keybindings cached in `jw-all-keys'\n\nThis function is also stored in `jw-all-keys-set-bindings-functions', and `jw-all-keys-set-bindings' evaluates every function in this list." org-table-name (intern keys-var-name))
-              (interactive)
-              (-each ,(intern keys-var-name) ;; must call the dynamic jw-[org-table] var here, not the lexical rows var
-                (lambda (row)
-                  (let* ((key (car row))
-                         (command (if (cadr row) (intern (cadr row)) nil))
-                         (scope (s-presence (nth 2 row)))
-                         (hook-name (s-presence (nth 3 row))))
-
-                    ;; yucky but the functions must be setup differently inside of hooks
-                    ;; being explicit about the various cases is best
-
-                    ;; todo -- check if (fboundp 'key) is true. if so, use [remap key] instead of (kbd key)?
-
-                    (cond
-                     ((and hook-name (s-equals? scope "local"))
-                      (add-hook (intern hook-name)
-                                `(lambda () (local-set-key (kbd ,key) (quote ,command)))))
-
-                     ((and hook-name (or (s-blank-str? scope) (s-equals? scope "global")))
-                      (add-hook (intern hook-name)
-                                `(lambda () (global-set-key (kbd ,key) (quote ,command)))))
-
-                     ((and hook-name (boundp (intern scope)))
-                      (add-hook (intern hook-name)
-                                `(lambda () (define-key ,(intern scope) (kbd ,key) (quote ,command)))))
-
-                     ((s-equals? scope "local") (local-set-key (kbd key) command))
-
-                     ((or (s-blank-str? scope) (s-equals? scope "global")) (global-set-key (kbd key) command))
-
-                     ((boundp (intern scope)) (define-key (eval (intern scope)) (kbd key) command))
-
-                     (t (message "Unable to set command %s to keybinding %s from org table. Silently skipping." command key))
-                     )
-                    )
-                  ))
-              ))
-
-     ;; append jw-[org-table]-set-bindings to jw-all-keys-set-bindings-functions variable
-     (unless (boundp 'jw-all-keys-set-bindings-functions) (setq jw-all-keys-set-bindings-functions nil))
-     (add-to-list 'jw-all-keys-set-bindings-functions `,keys-setter-def-symbol 'append)
-
-     ;; create jw-set-all-bindings to eval every function created with this macro
-     (unless (fboundp 'jw-all-keys-set-bindings)
-       (defun jw-all-keys-set-bindings ()
-         "Evaluate every function in `jw-all-keys-set-bindings-functions'."
-         (interactive)
-         (-each jw-all-keys-set-bindings-functions 'funcall)))
-
-     ;; go ahead and eval jw-[org-table]-set-bindings
-     (eval `(,keys-setter-def-symbol))
-     ))
-#+END_SRC
-
 * customization
 ** env
 
@@ -901,73 +804,61 @@ argument makes the windows rotate backwards."
 
 ** key bindings
 
-base-keys (keys not in other parts of this config)
-#+NAME: base-keys
-| Key           | Function                         | Scope          | Hook | Notes                |
-|---------------+----------------------------------+----------------+------+----------------------|
-| C-z           | nil                              |                |      | remove suspend       |
-| C-x C-z       | nil                              |                |      |                      |
-| C-x C-c       | life-might-be-too-much           |                |      |                      |
-| C-h           | nil                              |                |      | remove original help |
-| C-M-?         | help-command                     |                |      |                      |
-| <return>      | toggle-frame-maximized           | ctl-x-5-map    |      |                      |
-| S-<return>    | toggle-frame-fullscreen          | ctl-x-5-map    |      |                      |
-| M-!           | cmd-dwim                         |                |      |                      |
-| M-&           | cmd-dwim                         |                |      |                      |
-| C-s           | isearch-forward-regexp           |                |      |                      |
-| C-r           | isearch-backward-regexp          |                |      |                      |
-| C-M-g         | goto-line                        |                |      |                      |
-| C-M-9         | winner-undo                      |                |      |                      |
-| C-M-0         | winner-redo                      |                |      |                      |
-| C-w           | kill-region-or-line              |                |      |                      |
-| M-w           | kill-ring-save-region-or-line    |                |      |                      |
-| C-a           | beginning-of-line-or-indentation |                |      |                      |
-| C-o           | open-line-previous               |                |      |                      |
-| C-<return>    | open-line-next                   |                |      |                      |
-| C-j           | newline-and-open-line-previous   |                |      |                      |
-| M-;           | comment-dwim-dwim                |                |      |                      |
-| C-M-\         | indent-region-or-buffer          |                |      |                      |
-| M-g           | magit-status                     |                |      |                      |
-| C-=           | er/expand-region                 |                |      |                      |
-| C-+           | er/contract-region               |                |      |                      |
-| C-?           | mc/mark-all-like-this            |                |      |                      |
-| C-<           | mc/mark-previous-like-this       |                |      |                      |
-| C->           | mc/mark-next-like-this           |                |      |                      |
-| C-x r t       | mc/edit-lines                    |                |      |                      |
-| M-s j         | dumb-jump-go                     |                |      |                      |
-| M-s J         | dumb-jump-go-other-window        |                |      |                      |
-| M-<backspace> | nil                              | sp-keymap      |      |                      |
-| C-M-p         | nil                              | sp-keymap      |      |                      |
-| C-M-n         | nil                              | sp-keymap      |      |                      |
-| C-x m         | jw-keymap                        |                |      |                      |
-| C-c m         | jw-keymap                        |                |      |                      |
-| !             | cmd-menu                         | jw-keymap      |      |                      |
-| &             | cmd-menu                         | jw-keymap      |      |                      |
-| q             | emacs-configs-toggle             | jw-keymap      |      |                      |
-| d             | date                             | jw-keymap      |      |                      |
-| i             | toggle-scratch-buffer            | jw-keymap      |      |                      |
-| C-x C-q       | wdired-change-to-wdired-mode     | dired-mode-map |      |                      |
-| w             | wdired-change-to-wdired-mode     | dired-mode-map |      |                      |
-| "2"           | toggle-window-split              | ctl-x-4-map    |      |                      |
-| "3"           | toggle-window-split              | ctl-x-4-map    |      |                      |
-| "1"           | rotate-windows                   | ctl-x-4-map    |      |                      |
-
-#+HEADER: :var base-keys=base-keys
 #+BEGIN_SRC emacs-lisp
 (define-prefix-command 'jw-keymap)
-(keybinding-org-table 'base-keys)
+(global-set-key (kbd "C-x m") 'jw-keymap)
+(global-set-key (kbd "C-c m") 'jw-keymap)
+
+(global-set-key (kbd "C-x C-c") 'life-might-be-too-much)
+
+(global-set-key (kbd "M-!") 'cmd-dwim)
+(global-set-key (kbd "M-&") 'cmd-dwim)
+(define-key jw-keymap (kbd "!") 'cmd-menu)
+(define-key jw-keymap (kbd "&") 'cmd-menu)
+(define-key jw-keymap (kbd "q") 'emacs-configs-toggle)
+(define-key jw-keymap (kbd "d") 'date)
+(define-key jw-keymap (kbd "i") 'toggle-scratch-buffer)
+
+(global-set-key (kbd "C-z") nil) ;; remove suspend
+(global-set-key (kbd "C-x C-z") nil)
+(global-set-key (kbd "C-h") nil) ;; remove original help
+(global-set-key (kbd "C-M-?") 'help-command)
+
+(define-key ctl-x-5-map (kbd "<return>") 'toggle-frame-maximized)
+(define-key ctl-x-5-map (kbd "S-<return>") 'toggle-frame-fullscreen)
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-M-g") 'goto-line)
+(global-set-key (kbd "C-M-9") 'winner-undo)
+(global-set-key (kbd "C-M-0") 'winner-redo)
+(global-set-key (kbd "C-w") 'kill-region-or-line)
+(global-set-key (kbd "M-w") 'kill-ring-save-region-or-line)
+(global-set-key (kbd "C-a") 'beginning-of-line-or-indentation)
+(global-set-key (kbd "C-o") 'open-line-previous)
+(global-set-key (kbd "C-<return>") 'open-line-next)
+(global-set-key (kbd "C-j") 'newline-and-open-line-previous)
+(global-set-key (kbd "C-M-\\") 'indent-region-or-buffer) ;; C-M-\ but the \ is escaped
+(global-set-key (kbd "M-;") 'comment-dwim-dwim)
+(global-set-key (kbd "C-=") 'er/expand-region)
+(global-set-key (kbd "C-+") 'er/contract-region)
+(global-set-key (kbd "C-*") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-x r t") 'mc/edit-lines)
+(global-set-key (kbd "M-s j") 'dumb-jump-go) ;; todo -- this is obsolete
+(global-set-key (kbd "M-s J") 'dumb-jump-go-other-window)
+(define-key sp-keymap (kbd "M-<backspace>") nil)
+(define-key sp-keymap (kbd "C-M-p") nil)
+(define-key sp-keymap (kbd "C-M-n") nil)
+(define-key dired-mode-map (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
+(define-key dired-mode-map (kbd "w") 'wdired-change-to-wdired-mode)
+(define-key ctl-x-4-map (kbd "2") 'toggle-window-split)
+(define-key ctl-x-4-map (kbd "3") 'toggle-window-split)
+(define-key ctl-x-4-map (kbd "1") 'rotate-windows)
 #+END_SRC
 
 ** eshell
 
-eshell-keys
-#+NAME: eshell-keys
-| Key | Function | Scope     |
-|-----+----------+-----------|
-| e   | eshell-e | jw-keymap |
-| E   | eshell-E | jw-keymap |
-
-#+HEADER: :var eshell-keys=eshell-keys
 #+BEGIN_SRC emacs-lisp
 (defun eshell-e (arg)
   "A wrapper for `eshell', except that this function provides ordered cycling through all eshells creating using prefix arguments."
@@ -986,6 +877,10 @@ eshell-keys
     (lambda (buffer)
       (unless (and arg (s-equals? "*eshell*" (buffer-name buffer)))
         (kill-buffer buffer)))))
+
+
+(define-key jw-keymap (kbd "e") 'eshell-e)
+(define-key jw-keymap (kbd "E") 'eshell-E)
 
 (defun eshell--exec (prefix-arg cycle-backward)
   (let ((eshells (eshell--buffer-names-list)))
@@ -1048,8 +943,6 @@ eshell-keys
 (setq eshell-prompt-function 'eshell--prompt-function)
 (setq eshell-prompt-regexp "^[^#$»\n]* [#$»] ")
 
-(keybinding-org-table 'eshell-keys)
-
 (require 'em-alias)
 (eshell/alias "l" "ls -alh")
 (eshell/alias "d" "dired $1")
@@ -1108,13 +1001,6 @@ ansi-term additions
 
 ** yasnippet
 
-yas-keys
-#+NAME: yas-keys
-| Key | Function |
-|-----+----------|
-| M-? | yas-dwim |
-
-#+HEADER: :var yas-keys=yas-keys
 #+BEGIN_SRC emacs-lisp
 (defun yas-dwim (arg)
   (interactive "P")
@@ -1123,7 +1009,7 @@ yas-keys
 
 (yas-global-mode 1)
 
-(keybinding-org-table 'yas-keys)
+(global-set-key (kbd "M-?") 'yas-dwim)
 
 (setq yas-indent-line nil)
 
@@ -1151,6 +1037,8 @@ yas-keys
 
 (setq transient-enable-popup-navigation t)
 (setq transient-display-buffer-action '(display-buffer-below-selected))
+
+(global-set-key (kbd "M-g") 'magit-status)
 #+END_SRC
 
 ** rcirc
@@ -1241,21 +1129,6 @@ example of defining specific functions to connect to various irc servers
 
 ** org
 
-org-keys
-#+NAME: org-keys
-| Key       | Function                       | Scope       | Hook          |
-|-----------+--------------------------------+-------------+---------------|
-| o         | jw-todo                        | jw-keymap   |               |
-| O         | jw-todo-backup                 | jw-keymap   |               |
-| a         | org-agenda                     | jw-keymap   |               |
-| A         | jw-org-agenda                  | jw-keymap   |               |
-| c         | org-capture                    | jw-keymap   |               |
-| '         | jw-toggle-org-src-window-setup | ctl-x-4-map |               |
-| C-c <     | org-time-stamp                 | local       | org-mode-hook |
-| C-c .     | org-time-stamp-inactive        | local       | org-mode-hook |
-| C-c C-x g | org-feed-update-all-or-one     | local       | org-mode-hook |
-
-#+HEADER: :var org-keys=org-keys
 #+BEGIN_SRC emacs-lisp
 (require 'org)
 
@@ -1293,8 +1166,6 @@ org-keys
   (interactive "P")
   (org-id-get-create arg)
   (org-id-copy))
-
-(keybinding-org-table 'org-keys)
 
 (add-to-list 'org-latex-packages-alist '("" "physics"))
 (setq org-latex-remove-logfiles nil) ;; evaluating latex blocks was causing errors because ox-latex couldn't find the logfiles
@@ -1415,6 +1286,18 @@ org-keys
       org-babel-default-header-args:js '((:results . "output")) ;; doesn't work with "value" for some reason, it just prints "undefined"
       org-babel-default-header-args:python '((:results . "output")) ;; doesn't work with "value" for some reason, it just prints "None"
       )
+
+
+(define-key jw-keymap (kbd "o") 'jw-todo)
+(define-key jw-keymap (kbd "O") 'jw-todo-backup)
+(define-key jw-keymap (kbd "a") 'org-agenda)
+(define-key jw-keymap (kbd "A") 'jw-org-agenda)
+(define-key jw-keymap (kbd "c") 'org-capture)
+(define-key ctl-x-4-map (kbd "'") 'jw-toggle-org-src-window-setup)
+(add-hook 'org-mode-hook (lambda ()
+                           (local-set-key (kbd "C-c <") 'org-time-stamp)
+                           (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)
+                           (local-set-key (kbd "C-c C-x g") 'org-feed-update-all-or-one)))
 #+END_SRC
 
 support =cmd= function in org-babel and =cmd= org link
@@ -1483,17 +1366,6 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 ** scala
 
-scala-keys
-#+NAME: scala-keys
-| Key   | Function                   | Scope      |
-|-------+----------------------------+------------|
-| C-c s | sbt-command-prefix         |            |
-| s     | jw-sbt                     | sbt-keymap |
-| c     | sbt-compile                | sbt-keymap |
-| o     | sbt-test-only-current-test | sbt-keymap |
-| l     | sbt-run-previous-command   | sbt-keymap |
-
-#+HEADER: :var scala-keys=scala-keys
 #+BEGIN_SRC emacs-lisp
 (defun jw-sbt ()
   (interactive)
@@ -1549,7 +1421,11 @@ scala-keys
 (setq sbt-keymap (make-sparse-keymap))
 (fset 'sbt-command-prefix sbt-keymap)
 
-(keybinding-org-table 'scala-keys)
+(global-set-key (kbd "C-c s") 'sbt-command-prefix)
+(define-key sbt-keymap (kbd "s") 'jw-sbt)
+(define-key sbt-keymap (kbd "c") 'sbt-compile)
+(define-key sbt-keymap (kbd "o") 'sbt-test-only-current-test)
+(define-key sbt-keymap (kbd "l") 'sbt-run-previous-command)
 
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
 (add-to-list 'auto-mode-alist '("\\.sbt$" . scala-mode))
@@ -1575,36 +1451,6 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 
 ** ivy counsel
 
-counsel-keys
-#+NAME: counsel-keys
-| Key     | Function                  | Scope                 | Hook             | Notes |
-|---------+---------------------------+-----------------------+------------------+-------|
-| M-x     | counsel-M-x               |                       |                  |       |
-| C-o     | ivy-dispatching-done      | ivy-minibuffer-map    |                  |       |
-| M-o     | ivy-dispatching-done-ivy  | ivy-minibuffer-map    |                  |       |
-| C-x C-f | counsel-find-file-dwim    |                       |                  |       |
-| C-x F   | counsel-file-jump         |                       |                  |       |
-| C-x b   | counsel-switch-buffer     |                       |                  |       |
-| C-x E   | counsel-kmacro            |                       |                  |       |
-| C-x C-r | ivy-resume                |                       |                  |       |
-| M-s o   | swiper-thing-at-point     |                       |                  |       |
-| C-s     | swiper                    |                       |                  |       |
-| C-r     | swiper-backward           |                       |                  |       |
-| C-s     | ivy-next-line             | swiper-map            |                  |       |
-| C-r     | ivy-previous-line         | swiper-map            |                  |       |
-| M-s g   | counsel-grep              |                       |                  |       |
-| M-s s   | counsel-ag                |                       |                  |       |
-| M-s r   | counsel-rg                |                       |                  |       |
-| C-M-y   | counsel-yank-pop          |                       |                  |       |
-| C-M-? b | counsel-descbinds         |                       |                  |       |
-| C-M-? f | counsel-describe-function |                       |                  |       |
-| C-M-? v | counsel-describe-variable |                       |                  |       |
-| C-M-? l | counsel-find-library      |                       |                  |       |
-| C-c h p | counsel-list-processes    |                       |                  |       |
-| M-p     | counsel-esh-history       | eshell-mode-map       | eshell-mode-hook |       |
-| C-l     | counsel-up-directory      | counsel-find-file-map |                  |       |
-
-#+HEADER: :var counsel-keys=counsel-keys
 #+BEGIN_SRC emacs-lisp
 (ivy-mode 1)
 
@@ -1627,8 +1473,6 @@ counsel-keys
   (let ((ivy-read-action-function #'ivy-read-action-ivy))
     (ivy-dispatching-done)))
 
-(keybinding-org-table 'counsel-keys)
-
 (defun counsel-find-file--cmd-dwim-action (file) (let ((default-directory ivy--directory)) (cmd-dwim ivy-current-prefix-arg)))
 (defun counsel-find-file--magit-status-action (file) (let ((default-directory ivy--directory)) (magit-status)))
 (defun counsel-find-file--eshell-action (file) (let ((default-directory ivy--directory)) (eshell)))
@@ -1648,22 +1492,40 @@ counsel-keys
    ("C-cme" counsel-find-file--eshell-action "eshell in pwd")
    ("C-css" counsel-find-file--jw-sbt-action "sbt in pwd")
    ("C-csc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
+
+(global-set-key (kbd "M-x") 'counsel-M-x)
+(define-key ivy-minibuffer-map (kbd "C-o") 'ivy-dispatching-done)
+(define-key ivy-minibuffer-map (kbd "M-o") 'ivy-dispatching-done-ivy)
+(global-set-key (kbd "C-x C-f") 'counsel-find-file-dwim)
+(global-set-key (kbd "C-x F") 'counsel-file-jump)
+(global-set-key (kbd "C-x b") 'counsel-switch-buffer)
+(global-set-key (kbd "C-x E") 'counsel-kmacro)
+(global-set-key (kbd "C-x C-r") 'ivy-resume)
+(global-set-key (kbd "M-s o") 'swiper-thing-at-point)
+(global-set-key (kbd "C-s") 'swiper)
+(global-set-key (kbd "C-r") 'swiper-backward)
+(define-key swiper-map (kbd "C-s") 'ivy-next-line)
+(define-key swiper-map (kbd "C-r") 'ivy-previous-line)
+(global-set-key (kbd "M-s g") 'counsel-grep)
+(global-set-key (kbd "M-s s") 'counsel-ag)
+(global-set-key (kbd "M-s r") 'counsel-rg)
+(global-set-key (kbd "C-M-y") 'counsel-yank-pop)
+(global-set-key (kbd "C-M-? b") 'counsel-descbinds)
+(global-set-key (kbd "C-M-? f") 'counsel-describe-function)
+(global-set-key (kbd "C-M-? v") 'counsel-describe-variable)
+(global-set-key (kbd "C-M-? l") 'counsel-find-library)
+(global-set-key (kbd "C-c h p") 'counsel-list-process)
+(define-key counsel-find-file-map (kbd "C-l") 'counsel-up-directory)
+(add-hook 'eshell-mode-hook (lambda () (define-key eshell-mode-map (kbd "M-p") 'counsel-esh-history)))
 #+END_SRC
 
 ** projectile
 
-projectile-keys
-#+NAME: projectile-keys
-| Key   | Function               |
-|-------+------------------------|
-| C-c p | projectile-command-map |
-
-#+HEADER: :var projectile-keys=projectile-keys
 #+BEGIN_SRC emacs-lisp
 (setq projectile-completion-system 'ivy)
 (counsel-projectile-mode)
 
-(keybinding-org-table 'projectile-keys)
+(global-set-key (kbd "C-c p") 'projectile-command-map)
 
 (defun counsel-projectile-switch-project--cmd-dwim-action (project)
   (let ((projectile-switch-project-action (lambda () (cmd-dwim ivy-current-prefix-arg))))
