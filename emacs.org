@@ -1220,6 +1220,13 @@ example of defining specific functions to connect to various irc servers
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
+(defun org--color-red-box-state (s) `(,s :background "DarkRed" :foreground white :box (:style released-button)))
+(defun org--color-red-state (s) `(,s :foreground "Coral"))
+(defun org--color-blue-box-state (s) `(,s :background "DeepSkyBlue4" :foreground white :box (:style released-button)))
+(defun org--color-blue-state (s) `(,s :foreground "DeepSkyBlue1"))
+(defun org--color-green-box-state (s) `(,s :background "DarkGreen" :foreground white :box (:style released-button)))
+(defun org--color-green-state (s) `(,s :foreground "LimeGreen"))
+
 (setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread" "question")
       org--todo-todo-states '("⚑")
       org--blocked-todo-boxed-states '("blocked" "halted" "stalled" "paused")
@@ -1229,34 +1236,29 @@ example of defining specific functions to connect to various irc servers
       org--done-todo-boxed-states '("done" "cancelled" "canceled" "finished" "boom" "read" "answered" "noted")
       org--done-todo-states '("✘" "✔"))
 
-(defun org--red-box-state (s) `(,s :background "DarkRed" :foreground white :box (:style released-button)))
-(defun org--red-state (s) `(,s :foreground "Coral"))
-(defun org--blue-box-state (s) `(,s :background "DeepSkyBlue4" :foreground white :box (:style released-button)))
-(defun org--blue-state (s) `(,s :foreground "DeepSkyBlue1"))
-(defun org--green-box-state (s) `(,s :background "DarkGreen" :foreground white :box (:style released-button)))
-(defun org--green-state (s) `(,s :foreground "LimeGreen"))
+(setq org-todo-keyword-faces
+      (append
+       (mapcar 'org--color-red-box-state org--todo-todo-boxed-states)
+       (mapcar 'org--color-red-box-state (mapcar 'upcase org--todo-todo-boxed-states))
 
-(setq org-todo-keyword-faces (append (mapcar 'org--red-box-state org--todo-todo-boxed-states)
-                                     (mapcar 'org--red-box-state (mapcar 'upcase org--todo-todo-boxed-states))
+       (mapcar 'org--color-red-box-state org--blocked-todo-boxed-states)
+       (mapcar 'org--color-red-box-state (mapcar 'upcase org--blocked-todo-boxed-states))
 
-                                     (mapcar 'org--red-box-state org--blocked-todo-boxed-states)
-                                     (mapcar 'org--red-box-state (mapcar 'upcase org--blocked-todo-boxed-states))
+       (mapcar 'org--color-red-state org--todo-todo-states)
 
-                                     (mapcar 'org--red-state org--todo-todo-states)
+       (mapcar 'org--color-blue-box-state org--doing-todo-boxed-states)
+       (mapcar 'org--color-blue-box-state (mapcar 'upcase org--doing-todo-boxed-states))
 
-                                     (mapcar 'org--blue-box-state org--doing-todo-boxed-states)
-                                     (mapcar 'org--blue-box-state (mapcar 'upcase org--doing-todo-boxed-states))
+       (mapcar 'org--color-blue-box-state org--delegated-todo-boxed-states)
+       (mapcar 'org--color-blue-box-state (mapcar 'upcase org--delegated-todo-boxed-states))
 
-                                     (mapcar 'org--blue-box-state org--delegated-todo-boxed-states)
-                                     (mapcar 'org--blue-box-state (mapcar 'upcase org--delegated-todo-boxed-states))
+       (mapcar 'org--color-blue-state org--doing-todo-states)
 
-                                     (mapcar 'org--blue-state org--doing-todo-states)
+       (mapcar 'org--color-green-box-state org--done-todo-boxed-states)
+       (mapcar 'org--color-green-box-state (mapcar 'upcase org--done-todo-boxed-states))
 
-                                     (mapcar 'org--green-box-state org--done-todo-boxed-states)
-                                     (mapcar 'org--green-box-state (mapcar 'upcase org--done-todo-boxed-states))
-
-                                     (mapcar 'org--green-state org--done-todo-states)
-                                     ))
+       (mapcar 'org--color-green-state org--done-todo-states)
+       ))
 
 (custom-set-faces `(org-headline-done ((t (:inherit shadow))))
                   `(org-link ((t (:underline nil))))
