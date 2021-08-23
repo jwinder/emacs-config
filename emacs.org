@@ -423,6 +423,10 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 ;; comint doesn't recognize a password prompt in one of my scripts. consider reporting this as a bug.
 (setq comint-password-prompt-regexp (concat comint-password-prompt-regexp "\\|^.*Password:\\s *\\'"))
 
+(defun save-buffers-kill-terminal--advice--ask-yes-or-no (original-function args)
+  (if (yes-or-no-p "Is life too much? ") (apply original-function args) (message "Keep up the good fight!")))
+(advice-add 'save-buffers-kill-terminal :around 'save-buffers-kill-terminal--advice--ask-yes-or-no)
+
 (defun shell-command--advice--ignore-message-with-no-output (&rest args)
   (when (and (current-message) (string-match "Shell command succeeded with no output" (current-message))) (message nil)))
 (advice-add 'shell-command-on-region :after 'shell-command--advice--ignore-message-with-no-output)
@@ -462,12 +466,6 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (defalias 'filter-lines 'keep-lines)
 (defalias 'filter-out-lines 'flush-lines)
 (defalias 'elisp-shell 'ielm)
-
-(defun life-might-be-too-much (arg)
-  (interactive "P")
-  (if (or arg (yes-or-no-p "Is life too much? "))
-      (life-is-too-much)
-    (message "Life continues.")))
 
 (defun font-size-normal ()
   (interactive)
@@ -814,8 +812,6 @@ argument makes the windows rotate backwards."
 (define-prefix-command 'jw-keymap)
 (global-set-key (kbd "C-x m") 'jw-keymap)
 (global-set-key (kbd "C-c m") 'jw-keymap)
-
-(global-set-key (kbd "C-x C-c") 'life-might-be-too-much)
 
 (global-set-key (kbd "M-!") 'cmd-dwim)
 (global-set-key (kbd "M-&") 'cmd-dwim)
