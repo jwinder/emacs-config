@@ -823,8 +823,6 @@ argument makes the windows rotate backwards."
 
 (global-set-key (kbd "C-z") nil) ;; remove suspend
 (global-set-key (kbd "C-x C-z") nil)
-(global-set-key (kbd "C-h") nil) ;; remove original help
-(global-set-key (kbd "C-M-?") 'help-command)
 
 (define-key ctl-x-5-map (kbd "<return>") 'toggle-frame-maximized)
 (define-key ctl-x-5-map (kbd "S-<return>") 'toggle-frame-fullscreen)
@@ -1516,13 +1514,16 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (global-set-key (kbd "M-s s") 'counsel-ag)
 (global-set-key (kbd "M-s r") 'counsel-rg)
 (global-set-key (kbd "C-M-y") 'counsel-yank-pop)
-(global-set-key (kbd "C-M-? b") 'counsel-descbinds)
-(global-set-key (kbd "C-M-? f") 'counsel-describe-function)
-(global-set-key (kbd "C-M-? v") 'counsel-describe-variable)
-(global-set-key (kbd "C-M-? l") 'counsel-find-library)
-(global-set-key (kbd "C-c h p") 'counsel-list-process)
+(global-set-key (kbd "C-c h p") 'counsel-list-processes)
 (define-key counsel-find-file-map (kbd "C-l") 'counsel-up-directory)
+(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 (add-hook 'eshell-mode-hook (lambda () (define-key eshell-mode-map (kbd "M-p") 'counsel-esh-history)))
+
+(define-key help-map (kbd "b") 'counsel-descbinds)
+(define-key help-map (kbd "f") 'counsel-describe-function)
+(define-key help-map (kbd "v") 'counsel-describe-variable)
+(define-key help-map (kbd "S") 'counsel-info-lookup-symbol)
+(define-key help-map (kbd "a") 'counsel-apropos)
 #+END_SRC
 
 ** projectile
