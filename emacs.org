@@ -74,8 +74,9 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
               t)))
 
 (use-package smartparens
-  :config (progn (require 'smartparens-config)
-                 (smartparens-global-mode t)))
+  :config (progn
+            (require 'smartparens-config)
+            (smartparens-global-mode t)))
 
 (use-package yasnippet)
 (use-package yasnippet-snippets)
@@ -348,6 +349,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq jw-org-scratch-file (f-expand "scratch.org" user-emacs-directory))
 
+(setq help-window-select t)
+
 (setq enable-local-variables :all)
 
 (setq vc-follow-symlinks t)
@@ -619,9 +622,13 @@ Interactively:
 (transient-define-prefix cmd-menu
   "Run commands"
   ["Run command"
-   ("!" "sh cmd async    M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
-   (":" "elisp evaluate  M-:" eval-expression)
-   ("*" "calculator      M-*" calculator)
+   ("!" "sh cmd async     M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
+   ("*" "calculator       M-*" calculator)
+   (":" "eval-expression  M-:" eval-expression)
+   ("e" "eval-last-sexp   C-x C-e" eval-last-sexp)
+   ("d" "eval-defun" eval-defun)
+   ("r" "eval-region" eval-region)
+   ("b" "eval-buffer" eval-buffer)
    ])
 
 (defun beginning-of-line-or-indentation ()
@@ -825,6 +832,7 @@ argument makes the windows rotate backwards."
 
 (define-key ctl-x-5-map (kbd "<return>") 'toggle-frame-maximized)
 (define-key ctl-x-5-map (kbd "S-<return>") 'toggle-frame-fullscreen)
+(global-set-key (kbd "M-*") 'calculator)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-M-g") 'goto-line)
@@ -852,6 +860,7 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-4-map (kbd "2") 'toggle-window-split)
 (define-key ctl-x-4-map (kbd "3") 'toggle-window-split)
 (define-key ctl-x-4-map (kbd "1") 'rotate-windows)
+(define-key help-map (kbd "M-n") 'helpful-at-point)
 
 ;; todo emacs 28.1 -- remove these and use the default xref keybindings
 (global-set-key (kbd "M-s j") 'dumb-jump-go)
