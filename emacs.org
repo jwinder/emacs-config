@@ -454,8 +454,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (when (eq system-type 'darwin)
   (setq ns-command-modifier 'meta
-        browse-url-browser-function 'browse-url-default-macosx-browser
-        ispell-program-name "aspell"))
+        browse-url-browser-function 'browse-url-default-macosx-browser))
 #+END_SRC
 
 ** functions
