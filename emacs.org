@@ -426,8 +426,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 ;; comint doesn't recognize a password prompt in one of my scripts. consider reporting this as a bug.
 (setq comint-password-prompt-regexp (concat comint-password-prompt-regexp "\\|^.*Password:\\s *\\'"))
 
-(defun save-buffers-kill-terminal--advice--ask-yes-or-no (original-function &rest args)
-  (if (yes-or-no-p "Is life too much? ") (apply original-function args) (message "Keep up the good fight!")))
+(defun save-buffers-kill-terminal--advice--ask-yes-or-no (original-function &optional arg)
+  (if (yes-or-no-p "Is life too much? ") (apply original-function arg) (message "Keep up the good fight!")))
 (advice-add 'save-buffers-kill-terminal :around 'save-buffers-kill-terminal--advice--ask-yes-or-no)
 
 (defun shell-command--advice--ignore-message-with-no-output (&rest args)
