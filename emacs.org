@@ -1112,28 +1112,6 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 (advice-add 'rcirc-handler-NOTICE :around 'rcirc-handler-NOTICE--advice--ignore-KEEPALIVE)
 #+END_SRC
 
-example rcirc usage:
-#+BEGIN_SRC emacs-lisp :tangle no
-(setq rcirc-default-nick "nick"
-      rcirc-default-user-name "username"
-      rcirc-default-full-name "full name"
-      rcirc-keywords '("nick" "username")
-      rcirc-server-alist '(("irc.libera.chat"
-                            :port 6697
-                            :encryption tls
-                            :user-name "username"
-                            :password "pass"
-                            :channels ("#emacs"))))
-
-(defun rcirc-connect-libera ()
-  (interactive)
-  (rcirc-connect-dwim "irc.libera.chat" 6697 "nick" "nick" "nick" '("#emacs") "password" 'tls)
-
-(defun rcirc-connect-gitter ()
-  (interactive)
-  (rcirc-connect-dwim "irc.gitter.im" 6667 "username" "username" "username" nil "pass token" 'tls))
-#+END_SRC
-
 ** org
 
 #+BEGIN_SRC emacs-lisp
