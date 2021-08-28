@@ -347,7 +347,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror)
 
-(setq jw-org-scratch-file (f-expand "scratch.org" user-emacs-directory))
+(setq jw-scratch-file (f-expand "scratch.org" user-emacs-directory))
 
 (setq help-window-select t)
 
@@ -553,15 +553,15 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
   (insert (jw--current-date-string)))
 
 (defun scratch-buffer ()
-  "Save the scratch buffer in a file."
+  "Save the scratch buffer in a file. Use any mode you'd like by customizing `jw-scratch-file` to a separate (fully-qualified) filename & extension."
   (interactive)
-  (find-file jw-org-scratch-file)
+  (find-file jw-scratch-file)
   (cd (getenv "HOME"))
   (when (get-buffer "*scratch*") (kill-buffer "*scratch*")))
 
 (defun toggle-scratch-buffer ()
   (interactive)
-  (if (s-equals? (buffer-name) (f-filename jw-org-scratch-file))
+  (if (s-equals? (buffer-name) (f-filename jw-scratch-file))
       (progn
         (save-buffer)
         (switch-to-buffer (other-buffer)))
