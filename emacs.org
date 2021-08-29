@@ -55,13 +55,9 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
 
 (use-package magit :pin melpa-stable) ;; brings in magit/transient replacement for magit-define-popup
 
-(use-package browse-at-remote
-  :config (progn
-            (defalias 'git-browse-at-remote 'browse-at-remote)
-            (defalias 'github-browse-file 'browse-at-remote)))
+(use-package browse-at-remote)
 
-(use-package gist
-  :config (setq gist-view-gist t))
+(use-package gist)
 
 (use-package expand-region)
 
@@ -625,10 +621,10 @@ Interactively:
 (transient-define-prefix cmd-menu
   "Run commands"
   ["Run command"
-   ("!" "sh cmd async     M-! (C-u echo area / C-u C-u at point)" cmd-dwim)
-   ("*" "calculator       M-*" calculator)
-   (":" "eval-expression  M-:" eval-expression)
-   ("e" "eval-last-sexp   C-x C-e" eval-last-sexp)
+   ("!" "cmd-dwim          M-!   C-u to echo area / C-u C-u at point" cmd-dwim)
+   ("*" "calculator        M-*" calculator)
+   (":" "eval-expression   M-:" eval-expression)
+   ("e" "eval-last-sexp    C-x C-e" eval-last-sexp)
    ("d" "eval-defun" eval-defun)
    ("r" "eval-region" eval-region)
    ("b" "eval-buffer" eval-buffer)
@@ -1038,18 +1034,45 @@ ansi-term additions
     (jw--write-to-file file-contents file-location)))
 #+END_SRC
 
-** magit
+** git
 
 #+BEGIN_SRC emacs-lisp
-;; https://magit.vc/manual/magit/MacOS-Performance.html
-;; reset the executable to be my env's git
-;; magit tries to set this before jw-env is called, pointing it to a different git
+(defalias 'git-browse-at-remote 'browse-at-remote)
+(defalias 'github-browse-file 'browse-at-remote)
+
+;; magit works faster with the full path to git instead of just "git". https://magit.vc/manual/magit/MacOS-Performance.html
+;; also, use-package magit tries to set this before jw-env-set is called, pointing it to a different git.
 (setq magit-git-executable (executable-find "git"))
 
-(setq transient-enable-popup-navigation t)
-(setq transient-display-buffer-action '(display-buffer-below-selected))
+(setq transient-enable-popup-navigation t
+      transient-display-buffer-action '(display-buffer-below-selected))
+
+(setq gist-view-gist t)
+
+(defun gist-dwim (&optional arg)
+  "Gist region or buffer, private. With a prefix arg, create a public gist."
+  (interactive "P")
+  (gist-region-or-buffer (if arg nil t)))
+
+(defalias 'gist 'gist-dwim) ;; gist package doesn't create its own gist function.
+
+(defun gist-menu--gist-public () (interactive) (gist-dwim t))
+(defun gist-menu--gist-private () (interactive) (gist-dwim))
+(defun gist-menu--dired-do-gist-public () (interactive) (dired-do-gist))
+(defun gist-menu--dired-do-gist-private () (interactive) (dired-do-gist t))
+
+(transient-define-prefix gist-menu
+  "Gist"
+  ["Gist"
+   ("l" "gist-list" gist-list)
+   ("g" "gist-dwim       private"                   gist-menu--gist-private)
+   ("G" "gist-dwim       public"                    gist-menu--gist-public)
+   ("2" "dired-do-gist   private   C-u @ in dired"  gist-menu--dired-do-gist-private)
+   ("@" "dired-do-gist   public    @ in dired"      gist-menu--dired-do-gist-public)
+   ])
 
 (global-set-key (kbd "M-g") 'magit-status)
+(define-key jw-keymap "p" 'gist-menu) ;; p = paste, in case more paste services are added to gist-menu
 #+END_SRC
 
 ** rcirc
