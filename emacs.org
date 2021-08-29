@@ -1041,8 +1041,6 @@ ansi-term additions
 ** magit
 
 #+BEGIN_SRC emacs-lisp
-(require 's)
-
 ;; https://magit.vc/manual/magit/MacOS-Performance.html
 ;; reset the executable to be my env's git
 ;; magit tries to set this before jw-env is called, pointing it to a different git
