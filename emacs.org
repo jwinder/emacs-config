@@ -691,12 +691,6 @@ If the prefix arg is 4, then kill the comment on the current line."
     (newline-and-indent)
     (unless was-at-end-of-line (open-line-previous))))
 
-(defun kill-matching-buffers-silently (pattern)
-  (interactive "sKill buffers matching: ")
-  (dolist (buffer (buffer-list))
-    (when (string-match pattern (buffer-name buffer))
-      (kill-buffer buffer))))
-
 (defun set-transparency (value)
   (interactive "n0 - 100 (percent): ")
   (set-frame-parameter (selected-frame) 'alpha value))
