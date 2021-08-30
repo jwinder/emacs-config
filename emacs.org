@@ -563,10 +563,6 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
         (switch-to-buffer (other-buffer)))
     (scratch-buffer)))
 
-(defun ping-google ()
-  (interactive)
-  (ping "google.com"))
-
 (defun uuid ()
   (interactive)
   (insert (jw--make-uuid)))
