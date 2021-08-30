@@ -259,9 +259,9 @@ For long running processes, this will always toggle back and forth between the p
 
 (defun jw--sql-pretty-print (begin end)
   "Formats SQL on region between `begin' and `end' using underlying sql-formatter-cli."
-  (if (executable-find "sql-formatter-cli")
-      (shell-command-on-region begin end "sql-formatter-cli" nil 'replace)
-    (message "Formatter not found. Please run: npm install -g sql-formatter-cli")))
+  (if (executable-find "sql-formatter")
+      (shell-command-on-region begin end "sql-formatter" nil 'replace)
+    (message "Required: https://www.npmjs.com/package/sql-formatter -- npm install -g sql-formatter")))
 #+END_SRC
 
 * customization
