@@ -408,7 +408,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (add-to-list 'auto-mode-alist '("Berksfile$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.irbrc$" . ruby-mode))
 
-(add-hook 'text-mode-hook 'flyspell-mode)
+;; (add-hook 'text-mode-hook 'flyspell-mode) ;; i don't use this
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
