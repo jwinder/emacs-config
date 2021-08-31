@@ -430,6 +430,14 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
   (when (and (current-message) (string-match "Shell command succeeded with no output" (current-message))) (message nil)))
 (advice-add 'shell-command-on-region :after 'shell-command--advice--ignore-message-with-no-output)
 
+(defun kmacro-end-and-call-macro--advice--ask-for-repeat-number-instead-of-using-prefix-numeric-arg (original-function &rest args)
+  (if (car args)
+      (let* ((repeat-times-string (read-string "How many times to repeat kmacro? "))
+             (repeat-times (string-to-number repeat-times-string)))
+        (apply original-function (cons repeat-times (cdr args))))
+    (apply original-function args)))
+(advice-add 'kmacro-end-and-call-macro :around 'kmacro-end-and-call-macro--advice--ask-for-repeat-number-instead-of-using-prefix-numeric-arg)
+
 (setq user-auto-save-directory (expand-file-name "auto-saves/" user-emacs-directory ))
 (unless (file-exists-p user-auto-save-directory) (make-directory user-auto-save-directory)) ;; auto-save won't create directories
 (setq auto-save-file-name-transforms `((".*" ,user-auto-save-directory t)))
