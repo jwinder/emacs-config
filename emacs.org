@@ -1150,8 +1150,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
   (interactive)
   (jw--run-cmd "todo-backup" nil nil nil
                (lambda (proc) ;; after-process-finish
-                 (switch-to-buffer (other-buffer))
-                 (bury-buffer (process-buffer proc))
+                 (kill-buffer (process-buffer proc))
                  (message "Command jw-todo-backup finished"))))
 
 (setq jw-org-agenda-pre-hook nil)
