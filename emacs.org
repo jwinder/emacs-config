@@ -1062,11 +1062,11 @@ ansi-term additions
 
 (transient-define-prefix gist-menu ()
   ["Gist"
-   ("l" "gist-list" gist-list)
-   ("g" "gist-dwim       private"                   gist-menu--gist-private)
-   ("G" "gist-dwim       public"                    gist-menu--gist-public)
-   ("2" "dired-do-gist   private   @ in dired"      gist-menu--dired-do-gist-private)
-   ("@" "dired-do-gist   public    C-u @ in dired"  gist-menu--dired-do-gist-public)
+   ("l" "gist-list"                                      gist-list)
+   ("g" "gist-dwim            private"                   gist-menu--gist-private)
+   ("G" "gist-dwim            public"                    gist-menu--gist-public)
+   ("2" "dired-do-gist-dwim   private   @ in dired"      gist-menu--dired-do-gist-private)
+   ("@" "dired-do-gist-dwim   public    C-u @ in dired"  gist-menu--dired-do-gist-public)
    ])
 
 (global-set-key (kbd "M-g") 'magit-status)
