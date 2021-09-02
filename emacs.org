@@ -1046,26 +1046,32 @@ ansi-term additions
 (defun gist-dwim (&optional arg)
   "Gist region or buffer, private. With a prefix arg, create a public gist."
   (interactive "P")
-  (gist-region-or-buffer (if arg nil t)))
+  (gist-region-or-buffer (not arg)))
+
+(defun dired-do-gist-dwim (&optional arg)
+  "Rewrite of dired-do-gist to default to private gists. With a prefix arg, create public gists."
+  (interactive "P")
+  (dired-do-gist (not arg)))
 
 (defalias 'gist 'gist-dwim) ;; gist package doesn't create its own gist function.
 
 (defun gist-menu--gist-public () (interactive) (gist-dwim t))
 (defun gist-menu--gist-private () (interactive) (gist-dwim))
-(defun gist-menu--dired-do-gist-public () (interactive) (dired-do-gist))
-(defun gist-menu--dired-do-gist-private () (interactive) (dired-do-gist t))
+(defun gist-menu--dired-do-gist-public () (interactive) (dired-do-gist-dwim t))
+(defun gist-menu--dired-do-gist-private () (interactive) (dired-do-gist-dwim))
 
 (transient-define-prefix gist-menu ()
   ["Gist"
    ("l" "gist-list" gist-list)
    ("g" "gist-dwim       private"                   gist-menu--gist-private)
    ("G" "gist-dwim       public"                    gist-menu--gist-public)
-   ("2" "dired-do-gist   private   C-u @ in dired"  gist-menu--dired-do-gist-private)
-   ("@" "dired-do-gist   public    @ in dired"      gist-menu--dired-do-gist-public)
+   ("2" "dired-do-gist   private   @ in dired"      gist-menu--dired-do-gist-private)
+   ("@" "dired-do-gist   public    C-u @ in dired"  gist-menu--dired-do-gist-public)
    ])
 
 (global-set-key (kbd "M-g") 'magit-status)
 (define-key jw-keymap "p" 'gist-menu) ;; p = paste, in case more paste services are added to gist-menu
+(define-key dired-mode-map "@" 'dired-do-gist-dwim)
 #+END_SRC
 
 ** rcirc
