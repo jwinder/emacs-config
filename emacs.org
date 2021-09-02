@@ -622,8 +622,7 @@ Interactively:
           (_ (message (string-trim (shell-command-to-string prepared-cmd)))))
       (cmd prepared-cmd))))
 
-(transient-define-prefix cmd-menu
-  "Run commands"
+(transient-define-prefix cmd-menu ()
   ["Run command"
    ("!" "cmd-dwim          M-!   C-u to echo area / C-u C-u at point" cmd-dwim)
    ("*" "calculator        M-*" calculator)
@@ -1056,8 +1055,7 @@ ansi-term additions
 (defun gist-menu--dired-do-gist-public () (interactive) (dired-do-gist))
 (defun gist-menu--dired-do-gist-private () (interactive) (dired-do-gist t))
 
-(transient-define-prefix gist-menu
-  "Gist"
+(transient-define-prefix gist-menu ()
   ["Gist"
    ("l" "gist-list" gist-list)
    ("g" "gist-dwim       private"                   gist-menu--gist-private)
