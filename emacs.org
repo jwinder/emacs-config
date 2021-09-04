@@ -1269,7 +1269,10 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 
 (add-to-list 'org-emphasis-alist '("+" (:strike-through t :inherit shadow)))
 (delete '("+" (:strike-through t)) org-emphasis-alist)
+#+END_SRC
 
+org-babel languages & automatic yasnippet creation
+#+BEGIN_SRC emacs-lisp
 (defun org-babel-src-yasnippet (ob-lang &optional ob-src-header-override)
   (let* ((yas-src-shortcut (concat "src-" (jw--symbol-name ob-lang)))
          (ob-src-string (format "#+BEGIN_SRC %s\n$0\n#+END_SRC" (jw--symbol-name (or ob-src-header-override ob-lang)))))
@@ -1311,6 +1314,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
                            (local-set-key (kbd "C-c <") 'org-time-stamp)
                            (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)
                            (local-set-key (kbd "C-c C-x g") 'org-feed-update-all-or-one)))
+
 #+END_SRC
 
 support =cmd= function in org-babel and =cmd= org link
