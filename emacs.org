@@ -615,12 +615,11 @@ Interactively:
                                     (if (s-starts-with? "$" (s-trim (or (thing-at-point 'line t) "")))
                                         (s-trim-left (s-chop-prefix "$" (s-trim (thing-at-point 'line t))))
                                       (read-shell-command "Command: "))))))
-    (if arg
-        (pcase (prefix-numeric-value arg)
-          (16 (save-excursion (open-line-next) (insert (s-trim (shell-command-to-string prepared-cmd)))))
-          (64 (cmd-tmux prepared-cmd))
-          (_ (message (string-trim (shell-command-to-string prepared-cmd)))))
-      (cmd prepared-cmd))))
+    (pcase (prefix-numeric-value arg)
+      (16 (save-excursion (open-line-next) (insert (s-trim (shell-command-to-string prepared-cmd)))))
+      (64 (cmd-tmux prepared-cmd))
+      (4 (message (string-trim (shell-command-to-string prepared-cmd))))
+      (_ (cmd prepared-cmd)))))
 
 (transient-define-prefix cmd-menu ()
   ["Run command"
@@ -1283,18 +1282,22 @@ org-babel languages & automatic yasnippet creation
   (-each langs (lambda (lang) (org-babel-src-yasnippet lang))))
 
 (org-babel-support-langs
- (list 'awk 'calc 'C 'emacs-lisp 'java 'js 'latex 'lisp
-       'makefile 'org 'perl 'python 'R 'ruby 'scheme 'shell 'sql 'go 'mongo))
+ (list 'awk 'emacs-lisp 'lisp 'eshell 'shell 'calc
+       'C 'java 'js 'latex 'makefile 'org 'perl 'python 'R 'ruby 'scheme 'sql 'go 'mongo))
 
 (add-to-list 'org-src-lang-modes '("elisp" . emacs-lisp))
 (org-babel-src-yasnippet 'elisp 'emacs-lisp)
 
+;; org-babel-execute:bash already exists and there is no ob-bash file, only need the yasnippet
 (org-babel-src-yasnippet 'bash)
+
+;; yasnippets for modes that don't need an org-babel-execute function
 (org-babel-src-yasnippet 'markdown)
 (org-babel-src-yasnippet 'gfm)
 (org-babel-src-yasnippet 'conf)
 (org-babel-src-yasnippet 'text)
 (org-babel-src-yasnippet 'json 'js)
+(org-babel-src-yasnippet 'javascript 'js)
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
