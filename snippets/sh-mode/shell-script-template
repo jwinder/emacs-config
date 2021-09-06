@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: shell script template
-# key: shell-script-template_
+# key: shell-script-template
 # --
 #!/usr/bin/env bash
 set -euo pipefail

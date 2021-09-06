@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: y-or-n prompt
-# key: y-or-n-prompt_
+# key: y-or-n-prompt
 # --
 # example usage: y_or_n "pwd" && pwd
 y_or_n() {
