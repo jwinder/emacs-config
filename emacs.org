@@ -663,16 +663,15 @@ Interactively:
 (defun comment-dwim-dwim (&optional arg)
   "When the region is active, then toggle comments over it.
 Otherwise, toggle commenting the current line.
-If there is a prefix arg, then append a comment to the end of the line instead.
-If the prefix arg is 4, then kill the comment on the current line."
+With C-u, then append a comment to the end of the line instead.
+With C-u C-u, then kill the comment on the current line."
   (interactive "*P")
   (if (region-active-p)
       (comment-dwim arg)
-    (if arg
-        (if (equal arg 4)
-            (save-excursion (comment-dwim arg))
-          (comment-dwim nil))
-      (comment-or-uncomment-region (line-beginning-position) (line-end-position)))))
+    (pcase (prefix-numeric-value arg)
+      (16 (save-excursion (comment-dwim arg)))
+      (4 (comment-dwim nil))
+      (_ (comment-or-uncomment-region (line-beginning-position) (line-end-position))))))
 
 (defun open-line-next ()
   (interactive)
