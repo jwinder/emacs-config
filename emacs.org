@@ -312,7 +312,8 @@ For long running processes, this will always toggle back and forth between the p
 (set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
 (set-face-attribute 'header-line nil :background "#005858" :foreground "white")
 
-(setq-default mode-line-format '(" " mode-line-buffer-identification (vc-mode vc-mode) " " mode-line-misc-info))
+(setq jw-mode-line-format '(" " mode-line-buffer-identification (vc-mode vc-mode) " " mode-line-misc-info))
+(setq-default mode-line-format jw-mode-line-format)
 
 (setq frame-title-format nil)
 
@@ -693,7 +694,7 @@ With C-u C-u, then kill the comment on the current line."
     (unless was-at-end-of-line (open-line-previous))))
 
 (defun set-transparency (value)
-  (interactive "n0 - 100 (percent): ")
+  (interactive "n0 - 100 (default value is 75): ")
   (set-frame-parameter (selected-frame) 'alpha value))
 
 (defun transparency-on ()
@@ -703,6 +704,14 @@ With C-u C-u, then kill the comment on the current line."
 (defun transparency-off ()
   (interactive)
   (set-transparency 100))
+
+(defun mode-line-on ()
+  (interactive)
+  (setq-default mode-line-format jw-mode-line-format))
+
+(defun mode-line-off ()
+  (interactive)
+  (setq-default mode-line-format nil))
 
 (defun display-current-prefix-arg (arg)
   (interactive "P")
