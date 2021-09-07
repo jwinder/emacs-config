@@ -151,6 +151,9 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--set-font-size (size)
   (set-face-attribute 'default nil :font (jw--font-name size)))
 
+(defun jw--set-transparency (value)
+  (set-frame-parameter (selected-frame) 'alpha value))
+
 (defun jw--login-shell ()
   (file-name-nondirectory (getenv "SHELL")))
 
@@ -483,7 +486,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
   (jw--set-font-size "18"))
 
 (defun font-size-set (size)
-  (interactive "sSize: ")
+  (interactive "sSize (default 14 big 18): ")
   (jw--set-font-size size))
 
 (defun ns-raise-chrome ()
@@ -693,17 +696,17 @@ With C-u C-u, then kill the comment on the current line."
     (newline-and-indent)
     (unless was-at-end-of-line (open-line-previous))))
 
-(defun set-transparency (value)
-  (interactive "n0 - 100 (default value is 75): ")
-  (set-frame-parameter (selected-frame) 'alpha value))
+(defun transparency-set (value)
+  (interactive "n0 - 100 (default 75): ")
+  (jw--set-transparency value))
 
 (defun transparency-on ()
   (interactive)
-  (set-transparency 75))
+  (jw--set-transparency 75))
 
 (defun transparency-off ()
   (interactive)
-  (set-transparency 100))
+  (jw--set-transparency 100))
 
 (defun mode-line-on ()
   (interactive)
