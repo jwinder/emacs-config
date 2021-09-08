@@ -716,9 +716,13 @@ With C-u C-u, then kill the comment on the current line."
   (interactive)
   (setq-default mode-line-format nil))
 
-(defun display-current-prefix-arg (arg)
+(defun current-prefix-arg-raw (arg)
   (interactive "P")
   (message "%s" arg))
+
+(defun current-prefix-arg-numeric (arg)
+  (interactive "P")
+  (message "%s" (prefix-numeric-value arg)))
 
 (defun toggle-window-split ()
   (interactive)
@@ -873,35 +877,33 @@ argument makes the windows rotate backwards."
 ** eshell
 
 #+BEGIN_SRC emacs-lisp
-(defun eshell-e (arg)
-  "A wrapper for `eshell', except that this function provides ordered cycling through all eshells creating using prefix arguments."
+(defun eshell-dwim (arg)
+  "A dwim wrapper for `eshell', except that this function provides ordered cycling through all eshells creating using prefix arguments.
+No prefix argument: Create a new eshell or switch to an existing eshell. If multiple eshell buffers exist, then cycle through them in their buffer number order.
+Single prefix arg C-u: Create an additional eshell: *eshell*, *eshell*<2>, *eshell*<3>, etc.
+Negative prefix arg C--: Similar behavior to no prefix argument, except the cycling behavior is in reverse.
+"
   (interactive "P")
-  (eshell--exec arg nil))
+  (pcase (prefix-numeric-value arg)
+    (4 (eshell--dwim-exec arg nil))
+    (-1 (eshell--dwim-exec nil t))
+    (_ (eshell--dwim-exec nil nil))))
 
-(defun eshell-E (arg)
-  "Similar to `eshell-e' except the cycling function is reversed."
-  (interactive "P")
-  (eshell--exec arg t))
-
-(defun eshell-cleanup-eshells (arg)
-  "Kill all eshells. If a prefix arg is provided, then leave the original eshell alive."
+(defun eshell-kill-eshells (arg)
+  "Kill all eshells. If a prefix arg is provided, then leave the original eshell buffer alive."
   (interactive "P")
   (-each (eshell--buffers-list)
     (lambda (buffer)
       (unless (and arg (s-equals? "*eshell*" (buffer-name buffer)))
         (kill-buffer buffer)))))
 
+(define-key jw-keymap (kbd "e") 'eshell-dwim)
+(define-key jw-keymap (kbd "E") 'eshell-kill-eshells)
 
-(define-key jw-keymap (kbd "e") 'eshell-e)
-(define-key jw-keymap (kbd "E") 'eshell-E)
-
-(defun eshell--exec (prefix-arg cycle-backward)
-  (let ((eshells (eshell--buffer-names-list)))
-    (if (or prefix-arg
-            (not (eq major-mode 'eshell-mode))
-            (not eshells))
-        (eshell prefix-arg)
-      (eshell--cycle-to-next eshells cycle-backward))))
+(defun eshell--dwim-exec (prefix-arg cycle-backward)
+  (if prefix-arg
+      (eshell prefix-arg)
+    (eshell--cycle-to-next (eshell--buffer-names-list) cycle-backward)))
 
 (defun eshell--extract-buffer-name-digit (buffer)
   (string-to-number (or (car (s-match "[[:digit:]]+" (buffer-name buffer))) "-1")))
@@ -910,51 +912,19 @@ argument makes the windows rotate backwards."
   (< (eshell--extract-buffer-name-digit b1) (eshell--extract-buffer-name-digit b2)))
 
 (defun eshell--buffers-list ()
-  (-sort
-   'eshell--buffers-list-ordering
-   (-filter
-    (lambda (buffer) (eq (buffer-local-value 'major-mode buffer) 'eshell-mode))
-    (buffer-list))))
+  (-sort 'eshell--buffers-list-ordering (-filter (lambda (buffer) (eq (buffer-local-value 'major-mode buffer) 'eshell-mode)) (buffer-list))))
 
 (defun eshell--buffer-names-list ()
   (-map (lambda (b) (buffer-name b)) (eshell--buffers-list)))
 
 (defun eshell--cycle-to-next (eshells cycle-backward)
-  (let* ((num-eshells (length eshells))
-         (idx (or (-elem-index (buffer-name) eshells) num-eshells))
-         (next-idx (mod (if cycle-backward (- idx 1) (+ idx 1)) num-eshells))
-         (next-eshell (nth next-idx eshells)))
-    (switch-to-buffer next-eshell)))
-
-(defun eshell--last-command-status-prompt-string ()
-  (if (= 0 eshell-last-command-status)
-      ""
-    (propertize (format "-%s-\n" eshell-last-command-status) 'face '(:foreground "red3"))))
-
-(defun eshell--git-prompt-string ()
-  (require 'vc)
-  (if (jw--git-root-dir)
-      ;; vc-git-branches returns (list nil) instead of nil when there is no branch name instead of just nil (i.e. after a git-init)
-      (let* ((git-branch-name (or (car (vc-git-branches)) "(in the beginning there was darkness)"))
-             (git-is-clean (s-blank? (shell-command-to-string "git status --porcelain")))
-             (git-is-clean-marker (if git-is-clean "✔" "✘"))
-             (git-is-clean-color (if git-is-clean "green" "red1"))
-             (git-branch-name-string (propertize git-branch-name 'face '(:foreground "yellow3")))
-             (git-is-clean-string (propertize git-is-clean-marker 'face `(:foreground ,git-is-clean-color))))
-        (format "%s %s" git-branch-name-string git-is-clean-string))
-    ""))
-
-(defun eshell--prompt-function ()
-  (let* ((last-status-string (eshell--last-command-status-prompt-string))
-         (dir-string (propertize (abbreviate-file-name (eshell/pwd)) 'face '(:foreground "CornflowerBlue")))
-         (git-string (eshell--git-prompt-string))
-         (prompt-string (propertize (if (= (user-uid) 0) "#" "»") 'face '(:foreground "red3")))
-         (right-pad-string (propertize " " 'face '(:foreground nil)))
-         (prompt-string (s-collapse-whitespace (format "%s %s %s %s" dir-string git-string prompt-string right-pad-string))))
-    (concat last-status-string prompt-string)))
-
-(setq eshell-prompt-function 'eshell--prompt-function)
-(setq eshell-prompt-regexp "^[^#$»\n]* [#$»] ")
+  (if (or (not (eq major-mode 'eshell-mode)) (not eshells))
+      (eshell nil) ;; switch to or create the first eshell if we're not in an eshell or if no eshells exist
+    (let* ((num-eshells (length eshells))
+           (idx (or (-elem-index (buffer-name) eshells) num-eshells))
+           (next-idx (mod (if cycle-backward (- idx 1) (+ idx 1)) num-eshells))
+           (next-eshell (nth next-idx eshells)))
+      (switch-to-buffer next-eshell))))
 
 (require 'em-alias)
 (eshell/alias "l" "ls -alh")
@@ -985,7 +955,41 @@ argument makes the windows rotate backwards."
 
 #+END_SRC
 
-ansi-term additions
+eshell git prompt
+#+BEGIN_SRC emacs-lisp
+(defun eshell--last-command-status-prompt-string ()
+  (if (= 0 eshell-last-command-status)
+      ""
+    (propertize (format "-%s-\n" eshell-last-command-status) 'face '(:foreground "red3"))))
+
+(defun eshell--git-prompt-string ()
+  (require 'vc)
+  (if (jw--git-root-dir)
+      ;; vc-git-branches returns (list nil) instead of nil when there is no branch name instead of just nil (i.e. after a git-init)
+      (let* ((git-branch-name (or (car (vc-git-branches)) "(in the beginning there was darkness)"))
+             (git-is-clean (s-blank? (shell-command-to-string "git status --porcelain")))
+             (git-is-clean-marker (if git-is-clean "✔" "✘"))
+             (git-is-clean-color (if git-is-clean "green" "red1"))
+             (git-branch-name-string (propertize git-branch-name 'face '(:foreground "yellow3")))
+             (git-is-clean-string (propertize git-is-clean-marker 'face `(:foreground ,git-is-clean-color))))
+        (format "%s %s" git-branch-name-string git-is-clean-string))
+    ""))
+
+(defun eshell--prompt-function ()
+  (let* ((last-status-string (eshell--last-command-status-prompt-string))
+         (dir-string (propertize (abbreviate-file-name (eshell/pwd)) 'face '(:foreground "CornflowerBlue")))
+         (git-string (eshell--git-prompt-string))
+         (prompt-string (propertize (if (= (user-uid) 0) "#" "»") 'face '(:foreground "red3")))
+         (right-pad-string (propertize " " 'face '(:foreground nil)))
+         (prompt-string (s-collapse-whitespace (format "%s %s %s %s" dir-string git-string prompt-string right-pad-string))))
+    (concat last-status-string prompt-string)))
+
+(setq eshell-prompt-function 'eshell--prompt-function)
+(setq eshell-prompt-regexp "^[^#$»\n]* [#$»] ")
+
+#+END_SRC
+
+terminal additions
 #+BEGIN_SRC emacs-lisp
 (defun eshell/ansi (&rest args)
   (interactive)
