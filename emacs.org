@@ -1021,8 +1021,8 @@ terminal additions
 #+BEGIN_SRC emacs-lisp
 (defun yas-dwim (arg)
   (interactive "P")
-  (if arg (yas-visit-snippet-file)
-    (yas-insert-snippet)))
+  (when arg (end-of-buffer) (newline 2))
+  (yas-insert-snippet))
 
 (yas-global-mode 1)
 
