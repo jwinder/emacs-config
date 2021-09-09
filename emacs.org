@@ -170,11 +170,11 @@ These are non-interactive library functions useful in other parts of this config
      (progn ,@body)
      (message msg)))
 
-(defun jw--write-to-file (string file &optional append)
-  (jw--save-current-message
+(defun jw--file-write (string file &optional append encoding)
+  (let ((enc (or encoding 'utf-8)))
     (let ((file-dir (file-name-directory file)))
       (unless (f-exists? file-dir) (make-directory file-dir 'mk-parents)))
-    (if append (f-append string 'utf-8 file) (f-write string 'utf-8 file))))
+    (if append (f-append string enc file) (f-write string enc file))))
 
 (defun jw--make-uuid ()
   (downcase (shell-command-to-string "uuidgen | tr -d '\n'")))
@@ -244,7 +244,7 @@ For long running processes, this will always toggle back and forth between the p
                                              (executable-find (jw--login-shell))))
                (tmp-script-contents (format "#!%s\n\ncd %s\n\n%s" tmp-script-sh-executable (jw--pwd) prepared-cmd)))
           (when (get-buffer cmd-buffer-name) (kill-buffer cmd-buffer-name))
-          (jw--write-to-file tmp-script-contents tmp-script-abs-filename)
+          (jw--file-write tmp-script-contents tmp-script-abs-filename)
           (unless (file-executable-p tmp-script-abs-filename) (chmod tmp-script-abs-filename #o744))
           (let ((process-buffer (get-buffer-create cmd-buffer-name)))
             (when before-process-creation (funcall before-process-creation))
@@ -1039,7 +1039,7 @@ terminal additions
          (file-location (f-expand (format "%s/%s" mode-string shortcut-string) yas-dynamic-snippets-dir))
          (file-contents-format-string "# -*- mode: snippet -*-\n# name: %s\n# key: %s_\n# --\n%s")
          (file-contents (format file-contents-format-string shortcut-string shortcut-string contents)))
-    (jw--write-to-file file-contents file-location)))
+    (jw--file-write file-contents file-location)))
 #+END_SRC
 
 ** git
@@ -1475,7 +1475,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (require 'ob)
 
 (defun org-babel-execute:ammonite (body params)
-  (jw--write-to-file body "/tmp/ob-ammonite-input.scala")
+  (jw--file-write body "/tmp/ob-ammonite-input.scala")
   (shell-command-to-string "amm --silent /tmp/ob-ammonite-input.scala"))
 
 (add-to-list 'org-src-lang-modes '("ammonite" . scala))
