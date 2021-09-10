@@ -710,13 +710,17 @@ With C-u C-u, then kill the comment on the current line."
   (interactive)
   (jw--set-transparency 100))
 
-(defun mode-line-on ()
-  (interactive)
-  (setq-default mode-line-format jw-mode-line-format))
+(defun mode-line-on (&optional local)
+  (interactive "P")
+  (if local
+      (setq-local mode-line-format jw-mode-line-format)
+    (setq-default mode-line-format jw-mode-line-format)))
 
-(defun mode-line-off ()
-  (interactive)
-  (setq-default mode-line-format nil))
+(defun mode-line-off (&optional local)
+  (interactive "P")
+  (if local
+      (setq-local mode-line-format nil)
+    (setq-default mode-line-format nil)))
 
 (defun current-prefix-arg-raw (arg)
   (interactive "P")
