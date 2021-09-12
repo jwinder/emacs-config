@@ -479,6 +479,11 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (defalias 'filter-out-lines 'flush-lines)
 (defalias 'elisp-shell 'ielm)
 
+(defun sudo-su ()
+  (interactive)
+  (let ((goto (or (buffer-file-name) (jw--pwd))))
+    (find-file (format "/sudo:root@localhost:%s" goto))))
+
 (defun font-size-normal ()
   (interactive)
   (jw--set-font-size "14"))
