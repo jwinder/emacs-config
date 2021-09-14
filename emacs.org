@@ -1190,14 +1190,14 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
   (run-hooks 'jw-org-agenda-pre-hook)
   (org-agenda arg))
 
-(defun org-feed-update-all-or-one (arg)
+(defun jw-org-feed-update-all-or-one (arg)
   "When called with a prefix argument, interactively call `org-feed-update'. Otherwise call `org-feed-update-all'."
   (interactive "P")
   (if arg
       (call-interactively 'org-feed-update)
     (org-feed-update-all)))
 
-(defun org-id (arg)
+(defun jw-org-id (arg)
   "Ensure an org-id exists and copy to kill ring. With prefix arg, force creation of a new org-id."
   (interactive "P")
   (org-id-get-create arg)
@@ -1257,7 +1257,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 (add-hook 'org-mode-hook (lambda ()
                            (local-set-key (kbd "C-c <") 'org-time-stamp)
                            (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)
-                           (local-set-key (kbd "C-c C-x g") 'org-feed-update-all-or-one)))
+                           (local-set-key (kbd "C-c C-x g") 'jw-org-feed-update-all-or-one)))
 
 (defun org--color-red-box-state (s) `(,s :background "DarkRed" :foreground white :box (:style released-button)))
 (defun org--color-red-state (s) `(,s :foreground "Coral"))
