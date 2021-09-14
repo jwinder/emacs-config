@@ -1248,6 +1248,17 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
+(define-key jw-keymap (kbd "o") 'jw-todo)
+(define-key jw-keymap (kbd "O") 'jw-todo-backup)
+(define-key jw-keymap (kbd "a") 'org-agenda)
+(define-key jw-keymap (kbd "A") 'jw-org-agenda)
+(define-key jw-keymap (kbd "c") 'org-capture)
+(define-key ctl-x-4-map (kbd "'") 'jw-toggle-org-src-window-setup)
+(add-hook 'org-mode-hook (lambda ()
+                           (local-set-key (kbd "C-c <") 'org-time-stamp)
+                           (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)
+                           (local-set-key (kbd "C-c C-x g") 'org-feed-update-all-or-one)))
+
 (defun org--color-red-box-state (s) `(,s :background "DarkRed" :foreground white :box (:style released-button)))
 (defun org--color-red-state (s) `(,s :foreground "Coral"))
 (defun org--color-blue-box-state (s) `(,s :background "DeepSkyBlue4" :foreground white :box (:style released-button)))
@@ -1332,19 +1343,6 @@ org-babel languages & automatic yasnippet creation
       org-babel-default-header-args:js '((:results . "output")) ;; doesn't work with "value" for some reason, it just prints "undefined"
       org-babel-default-header-args:python '((:results . "output")) ;; doesn't work with "value" for some reason, it just prints "None"
       )
-
-
-(define-key jw-keymap (kbd "o") 'jw-todo)
-(define-key jw-keymap (kbd "O") 'jw-todo-backup)
-(define-key jw-keymap (kbd "a") 'org-agenda)
-(define-key jw-keymap (kbd "A") 'jw-org-agenda)
-(define-key jw-keymap (kbd "c") 'org-capture)
-(define-key ctl-x-4-map (kbd "'") 'jw-toggle-org-src-window-setup)
-(add-hook 'org-mode-hook (lambda ()
-                           (local-set-key (kbd "C-c <") 'org-time-stamp)
-                           (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)
-                           (local-set-key (kbd "C-c C-x g") 'org-feed-update-all-or-one)))
-
 #+END_SRC
 
 support =cmd= function in org-babel and =cmd= org link
