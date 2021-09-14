@@ -1558,7 +1558,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (global-set-key (kbd "C-M-y") 'counsel-yank-pop)
 (define-key counsel-find-file-map (kbd "C-l") 'counsel-up-directory)
 (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-(define-key org-mode-map (kbd "C-c C-j") 'counsel-org-goto)
+(define-key org-mode-map (kbd "C-c C-j") 'counsel-outline) ;; counsel-org-goto
 (add-hook 'eshell-mode-hook (lambda () (define-key eshell-mode-map (kbd "M-p") 'counsel-esh-history)))
 
 
