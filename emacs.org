@@ -496,11 +496,6 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
   (interactive "sSize (default 14 big 18): ")
   (jw--set-font-size size))
 
-(defun ns-raise-chrome ()
-  (interactive)
-  (when (fboundp 'ns-do-applescript)
-    (ns-do-applescript "tell application \"Google Chrome\" to activate")))
-
 (defun kill-ring-cleanup-last-kill (&optional in-major-mode)
   "Cleans whitespace and reindents the text in the head of the kill ring as if in the major mode."
   (interactive)
