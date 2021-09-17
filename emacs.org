@@ -562,6 +562,16 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
   (interactive)
   (insert (jw--current-date-string)))
 
+(defun weather (&optional arg)
+  (interactive "P")
+  (let* ((raw-query
+          (pcase (prefix-numeric-value arg)
+            (16 ":help")
+            (4 (read-string "Weather for city/state/country/zip/latlong/:help/etc - curl wttr.in/"))
+            (_ "")))
+         (query (s-replace "\s" "+" raw-query)))
+    (jw--run-cmd (format "curl https://wttr.in/%s" query))))
+
 (defun scratch-buffer ()
   "Save the scratch buffer in a file. Use any mode you'd like by customizing `jw-scratch-file` to a separate (fully-qualified) filename & extension."
   (interactive)
@@ -838,6 +848,7 @@ argument makes the windows rotate backwards."
 (define-key jw-keymap (kbd "&") 'cmd-menu)
 (define-key jw-keymap (kbd "q") 'emacs-configs-toggle)
 (define-key jw-keymap (kbd "d") 'date)
+(define-key jw-keymap (kbd "w") 'weather)
 (define-key jw-keymap (kbd "i") 'toggle-scratch-buffer)
 
 (global-set-key (kbd "C-z") nil) ;; remove suspend
