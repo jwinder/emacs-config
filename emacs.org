@@ -639,7 +639,7 @@ Interactively:
 
 (transient-define-prefix cmd-menu ()
   ["Run command"
-   ("!" "cmd-dwim          M-!   C-u to echo area / C-u C-u at point" cmd-dwim)
+   ("!" "cmd-dwim          M-!   C-u to echo area / C-u C-u on next line" cmd-dwim)
    ("*" "calculator        M-*" calculator)
    (":" "eval-expression   M-:" eval-expression)
    ("e" "eval-last-sexp    C-x C-e" eval-last-sexp)
