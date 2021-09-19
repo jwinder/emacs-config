@@ -1342,6 +1342,8 @@ org-babel languages & automatic yasnippet creation
 (org-babel-src-yasnippet 'yaml)
 (org-babel-src-yasnippet 'json 'js)
 (org-babel-src-yasnippet 'javascript 'js)
+(org-babel-src-yasnippet 'html)
+(org-babel-src-yasnippet 'xml)
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
