@@ -580,7 +580,7 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
             (pcase (prefix-numeric-value arg)
               (16 ":help")
               (4 ":list")
-              (_ (read-string "Command (git/ln/:help/:list/~search/etc or /{lang} & /{lang/:learn} - curl cheat.sh/")))))
+              (_ (read-string "Command (git/ln/:help/:list/~search/etc or /python & /python/:learn & python/quicksort - curl cheat.sh/")))))
          (query (s-replace "\s" "+" (s-trim raw-query))))
     (jw--run-cmd (format "curl http://cheat.sh/%s" query))))
 
