@@ -569,8 +569,20 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
             (16 ":help")
             (4 (read-string "Weather for city/state/country/zip/latlong/:help/etc - curl wttr.in/"))
             (_ "")))
-         (query (s-replace "\s" "+" raw-query)))
-    (jw--run-cmd (format "curl https://wttr.in/%s" query))))
+         (query (s-replace "\s" "+" (s-trim raw-query))))
+    (jw--run-cmd (format "curl http://wttr.in/%s" query))))
+
+(defun cheat-sh (&optional arg)
+  (interactive "P")
+  (let* ((raw-query
+          (if (region-active-p)
+              (buffer-substring-no-properties (region-beginning) (region-end))
+            (pcase (prefix-numeric-value arg)
+              (16 ":help")
+              (4 ":list")
+              (_ (read-string "Command (git/ln/:help/:list/~search/etc or /{lang} & /{lang/:learn} - curl cheat.sh/")))))
+         (query (s-replace "\s" "+" (s-trim raw-query))))
+    (jw--run-cmd (format "curl http://cheat.sh/%s" query))))
 
 (defun scratch-buffer ()
   "Save the scratch buffer in a file. Use any mode you'd like by customizing `jw-scratch-file` to a separate (fully-qualified) filename & extension."
@@ -885,6 +897,8 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-4-map (kbd "3") 'toggle-window-split)
 (define-key ctl-x-4-map (kbd "1") 'rotate-windows)
 (define-key help-map (kbd "M-n") 'helpful-at-point)
+(define-key help-map (kbd "H") 'view-hello-file)
+(define-key help-map (kbd "h") 'cheat-sh)
 
 ;; todo emacs 28.1 -- remove these and use the default xref keybindings
 (global-set-key (kbd "M-s j") 'dumb-jump-go)
