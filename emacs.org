@@ -883,7 +883,7 @@ argument makes the windows rotate backwards."
 (global-set-key (kbd "C-o") 'open-line-previous)
 (global-set-key (kbd "C-<return>") 'open-line-next)
 (global-set-key (kbd "C-j") 'newline-and-open-line-previous)
-(global-set-key (kbd "C-M-\\") 'indent-region-or-buffer) ;; C-M-\ but the \ is escaped
+(global-set-key (kbd "C-<tab>") 'indent-region-or-buffer)
 (global-set-key (kbd "M-;") 'comment-dwim-dwim)
 (global-set-key (kbd "C-=") 'er/expand-region)
 (global-set-key (kbd "C-+") 'er/contract-region)
