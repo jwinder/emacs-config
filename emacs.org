@@ -137,8 +137,6 @@ These are non-interactive library functions useful in other parts of this config
 (require 'f)
 (require 'vc)
 
-(defconst jw--mode-line-color "#22083397778B")
-
 (defconst jw--init-org-file (expand-file-name "emacs.org" user-emacs-directory))
 (defconst jw--init-file (expand-file-name "emacs.el" user-emacs-directory))
 (defconst jw--init-private-org-file (expand-file-name "private.org" user-emacs-directory))
@@ -309,7 +307,7 @@ For long running processes, this will always toggle back and forth between the p
 
 (jw--set-font-size "14")
 
-(set-face-attribute 'mode-line nil :font (jw--font-name "14") :background jw--mode-line-color :foreground "#7db5d6" :box '(:style released-button))
+(set-face-attribute 'mode-line nil :font (jw--font-name "14") :background "#22083397778B" :foreground "#7db5d6" :box '(:style released-button))
 (set-face-attribute 'mode-line-inactive nil :background "#263238" :foreground "gray" :box '(:style released-button))
 (set-face-attribute 'mode-line-buffer-id nil :foreground "white")
 (set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
