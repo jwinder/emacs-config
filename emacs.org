@@ -1543,6 +1543,10 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   (let ((ivy-read-action-function #'ivy-read-action-ivy))
     (ivy-dispatching-done)))
 
+(defun counsel-ps-dwim (arg)
+  (interactive "P")
+  (if arg (proced) (counsel-list-processes)))
+
 (defun counsel-find-file--cmd-dwim-action (file) (let ((default-directory ivy--directory)) (cmd-dwim ivy-current-prefix-arg)))
 (defun counsel-find-file--magit-status-action (file) (let ((default-directory ivy--directory)) (magit-status)))
 (defun counsel-find-file--eshell-action (file) (let ((default-directory ivy--directory)) (eshell)))
@@ -1570,7 +1574,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (global-set-key (kbd "C-x F") 'counsel-file-jump)
 (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
 (global-set-key (kbd "C-x E") 'counsel-kmacro)
-(global-set-key (kbd "C-x p") 'counsel-list-processes)
+(global-set-key (kbd "C-x p") 'counsel-ps-dwim)
 (global-set-key (kbd "C-x C-r") 'ivy-resume)
 (global-set-key (kbd "M-s o") 'swiper-thing-at-point)
 (global-set-key (kbd "C-s") 'swiper)
