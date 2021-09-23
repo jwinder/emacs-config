@@ -1367,6 +1367,7 @@ org-babel languages & automatic yasnippet creation
       org-babel-default-header-args:bash '((:results . "output"))
       org-babel-default-header-args:js '((:results . "output")) ;; doesn't work with "value" for some reason, it just prints "undefined"
       org-babel-default-header-args:python '((:results . "output")) ;; doesn't work with "value" for some reason, it just prints "None"
+      org-babel-default-header-args:ruby '((:results . "output"))
       )
 #+END_SRC
 
