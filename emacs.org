@@ -1324,12 +1324,12 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
        (mapcar 'org--color-green-state org--done-todo-states)
        ))
 
-(custom-set-faces `(org-headline-done ((t (:inherit shadow))))
-                  `(org-link ((t (:underline nil))))
-                  `(org-date ((t (:underline nil)))))
+(custom-set-faces '(org-link ((t (:underline nil))))
+                  '(org-date ((t (:underline nil))))
+                  '(org-hide ((t (:foreground "black" :background "black")))))
 
-(add-to-list 'org-emphasis-alist '("+" (:strike-through t :inherit shadow)))
 (delete '("+" (:strike-through t)) org-emphasis-alist)
+(add-to-list 'org-emphasis-alist '("+" (:strike-through t :inherit shadow)))
 #+END_SRC
 
 org-babel languages & automatic yasnippet creation
