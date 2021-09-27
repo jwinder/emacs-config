@@ -217,7 +217,7 @@ These are non-interactive library functions useful in other parts of this config
 
 (setq jw--run-cmd-shell "bash")
 
-(cl-defun jw--run-cmd (command &key process-name before-process-creation after-process-creation after-process-finish delete-tmp-script-after)
+(cl-defun jw--run-cmd (command &key process-name before-process-creation after-process-creation after-process-finish delete-tmp-script beginning-of-buffer)
   "A wrapper around `make-comint-in-buffer'.
 
 For commands that have already finished, this will clean up the process buffer and re-run the command.
@@ -249,9 +249,12 @@ For long running processes, this will always toggle back and forth between the p
             (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
             (let ((proc (get-buffer-process process-buffer)))
               (when after-process-creation (funcall after-process-creation proc))
-              (when after-process-finish (jw--do-when-process-finishes proc `(lambda (proc) (funcall ,after-process-finish proc))))
-              (when delete-tmp-script-after (jw--do-when-process-finishes proc `(lambda (proc) (f-delete ,tmp-script-abs-filename 'force)))))
-            (switch-to-buffer process-buffer)))))))
+              (switch-to-buffer process-buffer)
+              (jw--do-when-process-finishes (get-buffer-process process-buffer)
+                                            `(lambda (proc)
+                                               (when ,beginning-of-buffer (beginning-of-buffer))
+                                               (when ,after-process-finish (funcall ,after-process-finish proc))
+                                               (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force)))))))))))
 
 (defun jw--run-cmd-tmux (command tmux-session)
   "Create session `tmux-session' if needed, and send `command' to it."
@@ -475,6 +478,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 *** common
 
 #+BEGIN_SRC emacs-lisp
+(require 'url-util)
+
 (defalias 'life-is-too-much 'save-buffers-kill-terminal)
 (defalias 'filter-lines 'keep-lines)
 (defalias 'filter-out-lines 'flush-lines)
@@ -570,7 +575,7 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
             (16 ":help")
             (4 (read-string "Weather for city/state/country/zip/latlong/:help/etc - curl wttr.in/"))
             (_ "")))
-         (query (s-replace "\s" "+" (s-trim raw-query))))
+         (query (url-encode-url (s-replace "\s" "+" (s-trim raw-query)))))
     (jw--run-cmd (format "curl http://wttr.in/%s" query))))
 
 (setq cheat-sh-candidates nil)
@@ -587,8 +592,8 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
                      (initial (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end)) nil)))
                  (completing-read "curl http://cheat.sh/" candidates nil nil initial)))
             ))
-         (query (s-replace "\s" "+" (s-trim raw-query))))
-    (jw--run-cmd (format "curl http://cheat.sh/%s" query))))
+         (query (url-encode-url (s-replace "\s" "+" (s-trim raw-query)))))
+    (jw--run-cmd (format "curl http://cheat.sh/%s" query) :beginning-of-buffer t)))
 
 (defun scratch-buffer ()
   "Save the scratch buffer in a file. Use any mode you'd like by customizing `jw-scratch-file` to a separate (fully-qualified) filename & extension."
