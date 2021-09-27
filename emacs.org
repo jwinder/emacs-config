@@ -217,7 +217,7 @@ These are non-interactive library functions useful in other parts of this config
 
 (setq jw--run-cmd-shell "bash")
 
-(cl-defun jw--run-cmd (command &key process-name before-process-creation after-process-creation after-process-finish delete-tmp-script)
+(cl-defun jw--run-cmd (command &key process-name before-process-creation after-process-creation after-process-finish delete-tmp-script tail-output)
   "A wrapper around `make-comint-in-buffer'.
 
 For commands that have already finished, this will clean up the process buffer and re-run the command.
@@ -244,18 +244,19 @@ For long running processes, this will always toggle back and forth between the p
           (when (get-buffer cmd-buffer-name) (kill-buffer cmd-buffer-name))
           (jw--file-write tmp-script-contents tmp-script-abs-filename)
           (unless (file-executable-p tmp-script-abs-filename) (chmod tmp-script-abs-filename #o744))
-          (let ((process-buffer (get-buffer-create cmd-buffer-name)))
+          (let* ((process-buffer (get-buffer-create cmd-buffer-name))
+                 (run-cmd (lambda ()
+                             (insert command "\n\n")
+                             (when before-process-creation (funcall before-process-creation))
+                             (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
+                             (let ((proc (get-buffer-process process-buffer)))
+                               (when after-process-creation (funcall after-process-creation proc))
+                               (jw--do-when-process-finishes (get-buffer-process process-buffer)
+                                                             `(lambda (proc)
+                                                                (when ,after-process-finish (funcall ,after-process-finish proc))
+                                                                (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force))))))))
             (switch-to-buffer process-buffer)
-            (save-excursion
-              (insert command "\n\n")
-              (when before-process-creation (funcall before-process-creation))
-              (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
-              (let ((proc (get-buffer-process process-buffer)))
-                (when after-process-creation (funcall after-process-creation proc))
-                (jw--do-when-process-finishes (get-buffer-process process-buffer)
-                                              `(lambda (proc)
-                                                 (when ,after-process-finish (funcall ,after-process-finish proc))
-                                                 (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force))))))))))))
+            (if tail-output (funcall run-cmd) (save-excursion (funcall run-cmd)))))))))
 
 (defun jw--run-cmd-tmux (command tmux-session)
   "Create session `tmux-session' if needed, and send `command' to it."
