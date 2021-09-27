@@ -217,7 +217,7 @@ These are non-interactive library functions useful in other parts of this config
 
 (setq jw--run-cmd-shell "bash")
 
-(cl-defun jw--run-cmd (command &key process-name before-process-creation after-process-creation after-process-finish delete-tmp-script beginning-of-buffer)
+(cl-defun jw--run-cmd (command &key process-name before-process-creation after-process-creation after-process-finish delete-tmp-script)
   "A wrapper around `make-comint-in-buffer'.
 
 For commands that have already finished, this will clean up the process buffer and re-run the command.
@@ -245,16 +245,17 @@ For long running processes, this will always toggle back and forth between the p
           (jw--file-write tmp-script-contents tmp-script-abs-filename)
           (unless (file-executable-p tmp-script-abs-filename) (chmod tmp-script-abs-filename #o744))
           (let ((process-buffer (get-buffer-create cmd-buffer-name)))
-            (when before-process-creation (funcall before-process-creation))
-            (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
-            (let ((proc (get-buffer-process process-buffer)))
-              (when after-process-creation (funcall after-process-creation proc))
-              (switch-to-buffer process-buffer)
-              (jw--do-when-process-finishes (get-buffer-process process-buffer)
-                                            `(lambda (proc)
-                                               (when ,beginning-of-buffer (beginning-of-buffer))
-                                               (when ,after-process-finish (funcall ,after-process-finish proc))
-                                               (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force)))))))))))
+            (switch-to-buffer process-buffer)
+            (save-excursion
+              (insert command "\n\n")
+              (when before-process-creation (funcall before-process-creation))
+              (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
+              (let ((proc (get-buffer-process process-buffer)))
+                (when after-process-creation (funcall after-process-creation proc))
+                (jw--do-when-process-finishes (get-buffer-process process-buffer)
+                                              `(lambda (proc)
+                                                 (when ,after-process-finish (funcall ,after-process-finish proc))
+                                                 (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force))))))))))))
 
 (defun jw--run-cmd-tmux (command tmux-session)
   "Create session `tmux-session' if needed, and send `command' to it."
@@ -593,7 +594,7 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
                  (completing-read "curl http://cheat.sh/" candidates nil nil initial)))
             ))
          (query (url-encode-url (s-replace "\s" "+" (s-trim raw-query)))))
-    (jw--run-cmd (format "curl http://cheat.sh/%s" query) :beginning-of-buffer t)))
+    (jw--run-cmd (format "curl http://cheat.sh/%s" query))))
 
 (defun scratch-buffer ()
   "Save the scratch buffer in a file. Use any mode you'd like by customizing `jw-scratch-file` to a separate (fully-qualified) filename & extension."
