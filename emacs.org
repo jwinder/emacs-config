@@ -750,7 +750,7 @@ With C-u C-u, then kill the comment on the current line."
           (updated (read-string (format "0 - 100 (default 75, current %s): " current) current)))
      (jw--set-transparency updated)))
 
-(defun transparency-on ()
+(defun transparency-normal ()
   (interactive)
   (jw--set-transparency "75"))
 
