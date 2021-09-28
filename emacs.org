@@ -53,7 +53,8 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
             (defalias 'describe-variable 'helpful-variable)
             (defalias 'describe-symbol 'helpful-symbol)))
 
-(use-package magit :pin melpa-stable) ;; brings in magit/transient replacement for magit-define-popup
+(use-package transient :pin melpa-stable)
+(use-package magit :pin melpa-stable)
 
 (use-package browse-at-remote)
 
@@ -1096,8 +1097,13 @@ terminal additions
 ;; also, use-package magit tries to set this before jw-env-set is called, pointing it to a different git.
 (setq magit-git-executable (executable-find "git"))
 
-(setq transient-enable-popup-navigation t
+(setq transient-enable-popup-navigation t ;; todojoe -- this acts sorta weird, it doesn't exit the popup when starting the process
       transient-display-buffer-action '(display-buffer-below-selected))
+
+;; todojoe -- this is fixed on master
+;; for some reason, the universal arg was set to C-p, breaking C-p navigation
+(define-key transient-map (kbd "C-p") nil)
+(define-key transient-map (kbd "C-u") 'universal-argument)
 
 (setq gist-view-gist t)
 
