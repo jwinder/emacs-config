@@ -1236,10 +1236,6 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
   (org-id-get-create arg)
   (org-id-copy))
 
-(add-to-list 'org-latex-packages-alist '("" "physics"))
-(setq org-latex-remove-logfiles nil) ;; evaluating latex blocks was causing errors because ox-latex couldn't find the logfiles
-(setq org-latex-caption-above '(image table src-block special-block))
-
 (setq org-use-speed-commands t
       org-enforce-todo-dependencies t
       org-enforce-todo-checkbox-dependencies t
