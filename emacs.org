@@ -147,11 +147,19 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--font-name (&optional size)
   (if size (concat "Monaco " size) "Monaco"))
 
+(setq jw--font-size nil)
 (defun jw--set-font-size (size)
+  (setq jw--font-size size)
   (set-face-attribute 'default nil :font (jw--font-name size)))
+(defun jw--get-font-size ()
+  jw--font-size)
 
+(setq jw--transparency nil)
 (defun jw--set-transparency (value)
-  (set-frame-parameter (selected-frame) 'alpha value))
+  (setq jw--transparency value)
+  (set-frame-parameter (selected-frame) 'alpha (string-to-number value)))
+(defun jw--get-transparency ()
+  jw--transparency)
 
 (defun jw--login-shell ()
   (file-name-nondirectory (getenv "SHELL")))
@@ -501,9 +509,11 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
   (interactive)
   (jw--set-font-size "18"))
 
-(defun font-size-set (size)
-  (interactive "sSize (default 14 big 18): ")
-  (jw--set-font-size size))
+(defun font-size-set ()
+  (interactive)
+  (let* ((current (jw--get-font-size))
+         (updated (read-string (format "Size (default 14, big 18, current %s): " current) current)))
+    (jw--set-font-size updated)))
 
 (defun kill-ring-cleanup-last-kill (&optional in-major-mode)
   "Cleans whitespace and reindents the text in the head of the kill ring as if in the major mode."
@@ -734,17 +744,19 @@ With C-u C-u, then kill the comment on the current line."
     (newline-and-indent)
     (unless was-at-end-of-line (open-line-previous))))
 
-(defun transparency-set (value)
-  (interactive (list (read-string "0 - 100: " "75")))
-  (jw--set-transparency (string-to-number value)))
+(defun transparency-set ()
+  (interactive)
+   (let* ((current (jw--get-transparency))
+          (updated (read-string (format "0 - 100 (default 75, current %s): " current) current)))
+     (jw--set-transparency updated)))
 
 (defun transparency-on ()
   (interactive)
-  (jw--set-transparency 75))
+  (jw--set-transparency "75"))
 
 (defun transparency-off ()
   (interactive)
-  (jw--set-transparency 100))
+  (jw--set-transparency "100"))
 
 (defun mode-line-on (&optional local)
   (interactive "P")
