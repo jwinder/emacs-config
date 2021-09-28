@@ -1097,13 +1097,13 @@ terminal additions
 ;; also, use-package magit tries to set this before jw-env-set is called, pointing it to a different git.
 (setq magit-git-executable (executable-find "git"))
 
-(setq transient-enable-popup-navigation t ;; todojoe -- this acts sorta weird, it doesn't exit the popup when starting the process
-      transient-display-buffer-action '(display-buffer-below-selected))
+;; todojoe -- this acts sorta weird, it doesn't exit the popup when starting the process
+;; and for some reason, the universal arg was set to C-p, breaking C-p navigation -- fixed on master
+;; (setq transient-enable-popup-navigation t)
+;; (define-key transient-map (kbd "C-p") nil)
+;; (define-key transient-map (kbd "C-u") 'universal-argument)
 
-;; todojoe -- this is fixed on master
-;; for some reason, the universal arg was set to C-p, breaking C-p navigation
-(define-key transient-map (kbd "C-p") nil)
-(define-key transient-map (kbd "C-u") 'universal-argument)
+(setq transient-display-buffer-action '(display-buffer-below-selected))
 
 (setq gist-view-gist t)
 
