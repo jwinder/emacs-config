@@ -246,7 +246,7 @@ For long running processes, this will always toggle back and forth between the p
           (unless (file-executable-p tmp-script-abs-filename) (chmod tmp-script-abs-filename #o744))
           (let* ((process-buffer (get-buffer-create cmd-buffer-name))
                  (run-cmd (lambda ()
-                             (insert command "\n\n")
+                             (insert prepared-cmd "\n\n")
                              (when before-process-creation (funcall before-process-creation))
                              (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
                              (let ((proc (get-buffer-process process-buffer)))
@@ -1669,5 +1669,6 @@ load the =private= directory and the =private.org= file if they exist
 (transparency-on)
 (cd (getenv "HOME"))
 (toggle-frame-maximized)
+(mode-line-off)
 (unless (server-running-p) (server-start))
 #+END_SRC
