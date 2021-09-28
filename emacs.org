@@ -1680,7 +1680,7 @@ load the =private= directory and the =private.org= file if they exist
 #+BEGIN_SRC emacs-lisp
 (yas-reload-all)
 (scratch-buffer)
-(transparency-on)
+(transparency-normal)
 (cd (getenv "HOME"))
 (toggle-frame-maximized)
 (mode-line-off)
