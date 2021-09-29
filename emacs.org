@@ -149,15 +149,17 @@ These are non-interactive library functions useful in other parts of this config
 
 (setq jw--font-size nil)
 (defun jw--set-font-size (size)
-  (setq jw--font-size size)
-  (set-face-attribute 'default nil :font (jw--font-name size)))
+  (when (and (s-numeric? size) (>= (string-to-number size) 8) (<= (string-to-number size) 72))
+    (setq jw--font-size size)
+    (set-face-attribute 'default nil :font (jw--font-name size))))
 (defun jw--get-font-size ()
   jw--font-size)
 
 (setq jw--transparency nil)
 (defun jw--set-transparency (value)
-  (setq jw--transparency value)
-  (set-frame-parameter (selected-frame) 'alpha (string-to-number value)))
+  (when (and (s-numeric? value) (>= (string-to-number value) 0) (<= (string-to-number value) 100))
+    (setq jw--transparency value)
+    (set-frame-parameter (selected-frame) 'alpha (string-to-number value))))
 (defun jw--get-transparency ()
   jw--transparency)
 
@@ -512,7 +514,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (defun font-size-set ()
   (interactive)
   (let* ((current (jw--get-font-size))
-         (updated (read-string (format "Size (default 14, big 18, current %s): " current) current)))
+         (updated (read-string (format "Size (8 to 72, default 14, big 18, current %s): " current) current)))
     (jw--set-font-size updated)))
 
 (defun kill-ring-cleanup-last-kill (&optional in-major-mode)
@@ -747,7 +749,7 @@ With C-u C-u, then kill the comment on the current line."
 (defun transparency-set ()
   (interactive)
    (let* ((current (jw--get-transparency))
-          (updated (read-string (format "0 - 100 (default 75, current %s): " current) current)))
+          (updated (read-string (format "Transparency (0 - 100, default 75, current %s): " current) current)))
      (jw--set-transparency updated)))
 
 (defun transparency-normal ()
