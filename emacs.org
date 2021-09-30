@@ -1502,10 +1502,6 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
       (sbt-command "test:compile")
     (sbt-command "compile")))
 
-(defun sbt-test ()
-  (interactive)
-  (sbt-command "test"))
-
 (defun sbt-current-tests-in-buffer ()
   (save-excursion
     (let* ((pkg-name-components)
@@ -1522,16 +1518,17 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
              (full-test-names-str (string-join full-test-names " ")))
         full-test-names-str))))
 
-(defun sbt-test-only-current-test (only-zzz)
+(defun sbt-test (arg)
   (interactive "P")
-  (if only-zzz
-      (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz"))
-    (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer)))))
+  (pcase (prefix-numeric-value arg)
+    (4 (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz")))
+    (16 (sbt-command "test"))
+    (_ (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer))))))
 
 (defun sbt:command--advice--message-command (original-function &rest args)
   (message "sbt %s" (car args))
   (apply original-function args))
-(advice-add 'sbt:command :around 'sbt:command--advice--message-command)
+(advice-add 'sbt:command :around 'sbt:command--advice--message-command) ;; sbt-command delegates to sbt:command
 
 (add-to-list 'sbt:program-options "-no-colors") ;; remove a lot of extra spacing with new sbt prompt changes
 
@@ -1541,8 +1538,7 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (global-set-key (kbd "C-c s") 'sbt-command-prefix)
 (define-key sbt-keymap (kbd "s") 'jw-sbt)
 (define-key sbt-keymap (kbd "c") 'sbt-compile)
-(define-key sbt-keymap (kbd "O") 'sbt-test)
-(define-key sbt-keymap (kbd "o") 'sbt-test-only-current-test)
+(define-key sbt-keymap (kbd "o") 'sbt-test)
 (define-key sbt-keymap (kbd "l") 'sbt-run-previous-command)
 
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
