@@ -145,23 +145,27 @@ These are non-interactive library functions useful in other parts of this config
 (defconst jw--init-private-dir (expand-file-name "private" user-emacs-directory))
 
 (defun jw--font-name (&optional size)
-  (if size (concat "Monaco " size) "Monaco"))
+  (if size (format "Monaco %s" size) "Monaco"))
 
 (setq jw--font-size nil)
-(defun jw--set-font-size (size)
-  (when (and (s-numeric? size) (>= (string-to-number size) 8) (<= (string-to-number size) 72))
-    (setq jw--font-size size)
-    (set-face-attribute 'default nil :font (jw--font-name size))))
+
 (defun jw--get-font-size ()
   jw--font-size)
 
-(setq jw--transparency nil)
-(defun jw--set-transparency (value)
-  (when (and (s-numeric? value) (>= (string-to-number value) 0) (<= (string-to-number value) 100))
-    (setq jw--transparency value)
-    (set-frame-parameter (selected-frame) 'alpha (string-to-number value))))
-(defun jw--get-transparency ()
-  jw--transparency)
+(defun jw--set-font-size (size)
+  (when (and (numberp size) (>= size 8) (<= size 80))
+    (setq jw--font-size size)
+    (set-face-attribute 'default nil :font (jw--font-name size))))
+
+(setq jw--transparency-alpha nil)
+
+(defun jw--get-transparency-alpha ()
+  jw--transparency-alpha)
+
+(defun jw--set-transparency-alpha (value)
+  (when (and (numberp value) (>= value 0) (<= value 100))
+    (setq jw--transparency-alpha value)
+    (set-frame-parameter (selected-frame) 'alpha value)))
 
 (defun jw--login-shell ()
   (file-name-nondirectory (getenv "SHELL")))
@@ -321,9 +325,9 @@ For long running processes, this will always toggle back and forth between the p
 (set-background-color "black")
 (set-face-background 'fringe nil)
 
-(jw--set-font-size "14")
+(jw--set-font-size 14)
 
-(set-face-attribute 'mode-line nil :font (jw--font-name "14") :background "#22083397778B" :foreground "#7db5d6" :box '(:style released-button))
+(set-face-attribute 'mode-line nil :font (jw--font-name 14) :background "#22083397778B" :foreground "#7db5d6" :box '(:style released-button))
 (set-face-attribute 'mode-line-inactive nil :background "#263238" :foreground "gray" :box '(:style released-button))
 (set-face-attribute 'mode-line-buffer-id nil :foreground "white")
 (set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
@@ -506,24 +510,22 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (defun font-size-set ()
   (interactive)
   (let* ((current (jw--get-font-size))
-         (updated (read-string (format "8 to 72 (default 14, big 18, current %s): " current) current)))
-    (jw--set-font-size updated)))
+         (updated (read-string (format "Font size 8 to 80, default 14, current %s: " current) (number-to-string current))))
+    (jw--set-font-size (string-to-number updated))))
 
-(defun font-size-normal () (interactive) (jw--set-font-size "14"))
-(defun font-size-big () (interactive) (jw--set-font-size "18"))
-(defun font-size-increase () (interactive) (jw--set-font-size (number-to-string (1+ (string-to-number (jw--get-font-size))))))
-(defun font-size-decrease () (interactive) (jw--set-font-size (number-to-string (1- (string-to-number (jw--get-font-size))))))
+(defun font-size-normal () (interactive) (jw--set-font-size 14))
+(defun font-size-increase () (interactive) (jw--set-font-size (1+ (jw--get-font-size))))
+(defun font-size-decrease () (interactive) (jw--set-font-size (1- (jw--get-font-size))))
 
-(defun transparency-set ()
+(defun transparency-alpha-set ()
   (interactive)
-   (let* ((current (jw--get-transparency))
-          (updated (read-string (format "0 full to 100 no transparency (default 75, current %s): " current) current)))
-     (jw--set-transparency updated)))
+   (let* ((current (jw--get-transparency-alpha))
+          (updated (read-string (format "Transparency alpha 0 to 100, default 75, current %s: " current) (number-to-string current))))
+     (jw--set-transparency-alpha (string-to-number updated))))
 
-(defun transparency-normal () (interactive) (jw--set-transparency "75"))
-(defun transparency-off () (interactive) (jw--set-transparency "100"))
-(defun transparency-increase () (interactive) (jw--set-transparency (number-to-string (1- (string-to-number (jw--get-transparency))))))
-(defun transparency-decrease () (interactive) (jw--set-transparency (number-to-string (1+ (string-to-number (jw--get-transparency))))))
+(defun transparency-alpha-normal () (interactive) (jw--set-transparency-alpha 75))
+(defun transparency-alpha-increase () (interactive) (jw--set-transparency-alpha (1+ (jw--get-transparency-alpha))))
+(defun transparency-alpha-decrease () (interactive) (jw--set-transparency-alpha (1- (jw--get-transparency-alpha))))
 
 (defun kill-ring-cleanup-last-kill (&optional in-major-mode)
   "Cleans whitespace and reindents the text in the head of the kill ring as if in the major mode."
@@ -926,13 +928,13 @@ argument makes the windows rotate backwards."
 
 (define-key ctl-x-4-map (kbd "<up>") 'font-size-increase)
 (define-key ctl-x-4-map (kbd "<down>") 'font-size-decrease)
-(define-key ctl-x-4-map (kbd "<left>") 'transparency-increase)
-(define-key ctl-x-4-map (kbd "<right>") 'transparency-decrease)
+(define-key ctl-x-4-map (kbd "<right>") 'transparency-alpha-increase)
+(define-key ctl-x-4-map (kbd "<left>") 'transparency-alpha-decrease)
 
 (global-set-key (kbd "<C-wheel-up>") 'font-size-increase)
 (global-set-key (kbd "<C-wheel-down>") 'font-size-decrease)
-(global-set-key (kbd "<C-wheel-left>") 'transparency-increase)
-(global-set-key (kbd "<C-wheel-right>") 'transparency-decrease)
+(global-set-key (kbd "<C-wheel-right>") 'transparency-alpha-increase)
+(global-set-key (kbd "<C-wheel-left>") 'transparency-alpha-decrease)
 
 ;; todo emacs 28.1 -- remove these and use the default xref keybindings
 (global-set-key (kbd "M-s j") 'dumb-jump-go)
@@ -1688,7 +1690,7 @@ load the =private= directory and the =private.org= file if they exist
 #+BEGIN_SRC emacs-lisp
 (yas-reload-all)
 (scratch-buffer)
-(transparency-normal)
+(transparency-alpha-normal)
 (cd (getenv "HOME"))
 (toggle-frame-maximized)
 (mode-line-off)
