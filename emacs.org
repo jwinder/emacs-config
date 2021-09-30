@@ -1496,24 +1496,31 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
           (sbt-start)
         (cmd "sbt-new")))))
 
-(defun sbt-current-tests-in-buffer ()
+(defun sbt-compile (test-compile)
+  (interactive "P")
+  (if test-compile
+      (sbt-command "test:compile")
+    (sbt-command "compile")))
+
+(defun sbt-test ()
   (interactive)
+  (sbt-command "test"))
+
+(defun sbt-current-tests-in-buffer ()
   (save-excursion
     (let* ((pkg-name-components)
            (test-names))
       (goto-char (point-min))
       (while (re-search-forward "package " nil t)
-        (push (filter-buffer-substring (point) (point-at-eol)) pkg-name-components))
+        (push (buffer-substring-no-properties (point) (point-at-eol)) pkg-name-components))
       (goto-char (point-min))
       (while (re-search-forward "\\(object\\|class\\) " nil t)
-        (push (filter-buffer-substring (point) (progn (re-search-forward " ")
-                                                      (forward-char -1)
-                                                      (point)))
+        (push (buffer-substring-no-properties (point) (progn (re-search-forward " ") (forward-char -1) (point)))
               test-names))
       (let* ((full-pkg-name (string-join (reverse pkg-name-components) "."))
              (full-test-names (mapcar #'(lambda (test-name) (string-join (list full-pkg-name "." test-name))) test-names))
              (full-test-names-str (string-join full-test-names " ")))
-        (message full-test-names-str)))))
+        full-test-names-str))))
 
 (defun sbt-test-only-current-test (only-zzz)
   (interactive "P")
@@ -1521,11 +1528,10 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
       (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz"))
     (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer)))))
 
-(defun sbt-compile (test-compile)
-  (interactive "P")
-  (if test-compile
-      (sbt-command "test:compile")
-    (sbt-command "compile")))
+(defun sbt:command--advice--message-command (original-function &rest args)
+  (message "sbt %s" (car args))
+  (apply original-function args))
+(advice-add 'sbt:command :around 'sbt:command--advice--message-command)
 
 (add-to-list 'sbt:program-options "-no-colors") ;; remove a lot of extra spacing with new sbt prompt changes
 
@@ -1535,6 +1541,7 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (global-set-key (kbd "C-c s") 'sbt-command-prefix)
 (define-key sbt-keymap (kbd "s") 'jw-sbt)
 (define-key sbt-keymap (kbd "c") 'sbt-compile)
+(define-key sbt-keymap (kbd "O") 'sbt-test)
 (define-key sbt-keymap (kbd "o") 'sbt-test-only-current-test)
 (define-key sbt-keymap (kbd "l") 'sbt-run-previous-command)
 
