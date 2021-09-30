@@ -503,19 +503,27 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
   (let ((goto (or (buffer-file-name) (jw--pwd))))
     (find-file (format "/sudo:root@localhost:%s" goto))))
 
-(defun font-size-normal ()
-  (interactive)
-  (jw--set-font-size "14"))
-
-(defun font-size-big ()
-  (interactive)
-  (jw--set-font-size "18"))
-
 (defun font-size-set ()
   (interactive)
   (let* ((current (jw--get-font-size))
-         (updated (read-string (format "Size (8 to 72, default 14, big 18, current %s): " current) current)))
+         (updated (read-string (format "8 to 72 (default 14, big 18, current %s): " current) current)))
     (jw--set-font-size updated)))
+
+(defun font-size-normal () (interactive) (jw--set-font-size "14"))
+(defun font-size-big () (interactive) (jw--set-font-size "18"))
+(defun font-size-increase () (interactive) (jw--set-font-size (number-to-string (1+ (string-to-number (jw--get-font-size))))))
+(defun font-size-decrease () (interactive) (jw--set-font-size (number-to-string (1- (string-to-number (jw--get-font-size))))))
+
+(defun transparency-set ()
+  (interactive)
+   (let* ((current (jw--get-transparency))
+          (updated (read-string (format "0 full to 100 no transparency (default 75, current %s): " current) current)))
+     (jw--set-transparency updated)))
+
+(defun transparency-normal () (interactive) (jw--set-transparency "75"))
+(defun transparency-off () (interactive) (jw--set-transparency "100"))
+(defun transparency-increase () (interactive) (jw--set-transparency (number-to-string (1- (string-to-number (jw--get-transparency))))))
+(defun transparency-decrease () (interactive) (jw--set-transparency (number-to-string (1+ (string-to-number (jw--get-transparency))))))
 
 (defun kill-ring-cleanup-last-kill (&optional in-major-mode)
   "Cleans whitespace and reindents the text in the head of the kill ring as if in the major mode."
@@ -746,20 +754,6 @@ With C-u C-u, then kill the comment on the current line."
     (newline-and-indent)
     (unless was-at-end-of-line (open-line-previous))))
 
-(defun transparency-set ()
-  (interactive)
-   (let* ((current (jw--get-transparency))
-          (updated (read-string (format "Transparency (0 - 100, default 75, current %s): " current) current)))
-     (jw--set-transparency updated)))
-
-(defun transparency-normal ()
-  (interactive)
-  (jw--set-transparency "75"))
-
-(defun transparency-off ()
-  (interactive)
-  (jw--set-transparency "100"))
-
 (defun mode-line-on (&optional local)
   (interactive "P")
   (if local
@@ -894,8 +888,6 @@ argument makes the windows rotate backwards."
 (global-set-key (kbd "C-z") nil) ;; remove suspend
 (global-set-key (kbd "C-x C-z") nil)
 
-(define-key ctl-x-5-map (kbd "<return>") 'toggle-frame-maximized)
-(define-key ctl-x-5-map (kbd "S-<return>") 'toggle-frame-fullscreen)
 (global-set-key (kbd "M-*") 'calculator)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
@@ -921,12 +913,26 @@ argument makes the windows rotate backwards."
 (define-key sp-keymap (kbd "C-M-n") nil)
 (define-key dired-mode-map (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
 (define-key dired-mode-map (kbd "w") 'wdired-change-to-wdired-mode)
-(define-key ctl-x-4-map (kbd "2") 'toggle-window-split)
-(define-key ctl-x-4-map (kbd "3") 'toggle-window-split)
-(define-key ctl-x-4-map (kbd "1") 'rotate-windows)
 (define-key help-map (kbd "M-n") 'helpful-at-point)
 (define-key help-map (kbd "H") 'view-hello-file)
 (define-key help-map (kbd "h") 'cheat-sh)
+
+(define-key ctl-x-5-map (kbd "<return>") 'toggle-frame-maximized)
+(define-key ctl-x-5-map (kbd "S-<return>") 'toggle-frame-fullscreen)
+
+(define-key ctl-x-4-map (kbd "2") 'toggle-window-split)
+(define-key ctl-x-4-map (kbd "3") 'toggle-window-split)
+(define-key ctl-x-4-map (kbd "1") 'rotate-windows)
+
+(define-key ctl-x-4-map (kbd "<up>") 'font-size-increase)
+(define-key ctl-x-4-map (kbd "<down>") 'font-size-decrease)
+(define-key ctl-x-4-map (kbd "<left>") 'transparency-increase)
+(define-key ctl-x-4-map (kbd "<right>") 'transparency-decrease)
+
+(global-set-key (kbd "<C-wheel-up>") 'font-size-increase)
+(global-set-key (kbd "<C-wheel-down>") 'font-size-decrease)
+(global-set-key (kbd "<C-wheel-left>") 'transparency-increase)
+(global-set-key (kbd "<C-wheel-right>") 'transparency-decrease)
 
 ;; todo emacs 28.1 -- remove these and use the default xref keybindings
 (global-set-key (kbd "M-s j") 'dumb-jump-go)
