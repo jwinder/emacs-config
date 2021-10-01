@@ -147,25 +147,25 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--font-name (&optional size)
   (if size (format "Monaco %s" size) "Monaco"))
 
-(setq jw--font-size nil)
+(defconst jw--default-font-size 14)
+(setq jw--current-font-size 14)
+(defun jw--get-font-size () jw--current-font-size)
 
-(defun jw--get-font-size ()
-  jw--font-size)
+(defun jw--set-font-size (&optional size)
+  (let ((s (or size jw--default-font-size)))
+    (when (and (numberp s) (>= s 8) (<= s 80))
+      (setq jw--current-font-size s)
+      (set-face-attribute 'default nil :font (jw--font-name s)))))
 
-(defun jw--set-font-size (size)
-  (when (and (numberp size) (>= size 8) (<= size 80))
-    (setq jw--font-size size)
-    (set-face-attribute 'default nil :font (jw--font-name size))))
+(defconst jw--default-transparency-alpha 75)
+(setq jw--current-transparency-alpha 75)
+(defun jw--get-transparency-alpha () jw--current-transparency-alpha)
 
-(setq jw--transparency-alpha nil)
-
-(defun jw--get-transparency-alpha ()
-  jw--transparency-alpha)
-
-(defun jw--set-transparency-alpha (value)
-  (when (and (numberp value) (>= value 0) (<= value 100))
-    (setq jw--transparency-alpha value)
-    (set-frame-parameter (selected-frame) 'alpha value)))
+(defun jw--set-transparency-alpha (&optional value)
+  (let ((v (or value jw--default-transparency-alpha)))
+    (when (and (numberp v) (>= v 0) (<= v 100))
+      (setq jw--current-transparency-alpha v)
+      (set-frame-parameter (selected-frame) 'alpha v))))
 
 (defun jw--login-shell ()
   (file-name-nondirectory (getenv "SHELL")))
@@ -325,9 +325,9 @@ For long running processes, this will always toggle back and forth between the p
 (set-background-color "black")
 (set-face-background 'fringe nil)
 
-(jw--set-font-size 14)
+(jw--set-font-size)
 
-(set-face-attribute 'mode-line nil :font (jw--font-name 14) :background "#22083397778B" :foreground "#7db5d6" :box '(:style released-button))
+(set-face-attribute 'mode-line nil :font (jw--font-name jw--default-font-size) :background "#22083397778B" :foreground "#7db5d6" :box '(:style released-button))
 (set-face-attribute 'mode-line-inactive nil :background "#263238" :foreground "gray" :box '(:style released-button))
 (set-face-attribute 'mode-line-buffer-id nil :foreground "white")
 (set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
@@ -510,27 +510,27 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (defun font-size-set ()
   (interactive)
   (let* ((current (jw--get-font-size))
-         (updated (read-string (format "Font size 8 to 80, default 14, current %s: " current) (number-to-string current))))
+         (updated (read-string (format "Font size 8 to 80, default %s, current %s: " jw--default-font-size current) (number-to-string current))))
     (jw--set-font-size (string-to-number updated))))
 
-(defun font-size-normal () (interactive) (jw--set-font-size 14))
+(defun font-size-default () (interactive) (jw--set-font-size))
 (defun font-size-increase () (interactive) (jw--set-font-size (1+ (jw--get-font-size))))
 (defun font-size-decrease () (interactive) (jw--set-font-size (1- (jw--get-font-size))))
 
 (defun transparency-alpha-set ()
   (interactive)
    (let* ((current (jw--get-transparency-alpha))
-          (updated (read-string (format "Transparency alpha 0 to 100, default 75, current %s: " current) (number-to-string current))))
+          (updated (read-string (format "Transparency alpha 0 to 100, default %s, current %s: " jw--default-transparency-alpha current) (number-to-string current))))
      (jw--set-transparency-alpha (string-to-number updated))))
 
-(defun transparency-alpha-normal () (interactive) (jw--set-transparency-alpha 75))
+(defun transparency-alpha-default () (interactive) (jw--set-transparency-alpha))
 (defun transparency-alpha-increase () (interactive) (jw--set-transparency-alpha (1+ (jw--get-transparency-alpha))))
 (defun transparency-alpha-decrease () (interactive) (jw--set-transparency-alpha (1- (jw--get-transparency-alpha))))
 
-(defun font-size-transparency-alpha-normal ()
+(defun font-size-transparency-alpha-default ()
   (interactive)
-  (font-size-normal)
-  (transparency-alpha-normal))
+  (font-size-default)
+  (transparency-alpha-default))
 
 (defun kill-ring-cleanup-last-kill (&optional in-major-mode)
   "Cleans whitespace and reindents the text in the head of the kill ring as if in the major mode."
@@ -930,7 +930,7 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-4-map (kbd "2") 'toggle-window-split)
 (define-key ctl-x-4-map (kbd "3") 'toggle-window-split)
 (define-key ctl-x-4-map (kbd "1") 'rotate-windows)
-(define-key ctl-x-4-map (kbd "R") 'font-size-transparency-alpha-normal)
+(define-key ctl-x-4-map (kbd "R") 'font-size-transparency-alpha-default)
 
 (define-key ctl-x-4-map (kbd "<up>") 'font-size-increase)
 (define-key ctl-x-4-map (kbd "<down>") 'font-size-decrease)
@@ -1699,7 +1699,7 @@ load the =private= directory and the =private.org= file if they exist
 #+BEGIN_SRC emacs-lisp
 (yas-reload-all)
 (scratch-buffer)
-(font-size-transparency-alpha-normal)
+(font-size-transparency-alpha-default)
 (cd (getenv "HOME"))
 (toggle-frame-maximized)
 (mode-line-off)
