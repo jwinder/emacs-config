@@ -924,6 +924,10 @@ argument makes the windows rotate backwards."
 (define-key help-map (kbd "H") 'view-hello-file)
 (define-key help-map (kbd "h") 'cheat-sh)
 
+;; todo emacs 28.1 -- remove these and use the default xref keybindings
+(global-set-key (kbd "M-s j") 'dumb-jump-go)
+(global-set-key (kbd "M-s J") 'dumb-jump-go-other-window)
+
 (define-key ctl-x-5-map (kbd "<return>") 'toggle-frame-maximized)
 (define-key ctl-x-5-map (kbd "S-<return>") 'toggle-frame-fullscreen)
 
@@ -937,16 +941,15 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-4-map (kbd "<right>") 'transparency-alpha-increase)
 (define-key ctl-x-4-map (kbd "<left>") 'transparency-alpha-decrease)
 
-;; these only work when the cursor is inside of emacs, inside of the fringe
-;; currently, not setting the wheel for <left-fringe>, <right-fringe>, <header-line>, <mode-line>, <nil> (the edge)
-(global-set-key (kbd "<C-wheel-up>") 'font-size-increase)
-(global-set-key (kbd "<C-wheel-down>") 'font-size-decrease)
-(global-set-key (kbd "<C-wheel-right>") 'transparency-alpha-increase)
-(global-set-key (kbd "<C-wheel-left>") 'transparency-alpha-decrease)
+(defun global-set-wheel-key-everywhere (key command)
+  (global-set-key (kbd key) command)
+  (-each '("nil" "right-fringe" "left-fringe" "right-margin" "left-margin" "header-line" "tab-line" "vertical-line" "mode-line")
+    (lambda (area) (global-set-key (kbd (format "<%s> %s" area key)) command))))
 
-;; todo emacs 28.1 -- remove these and use the default xref keybindings
-(global-set-key (kbd "M-s j") 'dumb-jump-go)
-(global-set-key (kbd "M-s J") 'dumb-jump-go-other-window)
+(global-set-wheel-key-everywhere "<C-wheel-up>" 'font-size-increase)
+(global-set-wheel-key-everywhere "<C-wheel-down>" 'font-size-decrease)
+(global-set-wheel-key-everywhere "<C-wheel-right>" 'transparency-alpha-increase)
+(global-set-wheel-key-everywhere "<C-wheel-left>" 'transparency-alpha-decrease)
 #+END_SRC
 
 ** eshell
