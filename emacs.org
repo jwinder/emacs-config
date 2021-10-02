@@ -937,6 +937,8 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-4-map (kbd "<right>") 'transparency-alpha-increase)
 (define-key ctl-x-4-map (kbd "<left>") 'transparency-alpha-decrease)
 
+;; these only work when the cursor is inside of emacs, inside of the fringe
+;; currently, not setting the wheel for <left-fringe>, <right-fringe>, <header-line>, <mode-line>, <nil> (the edge)
 (global-set-key (kbd "<C-wheel-up>") 'font-size-increase)
 (global-set-key (kbd "<C-wheel-down>") 'font-size-decrease)
 (global-set-key (kbd "<C-wheel-right>") 'transparency-alpha-increase)
