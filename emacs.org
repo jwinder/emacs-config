@@ -144,11 +144,13 @@ These are non-interactive library functions useful in other parts of this config
 (defconst jw--init-private-file (expand-file-name "private.el" user-emacs-directory))
 (defconst jw--init-private-dir (expand-file-name "private" user-emacs-directory))
 
+(defconst jw--emacs-visual-areas '(nil right-fringe left-fringe right-margin left-margin header-line tab-line vertical-line mode-line))
+
 (defun jw--font-name (&optional size)
   (if size (format "Monaco %s" size) "Monaco"))
 
 (defconst jw--default-font-size 14)
-(setq jw--current-font-size 14)
+(setq jw--current-font-size jw--default-font-size)
 (defun jw--get-font-size () jw--current-font-size)
 
 (defun jw--set-font-size (&optional size)
@@ -158,7 +160,7 @@ These are non-interactive library functions useful in other parts of this config
       (set-face-attribute 'default nil :font (jw--font-name s)))))
 
 (defconst jw--default-transparency-alpha 75)
-(setq jw--current-transparency-alpha 75)
+(setq jw--current-transparency-alpha jw--default-transparency-alpha)
 (defun jw--get-transparency-alpha () jw--current-transparency-alpha)
 
 (defun jw--set-transparency-alpha (&optional value)
@@ -221,6 +223,11 @@ These are non-interactive library functions useful in other parts of this config
     (goto-char url-http-end-of-headers)
     (delete-region (point-min) (point))
     (s-trim (buffer-string))))
+
+(defun jw--global-set-wheel-key (key command &optional areas)
+  (global-set-key (kbd key) command)
+  (-each (or areas jw--emacs-visual-areas)
+    (lambda (area) (global-set-key (kbd (format "<%s> %s" (jw--symbol-name area) key)) command))))
 
 (defun jw--do-when-process-finishes (process fn)
   "Invoke function `fn' after process `process' finishes or exits. `fn' is a one-arg function providing the finished process."
@@ -941,15 +948,10 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-4-map (kbd "<right>") 'transparency-alpha-increase)
 (define-key ctl-x-4-map (kbd "<left>") 'transparency-alpha-decrease)
 
-(defun global-set-wheel-key-everywhere (key command)
-  (global-set-key (kbd key) command)
-  (-each '("nil" "right-fringe" "left-fringe" "right-margin" "left-margin" "header-line" "tab-line" "vertical-line" "mode-line")
-    (lambda (area) (global-set-key (kbd (format "<%s> %s" area key)) command))))
-
-(global-set-wheel-key-everywhere "<C-wheel-up>" 'font-size-increase)
-(global-set-wheel-key-everywhere "<C-wheel-down>" 'font-size-decrease)
-(global-set-wheel-key-everywhere "<C-wheel-right>" 'transparency-alpha-increase)
-(global-set-wheel-key-everywhere "<C-wheel-left>" 'transparency-alpha-decrease)
+(jw--global-set-wheel-key "<C-wheel-up>" 'font-size-increase)
+(jw--global-set-wheel-key "<C-wheel-down>" 'font-size-decrease)
+(jw--global-set-wheel-key "<C-wheel-right>" 'transparency-alpha-increase)
+(jw--global-set-wheel-key "<C-wheel-left>" 'transparency-alpha-decrease)
 #+END_SRC
 
 ** eshell
