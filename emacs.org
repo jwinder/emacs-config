@@ -144,7 +144,7 @@ These are non-interactive library functions useful in other parts of this config
 (defconst jw--init-private-file (expand-file-name "private.el" user-emacs-directory))
 (defconst jw--init-private-dir (expand-file-name "private" user-emacs-directory))
 
-(defconst jw--emacs-visual-areas '(nil right-fringe left-fringe right-margin left-margin header-line tab-line vertical-line mode-line))
+(defconst jw--emacs-visual-areas '(nil right-fringe left-fringe right-margin left-margin header-line tab-line tab-bar vertical-line vertical-scroll-bar mode-line menu-bar))
 
 (defun jw--font-name (&optional size)
   (if size (format "Monaco %s" size) "Monaco"))
@@ -224,7 +224,7 @@ These are non-interactive library functions useful in other parts of this config
     (delete-region (point-min) (point))
     (s-trim (buffer-string))))
 
-(defun jw--global-set-wheel-key (key command &optional areas)
+(defun jw--global-set-visual-area-key (key command &optional areas)
   (global-set-key (kbd key) command)
   (-each (or areas jw--emacs-visual-areas)
     (lambda (area) (global-set-key (kbd (format "<%s> %s" (jw--symbol-name area) key)) command))))
@@ -948,10 +948,10 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-4-map (kbd "<right>") 'transparency-alpha-increase)
 (define-key ctl-x-4-map (kbd "<left>") 'transparency-alpha-decrease)
 
-(jw--global-set-wheel-key "<C-wheel-up>" 'font-size-increase)
-(jw--global-set-wheel-key "<C-wheel-down>" 'font-size-decrease)
-(jw--global-set-wheel-key "<C-wheel-right>" 'transparency-alpha-increase)
-(jw--global-set-wheel-key "<C-wheel-left>" 'transparency-alpha-decrease)
+(jw--global-set-visual-area-key "<C-wheel-up>" 'font-size-increase)
+(jw--global-set-visual-area-key "<C-wheel-down>" 'font-size-decrease)
+(jw--global-set-visual-area-key "<C-wheel-right>" 'transparency-alpha-increase)
+(jw--global-set-visual-area-key "<C-wheel-left>" 'transparency-alpha-decrease)
 #+END_SRC
 
 ** eshell
