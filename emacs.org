@@ -338,7 +338,7 @@ For long running processes, this will always toggle back and forth between the p
 
 (setq frame-title-format nil)
 
-(add-hook 'linum-before-numbering-hook (lambda () (set-face-attribute 'linum nil :foreground "#5683a2" :background "black")))
+(add-hook 'linum-before-numbering-hook (lambda () (set-face-attribute 'linum nil :foreground "#5683a2" :background nil)))
 
 (when (eq system-type 'darwin)
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
