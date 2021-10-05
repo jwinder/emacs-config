@@ -591,10 +591,11 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 With single prefix arg (C-u M-x date), display calendar around current date.
 With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
   (interactive "P")
-  (pcase (prefix-numeric-value arg)
-    (16 (calendar arg))
-    (4 (calendar))
-    (_ (message (current-time-string)))))
+  (when arg
+    (pcase (prefix-numeric-value arg)
+      (16 (calendar arg))
+      (_ (calendar))))
+  (message (current-time-string)))
 
 (defun iso-datetime (utc)
   (interactive "P")
