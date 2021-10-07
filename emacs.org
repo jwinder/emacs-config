@@ -848,7 +848,7 @@ argument makes the windows rotate backwards."
 
 (defun dired-hide-subdir-dwim (arg)
   (interactive "P")
-  (if arg (dired-hide-all) (dired-hide-subdir 1)))
+  (save-excursion (if arg (dired-hide-all) (dired-hide-subdir 1))))
 #+END_SRC
 
 *** emacs
