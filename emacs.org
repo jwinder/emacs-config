@@ -845,6 +845,10 @@ argument makes the windows rotate backwards."
                (set-window-start w1 s2)
                (set-window-start w2 s1)
                (setq i next-i)))))))
+
+(defun dired-hide-subdir-dwim (arg)
+  (interactive "P")
+  (if arg (dired-hide-all) (dired-hide-subdir 1)))
 #+END_SRC
 
 *** emacs
@@ -932,6 +936,8 @@ argument makes the windows rotate backwards."
 (define-key sp-keymap (kbd "C-M-n") nil)
 (define-key dired-mode-map (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
 (define-key dired-mode-map (kbd "w") 'wdired-change-to-wdired-mode)
+(define-key dired-mode-map (kbd "<tab>") 'dired-hide-subdir-dwim)
+(define-key dired-mode-map (kbd "$") 'dired-hide-subdir-dwim)
 (define-key help-map (kbd "M-n") 'helpful-at-point)
 (define-key help-map (kbd "H") 'view-hello-file)
 (define-key help-map (kbd "h") 'cheat-sh)
