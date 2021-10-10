@@ -1385,7 +1385,8 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 
 (custom-set-faces '(org-link ((t (:underline nil))))
                   '(org-date ((t (:underline nil))))
-                  '(org-hide ((t (:foreground "black" :background "black")))))
+                  '(org-hide ((t (:foreground "black" :background "black"))))
+                  '(org-headline-done ((t (:inherit shadow)))))
 
 (delete '("+" (:strike-through t)) org-emphasis-alist)
 (add-to-list 'org-emphasis-alist '("+" (:strike-through t :inherit shadow)))
