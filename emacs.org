@@ -378,6 +378,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 ** settings
 
 #+BEGIN_SRC emacs-lisp
+(setq server-name "emacs-server")
+
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror)
 
