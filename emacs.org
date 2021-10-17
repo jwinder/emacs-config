@@ -487,7 +487,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq version-control t
       vc-make-backup-files t
-      kept-new-versions 10
+      kept-new-versions 25
       kept-old-versions 0
       backup-by-copying t ;; deep copy of symlinks
       delete-old-versions t)
