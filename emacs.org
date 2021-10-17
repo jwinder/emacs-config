@@ -487,12 +487,19 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq version-control t
       vc-make-backup-files t
-      kept-new-versions 25
+      kept-new-versions 50
       kept-old-versions 0
       backup-by-copying t ;; deep copy of symlinks
       delete-old-versions t)
 
 (setq backup-directory-alist `(("." . ,user-backup-directory)))
+
+(setq savehist-file (expand-file-name "savehist" user-emacs-directory))
+(savehist-mode 1)
+(setq history-length 500)
+(add-to-list 'savehist-additional-variables 'kill-ring)
+(add-to-list 'savehist-additional-variables 'search-ring)
+(add-to-list 'savehist-additional-variables 'regexp-search-ring)
 
 (when (eq system-type 'gnu/linux)
   (setq interprogram-paste-function 'x-cut-buffer-or-selection-value
