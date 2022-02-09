@@ -1586,6 +1586,35 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (org-babel-src-yasnippet 'scala 'ammonite) ;; default ob-scala requires brew scala & ensime, which I don't use.
 #+END_SRC
 
+** javascript
+
+#+BEGIN_SRC emacs-lisp
+(defun jw-js-find-project-root ()
+  (let ((root-dir (ignore-errors (vc-find-root (jw--pwd) "package.json"))))
+    (if root-dir (file-truename root-dir) nil)))
+
+(defun jw-js-execute (&optional cmd-start)
+  "Executes a command in the js project root, looking for package.json or a version control root. Otherwise, uses the pwd."
+  (interactive)
+  (let ((default-directory (or (jw-js-find-project-root) (jw--vc-root-dir) (jw--pwd))))
+    (jw--run-cmd (read-shell-command "Command: " (if cmd-start (concat cmd-start " ") "")))))
+
+(defun jw-js-node () (interactive) (jw-js-execute "node"))
+(defun jw-js-npm () (interactive) (jw-js-execute "npm"))
+(defun jw-js-yarn () (interactive) (jw-js-execute "yarn"))
+(defun jw-js-binci () (interactive) (jw-js-execute "binci"))
+
+(setq jw-js-keymap (make-sparse-keymap))
+(fset 'jw-js-command-prefix jw-js-keymap)
+
+(global-set-key (kbd "C-c e") 'jw-js-command-prefix) ;; e = ecmascript
+(define-key jw-js-keymap (kbd "e") 'jw-js-execute)
+(define-key jw-js-keymap (kbd "n") 'jw-js-node)
+(define-key jw-js-keymap (kbd "m") 'jw-js-npm)
+(define-key jw-js-keymap (kbd "y") 'jw-js-yarn)
+(define-key jw-js-keymap (kbd "b") 'jw-js-binci)
+#+END_SRC
+
 ** ivy counsel
 
 #+BEGIN_SRC emacs-lisp
@@ -1685,6 +1714,14 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   (let ((projectile-switch-project-action (lambda () (sbt-compile ivy-current-prefix-arg))))
     (counsel-projectile-switch-project-by-name project)))
 
+(defun counsel-projectile-switch-project--jw-js-yarn-action (project)
+  (let ((projectile-switch-project-action 'jw-js-yarn))
+    (counsel-projectile-switch-project-by-name project)))
+
+(defun counsel-projectile-switch-project--jw-js-binci-action (project)
+  (let ((projectile-switch-project-action 'jw-js-binci))
+    (counsel-projectile-switch-project-by-name project)))
+
 (ivy-add-actions
  'counsel-projectile-switch-project
  '(("!" counsel-projectile-switch-project--cmd-dwim-action "cmd-dwim in project root")
@@ -1692,7 +1729,10 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
    ("C-xd" counsel-projectile-switch-project-action-dired "open project in dired")
    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
    ("C-css" counsel-projectile-switch-project--jw-sbt-action "sbt")
-   ("C-csc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")))
+   ("C-csc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")
+   ("C-cey" counsel-projectile-switch-project--jw-js-yarn-action "js yarn")
+   ("C-ceb" counsel-projectile-switch-project--jw-js-binci-action "js binci")
+   ))
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
 (defalias 'projectile-purge-everything 'projectile-clear-known-projects)
