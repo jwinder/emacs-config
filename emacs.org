@@ -1597,7 +1597,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   "Executes a command in the js project root, looking for package.json or a version control root. Otherwise, uses the pwd."
   (interactive)
   (let ((default-directory (or (jw-js-find-project-root) (jw--vc-root-dir) (jw--pwd))))
-    (jw--run-cmd (read-shell-command "Command: " (if cmd-start (concat (s-trim cmd-start) " ") ""))
+    (jw--run-cmd (read-shell-command (format "Run in %s: " default-directory) (if cmd-start (concat (s-trim cmd-start) " ") ""))
                  :tail-output t)))
 
 (defun jw-js-node () (interactive) (jw-js-execute "node"))
@@ -1608,12 +1608,11 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (setq jw-js-keymap (make-sparse-keymap))
 (fset 'jw-js-command-prefix jw-js-keymap)
 
-(global-set-key (kbd "C-c e") 'jw-js-command-prefix) ;; e = ecmascript
-(define-key jw-js-keymap (kbd "e") 'jw-js-execute)
+(global-set-key (kbd "C-c n") 'jw-js-command-prefix) ;; n = node
 (define-key jw-js-keymap (kbd "n") 'jw-js-node)
 (define-key jw-js-keymap (kbd "m") 'jw-js-npm)
 (define-key jw-js-keymap (kbd "y") 'jw-js-yarn)
-(define-key jw-js-keymap (kbd "b") 'jw-js-binci)
+(define-key jw-js-keymap (kbd "i") 'jw-js-binci)
 #+END_SRC
 
 ** ivy counsel
@@ -1715,6 +1714,10 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   (let ((projectile-switch-project-action (lambda () (sbt-compile ivy-current-prefix-arg))))
     (counsel-projectile-switch-project-by-name project)))
 
+(defun counsel-projectile-switch-project--jw-js-npm-action (project)
+  (let ((projectile-switch-project-action 'jw-js-npm))
+    (counsel-projectile-switch-project-by-name project)))
+
 (defun counsel-projectile-switch-project--jw-js-yarn-action (project)
   (let ((projectile-switch-project-action 'jw-js-yarn))
     (counsel-projectile-switch-project-by-name project)))
@@ -1731,8 +1734,9 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
    ("C-css" counsel-projectile-switch-project--jw-sbt-action "sbt")
    ("C-csc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")
-   ("C-cey" counsel-projectile-switch-project--jw-js-yarn-action "js yarn")
-   ("C-ceb" counsel-projectile-switch-project--jw-js-binci-action "js binci")
+   ("C-cnm" counsel-projectile-switch-project--jw-js-npm-action "js npm")
+   ("C-cny" counsel-projectile-switch-project--jw-js-yarn-action "js yarn")
+   ("C-cni" counsel-projectile-switch-project--jw-js-binci-action "js binci")
    ))
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
