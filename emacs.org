@@ -1714,6 +1714,10 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   (let ((projectile-switch-project-action (lambda () (sbt-compile ivy-current-prefix-arg))))
     (counsel-projectile-switch-project-by-name project)))
 
+(defun counsel-projectile-switch-project--jw-js-node-action (project)
+  (let ((projectile-switch-project-action 'jw-js-node))
+    (counsel-projectile-switch-project-by-name project)))
+
 (defun counsel-projectile-switch-project--jw-js-npm-action (project)
   (let ((projectile-switch-project-action 'jw-js-npm))
     (counsel-projectile-switch-project-by-name project)))
@@ -1734,6 +1738,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
    ("C-css" counsel-projectile-switch-project--jw-sbt-action "sbt")
    ("C-csc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")
+   ("C-cnn" counsel-projectile-switch-project--jw-js-node-action "js node")
    ("C-cnm" counsel-projectile-switch-project--jw-js-npm-action "js npm")
    ("C-cny" counsel-projectile-switch-project--jw-js-yarn-action "js yarn")
    ("C-cni" counsel-projectile-switch-project--jw-js-binci-action "js binci")
