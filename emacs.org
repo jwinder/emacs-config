@@ -1590,14 +1590,15 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 
 #+BEGIN_SRC emacs-lisp
 (defun jw-js-find-project-root ()
-  (let ((root-dir (ignore-errors (vc-find-root (jw--pwd) "package.json"))))
-    (if root-dir (file-truename root-dir) nil)))
+  (let ((project-root (locate-dominating-file (jw--pwd) "package.json")))
+    (if project-root (file-truename project-root) nil)))
 
 (defun jw-js-execute (&optional cmd-start)
   "Executes a command in the js project root, looking for package.json or a version control root. Otherwise, uses the pwd."
   (interactive)
   (let ((default-directory (or (jw-js-find-project-root) (jw--vc-root-dir) (jw--pwd))))
-    (jw--run-cmd (read-shell-command "Command: " (if cmd-start (concat cmd-start " ") "")))))
+    (jw--run-cmd (read-shell-command "Command: " (if cmd-start (concat (s-trim cmd-start) " ") ""))
+                 :tail-output t)))
 
 (defun jw-js-node () (interactive) (jw-js-execute "node"))
 (defun jw-js-npm () (interactive) (jw-js-execute "npm"))
