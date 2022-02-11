@@ -94,6 +94,9 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
   ;;           )
   )
 
+(use-package editorconfig
+  :config (editorconfig-mode 1))
+
 (use-package yaml-mode)
 
 (use-package markdown-mode
