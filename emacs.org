@@ -861,6 +861,15 @@ argument makes the windows rotate backwards."
 (defun dired-hide-subdir-dwim (arg)
   (interactive "P")
   (save-excursion (if arg (dired-hide-all) (dired-hide-subdir 1))))
+
+(defun dired-do-kill-line-dwim (arg)
+  (interactive "P")
+  (when arg (dired-tree-up 0))
+  (dired-do-kill-lines 1 ""))
+
+(defun dired-do-kill-tree-dwim ()
+  (interactive)
+  (dired-do-kill-line-dwim 1))
 #+END_SRC
 
 *** emacs
@@ -950,6 +959,8 @@ argument makes the windows rotate backwards."
 (define-key dired-mode-map (kbd "w") 'wdired-change-to-wdired-mode)
 (define-key dired-mode-map (kbd "<tab>") 'dired-hide-subdir-dwim)
 (define-key dired-mode-map (kbd "$") 'dired-hide-subdir-dwim)
+(define-key dired-mode-map (kbd "k") 'dired-do-kill-line-dwim)
+(define-key dired-mode-map (kbd "K") 'dired-do-kill-tree-dwim)
 (define-key help-map (kbd "M-n") 'helpful-at-point)
 (define-key help-map (kbd "H") 'view-hello-file)
 (define-key help-map (kbd "h") 'cheat-sh)
