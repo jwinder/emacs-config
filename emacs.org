@@ -1781,6 +1781,10 @@ support typescript in org babel
    ("C-cni" counsel-projectile-switch-project--jw-js-binci-action "js binci")
    ))
 
+;; the default action that switches to either a buffer or file is slow as hell, even in small repos.
+;; changing it to find only files. NOTE: this does not change the counsel menu description.
+(fset 'counsel-projectile-switch-project-action 'counsel-projectile-switch-project-action-find-file)
+
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
 (defalias 'projectile-purge-everything 'projectile-clear-known-projects)
 
