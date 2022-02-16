@@ -1409,9 +1409,11 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 
 org-babel languages & automatic yasnippet creation
 #+BEGIN_SRC emacs-lisp
-(defun org-babel-src-yasnippet (ob-lang &optional ob-src-header-override)
+(defun org-babel-src-yasnippet (ob-lang &optional ob-src-header-override ob-src-header-additional-args)
   (let* ((yas-src-shortcut (concat "src-" (jw--symbol-name ob-lang)))
-         (ob-src-string (format "#+BEGIN_SRC %s\n$0\n#+END_SRC" (jw--symbol-name (or ob-src-header-override ob-lang)))))
+         (ob-src-header-lang-str (jw--symbol-name (or ob-src-header-override ob-lang)))
+         (ob-src-header-additional-args-str (if ob-src-header-additional-args (concat " " ob-src-header-additional-args) ""))
+         (ob-src-string (format "#+BEGIN_SRC %s%s\n$0\n#+END_SRC" ob-src-header-lang-str ob-src-header-additional-args-str)))
     (yas-write-dynamic-snippet 'org-mode yas-src-shortcut ob-src-string)))
 
 (defun org-babel-support-langs (langs)
@@ -1628,6 +1630,26 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (define-key jw-js-keymap (kbd "m") 'jw-js-npm)
 (define-key jw-js-keymap (kbd "y") 'jw-js-yarn)
 (define-key jw-js-keymap (kbd "i") 'jw-js-binci)
+#+END_SRC
+
+support typescript in org babel
+#+BEGIN_SRC emacs-lisp
+(require 'org)
+(require 'ob)
+
+(defun org-babel-execute:typescript (body params)
+  (let* ((run-js-option (assoc :run-js params))
+         (run-js (and run-js-option (string= (cdr run-js-option) "true"))))
+    (jw--file-write body "/tmp/ob-typescript-tsc-input.ts")
+    (shell-command-to-string "tsc /tmp/ob-typescript-tsc-input.ts --outFile /tmp/ob-typescript-tsc-output.js")
+    (if run-js
+        (org-babel-execute:js (f-read "/tmp/ob-typescript-tsc-output.js") params)
+      (f-read "/tmp/ob-typescript-tsc-output.js"))))
+
+(org-babel-src-yasnippet 'typescript nil ":run-js true")
+(org-babel-src-yasnippet 'ts 'typescript ":run-js true")
+
+(setq org-babel-default-header-args:typescript '((:results . "output")))
 #+END_SRC
 
 ** ivy counsel
