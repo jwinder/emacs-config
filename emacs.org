@@ -1436,6 +1436,7 @@ org-babel languages & automatic yasnippet creation
 (org-babel-src-yasnippet 'yaml)
 (org-babel-src-yasnippet 'json 'js)
 (org-babel-src-yasnippet 'javascript 'js)
+(org-babel-src-yasnippet 'nodejs 'js)
 (org-babel-src-yasnippet 'html)
 (org-babel-src-yasnippet 'xml)
 
