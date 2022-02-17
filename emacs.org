@@ -1742,6 +1742,9 @@ support typescript in org babel
 
 (global-set-key (kbd "C-c p") 'projectile-command-map)
 
+(setq projectile-sort-order 'recently-active)
+(setq projectile-enable-caching t)
+
 (defun counsel-projectile-switch-project--cmd-dwim-action (project)
   (let ((projectile-switch-project-action (lambda () (cmd-dwim ivy-current-prefix-arg))))
     (counsel-projectile-switch-project-by-name project)))
@@ -1783,11 +1786,6 @@ support typescript in org babel
    ("C-cny" counsel-projectile-switch-project--jw-js-yarn-action "js yarn")
    ("C-cni" counsel-projectile-switch-project--jw-js-binci-action "js binci")
    ))
-
-;; the default action that switches to either a buffer or file is slow as hell, even in small repos.
-;; changing it to find only files. NOTE: this does not change the counsel menu description.
-;; counsel-projectile itself is still slow, but i don't use it much.
-(fset 'counsel-projectile-switch-project-action 'counsel-projectile-switch-project-action-find-file)
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
 (defalias 'projectile-purge-everything 'projectile-clear-known-projects)
