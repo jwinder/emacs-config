@@ -1663,7 +1663,10 @@ support typescript in org babel
       ivy-use-selectable-prompt t
       ivy-magic-tilde nil
       ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
+
 (setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
+
+(setq counsel-switch-buffer-preview-virtual-buffers nil) ;; performance increase to main switch-buffer function
 
 (defun counsel-find-file-dwim ()
   (interactive)
@@ -1783,6 +1786,7 @@ support typescript in org babel
 
 ;; the default action that switches to either a buffer or file is slow as hell, even in small repos.
 ;; changing it to find only files. NOTE: this does not change the counsel menu description.
+;; counsel-projectile itself is still slow, but i don't use it much.
 (fset 'counsel-projectile-switch-project-action 'counsel-projectile-switch-project-action-find-file)
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
