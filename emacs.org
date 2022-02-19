@@ -400,6 +400,10 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror)
 
+(setq save-interprogram-paste-before-kill t
+      yank-pop-change-selection t
+      select-enable-clipboard t)
+
 (setq jw-scratch-file (f-expand "scratch.org" user-emacs-directory))
 
 (setq help-window-select t)
