@@ -299,6 +299,23 @@ For long running processes, this will always toggle back and forth between the p
   (if (executable-find "sql-formatter")
       (shell-command-on-region begin end "sql-formatter" nil 'replace)
     (message "Required: https://www.npmjs.com/package/sql-formatter -- npm install -g sql-formatter")))
+
+(defconst jw--fs-dumb-cache-dir (f-expand "jw-fs-dumb-cache" user-emacs-directory))
+
+(defun jw--fs-dumb-cache-set (sym &optional str)
+  "Dumb cache of string on file system for reading between emacs session. If something other than a string is provided, then clear the cache (delete the file)."
+  (let ((file (f-expand (jw--symbol-name sym) jw--fs-dumb-cache-dir)))
+    (if (not (stringp str))
+        (when (f-exists? file) (f-delete file))
+      (jw--file-write str file)
+      (jw--fs-dumb-cache-get sym))))
+
+(defun jw--fs-dumb-cache-clear (sym) (jw--fs-dumb-cache-set sym))
+
+(defun jw--fs-dumb-cache-get (sym)
+  "Get dumb cache string or else nil. No string trimming."
+  (let ((file (f-expand (jw--symbol-name sym) jw--fs-dumb-cache-dir)))
+    (when (f-exists? file) (f-read file 'utf-8))))
 #+END_SRC
 
 * customization
