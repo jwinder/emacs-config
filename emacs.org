@@ -39,12 +39,14 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
 (use-package afternoon-theme)
 
 (use-package dash)
+(use-package pcache)
 (use-package f)
 (use-package s
   :config (progn
             (defalias 's-empty? 's-blank?)
             (defalias 's-nonempty? 's-present?)
             (defalias 's-nonempty-or-nil 's-presence)))
+
 
 (use-package helpful
   :config (progn
@@ -136,6 +138,7 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
 These are non-interactive library functions useful in other parts of this config
 #+BEGIN_SRC emacs-lisp
 (require 'dash)
+(require 'pcache)
 (require 's)
 (require 'f)
 (require 'vc)
@@ -277,15 +280,15 @@ For long running processes, this will always toggle back and forth between the p
           (unless (file-executable-p tmp-script-abs-filename) (chmod tmp-script-abs-filename #o744))
           (let* ((process-buffer (get-buffer-create cmd-buffer-name))
                  (run-cmd (lambda ()
-                             (insert prepared-cmd "\n\n")
-                             (when before-process-creation (funcall before-process-creation))
-                             (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
-                             (let ((proc (get-buffer-process process-buffer)))
-                               (when after-process-creation (funcall after-process-creation proc))
-                               (jw--do-when-process-finishes (get-buffer-process process-buffer)
-                                                             `(lambda (proc)
-                                                                (when ,after-process-finish (funcall ,after-process-finish proc))
-                                                                (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force))))))))
+                            (insert prepared-cmd "\n\n")
+                            (when before-process-creation (funcall before-process-creation))
+                            (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
+                            (let ((proc (get-buffer-process process-buffer)))
+                              (when after-process-creation (funcall after-process-creation proc))
+                              (jw--do-when-process-finishes (get-buffer-process process-buffer)
+                                                            `(lambda (proc)
+                                                               (when ,after-process-finish (funcall ,after-process-finish proc))
+                                                               (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force))))))))
             (switch-to-buffer process-buffer)
             (if tail-output (funcall run-cmd) (save-excursion (funcall run-cmd)))))))))
 
@@ -300,22 +303,10 @@ For long running processes, this will always toggle back and forth between the p
       (shell-command-on-region begin end "sql-formatter" nil 'replace)
     (message "Required: https://www.npmjs.com/package/sql-formatter -- npm install -g sql-formatter")))
 
-(defconst jw--fs-dumb-cache-dir (f-expand "jw-fs-dumb-cache" user-emacs-directory))
-
-(defun jw--fs-dumb-cache-set (sym &optional str)
-  "Dumb cache of string on file system for reading between emacs session. If something other than a string is provided, then clear the cache (delete the file)."
-  (let ((file (f-expand (jw--symbol-name sym) jw--fs-dumb-cache-dir)))
-    (if (not (stringp str))
-        (when (f-exists? file) (f-delete file))
-      (jw--file-write str file)
-      (jw--fs-dumb-cache-get sym))))
-
-(defun jw--fs-dumb-cache-clear (sym) (jw--fs-dumb-cache-set sym))
-
-(defun jw--fs-dumb-cache-get (sym)
-  "Get dumb cache string or else nil. No string trimming."
-  (let ((file (f-expand (jw--symbol-name sym) jw--fs-dumb-cache-dir)))
-    (when (f-exists? file) (f-read file 'utf-8))))
+(setq jw--cache-repo (pcache-repository "jw-cache"))
+(defun jw--cache-delete (sym) (pcache-invalidate jw--cache-repo sym))
+(defun jw--cache-set (sym &optional value) (if value (pcache-put jw--cache-repo sym value) (jw--cache-delete sym)))
+(defun jw--cache-get (sym) (pcache-get jw--cache-repo sym))
 #+END_SRC
 
 * customization
