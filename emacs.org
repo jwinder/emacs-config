@@ -554,9 +554,9 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (defun transparency-alpha-set ()
   (interactive)
-   (let* ((current (jw--get-transparency-alpha))
-          (updated (read-string (format "Transparency alpha 0 to 100, default %s, current %s: " jw--default-transparency-alpha current) (number-to-string current))))
-     (jw--set-transparency-alpha (string-to-number updated))))
+  (let* ((current (jw--get-transparency-alpha))
+         (updated (read-string (format "Transparency alpha 0 to 100, default %s, current %s: " jw--default-transparency-alpha current) (number-to-string current))))
+    (jw--set-transparency-alpha (string-to-number updated))))
 
 (defun transparency-alpha-default () (interactive) (jw--set-transparency-alpha))
 (defun transparency-alpha-increase () (interactive) (jw--set-transparency-alpha (1+ (jw--get-transparency-alpha))))
@@ -674,6 +674,20 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
         (save-buffer)
         (switch-to-buffer (other-buffer)))
     (scratch-buffer)))
+
+(defun scratch-buffer-remember (arg)
+  "Opinionated alternative to remember-mode that automates my usage patterns. Remembers either the current region or line."
+  (interactive "P")
+  (let ((text (string-trim (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end)) (thing-at-point 'line)))))
+    (if (s-empty? text)
+        (message "text to remember is empty, doing nothing")
+      (save-window-excursion
+        (find-file jw-scratch-file)
+        (save-excursion
+          (kill-new text)
+          (if arg (progn (beginning-of-buffer) (insert text) (newline 2)) (progn (end-of-buffer) (newline 2) (insert text)) )
+          (save-buffer)))
+      (message "remembered in scratch & added to kill ring"))))
 
 (defun uuid ()
   (interactive)
@@ -939,6 +953,7 @@ argument makes the windows rotate backwards."
 (define-key jw-keymap (kbd "d") 'date)
 (define-key jw-keymap (kbd "w") 'weather)
 (define-key jw-keymap (kbd "i") 'toggle-scratch-buffer)
+(define-key jw-keymap (kbd "I") 'scratch-buffer-remember)
 
 (global-set-key (kbd "C-z") nil) ;; remove suspend
 (global-set-key (kbd "C-x C-z") nil)
