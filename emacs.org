@@ -989,7 +989,7 @@ argument makes the windows rotate backwards."
 (define-key dired-mode-map (kbd "k") 'dired-do-kill-line-dwim)
 (define-key dired-mode-map (kbd "K") 'dired-do-kill-subdir-dwim)
 (define-key help-map (kbd "M-n") 'helpful-at-point)
-(define-key help-map (kbd "H") 'view-hello-file)
+(define-key help-map (kbd "H") 'info-apropos)
 (define-key help-map (kbd "h") 'cheat-sh)
 
 ;; todo emacs 28.1 -- remove these and use the default xref keybindings
