@@ -89,6 +89,7 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
   :config (global-undo-tree-mode))
 
 (use-package dumb-jump
+  :config (setq dumb-jump-prefer-searcher 'rg)
   ;; todo emacs 28.1 -- dumb-jump xref backend and use M-. instead of M-s j
   ;; :config (lambda ()
   ;;           (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
@@ -1193,8 +1194,17 @@ terminal additions
 ;; also, use-package magit tries to set this before jw-env-set is called, pointing it to a different git.
 (setq magit-git-executable (executable-find "git"))
 
+(setq magit-define-global-key-bindings nil)
 (setq transient-enable-popup-navigation t)
 (setq transient-display-buffer-action '(display-buffer-below-selected))
+
+(define-prefix-command 'jw-magit-map)
+(global-set-key (kbd "M-g") 'jw-magit-map)
+(global-set-key (kbd "M-G") goto-map) ;; move old M-g (goto-map) to capital G since I'm hijacking it for magit
+
+(define-key jw-magit-map (kbd "g") 'magit-status)
+(define-key jw-magit-map (kbd "d") 'magit-dispatch)
+(define-key jw-magit-map (kbd "f") 'magit-file-dispatch)
 
 (setq gist-view-gist t)
 
@@ -1224,7 +1234,6 @@ terminal additions
    ("@" "dired-do-gist-dwim   public    C-u @ in dired"  gist-menu--dired-do-gist-public)
    ])
 
-(global-set-key (kbd "M-g") 'magit-status)
 (define-key jw-keymap "p" 'gist-menu) ;; p = paste, in case more paste services are added to gist-menu
 (define-key dired-mode-map "@" 'dired-do-gist-dwim)
 #+END_SRC
@@ -1599,10 +1608,8 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 (add-to-list 'sbt:program-options "-no-colors") ;; remove a lot of extra spacing with new sbt prompt changes
 
-(setq sbt-keymap (make-sparse-keymap))
-(fset 'sbt-command-prefix sbt-keymap)
-
-(global-set-key (kbd "C-c s") 'sbt-command-prefix)
+(define-prefix-command 'sbt-keymap)
+(global-set-key (kbd "C-c s") 'sbt-keymap)
 (define-key sbt-keymap (kbd "s") 'jw-sbt)
 (define-key sbt-keymap (kbd "c") 'sbt-compile)
 (define-key sbt-keymap (kbd "o") 'sbt-test)
@@ -1649,10 +1656,8 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (defun jw-js-yarn () (interactive) (jw-js-execute "yarn"))
 (defun jw-js-binci () (interactive) (jw-js-execute "binci"))
 
-(setq jw-js-keymap (make-sparse-keymap))
-(fset 'jw-js-command-prefix jw-js-keymap)
-
-(global-set-key (kbd "C-c n") 'jw-js-command-prefix) ;; n = node
+(define-prefix-command 'jw-js-keymap)
+(global-set-key (kbd "C-c n") 'jw-js-keymap) ;; n = node
 (define-key jw-js-keymap (kbd "n") 'jw-js-node)
 (define-key jw-js-keymap (kbd "m") 'jw-js-npm)
 (define-key jw-js-keymap (kbd "y") 'jw-js-yarn)
