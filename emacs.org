@@ -1738,6 +1738,7 @@ support typescript in org babel
    ("C-csc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
 
 (global-set-key (kbd "M-x") 'counsel-M-x)
+(global-set-key (kbd "M-X") 'ivy-resume)
 (define-key ivy-minibuffer-map (kbd "C-o") 'ivy-dispatching-done)
 (define-key ivy-minibuffer-map (kbd "M-o") 'ivy-dispatching-done-ivy)
 (global-set-key (kbd "C-x C-f") 'counsel-find-file-dwim)
@@ -1745,7 +1746,6 @@ support typescript in org babel
 (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
 (global-set-key (kbd "C-x E") 'counsel-kmacro)
 (global-set-key (kbd "C-x p") 'counsel-ps-dwim)
-(global-set-key (kbd "C-x C-r") 'ivy-resume)
 (global-set-key (kbd "M-s o") 'swiper-thing-at-point)
 (global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-r") 'swiper-backward)
