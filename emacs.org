@@ -363,12 +363,14 @@ For long running processes, this will always toggle back and forth between the p
 
 (setq frame-title-format nil)
 
+
 (add-hook 'linum-before-numbering-hook (lambda () (set-face-attribute 'linum nil :foreground "#5683a2" :background nil)))
 
 (when (eq system-type 'darwin)
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
-  (setq ns-use-proxy-icon nil))
+  (setq ns-use-proxy-icon nil)
+  (setq ns-auto-hide-menu-bar t))
 
 (setq inhibit-startup-message t
       initial-scratch-message ""
