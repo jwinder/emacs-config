@@ -1082,6 +1082,8 @@ Negative prefix arg C--: Similar behavior to no prefix argument, except the cycl
 (eshell/alias ":q" "exit")
 (eshell/alias ":Q" "exit")
 
+(setq eshell-banner-message "")
+
 (add-to-list 'eshell-mode-hook (lambda ()
                                  (add-to-list 'eshell-visual-commands "htop")
                                  (add-to-list 'eshell-visual-subcommands '("git" "log" "diff" "show"))
