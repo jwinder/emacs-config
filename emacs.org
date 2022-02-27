@@ -862,7 +862,7 @@ With C-u C-u, then kill the comment on the current line."
 Dedicated windows are left untouched. Giving a negative prefix
 argument makes the windows rotate backwards."
   (interactive "p")
-  (let* ((non-dedicated-windows (remove-if 'window-dedicated-p (window-list)))
+  (let* ((non-dedicated-windows (seq-remove 'window-dedicated-p (window-list)))
          (num-windows (length non-dedicated-windows))
          (i 0)
          (step (+ num-windows count)))
