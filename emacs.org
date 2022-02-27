@@ -667,8 +667,7 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
   "Save the scratch buffer in a file. Use any mode you'd like by customizing `jw-scratch-file` to a separate (fully-qualified) filename & extension."
   (interactive)
   (find-file jw-scratch-file)
-  (cd (getenv "HOME"))
-  (when (get-buffer "*scratch*") (kill-buffer "*scratch*")))
+  (cd (getenv "HOME")))
 
 (defun toggle-scratch-buffer ()
   (interactive)
@@ -1848,11 +1847,18 @@ load the =private= directory and the =private.org= file if they exist
 * finally
 
 #+BEGIN_SRC emacs-lisp
-(yas-reload-all)
+(when (get-buffer "*scratch*") (kill-buffer "*scratch*"))
 (scratch-buffer)
+
+(yas-reload-all)
+
 (font-size-transparency-alpha-default)
-(cd (getenv "HOME"))
-(toggle-frame-maximized)
+
+(unless (eq (frame-parameter nil 'fullscreen) 'maximized) (toggle-frame-maximized))
+
 (mode-line-off)
+
 (unless (server-running-p) (server-start))
+
+(cd (getenv "HOME"))
 #+END_SRC
