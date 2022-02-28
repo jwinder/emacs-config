@@ -438,6 +438,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (global-subword-mode t)
 
+(require 'dired-x)
+
 (put 'dired-find-alternate-file 'disabled nil)
 
 (setq wdired-allow-to-change-permissions 'advanced)
