@@ -726,6 +726,7 @@ M-x `cmd-dwim' will run an async shell command in a new buffer.
 C-u M-x `cmd-dwim' will run a shell command and print the response in the echo area.
 C-u C-u M-x `cmd-dwim' will run a shell command and insert the response in the buffer on the next line.
 C-u C-u C-u M-x `cmd-dwim' will send a shell command to the default tmux session using `cmd-tmux'.
+C-- M-x `cmd-dwim' will run an async shell command in a new buffer and kill the calling buffer.
 
 Interactively:
  - If a region is selected, the region will be used as the shell command.
@@ -741,6 +742,7 @@ Interactively:
       (16 (save-excursion (open-line-next) (insert (s-trim (shell-command-to-string prepared-cmd)))))
       (64 (cmd-tmux prepared-cmd))
       (4 (message (string-trim (shell-command-to-string prepared-cmd))))
+      (-1 (cmd prepared-cmd) (kill-buffer (other-buffer)))
       (_ (cmd prepared-cmd)))))
 
 (transient-define-prefix cmd-menu ()
