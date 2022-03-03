@@ -828,6 +828,12 @@ With C-u C-u, then kill the comment on the current line."
       (setq-local mode-line-format nil)
     (setq-default mode-line-format nil)))
 
+(defun toggle-mode-line-visibility (&optional local)
+  (interactive "P")
+  (if mode-line-format
+      (mode-line-off local)
+    (mode-line-on local)))
+
 (defun current-prefix-arg-raw (arg)
   (interactive "P")
   (message "%s" arg))
@@ -1005,6 +1011,7 @@ argument makes the windows rotate backwards."
 
 (define-key ctl-x-5-map (kbd "<return>") 'toggle-frame-maximized)
 (define-key ctl-x-5-map (kbd "S-<return>") 'toggle-frame-fullscreen)
+(define-key ctl-x-5-map (kbd "C-<return>") 'toggle-mode-line-visibility)
 
 (define-key ctl-x-4-map (kbd "2") 'toggle-window-split)
 (define-key ctl-x-4-map (kbd "3") 'toggle-window-split)
