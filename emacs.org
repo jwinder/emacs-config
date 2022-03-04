@@ -55,6 +55,9 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
             (defalias 'describe-variable 'helpful-variable)
             (defalias 'describe-symbol 'helpful-symbol)))
 
+(use-package beacon
+  :config (beacon-mode 1))
+
 (use-package magit) ;; brings in transient
 
 (use-package browse-at-remote)
