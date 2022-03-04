@@ -1416,13 +1416,13 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 (defun org--color-green-box-state (s) `(,s :background "DarkGreen" :foreground white :box (:style released-button)))
 (defun org--color-green-state (s) `(,s :foreground "LimeGreen"))
 
-(setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread" "question")
+(setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread" "question" "problem" "issue" "shitshow" "alert" "warning")
       org--todo-todo-states '("⚑")
       org--blocked-todo-boxed-states '("blocked" "halted" "stalled" "paused")
       org--doing-todo-boxed-states '("doing" "going")
       org--doing-todo-states '("⚐")
-      org--delegated-todo-boxed-states '("delegated" "assigned" "pr" "waiting" "deploying" "note" "idea")
-      org--done-todo-boxed-states '("done" "cancelled" "canceled" "finished" "boom" "read" "answered" "noted")
+      org--delegated-todo-boxed-states '("thinking" "investigating" "delegated" "assigned" "pr" "waiting" "deploying" "note" "idea")
+      org--done-todo-boxed-states '("done" "cancelled" "canceled" "finished" "boom" "read" "answered" "noted" "fixed" "solved" "warned")
       org--done-todo-states '("✘" "✔"))
 
 (setq org-todo-keyword-faces
