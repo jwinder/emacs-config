@@ -371,10 +371,10 @@ mode line
 (set-face-attribute 'mode-line-buffer-id nil :foreground "white")
 (set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
 
-(defvar jw-mode-line-config-show-full-filenames nil)
-(defun jw-mode-line-toggle-full-filenames ()
+(defvar jw-mode-line-config-show-pwd nil)
+(defun mode-line-toggle-pwd ()
   (interactive)
-  (setq jw-mode-line-config-show-full-filenames (not jw-mode-line-config-show-full-filenames)))
+  (setq jw-mode-line-config-show-pwd (not jw-mode-line-config-show-pwd)))
 
 (defvar jw--mode-line-buffer-id-keymap
   (let ((map (make-sparse-keymap)))
@@ -388,12 +388,10 @@ mode line
          (file-name (buffer-file-name b))
          (pwd (jw--pwd))
          (process-name (get-buffer-process b))
-         (display-name (if process-name buffer-name
-                         (if jw-mode-line-config-show-full-filenames (or file-name pwd)
-                           buffer-name)))
          (process-id (when process-name (process-id process-name)))
          (projectile-project-raw (projectile-project-name))
-         (projectile-project (if (string= projectile-project-raw "-") nil projectile-project-raw)))
+         (projectile-project (if (string= projectile-project-raw "-") nil projectile-project-raw))
+         (display-name (if jw-mode-line-config-show-pwd (format "%s · %s" pwd buffer-name) buffer-name)))
     (list (propertize display-name 'face 'mode-line-buffer-id
                       'help-echo (format "Buffer name: %s\nFile name: %s\nProcess name: %s\npid: %s\npwd: %s\nProjectile project: %s"
                                          buffer-name (or file-name "N/A") (or process-name "N/A") (or process-id "N/A") pwd (or projectile-project "N/A"))
