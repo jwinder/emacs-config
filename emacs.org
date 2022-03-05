@@ -350,17 +350,7 @@ For long running processes, this will always toggle back and forth between the p
 (set-background-color "black")
 (set-face-background 'fringe nil)
 
-(jw--set-font-size)
-
-(set-face-attribute 'mode-line nil :font (jw--font-name jw--default-font-size) :background "#22083397778B" :foreground "#7db5d6" :box '(:style released-button))
-(set-face-attribute 'mode-line-inactive nil :background "#263238" :foreground "gray" :box '(:style released-button))
-(set-face-attribute 'mode-line-buffer-id nil :foreground "white")
-(set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
 (set-face-attribute 'header-line nil :background "#005858" :foreground "white")
-
-(setq jw-mode-line-format '(" " mode-line-buffer-identification (vc-mode vc-mode) " " mode-line-misc-info))
-(setq-default mode-line-format jw-mode-line-format)
-
 (setq frame-title-format nil)
 
 (when (eq system-type 'darwin)
@@ -372,6 +362,64 @@ For long running processes, this will always toggle back and forth between the p
 (setq inhibit-startup-message t
       initial-scratch-message ""
       initial-major-mode 'org-mode)
+#+END_SRC
+
+mode line
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'mode-line nil :font (jw--font-name jw--default-font-size) :background "#22083397778B" :foreground "#7db5d6" :box '(:style released-button))
+(set-face-attribute 'mode-line-inactive nil :background "#263238" :foreground "gray" :box '(:style released-button))
+(set-face-attribute 'mode-line-buffer-id nil :foreground "white")
+(set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
+
+(defvar jw-mode-line-config-show-full-filenames nil)
+(defun jw-mode-line-toggle-full-filenames ()
+  (interactive)
+  (setq jw-mode-line-config-show-full-filenames (not jw-mode-line-config-show-full-filenames)))
+
+(defvar jw--mode-line-buffer-id-keymap
+  (let ((map (make-sparse-keymap)))
+    (define-key map [mode-line mouse-1] 'dired-jump)
+    (define-key map [mode-line mouse-3] 'dired-jump)
+    map))
+
+(defun jw--mode-line-make-buffer-id ()
+  (let* ((b (current-buffer))
+         (buffer-name (buffer-name b))
+         (file-name (buffer-file-name b))
+         (pwd (jw--pwd))
+         (display-name (if (and file-name jw-mode-line-config-show-full-filenames) file-name buffer-name))
+         (process-name (get-buffer-process b))
+         (process-id (when process-name (process-id process-name))))
+    (list (propertize display-name 'face 'mode-line-buffer-id
+                      'help-echo (format "Buffer name: %s\nFile name: %s\nProcess name: %s\npid: %s\npwd: %s\nMode line display: %s"
+                                         buffer-name (or file-name "N/A") (or process-name "N/A") (or process-id "N/A") pwd display-name)
+                      'mouse-face 'mode-line-highlight
+                      'local-map jw--mode-line-buffer-id-keymap))))
+
+(defvar jw--mode-line-buffer-id `(:eval (jw--mode-line-make-buffer-id)))
+(put 'jw--mode-line-buffer-id 'risky-local-variable t)
+(make-variable-buffer-local 'jw--mode-line-buffer-id)
+
+(setq jw-mode-line-format '(" " jw--mode-line-buffer-id " "))
+(setq-default mode-line-format jw-mode-line-format)
+
+(defun mode-line-on (&optional local)
+  (interactive "P")
+  (if local
+      (setq-local mode-line-format jw-mode-line-format)
+    (setq-default mode-line-format jw-mode-line-format)))
+
+(defun mode-line-off (&optional local)
+  (interactive "P")
+  (if local
+      (setq-local mode-line-format nil)
+    (setq-default mode-line-format nil)))
+
+(defun toggle-mode-line-visibility (&optional local)
+  (interactive "P")
+  (if mode-line-format
+      (mode-line-off local)
+    (mode-line-on local)))
 #+END_SRC
 
 fix for cursor color in clients falling back to the default theme [[http:emacs.stackexchange.com/a/14575][copied from stackoverflow]]
@@ -815,24 +863,6 @@ With C-u C-u, then kill the comment on the current line."
   (let ((was-at-end-of-line (equal (point) (line-end-position))))
     (newline-and-indent)
     (unless was-at-end-of-line (open-line-previous))))
-
-(defun mode-line-on (&optional local)
-  (interactive "P")
-  (if local
-      (setq-local mode-line-format jw-mode-line-format)
-    (setq-default mode-line-format jw-mode-line-format)))
-
-(defun mode-line-off (&optional local)
-  (interactive "P")
-  (if local
-      (setq-local mode-line-format nil)
-    (setq-default mode-line-format nil)))
-
-(defun toggle-mode-line-visibility (&optional local)
-  (interactive "P")
-  (if mode-line-format
-      (mode-line-off local)
-    (mode-line-on local)))
 
 (defun current-prefix-arg-raw (arg)
   (interactive "P")
