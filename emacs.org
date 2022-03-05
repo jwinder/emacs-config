@@ -795,7 +795,7 @@ Interactively:
       (-1 (cmd prepared-cmd) (kill-buffer (other-buffer)))
       (_ (cmd prepared-cmd)))))
 
-(transient-define-prefix cmd-menu ()
+(define-transient-command cmd-menu ()
   ["Run command"
    ("!" "cmd-dwim          M-!   C-u to echo area / C-u C-u on next line" cmd-dwim)
    ("*" "calculator        M-*" calculator)
@@ -1272,7 +1272,7 @@ terminal additions
 (defun gist-menu--dired-do-gist-public () (interactive) (dired-do-gist-dwim t))
 (defun gist-menu--dired-do-gist-private () (interactive) (dired-do-gist-dwim))
 
-(transient-define-prefix gist-menu ()
+(define-transient-command gist-menu ()
   ["Gist"
    ("l" "gist-list"                                      gist-list)
    ("g" "gist-dwim            private"                   gist-menu--gist-private)
