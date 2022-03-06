@@ -1423,7 +1423,8 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
       org-agenda-window-setup 'only-window
       org-refile-targets '((org-agenda-files :maxlevel . 10))
       org-refile-use-outline-path t
-      org-refile-allow-creating-parent-nodes 'confirm)
+      org-refile-allow-creating-parent-nodes 'confirm
+      org-id-link-to-org-use-id 'create-if-interactive)
 
 (defun jw-toggle-org-src-window-setup ()
   (interactive)
