@@ -1418,7 +1418,12 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
       org-confirm-babel-evaluate nil
       org-link-shell-confirm-function nil
       org-link-elisp-confirm-function nil
-      org-src-window-setup 'current-window)
+      org-src-window-setup 'current-window
+      org-agenda-todo-list-sublevels nil
+      org-agenda-window-setup 'only-window
+      org-refile-targets '((org-agenda-files :maxlevel . 10))
+      org-refile-use-outline-path t
+      org-refile-allow-creating-parent-nodes 'confirm)
 
 (defun jw-toggle-org-src-window-setup ()
   (interactive)
