@@ -203,13 +203,16 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--pwd ()
   (file-truename default-directory))
 
+(defun jw--abs-filename (f)
+  (if f (file-truename f) nil))
+
 (defun jw--vc-root-dir ()
   (let ((vc-root-dir (ignore-errors (vc-call-backend (vc-responsible-backend (jw--pwd)) 'root (jw--pwd)))))
-    (if vc-root-dir (file-truename vc-root-dir) nil)))
+    (jw--abs-filename vc-root-dir)))
 
 (defun jw--git-root-dir ()
   (let ((git-root-dir (ignore-errors (vc-find-root (jw--pwd) ".git"))))
-    (if git-root-dir (file-truename git-root-dir) nil)))
+    (jw--abs-filename git-root-dir)))
 
 (defun jw--git-config-get (key)
   (s-presence (s-trim (shell-command-to-string (format "git config --get %s 2>/dev/null" key)))))
@@ -455,9 +458,10 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (ansi-color-for-comint-mode-on)
 
-(show-paren-mode t)
+(show-paren-mode 1)
 
 (fset 'yes-or-no-p 'y-or-n-p)
+(setq use-dialog-box nil)
 
 (fset 'linum-mode 'display-line-numbers-mode)
 (fset 'global-linum-mode 'global-display-line-numbers-mode)
@@ -482,11 +486,15 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq tab-width 2)
 (setq js-indent-level 2)
 
-(delete-selection-mode t)
+(delete-selection-mode 1)
 
-(winner-mode t)
+(winner-mode 1)
 
-(global-subword-mode t)
+(recentf-mode 1)
+
+(global-subword-mode 1)
+
+(save-place-mode 1)
 
 (require 'dired-x)
 
@@ -495,6 +503,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq wdired-allow-to-change-permissions 'advanced)
 
 (setq dired-listing-switches "-alh")
+
+(setq dired-dwim-target t)
 
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
@@ -557,8 +567,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq version-control t
       vc-make-backup-files t
-      kept-new-versions 50
-      kept-old-versions 0
+      kept-new-versions 250
+      kept-old-versions 10
       backup-by-copying t ;; deep copy of symlinks
       delete-old-versions t)
 
@@ -566,7 +576,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq savehist-file (expand-file-name "savehist" user-emacs-directory))
 (savehist-mode 1)
-(setq history-length 500)
+(setq history-length 1000)
 (add-to-list 'savehist-additional-variables 'kill-ring)
 (add-to-list 'savehist-additional-variables 'search-ring)
 (add-to-list 'savehist-additional-variables 'regexp-search-ring)
@@ -1390,32 +1400,25 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
   (org-id-copy))
 
 (setq org-use-speed-commands t
+      org-startup-folded t
+      org-startup-with-inline-images t
+      org-hide-block-startup t
       org-enforce-todo-dependencies t
       org-enforce-todo-checkbox-dependencies t
       org-return-follows-link t
-      org-hide-leading-stars t
-      org-clock-clocked-in-display 'mode-line
-      org-refile-targets '((org-agenda-files :maxlevel . 10))
-      org-refile-use-outline-path t
-      org-refile-allow-creating-parent-nodes '(confirm)
       org-tags-column -100
       org-src-preserve-indentation t
-      org-src-tab-acts-natively nil
       org-cycle-open-archived-trees t
-      org-hide-block-startup t
-      org-ellipsis " …"
-      org-fontify-done-headline t
       org-todo-keywords '((sequence "⚑" "⚐" "|" "✔" "✘"))
-      org-agenda-todo-list-sublevels nil
-      org-startup-with-inline-images t
-      org-startup-folded t
+      org-hide-leading-stars t
+      org-ellipsis " …"
+      org-pretty-entities t
+      org-fontify-done-headline t
+      org-hide-emphasis-markers t
       org-confirm-babel-evaluate nil
-      org-confirm-shell-link-function nil
-      org-confirm-elisp-link-function nil
-      org-id-link-to-org-use-id 'create-if-interactive
-      org-agenda-window-setup 'only-window)
-
-(setq org-src-window-setup 'current-window)
+      org-link-shell-confirm-function nil
+      org-link-elisp-confirm-function nil
+      org-src-window-setup 'current-window)
 
 (defun jw-toggle-org-src-window-setup ()
   (interactive)
@@ -1747,11 +1750,11 @@ support typescript in org babel
 
 (setq counsel-switch-buffer-preview-virtual-buffers nil) ;; performance increase to main switch-buffer function
 
-(defun counsel-find-file-dwim ()
-  (interactive)
-  (if (region-active-p)
-      (counsel-find-file (buffer-substring-no-properties (region-beginning) (region-end)))
-    (counsel-find-file)))
+(defun counsel-find-file-dwim (arg)
+  (interactive "P")
+  (if arg (counsel-recentf)
+    (if (region-active-p) (counsel-find-file (buffer-substring-no-properties (region-beginning) (region-end)))
+      (counsel-find-file))))
 
 (defun ivy-dispatching-done-ivy ()
   (interactive)
