@@ -1758,9 +1758,12 @@ support typescript in org babel
 
 (defun counsel-find-file-dwim (arg)
   (interactive "P")
-  (if arg (counsel-recentf)
-    (if (region-active-p) (counsel-find-file (buffer-substring-no-properties (region-beginning) (region-end)))
-      (counsel-find-file))))
+  (pcase (prefix-numeric-value arg)
+    (16 (counsel-file-jump))
+    (4 (counsel-recentf))
+    (_ (if (region-active-p)
+           (counsel-find-file (buffer-substring-no-properties (region-beginning) (region-end)))
+         (counsel-find-file)))))
 
 (defun ivy-dispatching-done-ivy ()
   (interactive)
@@ -1796,7 +1799,6 @@ support typescript in org babel
 (define-key ivy-minibuffer-map (kbd "C-o") 'ivy-dispatching-done)
 (define-key ivy-minibuffer-map (kbd "M-o") 'ivy-dispatching-done-ivy)
 (global-set-key (kbd "C-x C-f") 'counsel-find-file-dwim)
-(global-set-key (kbd "C-x F") 'counsel-file-jump)
 (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
 (global-set-key (kbd "C-x E") 'counsel-kmacro)
 (global-set-key (kbd "C-x p") 'counsel-ps-dwim)
