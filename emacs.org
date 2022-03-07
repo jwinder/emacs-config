@@ -38,6 +38,13 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
 #+BEGIN_SRC emacs-lisp
 (use-package afternoon-theme)
 
+(use-package beacon
+  :config (progn
+            (beacon-mode 1)
+            (setq beacon-blink-when-window-scrolls nil)
+            (setq beacon-blink-when-window-changes t)
+            (setq beacon-blink-when-buffer-changes t)))
+
 (use-package dash)
 (use-package pcache)
 (use-package f)
@@ -375,9 +382,9 @@ mode line
 (set-face-attribute 'mode-line-highlight nil :foreground "#7db5d6")
 
 (defvar jw-mode-line-config-show-pwd nil)
-(defun mode-line-toggle-pwd ()
-  (interactive)
-  (setq jw-mode-line-config-show-pwd (not jw-mode-line-config-show-pwd)))
+(defun mode-line-pwd-on () (interactive) (setq jw-mode-line-config-show-pwd t))
+(defun mode-line-pwd-off () (interactive) (setq jw-mode-line-config-show-pwd nil))
+(defun mode-line-toggle-pwd () (interactive) (setq jw-mode-line-config-show-pwd (not jw-mode-line-config-show-pwd)))
 
 (defvar jw--mode-line-buffer-id-keymap
   (let ((map (make-sparse-keymap)))
@@ -420,7 +427,7 @@ mode line
       (setq-local mode-line-format nil)
     (setq-default mode-line-format nil)))
 
-(defun toggle-mode-line-visibility (&optional local)
+(defun mode-line-toggle-visibility (&optional local)
   (interactive "P")
   (if mode-line-format
       (mode-line-off local)
@@ -816,6 +823,13 @@ Interactively:
    ("b" "eval-buffer" eval-buffer)
    ])
 
+(defface jw-pulse-text-face '((t :background "#75C1FA")) "Face used to pulse text.")
+(defun jw-pulse-text (arg)
+  (interactive "P")
+  (if arg (pulse-momentary-highlight-region (point-min) (point-max) 'jw-pulse-text-face)
+    (if (region-active-p) (pulse-momentary-highlight-region (region-beginning) (region-end) 'jw-pulse-text-face)
+      (pulse-momentary-highlight-region (line-beginning-position) (line-end-position) 'jw-pulse-text-face))))
+
 (defun beginning-of-line-or-indentation ()
   (interactive)
   (let ((previous-point (point)))
@@ -950,6 +964,16 @@ argument makes the windows rotate backwards."
 (defun dired-do-kill-subdir-dwim ()
   (interactive)
   (dired-do-kill-line-dwim 1))
+
+(defun jw-pair-programming-on ()
+  (interactive)
+  (mode-line-on)
+  (mode-line-pwd-on))
+
+(defun jw-pair-programming-off ()
+  (interactive)
+  (mode-line-off)
+  (mode-line-pwd-off))
 #+END_SRC
 
 *** emacs
@@ -1026,6 +1050,7 @@ argument makes the windows rotate backwards."
 (global-set-key (kbd "C-<return>") 'open-line-next)
 (global-set-key (kbd "C-j") 'newline-and-open-line-previous)
 (global-set-key (kbd "C-<tab>") 'indent-region-or-buffer)
+(global-set-key (kbd "C-M-<tab>") 'jw-pulse-text)
 (global-set-key (kbd "C-M-;") 'just-one-space)
 (global-set-key (kbd "M-;") 'comment-dwim-dwim)
 (global-set-key (kbd "C-=") 'er/expand-region)
@@ -1053,7 +1078,7 @@ argument makes the windows rotate backwards."
 
 (define-key ctl-x-5-map (kbd "<return>") 'toggle-frame-maximized)
 (define-key ctl-x-5-map (kbd "S-<return>") 'toggle-frame-fullscreen)
-(define-key ctl-x-5-map (kbd "C-<return>") 'toggle-mode-line-visibility)
+(define-key ctl-x-5-map (kbd "C-<return>") 'mode-line-toggle-visibility)
 
 (define-key ctl-x-4-map (kbd "2") 'toggle-window-split)
 (define-key ctl-x-4-map (kbd "3") 'toggle-window-split)
