@@ -1438,9 +1438,9 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
       org-todo-keywords '((sequence "⚑" "⚐" "|" "✔" "✘"))
       org-hide-leading-stars t
       org-ellipsis " …"
-      org-pretty-entities t
-      org-fontify-done-headline t
+      org-pretty-entities nil ;; do not set this to t, it causes _ subscripts, which interfere with pg table names and such
       org-hide-emphasis-markers t
+      org-fontify-done-headline t
       org-confirm-babel-evaluate nil
       org-link-shell-confirm-function nil
       org-link-elisp-confirm-function nil
