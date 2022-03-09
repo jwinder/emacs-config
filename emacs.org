@@ -1832,6 +1832,7 @@ very opinionated project development lifecycle commands, an alternative to proje
 (defun jw-runbook-menu-open (&optional dir)
   (interactive)
   (setq jw-runbook--target-location dir)
+  (setq jw-runbook--current-prefix-arg nil)
   (jw-runbook-menu))
 
 (global-set-key (kbd "C-c N") 'jw-runbook-menu-open)
