@@ -1799,7 +1799,7 @@ very opinionated project development lifecycle commands, an alternative to proje
   (setq jw-runbook--current-prefix-arg arg)
   (set-transient-map jw-runbook-keymap))
 
-(global-set-key (kbd "C-c n") 'jw-runbook-command)
+(global-set-key (kbd "C-c s") 'jw-runbook-command)
 (define-key jw-runbook-keymap (kbd "I") 'jw-runbook-run-install)
 (define-key jw-runbook-keymap (kbd "d") 'jw-runbook-run-dev)
 (define-key jw-runbook-keymap (kbd "s") 'jw-runbook-run-start)
@@ -1807,7 +1807,7 @@ very opinionated project development lifecycle commands, an alternative to proje
 (define-key jw-runbook-keymap (kbd "c") 'jw-runbook-run-compile)
 (define-key jw-runbook-keymap (kbd "t") 'jw-runbook-run-test)
 (define-key jw-runbook-keymap (kbd "o") 'jw-runbook-run-test-only)
-(define-key jw-runbook-keymap (kbd "n") 'jw-runbook-run-command)
+(define-key jw-runbook-keymap (kbd "C") 'jw-runbook-run-command)
 (define-key jw-runbook-keymap (kbd "l") 'jw-runbook-run-last-command)
 (define-key jw-runbook-keymap (kbd "$") 'jw-runbook-run-repl)
 (define-key jw-runbook-keymap (kbd "!") 'jw-runbook-run-shell-command)
@@ -1822,7 +1822,7 @@ very opinionated project development lifecycle commands, an alternative to proje
    ("c" "compile         run compile function" jw-runbook-run-compile)
    ("t" "test            run all tests" jw-runbook-run-test)
    ("o" "test-only       run specific test" jw-runbook-run-test-only)
-   ("n" "command         provide an arbitrary command" jw-runbook-run-command)
+   ("C" "command         provide an arbitrary command" jw-runbook-run-command)
    ("l" "last-command    run the last command" jw-runbook-run-last-command)
    ("$" "repl            open project's repl" jw-runbook-run-repl)
    ("!" "shell-command   cmd-dwim command in project root" jw-runbook-run-shell-command)
@@ -1835,7 +1835,7 @@ very opinionated project development lifecycle commands, an alternative to proje
   (setq jw-runbook--current-prefix-arg nil)
   (jw-runbook-menu))
 
-(global-set-key (kbd "C-c N") 'jw-runbook-menu-open)
+(global-set-key (kbd "C-c S") 'jw-runbook-menu-open)
 (define-key jw-runbook-keymap (kbd "?") 'jw-runbook-menu-open)
 
 (defun counsel-projectile-switch-project--jw-runbook-menu-action (project)
@@ -1844,7 +1844,7 @@ very opinionated project development lifecycle commands, an alternative to proje
 
 (ivy-add-actions
  'counsel-projectile-switch-project
- '(("C-cn" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
+ '(("C-cs" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
 
 (cl-defun jw-runbook-setup-type (type &key install dev start run compile test test-only command last-command repl shell-command eshell)
   (interactive)
