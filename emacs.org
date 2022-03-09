@@ -1633,139 +1633,6 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 #+END_SRC
 
-** scala
-
-#+BEGIN_SRC emacs-lisp
-(defun jw-sbt ()
-  (interactive)
-  (if (eq major-mode 'sbt-mode)
-      (switch-to-buffer (other-buffer))
-    (with-temp-buffer
-      (if (sbt:find-root)
-          (sbt-start)
-        (call-interactively 'jw-sbt-run-or-create-new)))))
-
-(defun jw-sbt-run-or-create-new (dir)
-  (interactive "DSBT run or create new project in: ")
-  (when (not (f-exists? dir)) (make-directory dir 'make-parents))
-  (let ((default-directory dir))
-    (with-temp-buffer
-      (if (sbt:find-root)
-          (sbt-start)
-        (cmd "sbt-new")))))
-
-(defun sbt-compile (test-compile)
-  (interactive "P")
-  (if test-compile
-      (sbt-command "test:compile")
-    (sbt-command "compile")))
-
-(defun sbt-current-tests-in-buffer ()
-  (save-excursion
-    (let* ((pkg-name-components)
-           (test-names))
-      (goto-char (point-min))
-      (while (re-search-forward "package " nil t)
-        (push (buffer-substring-no-properties (point) (point-at-eol)) pkg-name-components))
-      (goto-char (point-min))
-      (while (re-search-forward "\\(object\\|class\\) " nil t)
-        (push (buffer-substring-no-properties (point) (progn (re-search-forward " ") (forward-char -1) (point)))
-              test-names))
-      (let* ((full-pkg-name (string-join (reverse pkg-name-components) "."))
-             (full-test-names (mapcar #'(lambda (test-name) (string-join (list full-pkg-name "." test-name))) test-names))
-             (full-test-names-str (string-join full-test-names " ")))
-        full-test-names-str))))
-
-(defun sbt-test (arg)
-  (interactive "P")
-  (pcase (prefix-numeric-value arg)
-    (4 (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz")))
-    (16 (sbt-command "test"))
-    (_ (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer))))))
-
-(defun sbt:command--advice--message-command (original-function &rest args)
-  (message "sbt %s" (car args))
-  (apply original-function args))
-(advice-add 'sbt:command :around 'sbt:command--advice--message-command) ;; sbt-command delegates to sbt:command
-
-(add-to-list 'sbt:program-options "-no-colors") ;; remove a lot of extra spacing with new sbt prompt changes
-
-(define-prefix-command 'sbt-keymap)
-(global-set-key (kbd "C-c s") 'sbt-keymap)
-(define-key sbt-keymap (kbd "s") 'jw-sbt)
-(define-key sbt-keymap (kbd "c") 'sbt-compile)
-(define-key sbt-keymap (kbd "o") 'sbt-test)
-(define-key sbt-keymap (kbd "l") 'sbt-run-previous-command)
-
-(add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
-(add-to-list 'auto-mode-alist '("\\.sbt$" . scala-mode))
-
-(setq scala-indent:align-forms t
-      scala-indent:align-parameters t)
-#+END_SRC
-
-support ammonite repl in org babel, requires `amm` command, or ammonite-repl
-#+BEGIN_SRC emacs-lisp
-(require 'org)
-(require 'ob)
-
-(defun org-babel-execute:ammonite (body params)
-  (jw--file-write body "/tmp/ob-ammonite-input.scala")
-  (shell-command-to-string "amm --silent /tmp/ob-ammonite-input.scala"))
-
-(add-to-list 'org-src-lang-modes '("ammonite" . scala))
-
-(org-babel-src-yasnippet 'ammonite)
-(org-babel-src-yasnippet 'scala 'ammonite) ;; default ob-scala requires brew scala & ensime, which I don't use.
-#+END_SRC
-
-** javascript
-
-#+BEGIN_SRC emacs-lisp
-(defun jw-js-find-project-root ()
-  (let ((project-root (locate-dominating-file (jw--pwd) "package.json")))
-    (if project-root (file-truename project-root) nil)))
-
-(defun jw-js-execute (&optional cmd-start)
-  "Executes a command in the js project root, looking for package.json or a version control root. Otherwise, uses the pwd."
-  (interactive)
-  (let ((default-directory (or (jw-js-find-project-root) (jw--vc-root-dir) (jw--pwd))))
-    (jw--run-cmd (read-shell-command (format "Run in %s: " default-directory) (if cmd-start (concat (s-trim cmd-start) " ") ""))
-                 :tail-output t)))
-
-(defun jw-js-node () (interactive) (jw-js-execute "node"))
-(defun jw-js-npm () (interactive) (jw-js-execute "npm"))
-(defun jw-js-yarn () (interactive) (jw-js-execute "yarn"))
-(defun jw-js-binci () (interactive) (jw-js-execute "binci"))
-
-(define-prefix-command 'jw-js-keymap)
-(global-set-key (kbd "C-c n") 'jw-js-keymap) ;; n = node
-(define-key jw-js-keymap (kbd "n") 'jw-js-node)
-(define-key jw-js-keymap (kbd "m") 'jw-js-npm)
-(define-key jw-js-keymap (kbd "y") 'jw-js-yarn)
-(define-key jw-js-keymap (kbd "i") 'jw-js-binci)
-#+END_SRC
-
-support typescript in org babel
-#+BEGIN_SRC emacs-lisp
-(require 'org)
-(require 'ob)
-
-(defun org-babel-execute:typescript (body params)
-  (let* ((run-js-option (assoc :run-js params))
-         (run-js (and run-js-option (string= (cdr run-js-option) "true"))))
-    (jw--file-write body "/tmp/ob-typescript-tsc-input.ts")
-    (shell-command-to-string "tsc /tmp/ob-typescript-tsc-input.ts --outFile /tmp/ob-typescript-tsc-output.js")
-    (if run-js
-        (org-babel-execute:js (f-read "/tmp/ob-typescript-tsc-output.js") params)
-      (f-read "/tmp/ob-typescript-tsc-output.js"))))
-
-(org-babel-src-yasnippet 'typescript nil ":run-js true")
-(org-babel-src-yasnippet 'ts 'typescript ":run-js true")
-
-(setq org-babel-default-header-args:typescript '((:results . "output")))
-#+END_SRC
-
 ** ivy counsel
 
 #+BEGIN_SRC emacs-lisp
@@ -1865,42 +1732,12 @@ support typescript in org babel
   (let ((projectile-switch-project-action (lambda () (cmd-dwim ivy-current-prefix-arg))))
     (counsel-projectile-switch-project-by-name project)))
 
-(defun counsel-projectile-switch-project--jw-sbt-action (project)
-  (let ((projectile-switch-project-action 'jw-sbt))
-    (counsel-projectile-switch-project-by-name project)))
-
-(defun counsel-projectile-switch-project--sbt-compile-action (project)
-  (let ((projectile-switch-project-action (lambda () (sbt-compile ivy-current-prefix-arg))))
-    (counsel-projectile-switch-project-by-name project)))
-
-(defun counsel-projectile-switch-project--jw-js-node-action (project)
-  (let ((projectile-switch-project-action 'jw-js-node))
-    (counsel-projectile-switch-project-by-name project)))
-
-(defun counsel-projectile-switch-project--jw-js-npm-action (project)
-  (let ((projectile-switch-project-action 'jw-js-npm))
-    (counsel-projectile-switch-project-by-name project)))
-
-(defun counsel-projectile-switch-project--jw-js-yarn-action (project)
-  (let ((projectile-switch-project-action 'jw-js-yarn))
-    (counsel-projectile-switch-project-by-name project)))
-
-(defun counsel-projectile-switch-project--jw-js-binci-action (project)
-  (let ((projectile-switch-project-action 'jw-js-binci))
-    (counsel-projectile-switch-project-by-name project)))
-
 (ivy-add-actions
  'counsel-projectile-switch-project
  '(("!" counsel-projectile-switch-project--cmd-dwim-action "cmd-dwim in project root")
    ("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
    ("C-xd" counsel-projectile-switch-project-action-dired "open project in dired")
    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
-   ("C-css" counsel-projectile-switch-project--jw-sbt-action "sbt")
-   ("C-csc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")
-   ("C-cnn" counsel-projectile-switch-project--jw-js-node-action "js node")
-   ("C-cnm" counsel-projectile-switch-project--jw-js-npm-action "js npm")
-   ("C-cny" counsel-projectile-switch-project--jw-js-yarn-action "js yarn")
-   ("C-cni" counsel-projectile-switch-project--jw-js-binci-action "js binci")
    ))
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
@@ -1912,6 +1749,244 @@ support typescript in org babel
     (message "Did NOT clear the projectile projects.")))
 
 (advice-add 'projectile-clear-known-projects :around 'projectile-clear-known-projects--advice--ask-y-or-n)
+#+END_SRC
+
+** runbook
+
+very opinionated project development lifecycle commands, an alternative to projectile's compile/configure/package/etc commands.
+#+BEGIN_SRC emacs-lisp
+;; todo -- projectile project name specific overrides
+
+;; do not auto-generate this. priority can be easily controlled via the order of the list. for now, this is good enough for me.
+(setq jw-runbook-support-project-types '(("build.sbt" . "scala") ("package.json" . "js")))
+
+;; jank cache to help with magit/transient. there is an edge case where exiting a transient by cancelling might leave this variable set. but the keymap command & transient clear it.
+(setq jw-runbook--target-location nil)
+
+(defun jw-runbook--find-and-run-function (name arg)
+  (let* ((root-dir (or jw-runbook--target-location (projectile-project-root)))
+         (_ (setq jw-runbook--target-location nil))
+         (type (cdr-safe (-find (lambda (pair) (f-exists? (f-expand (car pair) root-dir))) jw-runbook-support-project-types))))
+    (if (not type) (message "Could not find project type for jw-runbook")
+      (let* ((func-name (format "jw-runbook-run-%s:%s" name type))
+             (func (intern func-name)))
+        (if (not (fboundp func)) (message "%s jw-runbook function not provided" func-name)
+          (let ((default-directory root-dir))
+            (funcall func arg)))))))
+
+(defun jw-runbook-run-install (arg) (interactive "P") (jw-runbook--find-and-run-function "install" arg))
+(defun jw-runbook-run-dev (arg) (interactive "P") (jw-runbook--find-and-run-function "dev" arg))
+(defun jw-runbook-run-start (arg) (interactive "P") (jw-runbook--find-and-run-function "start" arg))
+(defun jw-runbook-run-run (arg) (interactive "P") (jw-runbook--find-and-run-function "run" arg))
+(defun jw-runbook-run-compile (arg) (interactive "P") (jw-runbook--find-and-run-function "compile" arg))
+(defun jw-runbook-run-test (arg) (interactive "P") (jw-runbook--find-and-run-function "test" arg))
+(defun jw-runbook-run-test-only (arg) (interactive "P") (jw-runbook--find-and-run-function "test-only" arg))
+(defun jw-runbook-run-command (arg) (interactive "P") (jw-runbook--find-and-run-function "command" arg))
+(defun jw-runbook-run-last-command (arg) (interactive "P") (jw-runbook--find-and-run-function "last-command" arg))
+(defun jw-runbook-run-repl (arg) (interactive "P") (jw-runbook--find-and-run-function "repl" arg))
+(defun jw-runbook-run-shell-command (arg) (interactive "P") (jw-runbook--find-and-run-function "shell-command" arg))
+(defun jw-runbook-run-eshell (arg) (interactive "P") (jw-runbook--find-and-run-function "eshell" arg))
+
+(setq jw-runbook-keymap (make-sparse-keymap))
+
+(defun jw-runbook-command ()
+  (interactive)
+  (setq jw-runbook--target-location nil)
+  (set-transient-map jw-runbook-keymap))
+
+(global-set-key (kbd "C-c n") 'jw-runbook-command)
+(define-key jw-runbook-keymap (kbd "I") 'jw-runbook-run-install)
+(define-key jw-runbook-keymap (kbd "d") 'jw-runbook-run-dev)
+(define-key jw-runbook-keymap (kbd "s") 'jw-runbook-run-start)
+(define-key jw-runbook-keymap (kbd "r") 'jw-runbook-run-run)
+(define-key jw-runbook-keymap (kbd "c") 'jw-runbook-run-compile)
+(define-key jw-runbook-keymap (kbd "t") 'jw-runbook-run-test)
+(define-key jw-runbook-keymap (kbd "o") 'jw-runbook-run-test-only)
+(define-key jw-runbook-keymap (kbd "n") 'jw-runbook-run-command)
+(define-key jw-runbook-keymap (kbd "l") 'jw-runbook-run-last-command)
+(define-key jw-runbook-keymap (kbd "$") 'jw-runbook-run-repl)
+(define-key jw-runbook-keymap (kbd "!") 'jw-runbook-run-shell-command)
+(define-key jw-runbook-keymap (kbd "e") 'jw-runbook-run-eshell)
+
+(define-transient-command jw-runbook-menu ()
+  ["Runbook"
+   ("I" "install         install development dependencies" jw-runbook-run-install)
+   ("d" "dev             start development dependencies, e.g. lsp" jw-runbook-run-dev)
+   ("s" "start           start development server locally" jw-runbook-run-start)
+   ("r" "run             run non-development server locally" jw-runbook-run-run)
+   ("c" "compile         run compile function" jw-runbook-run-compile)
+   ("t" "test            run all tests" jw-runbook-run-test)
+   ("o" "test-only       run specific test" jw-runbook-run-test-only)
+   ("n" "command         provide an arbitrary command" jw-runbook-run-command)
+   ("l" "last-command    run the last command" jw-runbook-run-last-command)
+   ("$" "repl            open project's repl" jw-runbook-run-repl)
+   ("!" "shell-command   cmd-dwim command in project root" jw-runbook-run-shell-command)
+   ("e" "eshell          eshell in project root" jw-runbook-run-eshell)
+   ])
+
+(defun jw-runbook-menu-open (&optional dir)
+  (interactive)
+  (setq jw-runbook--target-location dir)
+  (jw-runbook-menu))
+
+(global-set-key (kbd "C-c N") 'jw-runbook-menu-open)
+(define-key jw-runbook-keymap (kbd "?") 'jw-runbook-menu-open)
+
+(defun counsel-projectile-switch-project--jw-runbook-menu-action (project)
+  (let ((projectile-switch-project-action (lambda () (jw-runbook-menu-open project))))
+    (counsel-projectile-switch-project-by-name project)))
+
+(ivy-add-actions
+ 'counsel-projectile-switch-project
+ '(("C-cn" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
+
+(cl-defun jw-runbook-setup-type (type &key install dev start run compile test test-only command last-command repl)
+  (interactive)
+  (when install (fset (intern (format "jw-runbook-run-install:%s" type)) install))
+  (when dev (fset (intern (format "jw-runbook-run-dev:%s" type)) dev))
+  (when start (fset (intern (format "jw-runbook-run-start:%s" type)) start))
+  (when run (fset (intern (format "jw-runbook-run-run:%s" type)) run))
+  (when compile (fset (intern (format "jw-runbook-run-compile:%s" type)) compile))
+  (when test (fset (intern (format "jw-runbook-run-test:%s" type)) test))
+  (when test-only (fset (intern (format "jw-runbook-run-test-only:%s" type)) test-only))
+  (when start (fset (intern (format "jw-runbook-run-start:%s" type)) start))
+  (when command (fset (intern (format "jw-runbook-run-command:%s" type)) command))
+  (when last-command (fset (intern (format "jw-runbook-run-last-command:%s" type)) last-command))
+  (when repl (fset (intern (format "jw-runbook-run-repl:%s" type)) repl))
+  (fset (intern (format "jw-runbook-run-shell-command:%s" type)) (lambda (arg) (cmd-dwim arg)))
+  (fset (intern (format "jw-runbook-run-eshell:%s" type)) (lambda (arg) (eshell-dwim nil))))
+
+
+#+END_SRC
+
+** scala
+
+#+BEGIN_SRC emacs-lisp
+(defun jw-sbt ()
+  (interactive)
+  (if (eq major-mode 'sbt-mode)
+      (switch-to-buffer (other-buffer))
+    (with-temp-buffer
+      (if (sbt:find-root)
+          (sbt-start)
+        (call-interactively 'jw-sbt-run-or-create-new)))))
+
+(defun jw-sbt-run-or-create-new (dir)
+  (interactive "DSBT run or create new project in: ")
+  (when (not (f-exists? dir)) (make-directory dir 'make-parents))
+  (let ((default-directory dir))
+    (with-temp-buffer
+      (if (sbt:find-root)
+          (sbt-start)
+        (cmd "sbt-new")))))
+
+(defun sbt-compile (test-compile)
+  (interactive "P")
+  (if test-compile
+      (sbt-command "test:compile")
+    (sbt-command "compile")))
+
+(defun sbt-current-tests-in-buffer ()
+  (save-excursion
+    (let* ((pkg-name-components)
+           (test-names))
+      (goto-char (point-min))
+      (while (re-search-forward "package " nil t)
+        (push (buffer-substring-no-properties (point) (point-at-eol)) pkg-name-components))
+      (goto-char (point-min))
+      (while (re-search-forward "\\(object\\|class\\) " nil t)
+        (push (buffer-substring-no-properties (point) (progn (re-search-forward " ") (forward-char -1) (point)))
+              test-names))
+      (let* ((full-pkg-name (string-join (reverse pkg-name-components) "."))
+             (full-test-names (mapcar #'(lambda (test-name) (string-join (list full-pkg-name "." test-name))) test-names))
+             (full-test-names-str (string-join full-test-names " ")))
+        full-test-names-str))))
+
+(defun sbt-test (arg)
+  (interactive "P")
+  (pcase (prefix-numeric-value arg)
+    (4 (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz")))
+    (16 (sbt-command "test"))
+    (_ (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer))))))
+
+(defun sbt:command--advice--message-command (original-function &rest args)
+  (message "sbt %s" (car args))
+  (apply original-function args))
+(advice-add 'sbt:command :around 'sbt:command--advice--message-command) ;; sbt-command delegates to sbt:command
+
+(add-to-list 'sbt:program-options "-no-colors") ;; remove a lot of extra spacing with new sbt prompt changes
+(add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
+(add-to-list 'auto-mode-alist '("\\.sbt$" . scala-mode))
+
+(setq scala-indent:align-forms t
+      scala-indent:align-parameters t)
+
+(jw-runbook-setup-type "scala"
+                       :install (lambda (arg) (jw-sbt))
+                       :dev (lambda (arg) (jw-sbt))
+                       :start (lambda (arg) (jw-sbt))
+                       :run (lambda (arg) (sbt-command "run"))
+                       :compile 'sbt-compile
+                       :test (lambda (arg) (sbt-command "test"))
+                       :test-only 'sbt-test
+                       :command (lambda (arg) (call-interactively 'sbt-command))
+                       :last-command (lambda (arg) (sbt-run-previous-command))
+                       :repl (lambda (arg) (sbt-command "console")))
+#+END_SRC
+
+support ammonite repl in org babel, requires `amm` command, or ammonite-repl
+#+BEGIN_SRC emacs-lisp
+(require 'org)
+(require 'ob)
+
+(defun org-babel-execute:ammonite (body params)
+  (jw--file-write body "/tmp/ob-ammonite-input.scala")
+  (shell-command-to-string "amm --silent /tmp/ob-ammonite-input.scala"))
+
+(add-to-list 'org-src-lang-modes '("ammonite" . scala))
+
+(org-babel-src-yasnippet 'ammonite)
+(org-babel-src-yasnippet 'scala 'ammonite) ;; default ob-scala requires brew scala & ensime, which I don't use.
+#+END_SRC
+
+** javascript
+
+#+BEGIN_SRC emacs-lisp
+;; todojoe - npm/yarn/binci things, lsp stuff
+
+;; idea -- prefix arg forces yarn commands, regardless of binci.yml being present
+
+(jw-runbook-setup-type "js"
+                       :install 'ignore
+                       :dev 'ignore
+                       :start 'ignore
+                       :run 'ignore
+                       :compile 'ignore
+                       :test 'ignore
+                       :test-only 'ignore
+                       :command 'ignore
+                       :last-command 'ignore
+                       :repl 'ignore)
+#+END_SRC
+
+support typescript in org babel
+#+BEGIN_SRC emacs-lisp
+(require 'org)
+(require 'ob)
+
+(defun org-babel-execute:typescript (body params)
+  (let* ((run-js-option (assoc :run-js params))
+         (run-js (and run-js-option (string= (cdr run-js-option) "true"))))
+    (jw--file-write body "/tmp/ob-typescript-tsc-input.ts")
+    (shell-command-to-string "tsc /tmp/ob-typescript-tsc-input.ts --outFile /tmp/ob-typescript-tsc-output.js")
+    (if run-js
+        (org-babel-execute:js (f-read "/tmp/ob-typescript-tsc-output.js") params)
+      (f-read "/tmp/ob-typescript-tsc-output.js"))))
+
+(org-babel-src-yasnippet 'typescript nil ":run-js true")
+(org-babel-src-yasnippet 'ts 'typescript ":run-js true")
+
+(setq org-babel-default-header-args:typescript '((:results . "output")))
 #+END_SRC
 
 * private
