@@ -1760,19 +1760,23 @@ very opinionated project development lifecycle commands, an alternative to proje
 ;; do not auto-generate this. priority can be easily controlled via the order of the list. for now, this is good enough for me.
 (setq jw-runbook-support-project-types '(("build.sbt" . "scala") ("package.json" . "js")))
 
-;; jank cache to help with magit/transient. there is an edge case where exiting a transient by cancelling might leave this variable set. but the keymap command & transient clear it.
+;; jank cache to help with magit/transient & also manually setting transient-map.
+;; there is an edge case where exiting a transient by cancelling might leave this variable set. but the keymap command & transient clear it.
 (setq jw-runbook--target-location nil)
+(setq jw-runbook--current-prefix-arg nil)
 
 (defun jw-runbook--find-and-run-function (name arg)
   (let* ((root-dir (or jw-runbook--target-location (projectile-project-root)))
+         (a (or jw-runbook--current-prefix-arg arg))
          (_ (setq jw-runbook--target-location nil))
+         (_ (setq jw-runbook--current-prefix-arg nil))
          (type (cdr-safe (-find (lambda (pair) (f-exists? (f-expand (car pair) root-dir))) jw-runbook-support-project-types))))
     (if (not type) (message "Could not find project type for jw-runbook")
       (let* ((func-name (format "jw-runbook-run-%s:%s" name type))
              (func (intern func-name)))
         (if (not (fboundp func)) (message "%s jw-runbook function not provided" func-name)
           (let ((default-directory root-dir))
-            (funcall func arg)))))))
+            (funcall func a)))))))
 
 (defun jw-runbook-run-install (arg) (interactive "P") (jw-runbook--find-and-run-function "install" arg))
 (defun jw-runbook-run-dev (arg) (interactive "P") (jw-runbook--find-and-run-function "dev" arg))
@@ -1789,9 +1793,10 @@ very opinionated project development lifecycle commands, an alternative to proje
 
 (setq jw-runbook-keymap (make-sparse-keymap))
 
-(defun jw-runbook-command ()
-  (interactive)
+(defun jw-runbook-command (arg)
+  (interactive "P")
   (setq jw-runbook--target-location nil)
+  (setq jw-runbook--current-prefix-arg arg)
   (set-transient-map jw-runbook-keymap))
 
 (global-set-key (kbd "C-c n") 'jw-runbook-command)
@@ -1840,7 +1845,7 @@ very opinionated project development lifecycle commands, an alternative to proje
  'counsel-projectile-switch-project
  '(("C-cn" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
 
-(cl-defun jw-runbook-setup-type (type &key install dev start run compile test test-only command last-command repl)
+(cl-defun jw-runbook-setup-type (type &key install dev start run compile test test-only command last-command repl shell-command eshell)
   (interactive)
   (when install (fset (intern (format "jw-runbook-run-install:%s" type)) install))
   (when dev (fset (intern (format "jw-runbook-run-dev:%s" type)) dev))
@@ -1853,8 +1858,8 @@ very opinionated project development lifecycle commands, an alternative to proje
   (when command (fset (intern (format "jw-runbook-run-command:%s" type)) command))
   (when last-command (fset (intern (format "jw-runbook-run-last-command:%s" type)) last-command))
   (when repl (fset (intern (format "jw-runbook-run-repl:%s" type)) repl))
-  (fset (intern (format "jw-runbook-run-shell-command:%s" type)) (lambda (arg) (cmd-dwim arg)))
-  (fset (intern (format "jw-runbook-run-eshell:%s" type)) (lambda (arg) (eshell-dwim nil))))
+  (fset (intern (format "jw-runbook-run-shell-command:%s" type)) (or shell-command (lambda (arg) (cmd-dwim arg))))
+  (fset (intern (format "jw-runbook-run-eshell:%s" type)) (or eshell (lambda (arg) (eshell-dwim nil)))))
 
 
 #+END_SRC
