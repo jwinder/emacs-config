@@ -812,7 +812,7 @@ Interactively:
       (-1 (cmd prepared-cmd) (kill-buffer (other-buffer)))
       (_ (cmd prepared-cmd)))))
 
-(define-transient-command cmd-menu ()
+(transient-define-prefix cmd-menu ()
   ["Run command"
    ("!" "cmd-dwim          M-!   C-u to echo area / C-u C-u on next line" cmd-dwim)
    ("*" "calculator        M-*" calculator)
@@ -1308,7 +1308,7 @@ terminal additions
 (defun gist-menu--dired-do-gist-public () (interactive) (dired-do-gist-dwim t))
 (defun gist-menu--dired-do-gist-private () (interactive) (dired-do-gist-dwim))
 
-(define-transient-command gist-menu ()
+(transient-define-prefix gist-menu ()
   ["Gist"
    ("l" "gist-list"                                      gist-list)
    ("g" "gist-dwim            private"                   gist-menu--gist-private)
@@ -1808,7 +1808,7 @@ very opinionated project development lifecycle commands, an alternative to proje
 (define-key jw-runbook-keymap (kbd "!") 'jw-runbook-run-shell-command)
 (define-key jw-runbook-keymap (kbd "e") 'jw-runbook-run-eshell)
 
-(define-transient-command jw-runbook-menu ()
+(transient-define-prefix jw-runbook-menu ()
   ["Runbook"
    ("I" "install         install development dependencies" jw-runbook-run-install)
    ("d" "dev             start development dependencies, e.g. lsp" jw-runbook-run-dev)
