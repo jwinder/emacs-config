@@ -1743,6 +1743,13 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
    ))
 
+(defun counsel-projectile--filter-out-action-keys (actions keys)
+  (let ((-compare-fn (lambda (a b) (string= (car-safe a) b))))
+    (-difference actions keys)))
+
+(setq counsel-projectile-switch-project-action
+      (counsel-projectile--filter-out-action-keys counsel-projectile-switch-project-action (list "c" "C" "E" "Oc" "Oa" "v")))
+
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
 (defalias 'projectile-purge-everything 'projectile-clear-known-projects)
 
@@ -1935,21 +1942,22 @@ very opinionated project development lifecycle commands, an alternative to proje
 (setq scala-indent:align-forms t
       scala-indent:align-parameters t)
 
-(jw-runbook-setup-type "scala"
-                       :install (lambda (arg) (jw-sbt))
-                       :dev (lambda (arg) (jw-sbt))
-                       :start (lambda (arg) (jw-sbt))
-                       :run (lambda (arg) (sbt-command "run"))
-                       :compile (lambda (arg) (sbt-command "compile"))
-                       :test-compile (lambda (arg) (sbt-command "Test / compile"))
-                       :test (lambda (arg) (sbt-command "test"))
-                       :test-only 'sbt-test-only
-                       :lint 'ignore
-                       :command (lambda (arg) (call-interactively 'sbt-command))
-                       :last-command (lambda (arg) (sbt-run-previous-command))
-                       :repl (lambda (arg) (sbt-command "console"))
-                       :cleanup 'ignore ;; todojoe
-                       )
+(jw-runbook-setup-type
+ "scala"
+ :install (lambda (arg) (jw-sbt))
+ :dev (lambda (arg) (jw-sbt))
+ :start (lambda (arg) (jw-sbt))
+ :run (lambda (arg) (sbt-command "run"))
+ :compile (lambda (arg) (sbt-command "compile"))
+ :test-compile (lambda (arg) (sbt-command "Test / compile"))
+ :test (lambda (arg) (sbt-command "test"))
+ :test-only 'sbt-test-only
+ :lint 'ignore
+ :command (lambda (arg) (call-interactively 'sbt-command))
+ :last-command (lambda (arg) (sbt-run-previous-command))
+ :repl (lambda (arg) (sbt-command "console"))
+ :cleanup 'ignore ;; todojoe
+ )
 #+END_SRC
 
 support ammonite repl in org babel, requires `amm` command, or ammonite-repl
@@ -1982,19 +1990,21 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 ;; todojoe - npm/yarn/binci things, elgot/lsp stuff
 ;; todojoe -- compilation mode for compile/test commands
 
-(jw-runbook-setup-type "js"
-                       :install (lambda (arg) (jw-js-yarn-command arg "install"))
-                       :dev 'ignore ;; todojjoe
-                       :start 'ignore ;; todojoe
-                       :run 'ignore ;; todojoe
-                       :compile 'ignore ;; todojoe
-                       :test (lambda (arg) (jw-js-yarn-command arg "test"))
-                       :test-only (lambda (arg) (jw-js-yarn-command arg "test"))
-                       :lint (lambda (arg) (jw-js-yarn-command arg "lint"))
-                       :command (lambda (arg) (jw-js-yarn-command arg))
-                       :last-command 'ignore
-                       :repl (lambda (arg) (jw--run-cmd "node" :tail-output t))
-                       :cleanup (lambda (arg) (jw--run-cmd "binci --cleanup" :tail-output t)))
+(jw-runbook-setup-type
+ "js"
+ :install (lambda (arg) (jw-js-yarn-command arg "install"))
+ :dev 'ignore ;; todojjoe
+ :start 'ignore ;; todojoe
+ :run 'ignore ;; todojoe
+ :compile 'ignore ;; todojoe
+ :test (lambda (arg) (jw-js-yarn-command arg "test"))
+ :test-only (lambda (arg) (jw-js-yarn-command arg "test"))
+ :lint (lambda (arg) (jw-js-yarn-command arg "lint"))
+ :command (lambda (arg) (jw-js-yarn-command arg))
+ :last-command 'ignore
+ :repl (lambda (arg) (jw--run-cmd "node" :tail-output t))
+ :cleanup (lambda (arg) (jw--run-cmd "binci --cleanup" :tail-output t))
+ )
 #+END_SRC
 
 support typescript in org babel
