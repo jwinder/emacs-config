@@ -574,7 +574,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq version-control t
       vc-make-backup-files t
-      kept-new-versions 250
+      kept-new-versions 500
       kept-old-versions 10
       backup-by-copying t ;; deep copy of symlinks
       delete-old-versions t)
@@ -587,6 +587,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (add-to-list 'savehist-additional-variables 'kill-ring)
 (add-to-list 'savehist-additional-variables 'search-ring)
 (add-to-list 'savehist-additional-variables 'regexp-search-ring)
+
+(setq kill-ring-max 1000)
 
 (when (eq system-type 'gnu/linux)
   (setq interprogram-paste-function 'x-cut-buffer-or-selection-value
