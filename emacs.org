@@ -1447,6 +1447,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
       org-link-shell-confirm-function nil
       org-link-elisp-confirm-function nil
       org-src-window-setup 'current-window
+      org-src-tab-acts-natively nil ;; do not use this, it interferes with newlines
       org-agenda-todo-list-sublevels nil
       org-agenda-window-setup 'only-window
       org-refile-targets '((org-agenda-files :maxlevel . 10))
