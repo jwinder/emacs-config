@@ -1973,6 +1973,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   (interactive "P")
   (let* ((cmd-start (if (or arg (not (jw-js--binci-exists))) "yarn" "binci"))
          (cmd (if command (concat cmd-start " " command) (read-shell-command "Run: " (concat cmd-start " ")))))
+    (message cmd)
     (jw--run-cmd cmd :tail-output t)))
 
 ;; todojoe - npm/yarn/binci things, elgot/lsp stuff
