@@ -1783,6 +1783,7 @@ very opinionated project development lifecycle commands, an alternative to proje
 (defun jw-runbook-run-start (arg) (interactive "P") (jw-runbook--find-and-run-function "start" arg))
 (defun jw-runbook-run-run (arg) (interactive "P") (jw-runbook--find-and-run-function "run" arg))
 (defun jw-runbook-run-compile (arg) (interactive "P") (jw-runbook--find-and-run-function "compile" arg))
+(defun jw-runbook-run-test-compile (arg) (interactive "P") (jw-runbook--find-and-run-function "test-compile" arg))
 (defun jw-runbook-run-test (arg) (interactive "P") (jw-runbook--find-and-run-function "test" arg))
 (defun jw-runbook-run-test-only (arg) (interactive "P") (jw-runbook--find-and-run-function "test-only" arg))
 (defun jw-runbook-run-command (arg) (interactive "P") (jw-runbook--find-and-run-function "command" arg))
@@ -1805,9 +1806,10 @@ very opinionated project development lifecycle commands, an alternative to proje
 (define-key jw-runbook-keymap (kbd "s") 'jw-runbook-run-start)
 (define-key jw-runbook-keymap (kbd "r") 'jw-runbook-run-run)
 (define-key jw-runbook-keymap (kbd "c") 'jw-runbook-run-compile)
+(define-key jw-runbook-keymap (kbd "C") 'jw-runbook-run-test-compile)
 (define-key jw-runbook-keymap (kbd "t") 'jw-runbook-run-test)
 (define-key jw-runbook-keymap (kbd "o") 'jw-runbook-run-test-only)
-(define-key jw-runbook-keymap (kbd "C") 'jw-runbook-run-command)
+(define-key jw-runbook-keymap (kbd ":") 'jw-runbook-run-command)
 (define-key jw-runbook-keymap (kbd "l") 'jw-runbook-run-last-command)
 (define-key jw-runbook-keymap (kbd "$") 'jw-runbook-run-repl)
 (define-key jw-runbook-keymap (kbd "!") 'jw-runbook-run-shell-command)
@@ -1820,9 +1822,10 @@ very opinionated project development lifecycle commands, an alternative to proje
    ("s" "start           start development server locally" jw-runbook-run-start)
    ("r" "run             run non-development server locally" jw-runbook-run-run)
    ("c" "compile         run compile function" jw-runbook-run-compile)
+   ("C" "test-compile    run test-compile function" jw-runbook-run-test-compile)
    ("t" "test            run all tests" jw-runbook-run-test)
    ("o" "test-only       run specific test" jw-runbook-run-test-only)
-   ("C" "command         provide an arbitrary command" jw-runbook-run-command)
+   (":" "command         provide an arbitrary command" jw-runbook-run-command)
    ("l" "last-command    run the last command" jw-runbook-run-last-command)
    ("$" "repl            open project's repl" jw-runbook-run-repl)
    ("!" "shell-command   cmd-dwim command in project root" jw-runbook-run-shell-command)
@@ -1846,13 +1849,14 @@ very opinionated project development lifecycle commands, an alternative to proje
  'counsel-projectile-switch-project
  '(("C-cs" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
 
-(cl-defun jw-runbook-setup-type (type &key install dev start run compile test test-only command last-command repl shell-command eshell)
+(cl-defun jw-runbook-setup-type (type &key install dev start run compile test-compile test test-only command last-command repl shell-command eshell)
   (interactive)
   (when install (fset (intern (format "jw-runbook-run-install:%s" type)) install))
   (when dev (fset (intern (format "jw-runbook-run-dev:%s" type)) dev))
   (when start (fset (intern (format "jw-runbook-run-start:%s" type)) start))
   (when run (fset (intern (format "jw-runbook-run-run:%s" type)) run))
   (when compile (fset (intern (format "jw-runbook-run-compile:%s" type)) compile))
+  (when test-compile (fset (intern (format "jw-runbook-run-test-compile:%s" type)) test-compile))
   (when test (fset (intern (format "jw-runbook-run-test:%s" type)) test))
   (when test-only (fset (intern (format "jw-runbook-run-test-only:%s" type)) test-only))
   (when start (fset (intern (format "jw-runbook-run-start:%s" type)) start))
@@ -1886,12 +1890,6 @@ very opinionated project development lifecycle commands, an alternative to proje
           (sbt-start)
         (cmd "sbt-new")))))
 
-(defun sbt-compile (test-compile)
-  (interactive "P")
-  (if test-compile
-      (sbt-command "test:compile")
-    (sbt-command "compile")))
-
 (defun sbt-current-tests-in-buffer ()
   (save-excursion
     (let* ((pkg-name-components)
@@ -1908,12 +1906,11 @@ very opinionated project development lifecycle commands, an alternative to proje
              (full-test-names-str (string-join full-test-names " ")))
         full-test-names-str))))
 
-(defun sbt-test (arg)
+(defun sbt-test-only (arg)
   (interactive "P")
-  (pcase (prefix-numeric-value arg)
-    (4 (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz")))
-    (16 (sbt-command "test"))
-    (_ (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer))))))
+  (if arg
+      (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz"))
+    (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer)))))
 
 (defun sbt:command--advice--message-command (original-function &rest args)
   (message "sbt %s" (car args))
@@ -1932,9 +1929,10 @@ very opinionated project development lifecycle commands, an alternative to proje
                        :dev (lambda (arg) (jw-sbt))
                        :start (lambda (arg) (jw-sbt))
                        :run (lambda (arg) (sbt-command "run"))
-                       :compile 'sbt-compile
+                       :compile (lambda (arg) (sbt-command "compile"))
+                       :test-compile (lambda (arg) (sbt-command "Test / compile"))
                        :test (lambda (arg) (sbt-command "test"))
-                       :test-only 'sbt-test
+                       :test-only 'sbt-test-only
                        :command (lambda (arg) (call-interactively 'sbt-command))
                        :last-command (lambda (arg) (sbt-run-previous-command))
                        :repl (lambda (arg) (sbt-command "console")))
