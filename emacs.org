@@ -1786,11 +1786,13 @@ very opinionated project development lifecycle commands, an alternative to proje
 (defun jw-runbook-run-test-compile (arg) (interactive "P") (jw-runbook--find-and-run-function "test-compile" arg))
 (defun jw-runbook-run-test (arg) (interactive "P") (jw-runbook--find-and-run-function "test" arg))
 (defun jw-runbook-run-test-only (arg) (interactive "P") (jw-runbook--find-and-run-function "test-only" arg))
+(defun jw-runbook-run-lint (arg) (interactive "P") (jw-runbook--find-and-run-function "lint" arg))
 (defun jw-runbook-run-command (arg) (interactive "P") (jw-runbook--find-and-run-function "command" arg))
 (defun jw-runbook-run-last-command (arg) (interactive "P") (jw-runbook--find-and-run-function "last-command" arg))
 (defun jw-runbook-run-repl (arg) (interactive "P") (jw-runbook--find-and-run-function "repl" arg))
 (defun jw-runbook-run-shell-command (arg) (interactive "P") (jw-runbook--find-and-run-function "shell-command" arg))
 (defun jw-runbook-run-eshell (arg) (interactive "P") (jw-runbook--find-and-run-function "eshell" arg))
+(defun jw-runbook-run-cleanup (arg) (interactive "P") (jw-runbook--find-and-run-function "cleanup" arg))
 
 (setq jw-runbook-keymap (make-sparse-keymap))
 
@@ -1809,11 +1811,13 @@ very opinionated project development lifecycle commands, an alternative to proje
 (define-key jw-runbook-keymap (kbd "C") 'jw-runbook-run-test-compile)
 (define-key jw-runbook-keymap (kbd "t") 'jw-runbook-run-test)
 (define-key jw-runbook-keymap (kbd "o") 'jw-runbook-run-test-only)
+(define-key jw-runbook-keymap (kbd "L") 'jw-runbook-run-lint)
 (define-key jw-runbook-keymap (kbd ":") 'jw-runbook-run-command)
 (define-key jw-runbook-keymap (kbd "l") 'jw-runbook-run-last-command)
 (define-key jw-runbook-keymap (kbd "$") 'jw-runbook-run-repl)
 (define-key jw-runbook-keymap (kbd "!") 'jw-runbook-run-shell-command)
 (define-key jw-runbook-keymap (kbd "e") 'jw-runbook-run-eshell)
+(define-key jw-runbook-keymap (kbd "K") 'jw-runbook-run-cleanup)
 
 (transient-define-prefix jw-runbook-menu ()
   ["Runbook"
@@ -1825,11 +1829,13 @@ very opinionated project development lifecycle commands, an alternative to proje
    ("C" "test-compile    run test-compile function" jw-runbook-run-test-compile)
    ("t" "test            run all tests" jw-runbook-run-test)
    ("o" "test-only       run specific test" jw-runbook-run-test-only)
+   ("L" "lint            run lint" jw-runbook-run-lint)
    (":" "command         provide an arbitrary command" jw-runbook-run-command)
    ("l" "last-command    run the last command" jw-runbook-run-last-command)
    ("$" "repl            open project's repl" jw-runbook-run-repl)
    ("!" "shell-command   cmd-dwim command in project root" jw-runbook-run-shell-command)
    ("e" "eshell          eshell in project root" jw-runbook-run-eshell)
+   ("K" "cleanup         kill dev buffers & processes" jw-runbook-run-cleanup)
    ])
 
 (defun jw-runbook-menu-open (&optional dir)
@@ -1849,7 +1855,7 @@ very opinionated project development lifecycle commands, an alternative to proje
  'counsel-projectile-switch-project
  '(("C-cs" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
 
-(cl-defun jw-runbook-setup-type (type &key install dev start run compile test-compile test test-only command last-command repl shell-command eshell)
+(cl-defun jw-runbook-setup-type (type &key install dev start run compile test-compile test test-only lint command last-command repl shell-command eshell cleanup)
   (interactive)
   (when install (fset (intern (format "jw-runbook-run-install:%s" type)) install))
   (when dev (fset (intern (format "jw-runbook-run-dev:%s" type)) dev))
@@ -1859,12 +1865,14 @@ very opinionated project development lifecycle commands, an alternative to proje
   (when test-compile (fset (intern (format "jw-runbook-run-test-compile:%s" type)) test-compile))
   (when test (fset (intern (format "jw-runbook-run-test:%s" type)) test))
   (when test-only (fset (intern (format "jw-runbook-run-test-only:%s" type)) test-only))
+  (when lint (fset (intern (format "jw-runbook-run-lint:%s" type)) lint))
   (when start (fset (intern (format "jw-runbook-run-start:%s" type)) start))
   (when command (fset (intern (format "jw-runbook-run-command:%s" type)) command))
   (when last-command (fset (intern (format "jw-runbook-run-last-command:%s" type)) last-command))
   (when repl (fset (intern (format "jw-runbook-run-repl:%s" type)) repl))
   (fset (intern (format "jw-runbook-run-shell-command:%s" type)) (or shell-command (lambda (arg) (cmd-dwim arg))))
-  (fset (intern (format "jw-runbook-run-eshell:%s" type)) (or eshell (lambda (arg) (eshell-dwim nil)))))
+  (fset (intern (format "jw-runbook-run-eshell:%s" type)) (or eshell (lambda (arg) (eshell-dwim nil))))
+  (when cleanup (fset (intern (format "jw-runbook-run-cleanup:%s" type)) cleanup)))
 
 
 #+END_SRC
@@ -1933,9 +1941,12 @@ very opinionated project development lifecycle commands, an alternative to proje
                        :test-compile (lambda (arg) (sbt-command "Test / compile"))
                        :test (lambda (arg) (sbt-command "test"))
                        :test-only 'sbt-test-only
+                       :lint 'ignore
                        :command (lambda (arg) (call-interactively 'sbt-command))
                        :last-command (lambda (arg) (sbt-run-previous-command))
-                       :repl (lambda (arg) (sbt-command "console")))
+                       :repl (lambda (arg) (sbt-command "console"))
+                       :cleanup 'ignore ;; todojoe
+                       )
 #+END_SRC
 
 support ammonite repl in org babel, requires `amm` command, or ammonite-repl
@@ -1956,21 +1967,30 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 ** javascript
 
 #+BEGIN_SRC emacs-lisp
-;; todojoe - npm/yarn/binci things, lsp stuff
+(defun jw-js--binci-exists () (f-exists? "binci.yml"))
 
-;; idea -- prefix arg forces yarn commands, regardless of binci.yml being present
+(defun jw-js-yarn-command (arg &optional command)
+  (interactive "P")
+  (let* ((cmd-start (if (or arg (not (jw-js--binci-exists))) "yarn" "binci"))
+         (cmd (if command (concat cmd-start " " command) (read-shell-command "Run: " (concat cmd-start " ")))))
+    (jw--run-cmd cmd :tail-output t)))
+
+;; todojoe - npm/yarn/binci things, elgot/lsp stuff
+;; todojoe -- compilation mode for compile/test commands
 
 (jw-runbook-setup-type "js"
-                       :install 'ignore
-                       :dev 'ignore
-                       :start 'ignore
-                       :run 'ignore
-                       :compile 'ignore
-                       :test 'ignore
-                       :test-only 'ignore
-                       :command 'ignore
+                       :install (lambda (arg) (jw-js-yarn-command arg "install"))
+                       :dev 'ignore ;; todojjoe
+                       :start 'ignore ;; todojoe
+                       :run 'ignore ;; todojoe
+                       :compile 'ignore ;; todojoe
+                       :test (lambda (arg) (jw-js-yarn-command arg "test"))
+                       :test-only (lambda (arg) (jw-js-yarn-command arg "test"))
+                       :lint (lambda (arg) (jw-js-yarn-command arg "lint"))
+                       :command (lambda (arg) (jw-js-yarn-command arg))
                        :last-command 'ignore
-                       :repl 'ignore)
+                       :repl (lambda (arg) (jw--run-cmd "node" :tail-output t))
+                       :cleanup (lambda (arg) (jw--run-cmd "binci --cleanup" :tail-output t)))
 #+END_SRC
 
 support typescript in org babel
