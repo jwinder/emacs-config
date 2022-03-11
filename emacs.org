@@ -2002,7 +2002,9 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
  :repl (lambda (arg) (jw--run-cmd "node" :tail-output t))
  :cleanup (lambda (arg)
             (projectile-kill-buffers)
-            (jw--run-cmd "binci --cleanup" :after-process-finish (lambda (proc) (kill-buffer (process-buffer proc))))))
+            (when (jw-js--binci-exists)
+              (jw--run-cmd "binci --cleanup" :after-process-finish (lambda (proc) (kill-buffer (process-buffer proc)))))
+            ))
 #+END_SRC
 
 support typescript in org babel
