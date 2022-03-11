@@ -1845,7 +1845,7 @@ very opinionated project development lifecycle commands, an alternative to proje
    ("$" "repl            open project's repl" jw-runbook-run-repl)
    ("!" "shell-command   cmd-dwim command in project root" jw-runbook-run-shell-command)
    ("e" "eshell          eshell in project root" jw-runbook-run-eshell)
-   ("K" "cleanup         kill dev buffers & processes" jw-runbook-run-cleanup)
+   ("K" "cleanup         kill project dev & process buffers" jw-runbook-run-cleanup)
    ])
 
 (defun jw-runbook-menu-open (&optional dir)
@@ -1882,7 +1882,7 @@ very opinionated project development lifecycle commands, an alternative to proje
   (when repl (fset (intern (format "jw-runbook-run-repl:%s" type)) repl))
   (fset (intern (format "jw-runbook-run-shell-command:%s" type)) (or shell-command (lambda (arg) (cmd-dwim arg))))
   (fset (intern (format "jw-runbook-run-eshell:%s" type)) (or eshell (lambda (arg) (eshell-dwim nil))))
-  (when cleanup (fset (intern (format "jw-runbook-run-cleanup:%s" type)) cleanup)))
+  (fset (intern (format "jw-runbook-run-cleanup:%s" type)) (or cleanup (lambda (arg) (projectile-kill-buffers)))))
 
 
 #+END_SRC
@@ -1952,12 +1952,9 @@ very opinionated project development lifecycle commands, an alternative to proje
  :test-compile (lambda (arg) (sbt-command "Test / compile"))
  :test (lambda (arg) (sbt-command "test"))
  :test-only 'sbt-test-only
- :lint 'ignore
  :command (lambda (arg) (call-interactively 'sbt-command))
  :last-command (lambda (arg) (sbt-run-previous-command))
- :repl (lambda (arg) (sbt-command "console"))
- :cleanup 'ignore ;; todojoe
- )
+ :repl (lambda (arg) (sbt-command "console")))
 #+END_SRC
 
 support ammonite repl in org babel, requires `amm` command, or ammonite-repl
@@ -2003,8 +2000,9 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
  :command (lambda (arg) (jw-js-yarn-command arg))
  :last-command 'ignore
  :repl (lambda (arg) (jw--run-cmd "node" :tail-output t))
- :cleanup (lambda (arg) (jw--run-cmd "binci --cleanup" :tail-output t))
- )
+ :cleanup (lambda (arg)
+            (projectile-kill-buffers)
+            (jw--run-cmd "binci --cleanup" :after-process-finish (lambda (proc) (kill-buffer (process-buffer proc))))))
 #+END_SRC
 
 support typescript in org babel
