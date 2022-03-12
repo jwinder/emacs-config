@@ -820,7 +820,7 @@ Interactively:
    ("*" "calculator        M-*" calculator)
    (":" "eval-expression   M-:" eval-expression)
    ("e" "eval-last-sexp    C-x C-e" eval-last-sexp)
-   ("d" "eval-defun" eval-defun)
+   ("x" "eval-defun        C-M-x" eval-defun)
    ("r" "eval-region" eval-region)
    ("b" "eval-buffer" eval-buffer)
    ])
