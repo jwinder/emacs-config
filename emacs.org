@@ -257,6 +257,18 @@ These are non-interactive library functions useful in other parts of this config
                              (when (string-match "\\(?:finished\\|exited\\)" change)
                                (funcall ,fn proc))))))
 
+(defun jw--kill-buffer (&rest buffers)
+  "Kill each buffer in `buffers'. If no list is provided, then kill the current buffer."
+  (if (not buffers)
+      (kill-buffer (current-buffer))
+    (dolist (buffer buffers)
+      (when buffer (kill-buffer buffer)))))
+
+(defun jw--kill-process-buffer (&rest processes)
+  "Kill the buffers associated with each process in `processes'."
+  (dolist (process processes)
+    (jw--kill-buffer (process-buffer process))))
+
 (setq jw--run-cmd-shell "bash")
 (setq jw--run-cmd-script-dir "/tmp/emacs-jw-run-cmd/")
 
@@ -267,11 +279,13 @@ For commands that have already finished, this will clean up the process buffer a
 For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive.
 
 `:process-name' can be used to override the automatic naming of the process & buffer (from the `command').
-`:before-process-creation' is an optional zero-arg function that is run before the process is started.
-`:after-process-creation' is an optional one-arg function (providing the process an arg) that is run after the process is started.
-`:after-process-finish' is an optional one-arg function (providing the process as an arg) that is run after the process finishes.
+`:before-process-creation' is an optional zero-arg lambda that is run before the process is started.
+`:after-process-creation' is an optional one-arg lambda (providing the process an arg) that is run after the process is started.
+`:after-process-finish' is an optional one-arg lambda (providing the process as an arg) that is run after the process finishes.
 `:tail-output' will direct the cursor to tail the output in the emacs buffer, instead of leaving it at the top of the buffer.
 `:delete-tmp-script' will remove the underlying shell script, instead of leaving it in the tmp directory.
+
+Warning: The optional lambda functions currently MUST be lambdas, not symbols with function definitions.
 "
   (require 'comint)
   (let* ((prepared-cmd (string-trim command))
@@ -1403,7 +1417,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
   (interactive "P")
   (jw--run-cmd "todo-backup"
                :after-process-finish `(lambda (proc)
-                                        (when ,(null arg) (kill-buffer (process-buffer proc)))
+                                        (when ,(not arg) (jw--kill-process-buffer proc))
                                         (message "Command jw-todo-backup finished"))))
 
 (setq jw-org-agenda-pre-hook nil)
@@ -2003,7 +2017,8 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
  :cleanup (lambda (arg)
             (projectile-kill-buffers)
             (when (jw-js--binci-exists)
-              (jw--run-cmd "binci --cleanup" :after-process-finish (lambda (proc) (kill-buffer (process-buffer proc)))))
+              (jw--run-cmd "binci --cleanup"
+                           :after-process-finish (lambda (proc) (jw--kill-process-buffer proc))))
             ))
 #+END_SRC
 
