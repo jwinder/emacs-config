@@ -299,7 +299,7 @@ Warning: The optional lambda functions currently MUST be lambdas, not symbols wi
                (tmp-script-abs-filename (concat jw--run-cmd-script-dir tmp-script-rel-filename))
                (tmp-script-sh-executable (or (ignore-errors (executable-find jw--run-cmd-shell))
                                              (executable-find (jw--login-shell))))
-               (tmp-script-contents (format "#!%s\n\ncd %s\n\n%s\n\necho" tmp-script-sh-executable (jw--pwd) prepared-cmd)))
+               (tmp-script-contents (format "#!%s\n\ncd %s\n\n%s\n\necho" tmp-script-sh-executable (shell-quote-argument (jw--pwd)) prepared-cmd)))
           (when (get-buffer cmd-buffer-name) (kill-buffer cmd-buffer-name))
           (jw--file-write tmp-script-contents tmp-script-abs-filename)
           (unless (file-executable-p tmp-script-abs-filename) (chmod tmp-script-abs-filename #o744))
