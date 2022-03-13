@@ -262,7 +262,7 @@ These are non-interactive library functions useful in other parts of this config
   (if (not buffers)
       (kill-buffer (current-buffer))
     (dolist (buffer buffers)
-      (when buffer (kill-buffer buffer)))))
+      (when (get-buffer buffer) (kill-buffer buffer)))))
 
 (defun jw--kill-process-buffer (&rest processes)
   "Kill the buffers associated with each process in `processes'."
