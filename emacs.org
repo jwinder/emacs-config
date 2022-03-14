@@ -2003,7 +2003,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
  "js"
  :install (lambda (arg) (jw-js-yarn-command arg "install"))
  :dev 'ignore ;; todojoe -- elgot/lsp stuff
- :start (lambda (arg) (jw-js-yarn-command arg "dev")) ;; todojoe -- delegate to dev or start depending on the contents of package.json?
+ :start (lambda (arg) (jw-js-yarn-command arg "dev")) ;; todojoe -- delegate to dev or start depending on the contents of package.json? maybe just roll lsp stuff into start and kill :dev command.
  :run 'ignore ;; todojoe
  :compile 'ignore ;; todojoe
  :test (lambda (arg) (jw-js-yarn-command arg "test")) ;; todojoe -- compilation mode
