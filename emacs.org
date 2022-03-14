@@ -1804,7 +1804,6 @@ very opinionated project development lifecycle commands, an alternative to proje
             (funcall func a)))))))
 
 (defun jw-runbook-run-install (arg) (interactive "P") (jw-runbook--find-and-run-function "install" arg))
-(defun jw-runbook-run-dev (arg) (interactive "P") (jw-runbook--find-and-run-function "dev" arg))
 (defun jw-runbook-run-start (arg) (interactive "P") (jw-runbook--find-and-run-function "start" arg))
 (defun jw-runbook-run-run (arg) (interactive "P") (jw-runbook--find-and-run-function "run" arg))
 (defun jw-runbook-run-compile (arg) (interactive "P") (jw-runbook--find-and-run-function "compile" arg))
@@ -1829,7 +1828,6 @@ very opinionated project development lifecycle commands, an alternative to proje
 
 (global-set-key (kbd "C-c s") 'jw-runbook-command)
 (define-key jw-runbook-keymap (kbd "I") 'jw-runbook-run-install)
-(define-key jw-runbook-keymap (kbd "d") 'jw-runbook-run-dev)
 (define-key jw-runbook-keymap (kbd "s") 'jw-runbook-run-start)
 (define-key jw-runbook-keymap (kbd "r") 'jw-runbook-run-run)
 (define-key jw-runbook-keymap (kbd "c") 'jw-runbook-run-compile)
@@ -1847,8 +1845,7 @@ very opinionated project development lifecycle commands, an alternative to proje
 (transient-define-prefix jw-runbook-menu ()
   ["Runbook"
    ("I" "install         install development dependencies" jw-runbook-run-install)
-   ("d" "dev             start development dependencies, e.g. lsp" jw-runbook-run-dev)
-   ("s" "start           start development server locally" jw-runbook-run-start)
+   ("s" "start           start development dependencies & server locally" jw-runbook-run-start)
    ("r" "run             run non-development server locally" jw-runbook-run-run)
    ("c" "compile         run compile function" jw-runbook-run-compile)
    ("C" "test-compile    run test-compile function" jw-runbook-run-test-compile)
@@ -1880,10 +1877,9 @@ very opinionated project development lifecycle commands, an alternative to proje
  'counsel-projectile-switch-project
  '(("C-cs" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
 
-(cl-defun jw-runbook-setup-type (type &key install dev start run compile test-compile test test-only lint command last-command repl shell-command eshell cleanup)
+(cl-defun jw-runbook-setup-type (type &key install start run compile test-compile test test-only lint command last-command repl shell-command eshell cleanup)
   (interactive)
   (when install (fset (intern (format "jw-runbook-run-install:%s" type)) install))
-  (when dev (fset (intern (format "jw-runbook-run-dev:%s" type)) dev))
   (when start (fset (intern (format "jw-runbook-run-start:%s" type)) start))
   (when run (fset (intern (format "jw-runbook-run-run:%s" type)) run))
   (when compile (fset (intern (format "jw-runbook-run-compile:%s" type)) compile))
@@ -1960,7 +1956,6 @@ very opinionated project development lifecycle commands, an alternative to proje
 (jw-runbook-setup-type
  "scala"
  :install (lambda (arg) (jw-sbt))
- :dev (lambda (arg) (jw-sbt))
  :start (lambda (arg) (jw-sbt))
  :run (lambda (arg) (sbt-command "run"))
  :compile (lambda (arg) (sbt-command "compile"))
@@ -2002,8 +1997,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (jw-runbook-setup-type
  "js"
  :install (lambda (arg) (jw-js-yarn-command arg "install"))
- :dev 'ignore ;; todojoe -- elgot/lsp stuff
- :start (lambda (arg) (jw-js-yarn-command arg "dev")) ;; todojoe -- delegate to dev or start depending on the contents of package.json? maybe just roll lsp stuff into start and kill :dev command.
+ :start (lambda (arg) (jw-js-yarn-command arg "dev")) ;; todojoe -- delegate to dev or start depending on the contents of package.json. elgot/lsp startup.
  :run 'ignore ;; todojoe
  :compile 'ignore ;; todojoe
  :test (lambda (arg) (jw-js-yarn-command arg "test")) ;; todojoe -- compilation mode
