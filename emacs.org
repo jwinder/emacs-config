@@ -1878,7 +1878,6 @@ very opinionated project development lifecycle commands, an alternative to proje
  '(("C-cs" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
 
 (cl-defun jw-runbook-setup-type (type &key install start run compile test-compile test test-only lint command last-command repl shell-command eshell cleanup)
-  (interactive)
   (when install (fset (intern (format "jw-runbook-run-install:%s" type)) install))
   (when start (fset (intern (format "jw-runbook-run-start:%s" type)) start))
   (when run (fset (intern (format "jw-runbook-run-run:%s" type)) run))
