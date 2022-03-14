@@ -1999,17 +1999,14 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
     (message cmd)
     (jw--run-cmd cmd :tail-output t)))
 
-;; todojoe - npm/yarn/binci things, elgot/lsp stuff
-;; todojoe -- compilation mode for compile/test commands
-
 (jw-runbook-setup-type
  "js"
  :install (lambda (arg) (jw-js-yarn-command arg "install"))
- :dev (lambda (arg) (jw-js-yarn-command arg "dev"))
- :start 'ignore ;; todojoe
+ :dev 'ignore ;; todojoe -- elgot/lsp stuff
+ :start (lambda (arg) (jw-js-yarn-command arg "dev")) ;; todojoe -- delegate to dev or start depending on the contents of package.json?
  :run 'ignore ;; todojoe
  :compile 'ignore ;; todojoe
- :test (lambda (arg) (jw-js-yarn-command arg "test"))
+ :test (lambda (arg) (jw-js-yarn-command arg "test")) ;; todojoe -- compilation mode
  :test-only (lambda (arg) (jw-js-yarn-command arg "test"))
  :lint (lambda (arg) (jw-js-yarn-command arg "lint"))
  :command (lambda (arg) (jw-js-yarn-command arg))
