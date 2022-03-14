@@ -2005,7 +2005,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (jw-runbook-setup-type
  "js"
  :install (lambda (arg) (jw-js-yarn-command arg "install"))
- :dev 'ignore ;; todojjoe
+ :dev (lambda (arg) (jw-js-yarn-command arg "dev"))
  :start 'ignore ;; todojoe
  :run 'ignore ;; todojoe
  :compile 'ignore ;; todojoe
