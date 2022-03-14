@@ -1500,7 +1500,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 (defun org--color-green-box-state (s) `(,s :background "DarkGreen" :foreground "LightGrey" :box (:style released-button)))
 (defun org--color-green-state (s) `(,s :foreground "LimeGreen"))
 
-(setq org--todo-todo-boxed-states '("todo" "incoming" "captured" "unread" "question" "problem" "issue" "shitshow" "alert" "warning")
+(setq org--todo-todo-boxed-states '("todo" "started" "incoming" "captured" "unread" "question" "problem" "issue" "shitshow" "alert" "warning")
       org--todo-todo-states '("⚑")
       org--blocked-todo-boxed-states '("blocked" "halted" "stalled" "paused")
       org--doing-todo-boxed-states '("doing" "going")
