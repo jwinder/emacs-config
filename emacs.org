@@ -272,7 +272,7 @@ These are non-interactive library functions useful in other parts of this config
 (setq jw--run-cmd-shell "bash")
 (setq jw--run-cmd-script-dir "/tmp/emacs-jw-run-cmd/")
 
-(cl-defun jw--run-cmd (command &key process-name before-process-creation after-process-creation after-process-finish tail-output delete-tmp-script)
+(cl-defun jw--run-cmd (command &key process-name buffer-name before-process-creation after-process-creation after-process-finish tail-output delete-tmp-script)
   "An opinionated wrapper around `make-comint-in-buffer'.
 
 For commands that have already finished, this will clean up the process buffer and re-run the command.
@@ -290,7 +290,7 @@ Warning: The optional lambda functions currently MUST be lambdas, not symbols wi
   (require 'comint)
   (let* ((prepared-cmd (string-trim command))
          (cmd-process-name (or process-name (s-collapse-whitespace (s-left 100 prepared-cmd))))
-         (cmd-buffer-name (format "*%s*" cmd-process-name)))
+         (cmd-buffer-name (or buffer-name (format "*%s*" cmd-process-name))))
     (if (s-empty? prepared-cmd)
         (message "Empty command! Doing nothing.")
       (if (process-live-p (get-process cmd-process-name))
@@ -1986,13 +1986,14 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 
 #+BEGIN_SRC emacs-lisp
 (defun jw-js--binci-exists () (f-exists? "binci.yml"))
+(defun jw-js--get-project-name () (projectile-project-name))
 
 (defun jw-js-yarn-command (arg &optional command)
   (interactive "P")
   (let* ((cmd-start (if (or arg (not (jw-js--binci-exists))) "yarn" "binci"))
          (cmd (if command (concat cmd-start " " command) (read-shell-command "Run: " (concat cmd-start " ")))))
     (message cmd)
-    (jw--run-cmd cmd :tail-output t)))
+    (jw--run-cmd cmd :buffer-name (format "*%s*<%s>" cmd (jw-js--get-project-name)) :tail-output t)))
 
 (jw-runbook-setup-type
  "js"
