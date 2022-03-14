@@ -1680,9 +1680,9 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
   (let ((ivy-read-action-function #'ivy-read-action-ivy))
     (ivy-dispatching-done)))
 
-(defun counsel-ps-dwim (arg)
+(defun counsel-emacs-processes-dwim (arg)
   (interactive "P")
-  (if arg (proced) (counsel-list-processes)))
+  (if arg (list-processes) (counsel-list-processes)))
 
 (defun counsel-find-file--cmd-dwim-action (file) (let ((default-directory ivy--directory)) (cmd-dwim ivy-current-prefix-arg)))
 (defun counsel-find-file--magit-status-action (file) (let ((default-directory ivy--directory)) (magit-status)))
@@ -1711,7 +1711,8 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (global-set-key (kbd "C-x C-f") 'counsel-find-file-dwim)
 (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
 (global-set-key (kbd "C-x E") 'counsel-kmacro)
-(global-set-key (kbd "C-x p") 'counsel-ps-dwim)
+(global-set-key (kbd "C-x p") 'counsel-emacs-processes-dwim)
+(global-set-key (kbd "C-x P") 'proced)
 (global-set-key (kbd "M-s o") 'swiper-thing-at-point)
 (global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-r") 'swiper-backward)
