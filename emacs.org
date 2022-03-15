@@ -611,7 +611,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (when (eq system-type 'darwin)
   (setq ns-command-modifier 'meta
-        browse-url-browser-function 'browse-url-default-macosx-browser))
+        browse-url-browser-function 'browse-url-default-macosx-browser
+        browse-url-generic-program "open"))
 #+END_SRC
 
 ** functions
@@ -747,6 +748,22 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
             ))
          (query (url-encode-url (s-replace "\s" "+" (s-trim raw-query)))))
     (jw--run-cmd (format "curl http://cheat.sh/%s" query))))
+
+(defun jw-web-search ()
+  "Open URL or search query in a default external web browser, controlled by `browse-url-browser-function'."
+  (interactive)
+  (let* ((raw-text (if (use-region-p)
+                       (buffer-substring-no-properties (region-beginning) (region-end))
+                     (read-string "Enter URL or keywords for external web browser search: " (or (thing-at-point 'url t) (thing-at-point 'word t)))))
+         (parsed-url (url-generic-parse-url raw-text))
+         (is-url (and parsed-url (url-type parsed-url) (url-host parsed-url)))
+         (url (if is-url (url-encode-url raw-text) (format "https://duckduckgo.com?q=%s" (url-hexify-string raw-text)))))
+    (browse-url url)))
+
+(defun web-search-dwim (arg)
+  "Open URL or search query in a web browser. By default, this delegates to `jw-web-search' and an external web browser. With a prefix arg, this delegates to `eww-search-words'  and the eww browser."
+  (interactive "P")
+  (call-interactively (if arg 'eww-search-words 'jw-web-search)))
 
 (defun scratch-buffer ()
   "Save the scratch buffer in a file. Use any mode you'd like by customizing `jw-scratch-file` to a separate (fully-qualified) filename & extension."
@@ -1088,6 +1105,7 @@ argument makes the windows rotate backwards."
 (define-key help-map (kbd "M-n") 'helpful-at-point)
 (define-key help-map (kbd "H") 'info-apropos)
 (define-key help-map (kbd "h") 'cheat-sh)
+(define-key search-map (kbd "M-w") 'web-search-dwim)
 
 ;; todo emacs 28.1 -- remove these and use the default xref keybindings
 (global-set-key (kbd "M-s j") 'dumb-jump-go)
