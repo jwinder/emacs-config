@@ -1982,7 +1982,11 @@ very opinionated project development lifecycle commands, an alternative to proje
  :test-only 'sbt-test-only
  :command (lambda (arg) (call-interactively 'sbt-command))
  :last-command (lambda (arg) (sbt-run-previous-command))
- :repl (lambda (arg) (sbt-command "console")))
+ :repl (lambda (arg) (sbt-command "console"))
+ :cleanup (lambda (arg)
+            (projectile-kill-buffers)
+            (jw--run-cmd "docker compose stop && docker compose -f rm" :after-process-finish (lambda (proc) (jw--kill-process-buffer proc))))
+            )
 #+END_SRC
 
 support ammonite repl in org babel, requires `amm` command, or ammonite-repl
