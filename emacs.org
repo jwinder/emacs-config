@@ -2030,11 +2030,11 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
     (-find (lambda (command) (alist-get (if (stringp command) (intern command) command) scripts))
            commands)))
 
-(setq jw-js--last-raw-command nil) ;; todo -- doesn't cache last command per project.
+(setq jw-js--last-command-global nil)
 (defun jw-js-run-raw-command (arg &optional command)
   (interactive "P")
   (message command)
-  (setq jw-js--last-raw-command command)
+  (setq jw-js--last-command-global command)
   (let ((cmd (or command (read-shell-command "Run: "))))
     (jw--run-cmd cmd
                  :process-name (jw-js--make-process-name cmd)
@@ -2051,17 +2051,30 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   (let ((command (jw-js--find-command commands arg)))
     (if command (jw-js-command arg command) (message "Could not find command to run in %S" commands))))
 
+(defun jw-js--find-entrypoint ()
+  (-find 'f-exists? (list "index.js" "server.js" "app.js" "src/index.js" "src/server.js" "src/app.js")))
+
+;; todojoe -- elgot/lsp
+(defun jw-js-start (arg)
+  (interactive "P")
+  (jw-js--run-first-command arg (list "dev" "start")))
+
+(defun jw-js-run (arg)
+  (interactive "P")
+  (let ((entrypoint (jw-js--find-entrypoint)))
+    (if entrypoint (jw-js-run-raw-command arg (format "node %s" entrypoint)) (jw-js-start arg))))
+
 (jw-runbook-setup-type
  "js"
  :install (lambda (arg) (jw-js-command arg "install"))
- :start (lambda (arg) (jw-js--run-first-command arg (list "start" "dev"))) ;; todojoe -- elgot/lsp.
- :run nil ;; todojoe "node index.js/server.js" or something
+ :start (lambda (arg) (jw-js-start arg))
+ :run (lambda (arg) (jw-js-run arg))
  :compile (lambda (arg) (jw-js--run-first-command arg (list "rebuild" "build")))
  :test (lambda (arg) (jw-js-command arg "test")) ;; todojoe -- compilation mode
  :test-only nil
  :lint (lambda (arg) (jw-js-command arg "lint"))
  :command (lambda (arg) (jw-js-command arg))
- :last-command (lambda (arg) (jw-js-run-raw-command arg jw-js--last-raw-command))
+ :last-command (lambda (arg) (jw-js-run-raw-command arg jw-js--last-command-global))
  :repl (lambda (arg) (jw-js-run-raw-command arg "node"))
  :cleanup (lambda (arg)
             (projectile-kill-buffers)
