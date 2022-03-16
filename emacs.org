@@ -54,6 +54,7 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
             (defalias 's-nonempty? 's-present?)
             (defalias 's-nonempty-or-nil 's-presence)))
 
+(use-package yaml)
 
 (use-package helpful
   :config (progn
@@ -2002,31 +2003,69 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 ** javascript
 
 #+BEGIN_SRC emacs-lisp
-(defun jw-js--binci-exists () (f-exists? "binci.yml"))
-(defun jw-js--get-project-name () (projectile-project-name))
+(require 'json)
+(require 'yaml)
 
-(defun jw-js-yarn-command (arg &optional command)
+(defun jw-js--binci-p () (and (executable-find "binci") (f-exists? "binci.yml")))
+(defun jw-js--get-project-name () (projectile-project-name))
+(defun jw-js--npm-run-command () (if (executable-find "yarn") "yarn" "npm run"))
+(defun jw-js--binci-run-command () "binci")
+(defun jw-js--make-process-name (process-name) (format "%s-%s" (jw-js--get-project-name) process-name))
+(defun jw-js--make-buffer-name (process-name) (format "*%s*<%s>" process-name (jw-js--get-project-name)))
+
+(defun jw-js--package-json-scripts-alist ()
+  (alist-get 'scripts (json-parse-string (f-read-text "package.json") :object-type 'alist)))
+
+(defun jw-js--binci-yml-tasks-alist ()
+  (alist-get 'tasks (yaml-parse-string (f-read-text "binci.yml") :object-type 'alist)))
+
+(defun jw-js--force-package-json (&optional current-arg)
+  (or current-arg (not (jw-js--binci-p))))
+
+(defun jw-js--get-scripts (&optional current-arg)
+  (if (jw-js--force-package-json current-arg) (jw-js--package-json-scripts-alist) (jw-js--binci-yml-tasks-alist)))
+
+(defun jw-js--find-command (commands &optional current-arg)
+  (let ((scripts (jw-js--get-scripts current-arg )))
+    (-find (lambda (command) (alist-get (if (stringp command) (intern command) command) scripts))
+           commands)))
+
+(setq jw-js--last-raw-command nil) ;; todo -- doesn't cache last command per project.
+(defun jw-js-run-raw-command (arg &optional command)
   (interactive "P")
-  (let* ((cmd-start (if (or arg (not (jw-js--binci-exists))) "yarn" "binci"))
+  (message command)
+  (setq jw-js--last-raw-command command)
+  (let ((cmd (or command (read-shell-command "Run: "))))
+    (jw--run-cmd cmd
+                 :process-name (jw-js--make-process-name cmd)
+                 :buffer-name (jw-js--make-buffer-name cmd)
+                 :tail-output t)))
+
+(defun jw-js-command (arg &optional command)
+  (interactive "P")
+  (let* ((cmd-start (if (jw-js--force-package-json arg) (jw-js--npm-run-command) (jw-js--binci-run-command)))
          (cmd (if command (concat cmd-start " " command) (read-shell-command "Run: " (concat cmd-start " ")))))
-    (message cmd)
-    (jw--run-cmd cmd :buffer-name (format "*%s*<%s>" cmd (jw-js--get-project-name)) :tail-output t)))
+    (jw-js-run-raw-command arg cmd)))
+
+(defun jw-js--run-first-command (arg commands)
+  (let ((command (jw-js--find-command commands arg)))
+    (if command (jw-js-command arg command) (message "Could not find command to run in %S" commands))))
 
 (jw-runbook-setup-type
  "js"
- :install (lambda (arg) (jw-js-yarn-command arg "install"))
- :start (lambda (arg) (jw-js-yarn-command arg "dev")) ;; todojoe -- delegate to dev or start depending on the contents of package.json. elgot/lsp startup.
- :run 'ignore ;; todojoe
- :compile 'ignore ;; todojoe
- :test (lambda (arg) (jw-js-yarn-command arg "test")) ;; todojoe -- compilation mode
- :test-only (lambda (arg) (jw-js-yarn-command arg "test"))
- :lint (lambda (arg) (jw-js-yarn-command arg "lint"))
- :command (lambda (arg) (jw-js-yarn-command arg))
- :last-command 'ignore
- :repl (lambda (arg) (jw--run-cmd "node" :tail-output t))
+ :install (lambda (arg) (jw-js-command arg "install"))
+ :start (lambda (arg) (jw-js--run-first-command arg (list "start" "dev"))) ;; todojoe -- elgot/lsp.
+ :run nil ;; todojoe "node index.js/server.js" or something
+ :compile (lambda (arg) (jw-js--run-first-command arg (list "rebuild" "build")))
+ :test (lambda (arg) (jw-js-command arg "test")) ;; todojoe -- compilation mode
+ :test-only nil
+ :lint (lambda (arg) (jw-js-command arg "lint"))
+ :command (lambda (arg) (jw-js-command arg))
+ :last-command (lambda (arg) (jw-js-run-raw-command arg jw-js--last-raw-command))
+ :repl (lambda (arg) (jw-js-run-raw-command arg "node"))
  :cleanup (lambda (arg)
             (projectile-kill-buffers)
-            (when (jw-js--binci-exists)
+            (when (jw-js--binci-p)
               (jw--run-cmd "binci --cleanup"
                            :after-process-finish (lambda (proc) (jw--kill-process-buffer proc))))
             ))
