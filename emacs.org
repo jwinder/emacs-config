@@ -2037,9 +2037,9 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (setq jw-js--last-command-global nil)
 (defun jw-js-run-raw-command (arg &optional command)
   (interactive "P")
-  (message command)
-  (setq jw-js--last-command-global command)
   (let ((cmd (or command (read-shell-command "Run: "))))
+    (message cmd)
+    (setq jw-js--last-command-global cmd)
     (jw--run-cmd cmd
                  :process-name (jw-js--make-process-name cmd)
                  :buffer-name (jw-js--make-buffer-name cmd)
