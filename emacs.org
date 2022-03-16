@@ -2056,7 +2056,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
     (if command (jw-js-command arg command) (message "Could not find command to run in %S" commands))))
 
 (defun jw-js--find-entrypoint ()
-  (-find 'f-exists? (list "index.js" "server.js" "app.js" "src/index.js" "src/server.js" "src/app.js")))
+  (-find 'f-exists? (list "index.js" "server.js" "app.js" "main.js" "src/index.js" "src/server.js" "src/app.js" "src/main.js")))
 
 ;; todojoe -- elgot/lsp
 (defun jw-js-start (arg)
