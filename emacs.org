@@ -239,6 +239,12 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--symbol-name (symbol-or-string)
   (if (symbolp symbol-or-string) (symbol-name symbol-or-string) symbol-or-string))
 
+(defun jw--as-function (func)
+  (if (symbolp func) (symbol-function func)
+    (if (stringp func) (symbol-function (intern func))
+      (if (functionp func) func
+        nil))))
+
 (defun jw--http-get-request-to-string (url)
   (with-current-buffer (url-retrieve-synchronously url)
     (goto-char url-http-end-of-headers)
@@ -280,13 +286,11 @@ For commands that have already finished, this will clean up the process buffer a
 For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive.
 
 `:process-name' can be used to override the automatic naming of the process & buffer (from the `command').
-`:before-process-creation' is an optional zero-arg lambda that is run before the process is started.
-`:after-process-creation' is an optional one-arg lambda (providing the process an arg) that is run after the process is started.
-`:after-process-finish' is an optional one-arg lambda (providing the process as an arg) that is run after the process finishes.
+`:before-process-creation' is an optional zero-arg function that is run before the process is started.
+`:after-process-creation' is an optional one-arg function (providing the process an arg) that is run after the process is started.
+`:after-process-finish' is an optional one-arg function (providing the process as an arg) that is run after the process finishes.
 `:tail-output' will direct the cursor to tail the output in the emacs buffer, instead of leaving it at the top of the buffer.
 `:delete-tmp-script' will remove the underlying shell script, instead of leaving it in the tmp directory.
-
-Warning: The optional lambda functions currently MUST be lambdas, not symbols with function definitions.
 "
   (require 'comint)
   (let* ((prepared-cmd (string-trim command))
@@ -304,17 +308,20 @@ Warning: The optional lambda functions currently MUST be lambdas, not symbols wi
           (when (get-buffer cmd-buffer-name) (kill-buffer cmd-buffer-name))
           (jw--file-write tmp-script-contents tmp-script-abs-filename)
           (unless (file-executable-p tmp-script-abs-filename) (chmod tmp-script-abs-filename #o744))
-          (let* ((process-buffer (get-buffer-create cmd-buffer-name))
-                 (run-cmd (lambda ()
-                            (insert prepared-cmd "\n\n")
-                            (when before-process-creation (funcall before-process-creation))
-                            (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
-                            (let ((proc (get-buffer-process process-buffer)))
-                              (when after-process-creation (funcall after-process-creation proc))
-                              (jw--do-when-process-finishes (get-buffer-process process-buffer)
-                                                            `(lambda (proc)
-                                                               (when ,after-process-finish (funcall ,after-process-finish proc))
-                                                               (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force))))))))
+          (letrec ((process-buffer (get-buffer-create cmd-buffer-name))
+                   (before-process-creation-func (jw--as-function before-process-creation))
+                   (after-process-creation-func (jw--as-function after-process-creation))
+                   (after-process-finish-func (jw--as-function after-process-finish))
+                   (run-cmd (lambda ()
+                              (insert prepared-cmd "\n\n")
+                              (when before-process-creation-func (funcall before-process-creation-func))
+                              (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
+                              (let ((proc (get-buffer-process process-buffer)))
+                                (when after-process-creation-func (funcall after-process-creation-func proc))
+                                (jw--do-when-process-finishes (get-buffer-process process-buffer)
+                                                              `(lambda (proc)
+                                                                 (when ,after-process-finish-func (funcall ,after-process-finish-func proc))
+                                                                 (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force))))))))
             (switch-to-buffer process-buffer)
             (if tail-output (funcall run-cmd) (save-excursion (funcall run-cmd)))))))))
 
