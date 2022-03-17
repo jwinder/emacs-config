@@ -1077,7 +1077,6 @@ argument makes the windows rotate backwards."
 (global-set-key (kbd "C-z") nil) ;; remove suspend
 (global-set-key (kbd "C-x C-z") nil)
 
-(global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "M-*") 'calculator)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
@@ -1735,7 +1734,9 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (define-key ivy-minibuffer-map (kbd "C-o") 'ivy-dispatching-done)
 (define-key ivy-minibuffer-map (kbd "M-o") 'ivy-dispatching-done-ivy)
 (global-set-key (kbd "C-x C-f") 'counsel-find-file-dwim)
+(global-set-key (kbd "C-x f") 'pop-to-buffer)
 (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "C-x E") 'counsel-kmacro)
 (global-set-key (kbd "C-x p") 'counsel-emacs-processes-dwim)
 (global-set-key (kbd "C-x P") 'proced)
@@ -1752,7 +1753,6 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 (define-key org-mode-map (kbd "C-c C-j") 'counsel-outline) ;; counsel-org-goto
 (add-hook 'eshell-mode-hook (lambda () (define-key eshell-mode-map (kbd "M-p") 'counsel-esh-history)))
-
 
 (define-key help-map (kbd "b") 'counsel-descbinds)
 (define-key help-map (kbd "f") 'counsel-describe-function)
