@@ -279,7 +279,7 @@ These are non-interactive library functions useful in other parts of this config
 (setq jw--run-cmd-shell "bash")
 (setq jw--run-cmd-script-dir "/tmp/emacs-jw-run-cmd/")
 
-(cl-defun jw--run-cmd (command &key process-name buffer-name before-process-creation after-process-creation after-process-finish tail-output delete-tmp-script)
+(cl-defun jw--run-cmd (command &key process-name buffer-name before-process-creation after-process-creation after-process-finish tail-output kill-process-buffer delete-tmp-script)
   "An opinionated wrapper around `make-comint-in-buffer'.
 
 For commands that have already finished, this will clean up the process buffer and re-run the command.
@@ -313,14 +313,17 @@ For long running processes, this will always toggle back and forth between the p
                    (after-process-creation-func (jw--as-function after-process-creation))
                    (after-process-finish-func (jw--as-function after-process-finish))
                    (run-cmd (lambda ()
-                              (insert prepared-cmd "\n\n")
                               (when before-process-creation-func (funcall before-process-creation-func))
+                              (insert cmd-buffer-name "\n\n")
+                              (message cmd-buffer-name)
                               (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
                               (let ((proc (get-buffer-process process-buffer)))
                                 (when after-process-creation-func (funcall after-process-creation-func proc))
                                 (jw--do-when-process-finishes (get-buffer-process process-buffer)
                                                               `(lambda (proc)
+                                                                 (message "%s finished" ,cmd-buffer-name)
                                                                  (when ,after-process-finish-func (funcall ,after-process-finish-func proc))
+                                                                 (when ,kill-process-buffer (jw--kill-buffer ,process-buffer))
                                                                  (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force))))))))
             (switch-to-buffer process-buffer)
             (if tail-output (funcall run-cmd) (save-excursion (funcall run-cmd)))))))))
@@ -1443,9 +1446,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 (defun jw-todo-backup (arg)
   (interactive "P")
   (jw--run-cmd "todo-backup"
-               :after-process-finish `(lambda (proc)
-                                        (when ,(not arg) (jw--kill-process-buffer proc))
-                                        (message "Command jw-todo-backup finished"))))
+               :after-process-finish `(lambda (proc) (when ,(not arg) (jw--kill-process-buffer proc)))))
 
 (setq jw-org-agenda-pre-hook nil)
 
@@ -1994,7 +1995,7 @@ very opinionated project development lifecycle commands, an alternative to proje
  :repl (lambda (arg) (sbt-command "console"))
  :cleanup (lambda (arg)
             (projectile-kill-buffers)
-            (jw--run-cmd "docker compose stop && docker compose -f rm" :after-process-finish 'jw--kill-process-buffer)))
+            (jw--run-cmd "docker compose stop && docker compose -f rm" :kill-process-buffer t)))
 #+END_SRC
 
 support ammonite repl in org babel, requires `amm` command, or ammonite-repl
@@ -2090,7 +2091,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
  :repl (lambda (arg) (jw-js-run-raw-command arg "node"))
  :cleanup (lambda (arg)
             (projectile-kill-buffers)
-            (when (jw-js--binci-p) (jw--run-cmd "binci --cleanup" :after-process-finish 'jw--kill-process-buffer))))
+            (when (jw-js--binci-p) (jw--run-cmd "binci --cleanup" :kill-process-buffer t))))
 #+END_SRC
 
 support typescript in org babel
