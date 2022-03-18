@@ -279,7 +279,7 @@ These are non-interactive library functions useful in other parts of this config
 (setq jw--run-cmd-shell "bash")
 (setq jw--run-cmd-script-dir "/tmp/emacs-jw-run-cmd/")
 
-(cl-defun jw--run-cmd (command &key process-name buffer-name before-process-creation after-process-creation after-process-finish tail-output kill-process-buffer delete-tmp-script)
+(cl-defun jw--run-cmd (command &key process-name before-process-creation after-process-creation after-process-finish tail-output kill-process-buffer delete-tmp-script)
   "An opinionated wrapper around `make-comint-in-buffer'.
 
 For commands that have already finished, this will clean up the process buffer and re-run the command.
@@ -289,13 +289,15 @@ For long running processes, this will always toggle back and forth between the p
 `:before-process-creation' is an optional zero-arg function that is run before the process is started.
 `:after-process-creation' is an optional one-arg function (providing the process an arg) that is run after the process is started.
 `:after-process-finish' is an optional one-arg function (providing the process as an arg) that is run after the process finishes.
-`:tail-output' will direct the cursor to tail the output in the emacs buffer, instead of leaving it at the top of the buffer.
-`:delete-tmp-script' will remove the underlying shell script, instead of leaving it in the tmp directory.
+`:tail-output' t will direct the cursor to tail the output in the emacs buffer, instead of leaving it at the top of the buffer.
+`:kill-process-buffer' t will kill the buffer when the process finishes or exits.
+`:delete-tmp-script' t will remove the underlying shell script, instead of leaving it in the tmp directory.
 "
   (require 'comint)
   (let* ((prepared-cmd (string-trim command))
-         (cmd-process-name (or process-name (s-collapse-whitespace (s-left 100 prepared-cmd))))
-         (cmd-buffer-name (or buffer-name (format "*%s*" cmd-process-name))))
+         (prepared-cmd-readable (s-collapse-whitespace (s-left 100 prepared-cmd)))
+         (cmd-process-name (or process-name (format "*%s*" prepared-cmd-readable)))
+         (cmd-buffer-name cmd-process-name)) ;; keep the process & buffer name the same
     (if (s-empty? prepared-cmd)
         (message "Empty command! Doing nothing.")
       (if (process-live-p (get-process cmd-process-name))
@@ -314,14 +316,14 @@ For long running processes, this will always toggle back and forth between the p
                    (after-process-finish-func (jw--as-function after-process-finish))
                    (run-cmd (lambda ()
                               (when before-process-creation-func (funcall before-process-creation-func))
-                              (insert cmd-buffer-name "\n\n")
-                              (message cmd-buffer-name)
+                              (insert prepared-cmd "\n\n")
+                              (message cmd-process-name)
                               (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
                               (let ((proc (get-buffer-process process-buffer)))
                                 (when after-process-creation-func (funcall after-process-creation-func proc))
                                 (jw--do-when-process-finishes (get-buffer-process process-buffer)
                                                               `(lambda (proc)
-                                                                 (message "%s finished" ,cmd-buffer-name)
+                                                                 (message "%s finished" ,cmd-process-name)
                                                                  (when ,after-process-finish-func (funcall ,after-process-finish-func proc))
                                                                  (when ,kill-process-buffer (jw--kill-buffer ,process-buffer))
                                                                  (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force))))))))
@@ -2023,8 +2025,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (defun jw-js--get-project-name () (projectile-project-name))
 (defun jw-js--npm-run-command () (if (executable-find "yarn") "yarn" "npm run"))
 (defun jw-js--binci-run-command () "binci")
-(defun jw-js--make-process-name (process-name) (format "%s-%s" (jw-js--get-project-name) process-name))
-(defun jw-js--make-buffer-name (process-name) (format "*%s*<%s>" process-name (jw-js--get-project-name)))
+(defun jw-js--make-process-name (process-name) (format "*%s*<%s>" process-name (jw-js--get-project-name)))
 
 (defun jw-js--package-json-scripts-alist ()
   (alist-get 'scripts (json-parse-string (f-read-text "package.json") :object-type 'alist)))
@@ -2049,10 +2050,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   (let ((cmd (or command (read-shell-command "Run: "))))
     (message cmd)
     (setq jw-js--last-command-global cmd)
-    (jw--run-cmd cmd
-                 :process-name (jw-js--make-process-name cmd)
-                 :buffer-name (jw-js--make-buffer-name cmd)
-                 :tail-output t)))
+    (jw--run-cmd cmd :process-name (jw-js--make-process-name cmd) :tail-output t)))
 
 (defun jw-js-command (arg &optional command)
   (interactive "P")
