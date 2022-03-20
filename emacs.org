@@ -1606,7 +1606,7 @@ customize speed commands
     ("1" . (org-priority ?A))
     ("2" . (org-priority ?B))
     ("3" . (org-priority ?C))
-    (":" . org-set-tags-command)
+    ("q" . org-set-tags-command)
     ("e" . org-set-effort)
     ("E" . org-inc-effort)
     ("I" . org-clock-in)
