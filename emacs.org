@@ -1471,7 +1471,10 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
   (org-id-get-create arg)
   (org-id-copy))
 
-(setq org-use-speed-commands t
+(setq org-special-ctrl-a/e t
+      org-special-ctrl-k t
+      org-special-ctrl-o t
+      org-use-speed-commands t
       org-startup-folded t
       org-startup-with-inline-images t
       org-hide-block-startup t
