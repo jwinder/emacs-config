@@ -566,6 +566,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (put 'narrow-to-region 'disabled nil)
+(put 'narrow-to-page 'disabled nil)
 
 ;; (setq calc-angle-mode 'rad)
 (setq calc-angle-mode 'deg)
@@ -1013,6 +1014,15 @@ argument makes the windows rotate backwards."
   (interactive)
   (dired-do-kill-line-dwim 1))
 
+(defun jw-narrow-dwim (arg)
+  (interactive "P")
+  (cond (arg (widen))
+        ((buffer-narrowed-p) (widen))
+        ((region-active-p) (narrow-to-region (region-beginning) (region-end)))
+        ((org-at-heading-p) (org-narrow-to-subtree))
+        ((org-at-block-p) (org-narrow-to-block))
+        (t (narrow-to-defun))))
+
 (defun jw-pair-programming-on ()
   (interactive)
   (mode-line-on)
@@ -1116,6 +1126,8 @@ argument makes the windows rotate backwards."
 (define-key dired-mode-map (kbd "$") 'dired-hide-subdir-dwim)
 (define-key dired-mode-map (kbd "k") 'dired-do-kill-line-dwim)
 (define-key dired-mode-map (kbd "K") 'dired-do-kill-subdir-dwim)
+(define-key narrow-map (kbd "r") 'narrow-to-region)
+(define-key narrow-map (kbd "n") 'jw-narrow-dwim)
 (define-key help-map (kbd "M-n") 'helpful-at-point)
 (define-key help-map (kbd "H") 'info-apropos)
 (define-key help-map (kbd "h") 'cheat-sh)
