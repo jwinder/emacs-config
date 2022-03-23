@@ -1336,32 +1336,18 @@ terminal additions
 ;; magit works faster with the full path to git instead of just "git". https://magit.vc/manual/magit/MacOS-Performance.html
 ;; also, use-package magit tries to set this before jw-env-set is called, pointing it to a different git.
 (setq magit-git-executable (executable-find "git"))
+;; magit-status-goto-file-position
 
-(setq magit-define-global-key-bindings nil)
+(setq magit-status-goto-file-position t
+      magit-define-global-key-bindings nil)
 (setq transient-enable-popup-navigation t)
 (setq transient-display-buffer-action '(display-buffer-below-selected))
-
-;; source: https://github.com/alphapapa/unpackaged.el
-(defun jw-magit-status-dwim ()
-  (interactive)
-  (let* ((buffer-file-path (when buffer-file-name (file-relative-name buffer-file-name (locate-dominating-file buffer-file-name ".git"))))
-         (section-ident `((file . ,buffer-file-path) (unstaged) (status))))
-    (call-interactively #'magit-status)
-    (when buffer-file-path
-      (goto-char (point-min))
-      (cl-loop until (when (equal section-ident (magit-section-ident (magit-current-section)))
-                       (magit-section-show (magit-current-section))
-                       (recenter)
-                       t)
-               do (condition-case nil
-                      (magit-section-forward)
-                    (error (cl-return (magit-status-goto-initial-section-1))))))))
 
 (define-prefix-command 'jw-magit-map)
 (global-set-key (kbd "M-g") 'jw-magit-map)
 (global-set-key (kbd "M-G") goto-map) ;; move old M-g (goto-map) to capital G since I'm hijacking it for magit
 
-(define-key jw-magit-map (kbd "g") 'jw-magit-status-dwim)
+(define-key jw-magit-map (kbd "g") 'magit-status)
 (define-key jw-magit-map (kbd "d") 'magit-dispatch)
 (define-key jw-magit-map (kbd "f") 'magit-file-dispatch)
 
