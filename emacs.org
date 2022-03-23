@@ -1337,8 +1337,7 @@ terminal additions
 ;; also, use-package magit tries to set this before jw-env-set is called, pointing it to a different git.
 (setq magit-git-executable (executable-find "git"))
 
-(setq magit-status-goto-file-position t
-      magit-define-global-key-bindings nil)
+(setq magit-define-global-key-bindings nil)
 (setq transient-enable-popup-navigation t)
 (setq transient-display-buffer-action '(display-buffer-below-selected))
 
