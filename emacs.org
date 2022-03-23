@@ -1336,7 +1336,6 @@ terminal additions
 ;; magit works faster with the full path to git instead of just "git". https://magit.vc/manual/magit/MacOS-Performance.html
 ;; also, use-package magit tries to set this before jw-env-set is called, pointing it to a different git.
 (setq magit-git-executable (executable-find "git"))
-;; magit-status-goto-file-position
 
 (setq magit-status-goto-file-position t
       magit-define-global-key-bindings nil)
