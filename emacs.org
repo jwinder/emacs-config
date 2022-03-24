@@ -1348,6 +1348,7 @@ terminal additions
 (define-key jw-magit-map (kbd "g") 'magit-status)
 (define-key jw-magit-map (kbd "d") 'magit-dispatch)
 (define-key jw-magit-map (kbd "f") 'magit-file-dispatch)
+(define-key jw-magit-map (kbd "M-w") 'browse-at-remote)
 
 (setq gist-view-gist t)
 
