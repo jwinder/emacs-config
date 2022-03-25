@@ -571,6 +571,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
+(put 'set-goal-column 'disabled nil)
 
 ;; (setq calc-angle-mode 'rad)
 (setq calc-angle-mode 'deg)
