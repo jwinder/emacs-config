@@ -1602,26 +1602,14 @@ customize speed commands
 
 (setq org-speed-commands-user
   '(("navigation")
-    ("n" . (org-speed-move-safe 'org-next-visible-heading))
-    ("p" . (org-speed-move-safe 'org-previous-visible-heading))
     ("f" . (org-speed-move-safe 'org-forward-heading-same-level))
     ("b" . (org-speed-move-safe 'org-backward-heading-same-level))
-    ("u" . (org-speed-move-safe 'outline-up-heading))
     ("*" . org-display-outline-path)
     ("o" . org-open-at-point)
-    ("s" . org-toggle-narrow-to-subtree)
-    ("w" . widen)
+    ("n" . jw-narrow-dwim)
     ("/" . org-sparse-tree)
-
-    ("move subtrees around")
     ("@" . org-mark-subtree)
-    ("W" . org-cut-subtree)
-    ("U" . org-metaup)
-    ("D" . org-metadown)
-    ("r" . org-metaright)
-    ("l" . org-metaleft)
-    ("R" . org-shiftmetaright)
-    ("L" . org-shiftmetaleft)
+    ("w" . org-cut-subtree)
 
     ("todo tasks")
     ("t" . org-todo)
