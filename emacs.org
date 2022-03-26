@@ -2072,8 +2072,8 @@ very opinionated project development lifecycle commands, an alternative to proje
  :last-command (lambda (arg) (sbt-run-previous-command))
  :repl (lambda (arg) (sbt-command "console"))
  :cleanup (lambda (arg)
-            (projectile-kill-buffers)
-            (jw--run-cmd "docker compose stop" :kill-process-buffer t)))
+            (jw--run-cmd "docker compose stop"
+                         :after-process-finish (lambda (arg) (projectile-kill-buffers)))))
 #+END_SRC
 
 support ammonite repl in org babel, requires `amm` command, or ammonite-repl
@@ -2164,9 +2164,10 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
  :last-command (lambda (arg) (jw-js-run-raw-command arg jw-js--last-command-global))
  :repl (lambda (arg) (jw-js-run-raw-command arg "node"))
  :cleanup (lambda (arg)
-            (projectile-kill-buffers)
-            ;; (when (jw-js--binci-p) (jw--run-cmd "binci --cleanup" :kill-process-buffer t)) ;; todo -- this does't quite work for some reason
-            ))
+            (if (jw-js--binci-p)
+                (jw--run-cmd "binci --cleanup"
+                             :after-process-finish (lambda (arg) (projectile-kill-buffers)))
+              (projectile-kill-buffers))))
 #+END_SRC
 
 support typescript in org babel
