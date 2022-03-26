@@ -1906,10 +1906,13 @@ very opinionated project development lifecycle commands, an alternative to proje
          (type (cdr-safe (-find (lambda (pair) (f-exists? (f-expand (car pair) root-dir))) jw-runbook-support-project-types))))
     (if (not type) (message "Could not find project type for jw-runbook")
       (let* ((func-name (format "jw-runbook-run-%s:%s" name type))
-             (func (intern func-name)))
-        (if (not (fboundp func)) (message "%s jw-runbook function not provided" func-name)
-          (let ((default-directory root-dir))
-            (funcall func a)))))))
+             (func (intern func-name))
+             (default-func-name (format "jw-runbook-run-%s:default" name))
+             (default-func (intern default-func-name)))
+        (cond
+         ((fboundp func) (let ((default-directory root-dir)) (funcall func a)))
+         ((fboundp default-func) (let ((default-directory root-dir)) (funcall default-func a)))
+         (t (message "jw-runbook - neither %s nor %s functions bound" func-name default-func-name)))))))
 
 (defun jw-runbook-run-install (arg) (interactive "P") (jw-runbook--find-and-run-function "install" arg))
 (defun jw-runbook-run-start (arg) (interactive "P") (jw-runbook--find-and-run-function "start" arg))
@@ -1925,6 +1928,7 @@ very opinionated project development lifecycle commands, an alternative to proje
 (defun jw-runbook-run-shell-command (arg) (interactive "P") (jw-runbook--find-and-run-function "shell-command" arg))
 (defun jw-runbook-run-eshell (arg) (interactive "P") (jw-runbook--find-and-run-function "eshell" arg))
 (defun jw-runbook-run-cleanup (arg) (interactive "P") (jw-runbook--find-and-run-function "cleanup" arg))
+(defun jw-runbook-run-open-jenkins (arg) (interactive "P") (jw-runbook--find-and-run-function "open-jenkins" arg))
 
 (setq jw-runbook-keymap (make-sparse-keymap))
 
@@ -1949,9 +1953,10 @@ very opinionated project development lifecycle commands, an alternative to proje
 (define-key jw-runbook-keymap (kbd "!") 'jw-runbook-run-shell-command)
 (define-key jw-runbook-keymap (kbd "e") 'jw-runbook-run-eshell)
 (define-key jw-runbook-keymap (kbd "K") 'jw-runbook-run-cleanup)
+(define-key jw-runbook-keymap (kbd "j") 'jw-runbook-run-open-jenkins)
 
 (transient-define-prefix jw-runbook-menu ()
-  ["Runbook"
+  ["Runbook local build"
    ("I" "install         install development dependencies" jw-runbook-run-install)
    ("s" "start           start development dependencies & server locally" jw-runbook-run-start)
    ("r" "run             run non-development server locally" jw-runbook-run-run)
@@ -1966,6 +1971,9 @@ very opinionated project development lifecycle commands, an alternative to proje
    ("!" "shell-command   cmd-dwim command in project root" jw-runbook-run-shell-command)
    ("e" "eshell          eshell in project root" jw-runbook-run-eshell)
    ("K" "cleanup         kill project dev & process buffers" jw-runbook-run-cleanup)
+   ]
+  ["Runbook deployment"
+   ("j" "open-jenkins    open jenkins job in web browser" jw-runbook-run-open-jenkins)
    ])
 
 (defun jw-runbook-menu-open (&optional dir)
@@ -1985,7 +1993,7 @@ very opinionated project development lifecycle commands, an alternative to proje
  'counsel-projectile-switch-project
  '(("C-cs" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
 
-(cl-defun jw-runbook-setup-type (type &key install start run compile test-compile test test-only lint command last-command repl shell-command eshell cleanup)
+(cl-defun jw-runbook-setup-type (type &key install start run compile test-compile test test-only lint command last-command repl shell-command eshell cleanup open-jenkins)
   (when install (fset (intern (format "jw-runbook-run-install:%s" type)) install))
   (when start (fset (intern (format "jw-runbook-run-start:%s" type)) start))
   (when run (fset (intern (format "jw-runbook-run-run:%s" type)) run))
@@ -1998,11 +2006,14 @@ very opinionated project development lifecycle commands, an alternative to proje
   (when command (fset (intern (format "jw-runbook-run-command:%s" type)) command))
   (when last-command (fset (intern (format "jw-runbook-run-last-command:%s" type)) last-command))
   (when repl (fset (intern (format "jw-runbook-run-repl:%s" type)) repl))
-  (fset (intern (format "jw-runbook-run-shell-command:%s" type)) (or shell-command (lambda (arg) (cmd-dwim arg))))
-  (fset (intern (format "jw-runbook-run-eshell:%s" type)) (or eshell (lambda (arg) (eshell-dwim nil))))
-  (fset (intern (format "jw-runbook-run-cleanup:%s" type)) (or cleanup (lambda (arg) (projectile-kill-buffers)))))
+  (when shell-command (fset (intern (format "jw-runbook-run-shell-command:%s" type)) shell-command))
+  (when eshell (fset (intern (format "jw-runbook-run-eshell:%s" type)) eshell))
+  (when cleanup (fset (intern (format "jw-runbook-run-cleanup:%s" type)) cleanup))
+  (when open-jenkins (fset (intern (format "jw-runbook-run-open-jenkins:%s" type)) open-jenkins)))
 
-
+(defun jw-runbook-run-shell-command:default (arg) (cmd-dwim arg))
+(defun jw-runbook-run-eshell:default (arg) (eshell-dwim nil))
+(defun jw-runbook-run-cleanup:default (arg) (projectile-kill-buffers))
 #+END_SRC
 
 ** scala
@@ -2165,8 +2176,9 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
  :last-command (lambda (arg) (jw-js-run-raw-command arg jw-js--last-command-global))
  :repl (lambda (arg) (jw-js-run-raw-command arg "node"))
  :cleanup (lambda (arg)
-            (projectile-kill-buffers)
-            (when (jw-js--binci-p) (jw--run-cmd "binci --cleanup" :kill-process-buffer t))))
+            (if (jw-js--binci-p)
+                (jw--run-cmd "binci --cleanup" :after-process-finish (lambda (prod) (projectile-kill-buffers)))
+              (projectile-kill-buffers))))
 #+END_SRC
 
 support typescript in org babel
