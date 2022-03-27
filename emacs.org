@@ -71,7 +71,7 @@ This is a fix for http://elpa.gnu.org/packages/gnu-elpa-keyring-update.html. Can
 
 (use-package browse-at-remote)
 
-(use-package gist)
+(use-package gist) ;; possibly abandonded -- uses old version of gh, which forces an old version of pcache/eieio-persistent
 
 (use-package expand-region)
 
