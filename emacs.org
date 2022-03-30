@@ -1612,7 +1612,6 @@ customize speed commands
     ("f" . (org-speed-move-safe 'org-forward-heading-same-level))
     ("b" . (org-speed-move-safe 'org-backward-heading-same-level))
     ("*" . org-display-outline-path)
-    ("o" . org-open-at-point)
     ("n" . jw-narrow-dwim)
     ("/" . org-sparse-tree)
     ("@" . org-mark-subtree)
