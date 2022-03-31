@@ -1946,7 +1946,7 @@ very opinionated project development lifecycle commands, an alternative to proje
 (define-key jw-runbook-keymap (kbd "j") 'jw-runbook-run-open-jenkins)
 
 (transient-define-prefix jw-runbook-menu ()
-  ["Runbook local build"
+  ["Runbook"
    ("I" "install         install development dependencies" jw-runbook-run-install)
    ("s" "start           start development dependencies & server locally" jw-runbook-run-start)
    ("r" "run             run non-development server locally" jw-runbook-run-run)
@@ -1962,7 +1962,7 @@ very opinionated project development lifecycle commands, an alternative to proje
    ("e" "eshell          eshell in project root" jw-runbook-run-eshell)
    ("K" "cleanup         kill project dev & process buffers" jw-runbook-run-cleanup)
    ]
-  ["Runbook deployment"
+  ["Deployment"
    ("j" "open-jenkins    open jenkins job in web browser" jw-runbook-run-open-jenkins)
    ])
 
