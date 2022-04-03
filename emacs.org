@@ -1887,8 +1887,6 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 very opinionated project development lifecycle commands, an alternative to projectile's compile/configure/package/etc commands.
 #+BEGIN_SRC emacs-lisp
-;; todo -- projectile project name specific overrides
-
 ;; do not auto-generate this. priority can be easily controlled via the order of the list. for now, this is good enough for me.
 (setq jw-runbook-support-project-types '(("build.sbt" . "scala") ("package.json" . "js")))
 
@@ -1897,21 +1895,28 @@ very opinionated project development lifecycle commands, an alternative to proje
 (setq jw-runbook--target-location nil)
 (setq jw-runbook--current-prefix-arg nil)
 
+(defun jw-runbook--find-root () (projectile-project-root))
+(defun jw-runbook--find-project-name (&optional d) (let ((n (projectile-project-name d))) (unless (string= n "-") n)))
+
 (defun jw-runbook--find-and-run-function (name arg)
-  (let* ((root-dir (or jw-runbook--target-location (projectile-project-root)))
+  (let* ((root-dir (or jw-runbook--target-location (jw-runbook--find-root)))
+         (proj-name (jw-runbook--find-project-name root-dir))
          (a (or jw-runbook--current-prefix-arg arg))
-         (_ (setq jw-runbook--target-location nil))
-         (_ (setq jw-runbook--current-prefix-arg nil))
-         (type (cdr-safe (-find (lambda (pair) (f-exists? (f-expand (car pair) root-dir))) jw-runbook-support-project-types))))
-    (if (not type) (message "Could not find project type for jw-runbook")
-      (let* ((func-name (format "jw-runbook-run-%s:%s" name type))
-             (func (intern func-name))
-             (default-func-name (format "jw-runbook-run-%s:default" name))
-             (default-func (intern default-func-name)))
-        (cond
-         ((fboundp func) (let ((default-directory root-dir)) (funcall func a)))
-         ((fboundp default-func) (let ((default-directory root-dir)) (funcall default-func a)))
-         (t (message "jw-runbook - neither %s nor %s functions bound" func-name default-func-name)))))))
+         (_ (setq jw-runbook--target-location nil
+                  jw-runbook--current-prefix-arg nil))
+         (proj-func-name (when proj-name (format "jw-runbook-run-%s:name:%s" name proj-name)))
+         (proj-func (when proj-name (intern proj-func-name)))
+         (type (cdr-safe (-find (lambda (pair) (f-exists? (f-expand (car pair) root-dir))) jw-runbook-support-project-types)))
+         (type-func-name (when type (format "jw-runbook-run-%s:type:%s" name type)))
+         (type-func (when type (intern type-func-name)))
+         (default-func-name (format "jw-runbook-run-%s:default" name))
+         (default-func (intern default-func-name)))
+    (cond
+     ((and proj-name (fboundp proj-func)) (let ((default-directory root-dir)) (funcall proj-func a)))
+     ((not type) (message "jw-runbook - could not find project type for jw-runbook"))
+     ((fboundp type-func) (let ((default-directory root-dir)) (funcall type-func a)))
+     ((fboundp default-func) (let ((default-directory root-dir)) (funcall default-func a)))
+     (t (message "jw-runbook - could not find any bound function: %s %s %s" proj-func-name type-func-name default-func-name)))))
 
 (defun jw-runbook-run-install (arg) (interactive "P") (jw-runbook--find-and-run-function "install" arg))
 (defun jw-runbook-run-start (arg) (interactive "P") (jw-runbook--find-and-run-function "start" arg))
@@ -1992,23 +1997,27 @@ very opinionated project development lifecycle commands, an alternative to proje
  'counsel-projectile-switch-project
  '(("C-cs" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
 
-(cl-defun jw-runbook-setup-type (type &key install start run compile test-compile test test-only lint command last-command repl shell-command eshell cleanup open-jenkins)
-  (when install (fset (intern (format "jw-runbook-run-install:%s" type)) install))
-  (when start (fset (intern (format "jw-runbook-run-start:%s" type)) start))
-  (when run (fset (intern (format "jw-runbook-run-run:%s" type)) run))
-  (when compile (fset (intern (format "jw-runbook-run-compile:%s" type)) compile))
-  (when test-compile (fset (intern (format "jw-runbook-run-test-compile:%s" type)) test-compile))
-  (when test (fset (intern (format "jw-runbook-run-test:%s" type)) test))
-  (when test-only (fset (intern (format "jw-runbook-run-test-only:%s" type)) test-only))
-  (when lint (fset (intern (format "jw-runbook-run-lint:%s" type)) lint))
-  (when start (fset (intern (format "jw-runbook-run-start:%s" type)) start))
-  (when command (fset (intern (format "jw-runbook-run-command:%s" type)) command))
-  (when last-command (fset (intern (format "jw-runbook-run-last-command:%s" type)) last-command))
-  (when repl (fset (intern (format "jw-runbook-run-repl:%s" type)) repl))
-  (when shell-command (fset (intern (format "jw-runbook-run-shell-command:%s" type)) shell-command))
-  (when eshell (fset (intern (format "jw-runbook-run-eshell:%s" type)) eshell))
-  (when cleanup (fset (intern (format "jw-runbook-run-cleanup:%s" type)) cleanup))
-  (when open-jenkins (fset (intern (format "jw-runbook-run-open-jenkins:%s" type)) open-jenkins)))
+(cl-defun jw-runbook-setup (&key runbook-type runbook-name install start run compile test-compile test test-only lint command last-command repl shell-command eshell cleanup open-jenkins)
+  (if (and (not runbook-type) (not runbook-name))
+      (message "jw-runbook-setup called without neither type nor name configuration")
+    (let ((namespace (if runbook-name "name" "type"))
+          (func-name-suffix (or runbook-name runbook-type)))
+      (when install (fset (intern (format "jw-runbook-run-install:%s:%s" namespace func-name-suffix)) install))
+      (when start (fset (intern (format "jw-runbook-run-start:%s:%s" namespace func-name-suffix)) start))
+      (when run (fset (intern (format "jw-runbook-run-run:%s:%s" namespace func-name-suffix)) run))
+      (when compile (fset (intern (format "jw-runbook-run-compile:%s:%s" namespace func-name-suffix)) compile))
+      (when test-compile (fset (intern (format "jw-runbook-run-test-compile:%s:%s" namespace func-name-suffix)) test-compile))
+      (when test (fset (intern (format "jw-runbook-run-test:%s:%s" namespace func-name-suffix)) test))
+      (when test-only (fset (intern (format "jw-runbook-run-test-only:%s:%s" namespace func-name-suffix)) test-only))
+      (when lint (fset (intern (format "jw-runbook-run-lint:%s:%s" namespace func-name-suffix)) lint))
+      (when start (fset (intern (format "jw-runbook-run-start:%s:%s" namespace func-name-suffix)) start))
+      (when command (fset (intern (format "jw-runbook-run-command:%s:%s" namespace func-name-suffix)) command))
+      (when last-command (fset (intern (format "jw-runbook-run-last-command:%s:%s" namespace func-name-suffix)) last-command))
+      (when repl (fset (intern (format "jw-runbook-run-repl:%s:%s" namespace func-name-suffix)) repl))
+      (when shell-command (fset (intern (format "jw-runbook-run-shell-command:%s:%s" namespace func-name-suffix)) shell-command))
+      (when eshell (fset (intern (format "jw-runbook-run-eshell:%s:%s" namespace func-name-suffix)) eshell))
+      (when cleanup (fset (intern (format "jw-runbook-run-cleanup:%s:%s" namespace func-name-suffix)) cleanup))
+      (when open-jenkins (fset (intern (format "jw-runbook-run-open-jenkins:%s:%s" namespace func-name-suffix)) open-jenkins)))))
 
 (defun jw-runbook-run-shell-command:default (arg) (cmd-dwim arg))
 (defun jw-runbook-run-eshell:default (arg) (eshell-dwim nil))
@@ -2070,8 +2079,8 @@ very opinionated project development lifecycle commands, an alternative to proje
 (setq scala-indent:align-forms t
       scala-indent:align-parameters t)
 
-(jw-runbook-setup-type
- "scala"
+(jw-runbook-setup
+ :runbook-type "scala"
  :install (lambda (arg) (jw-sbt))
  :start (lambda (arg) (jw-sbt))
  :run (lambda (arg) (sbt-command "run"))
@@ -2162,8 +2171,8 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   (let ((entrypoint (jw-js--find-entrypoint)))
     (if entrypoint (jw-js-run-raw-command arg (format "node %s" entrypoint)) (jw-js-start arg))))
 
-(jw-runbook-setup-type
- "js"
+(jw-runbook-setup
+ :runbook-type "js"
  :install (lambda (arg) (jw-js-command arg "install"))
  :start (lambda (arg) (jw-js-start arg))
  :run (lambda (arg) (jw-js-run arg))
