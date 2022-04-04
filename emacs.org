@@ -1998,6 +1998,7 @@ very opinionated project development lifecycle commands, an alternative to proje
  '(("C-cs" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
 
 (cl-defun jw-runbook-setup (&key runbook-type runbook-name install start run compile test-compile test test-only lint command last-command repl shell-command eshell cleanup open-jenkins)
+  (declare (indent defun))
   (if (and (not runbook-type) (not runbook-name))
       (message "jw-runbook-setup called without neither type nor name configuration")
     (let ((namespace (if runbook-name "name" "type"))
@@ -2079,21 +2080,20 @@ very opinionated project development lifecycle commands, an alternative to proje
 (setq scala-indent:align-forms t
       scala-indent:align-parameters t)
 
-(jw-runbook-setup
- :runbook-type "scala"
- :install (lambda (arg) (jw-sbt))
- :start (lambda (arg) (jw-sbt))
- :run (lambda (arg) (sbt-command "run"))
- :compile (lambda (arg) (sbt-command "compile"))
- :test-compile (lambda (arg) (sbt-command "Test / compile"))
- :test (lambda (arg) (sbt-command "test"))
- :test-only 'sbt-test-only
- :command (lambda (arg) (call-interactively 'sbt-command))
- :last-command (lambda (arg) (sbt-run-previous-command))
- :repl (lambda (arg) (sbt-command "console"))
- :cleanup (lambda (arg)
-            (jw--run-cmd "docker compose stop"
-                         :after-process-finish (lambda (arg) (projectile-kill-buffers)))))
+(jw-runbook-setup :runbook-type "scala"
+  :install (lambda (arg) (jw-sbt))
+  :start (lambda (arg) (jw-sbt))
+  :run (lambda (arg) (sbt-command "run"))
+  :compile (lambda (arg) (sbt-command "compile"))
+  :test-compile (lambda (arg) (sbt-command "Test / compile"))
+  :test (lambda (arg) (sbt-command "test"))
+  :test-only 'sbt-test-only
+  :command (lambda (arg) (call-interactively 'sbt-command))
+  :last-command (lambda (arg) (sbt-run-previous-command))
+  :repl (lambda (arg) (sbt-command "console"))
+  :cleanup (lambda (arg)
+             (jw--run-cmd "docker compose stop"
+                          :after-process-finish (lambda (arg) (projectile-kill-buffers)))))
 #+END_SRC
 
 support ammonite repl in org babel, requires `amm` command, or ammonite-repl
@@ -2171,23 +2171,22 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   (let ((entrypoint (jw-js--find-entrypoint)))
     (if entrypoint (jw-js-run-raw-command arg (format "node %s" entrypoint)) (jw-js-start arg))))
 
-(jw-runbook-setup
- :runbook-type "js"
- :install (lambda (arg) (jw-js-command arg "install"))
- :start (lambda (arg) (jw-js-start arg))
- :run (lambda (arg) (jw-js-run arg))
- :compile (lambda (arg) (jw-js--run-first-command arg (list "rebuild" "build")))
- :test (lambda (arg) (jw-js-command arg "test")) ;; todojoe -- compilation mode
- :test-only nil
- :lint (lambda (arg) (jw-js-command arg "lint"))
- :command (lambda (arg) (jw-js-command arg))
- :last-command (lambda (arg) (jw-js-run-raw-command arg jw-js--last-command-global))
- :repl (lambda (arg) (jw-js-run-raw-command arg "node"))
- :cleanup (lambda (arg)
-            (if (jw-js--binci-p)
-                (jw--run-cmd "binci --cleanup"
-                             :after-process-finish (lambda (arg) (projectile-kill-buffers)))
-              (projectile-kill-buffers))))
+(jw-runbook-setup :runbook-type "js"
+  :install (lambda (arg) (jw-js-command arg "install"))
+  :start (lambda (arg) (jw-js-start arg))
+  :run (lambda (arg) (jw-js-run arg))
+  :compile (lambda (arg) (jw-js--run-first-command arg (list "rebuild" "build")))
+  :test (lambda (arg) (jw-js-command arg "test")) ;; todojoe -- compilation mode
+  :test-only nil
+  :lint (lambda (arg) (jw-js-command arg "lint"))
+  :command (lambda (arg) (jw-js-command arg))
+  :last-command (lambda (arg) (jw-js-run-raw-command arg jw-js--last-command-global))
+  :repl (lambda (arg) (jw-js-run-raw-command arg "node"))
+  :cleanup (lambda (arg)
+             (if (jw-js--binci-p)
+                 (jw--run-cmd "binci --cleanup"
+                              :after-process-finish (lambda (arg) (projectile-kill-buffers)))
+               (projectile-kill-buffers))))
 #+END_SRC
 
 support typescript in org babel
