@@ -317,7 +317,7 @@ For long running processes, this will always toggle back and forth between the p
                    (after-process-finish-func (jw--as-function after-process-finish))
                    (run-cmd (lambda ()
                               (when before-process-creation-func (funcall before-process-creation-func))
-                              (insert prepared-cmd "\n\n")
+                              (insert "$ " prepared-cmd "\n\n")
                               (message cmd-process-name)
                               (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
                               (let ((proc (get-buffer-process process-buffer)))
