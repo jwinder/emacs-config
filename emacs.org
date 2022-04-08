@@ -1936,9 +1936,9 @@ very opinionated project development lifecycle commands, an alternative to proje
 (defun jw-runbook-run-command (arg) (interactive "P") (jw-runbook--find-and-run-function "command" arg))
 (defun jw-runbook-run-last-command (arg) (interactive "P") (jw-runbook--find-and-run-function "last-command" arg))
 (defun jw-runbook-run-repl (arg) (interactive "P") (jw-runbook--find-and-run-function "repl" arg))
+(defun jw-runbook-run-cleanup (arg) (interactive "P") (jw-runbook--find-and-run-function "cleanup" arg))
 (defun jw-runbook-run-shell-command (arg) (interactive "P") (jw-runbook--find-and-run-function "shell-command" arg))
 (defun jw-runbook-run-eshell (arg) (interactive "P") (jw-runbook--find-and-run-function "eshell" arg))
-(defun jw-runbook-run-cleanup (arg) (interactive "P") (jw-runbook--find-and-run-function "cleanup" arg))
 (defun jw-runbook-run-open-jenkins (arg) (interactive "P") (jw-runbook--find-and-run-function "open-jenkins" arg))
 
 (setq jw-runbook-keymap (make-sparse-keymap))
@@ -1950,6 +1950,7 @@ very opinionated project development lifecycle commands, an alternative to proje
   (set-transient-map jw-runbook-keymap))
 
 (global-set-key (kbd "C-c s") 'jw-runbook-command)
+
 (define-key jw-runbook-keymap (kbd "I") 'jw-runbook-run-install)
 (define-key jw-runbook-keymap (kbd "s") 'jw-runbook-run-start)
 (define-key jw-runbook-keymap (kbd "r") 'jw-runbook-run-run)
@@ -1961,30 +1962,34 @@ very opinionated project development lifecycle commands, an alternative to proje
 (define-key jw-runbook-keymap (kbd ":") 'jw-runbook-run-command)
 (define-key jw-runbook-keymap (kbd "l") 'jw-runbook-run-last-command)
 (define-key jw-runbook-keymap (kbd "$") 'jw-runbook-run-repl)
+(define-key jw-runbook-keymap (kbd "K") 'jw-runbook-run-cleanup)
+
 (define-key jw-runbook-keymap (kbd "!") 'jw-runbook-run-shell-command)
 (define-key jw-runbook-keymap (kbd "e") 'jw-runbook-run-eshell)
-(define-key jw-runbook-keymap (kbd "K") 'jw-runbook-run-cleanup)
+
 (define-key jw-runbook-keymap (kbd "j") 'jw-runbook-run-open-jenkins)
 
 (transient-define-prefix jw-runbook-menu ()
   ["Runbook"
-   ("I" "install         install development dependencies" jw-runbook-run-install)
-   ("s" "start           start development dependencies & server locally" jw-runbook-run-start)
-   ("r" "run             run non-development server locally" jw-runbook-run-run)
-   ("c" "compile         run compile function" jw-runbook-run-compile)
-   ("C" "test-compile    run test-compile function" jw-runbook-run-test-compile)
-   ("t" "test            run all tests" jw-runbook-run-test)
-   ("o" "test-only       run specific test" jw-runbook-run-test-only)
-   ("L" "lint            run lint" jw-runbook-run-lint)
-   (":" "command         provide an arbitrary command" jw-runbook-run-command)
-   ("l" "last-command    run the last command" jw-runbook-run-last-command)
-   ("$" "repl            open project's repl" jw-runbook-run-repl)
-   ("!" "shell-command   cmd-dwim command in project root" jw-runbook-run-shell-command)
-   ("e" "eshell          eshell in project root" jw-runbook-run-eshell)
-   ("K" "cleanup         kill project dev & process buffers" jw-runbook-run-cleanup)
+   ("I" "install        install development dependencies" jw-runbook-run-install)
+   ("s" "start          start development dependencies & server locally" jw-runbook-run-start)
+   ("r" "run            run app locally" jw-runbook-run-run)
+   ("c" "compile        run compile function" jw-runbook-run-compile)
+   ("C" "test-compile   run test-compile function" jw-runbook-run-test-compile)
+   ("t" "test           run all tests" jw-runbook-run-test)
+   ("o" "test-only      run specific test" jw-runbook-run-test-only)
+   ("L" "lint           run lint" jw-runbook-run-lint)
+   (":" "command        arbitrary build command" jw-runbook-run-command)
+   ("l" "last-command   run the last command" jw-runbook-run-last-command)
+   ("K" "cleanup        kill project dev & process buffers" jw-runbook-run-cleanup)
+   ("$" "repl           open project's language repl" jw-runbook-run-repl)
+   ]
+  ["Shell"
+   ("!" "cmd-dwim       shell command in project root" jw-runbook-run-shell-command)
+   ("e" "eshell         eshell in project root" jw-runbook-run-eshell)
    ]
   ["Deployment"
-   ("j" "open-jenkins    open jenkins job in web browser" jw-runbook-run-open-jenkins)
+   ("j" "open-jenkins   open jenkins job in web browser" jw-runbook-run-open-jenkins)
    ])
 
 (defun jw-runbook-menu-open (&optional dir)
@@ -2010,6 +2015,7 @@ very opinionated project development lifecycle commands, an alternative to proje
       (message "jw-runbook-setup called without neither type nor name configuration")
     (let ((namespace (if runbook-name "name" "type"))
           (func-name-suffix (or runbook-name runbook-type)))
+
       (when install (fset (intern (format "jw-runbook-run-install:%s:%s" namespace func-name-suffix)) install))
       (when start (fset (intern (format "jw-runbook-run-start:%s:%s" namespace func-name-suffix)) start))
       (when run (fset (intern (format "jw-runbook-run-run:%s:%s" namespace func-name-suffix)) run))
@@ -2022,10 +2028,13 @@ very opinionated project development lifecycle commands, an alternative to proje
       (when command (fset (intern (format "jw-runbook-run-command:%s:%s" namespace func-name-suffix)) command))
       (when last-command (fset (intern (format "jw-runbook-run-last-command:%s:%s" namespace func-name-suffix)) last-command))
       (when repl (fset (intern (format "jw-runbook-run-repl:%s:%s" namespace func-name-suffix)) repl))
+      (when cleanup (fset (intern (format "jw-runbook-run-cleanup:%s:%s" namespace func-name-suffix)) cleanup))
+
       (when shell-command (fset (intern (format "jw-runbook-run-shell-command:%s:%s" namespace func-name-suffix)) shell-command))
       (when eshell (fset (intern (format "jw-runbook-run-eshell:%s:%s" namespace func-name-suffix)) eshell))
-      (when cleanup (fset (intern (format "jw-runbook-run-cleanup:%s:%s" namespace func-name-suffix)) cleanup))
-      (when open-jenkins (fset (intern (format "jw-runbook-run-open-jenkins:%s:%s" namespace func-name-suffix)) open-jenkins)))))
+
+      (when open-jenkins (fset (intern (format "jw-runbook-run-open-jenkins:%s:%s" namespace func-name-suffix)) open-jenkins))))
+  )
 
 (defun jw-runbook-run-shell-command:default (arg) (cmd-dwim arg))
 (defun jw-runbook-run-eshell:default (arg) (eshell-dwim nil))
