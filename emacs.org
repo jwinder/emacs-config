@@ -1982,7 +1982,7 @@ very opinionated project development lifecycle commands, an alternative to proje
    (":" "command        arbitrary build command" jw-runbook-run-command)
    ("l" "last-command   run the last command" jw-runbook-run-last-command)
    ("K" "cleanup        kill project dev & process buffers" jw-runbook-run-cleanup)
-   ("$" "repl           open project's language repl" jw-runbook-run-repl)
+   ("$" "repl           open project language's repl" jw-runbook-run-repl)
    ]
   ["Shell"
    ("!" "cmd-dwim       shell command in project root" jw-runbook-run-shell-command)
