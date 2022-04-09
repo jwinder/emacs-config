@@ -1086,6 +1086,13 @@ argument makes the windows rotate backwards."
 ** key bindings
 
 #+BEGIN_SRC emacs-lisp
+;; remove bindings for functions I don't regularly use
+(global-unset-key (kbd "C-z")) ;; suspend-frame
+(global-unset-key (kbd "C-x C-z")) ;; suspend-frame
+(global-unset-key (kbd "C-x .")) ;; set-fill-prefix
+(global-unset-key (kbd "C-x f")) ;; set-fill-column
+(global-unset-key (kbd "C-x C-n")) ;; set-goal-column, too easy to confuse with narrow
+
 (define-prefix-command 'jw-keymap)
 (global-set-key (kbd "C-x m") 'jw-keymap)
 (global-set-key (kbd "C-c m") 'jw-keymap)
@@ -1099,9 +1106,6 @@ argument makes the windows rotate backwards."
 (define-key jw-keymap (kbd "w") 'weather)
 (define-key jw-keymap (kbd "i") 'toggle-scratch-buffer)
 (define-key jw-keymap (kbd "I") 'scratch-buffer-remember)
-
-(global-set-key (kbd "C-z") nil) ;; remove suspend
-(global-set-key (kbd "C-x C-z") nil)
 
 (global-set-key (kbd "M-*") 'calculator)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
