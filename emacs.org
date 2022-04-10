@@ -1784,12 +1784,11 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
 
 (defun counsel-find-file-dwim (arg)
   (interactive "P")
-  (pcase (prefix-numeric-value arg)
-    (16 (counsel-file-jump))
-    (4 (counsel-recentf))
-    (_ (if (region-active-p)
-           (counsel-find-file (buffer-substring-no-properties (region-beginning) (region-end)))
-         (counsel-find-file)))))
+  (let ((initial-input (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end)) nil)))
+    (pcase (prefix-numeric-value arg)
+      (16 (counsel-file-jump initial-input))
+      (4 (counsel-recentf))
+      (_ (counsel-find-file initial-input)))))
 
 (defun ivy-dispatching-done-ivy ()
   (interactive)
