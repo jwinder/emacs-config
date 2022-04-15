@@ -1522,7 +1522,6 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 (setq org-special-ctrl-a/e t
       org-special-ctrl-k t
       org-special-ctrl-o t
-      org-use-speed-commands t
       org-startup-folded t
       org-startup-with-inline-images t
       org-hide-block-startup t
@@ -1620,42 +1619,6 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 
 (delete '("+" (:strike-through t)) org-emphasis-alist)
 (add-to-list 'org-emphasis-alist '("+" (:strike-through t :inherit shadow)))
-#+END_SRC
-
-customize speed commands
-#+BEGIN_SRC emacs-lisp
-(setq org-speed-commands-default '(("turned off")))
-
-(setq org-speed-commands-user
-  '(("nav")
-    ("f" . (org-speed-move-safe 'org-forward-heading-same-level))
-    ("b" . (org-speed-move-safe 'org-backward-heading-same-level))
-    ("*" . org-display-outline-path)
-    ("n" . jw-narrow-dwim)
-    ("/" . org-sparse-tree)
-    ("@" . org-mark-subtree)
-    ("w" . org-cut-subtree)
-    ("<" . (org-agenda-set-restriction-lock 'subtree))
-    (">" . (org-agenda-remove-restriction-lock))
-
-    ("todo")
-    ("t" . org-todo)
-    (":" . org-set-tags-command)
-    ("I" . org-clock-in)
-    ("O" . org-clock-out)
-    ("," . (org-priority))
-    ("0" . (org-priority ?\ ))
-    ("1" . (org-priority ?A))
-    ("2" . (org-priority ?B))
-    ("3" . (org-priority ?C))
-    ("e" . org-set-effort)
-    ("E" . org-inc-effort)
-
-    ("misc")
-    ("?" . org-speed-command-help)
-    )
-  )
-
 #+END_SRC
 
 org-babel languages & automatic yasnippet creation
