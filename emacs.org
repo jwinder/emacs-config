@@ -1153,7 +1153,6 @@ argument makes the windows rotate backwards."
 
 (define-key ctl-x-5-map (kbd "<return>") 'toggle-frame-maximized)
 (define-key ctl-x-5-map (kbd "S-<return>") 'toggle-frame-fullscreen)
-(define-key ctl-x-5-map (kbd "C-<return>") 'mode-line-toggle-visibility)
 
 (define-key ctl-x-4-map (kbd "2") 'toggle-window-split)
 (define-key ctl-x-4-map (kbd "3") 'toggle-window-split)
