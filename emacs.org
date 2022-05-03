@@ -1567,8 +1567,6 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 (define-key jw-keymap (kbd "A") 'jw-org-agenda)
 (define-key ctl-x-4-map (kbd "'") 'jw-toggle-org-src-window-setup)
 (add-hook 'org-mode-hook (lambda ()
-                           (local-set-key (kbd "C-c <") 'org-time-stamp)
-                           (local-set-key (kbd "C-c .") 'org-time-stamp-inactive)
                            (local-set-key (kbd "C-c C-x g") 'jw-org-feed-update-all-or-one)))
 
 (defun org--color-red-box-state (s) `(,s :background "DarkRed" :foreground "LightGrey" :box (:style released-button)))
