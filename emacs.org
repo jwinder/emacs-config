@@ -589,6 +589,13 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
   (when (and (current-message) (string-match "Shell command succeeded with no output" (current-message))) (message nil)))
 (advice-add 'shell-command-on-region :after 'shell-command--advice--ignore-message-with-no-output)
 
+(defun term--kill-buffer-on-exit ()
+  (let ((process (get-buffer-process (current-buffer))))
+    (jw--do-when-process-finishes process
+                                  (lambda (proc)
+                                    (kill-buffer (process-buffer proc))))))
+(add-hook 'term-mode-hook 'term--kill-buffer-on-exit)
+
 (defun kmacro-end-and-call-macro--advice--ask-for-repeat-number-instead-of-using-prefix-numeric-arg (original-function &rest args)
   (if (car args)
       (let* ((repeat-times-string (read-string "How many times to repeat kmacro? "))
@@ -1255,7 +1262,7 @@ Negative prefix arg C--: Similar behavior to no prefix argument, except the cycl
 
 #+END_SRC
 
-eshell git prompt
+eshell prompt
 #+BEGIN_SRC emacs-lisp
 (defun eshell--last-command-status-prompt-string ()
   (if (= 0 eshell-last-command-status)
@@ -1287,33 +1294,6 @@ eshell git prompt
 (setq eshell-prompt-function 'eshell--prompt-function)
 (setq eshell-prompt-regexp "^[^#$»\n]* [#$»] ")
 
-#+END_SRC
-
-terminal additions
-#+BEGIN_SRC emacs-lisp
-(defun eshell/ansi (&rest args)
-  (interactive)
-  (ansi-term (jw--login-shell))
-  (when args
-    (insert (s-join " " args))
-    (term-send-input)))
-
-(setq ansi-term-kill-on-exit t)
-
-(defun ansi-term-life-is-too-much ()
-  (interactive)
-  (if (not ansi-term-kill-on-exit)
-      (bury-buffer)
-    (kill-buffer (current-buffer))))
-
-(defun ansi-term--exit-hook ()
-  (let ((ansi-process (get-buffer-process (current-buffer))))
-    (jw--do-when-process-finishes ansi-process
-                                  (lambda (proc)
-                                    (switch-to-buffer (process-buffer proc))
-                                    (ansi-term-life-is-too-much)))))
-
-(add-hook 'term-mode-hook 'ansi-term--exit-hook)
 #+END_SRC
 
 ** yasnippet
