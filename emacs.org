@@ -1822,7 +1822,7 @@ hacky way of using org tables for markdown tables [[http://stackoverflow.com/que
     (-difference actions keys)))
 
 (setq counsel-projectile-switch-project-action
-      (counsel-projectile--filter-out-action-keys counsel-projectile-switch-project-action (list "c" "C" "E" "Oc" "Oa" "v")))
+      (counsel-projectile--filter-out-action-keys counsel-projectile-switch-project-action (list "c" "C" "E" "Oc" "Oa" "v" "xs" "xv")))
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
 (defalias 'projectile-purge-everything 'projectile-clear-known-projects)
