@@ -1670,8 +1670,8 @@ support =cmd= function in org-babel and =cmd= org link
 (org-babel-src-yasnippet 'cmd)
 (org-babel-src-yasnippet 'tmux "cmd :tmux")
 
-(add-to-list 'org-link-parameters '("cmd" :follow (lambda (ref) (cmd ref))))
-(add-to-list 'org-link-parameters '("cmd+tmux" :follow (lambda (ref) (cmd-tmux ref))))
+(org-link-set-parameters "cmd" :follow #'(lambda (path _) (cmd path)))
+(org-link-set-parameters "cmd+tmux" :follow #'(lambda (path _) (cmd-tmux path)))
 #+END_SRC
 
 support =gist= and =gist+raw= org links
@@ -1682,8 +1682,8 @@ support =gist= and =gist+raw= org links
         (raw-segment (if raw "raw" "")))
     (browse-url (format "https://gist.github.com/%s/%s" url-segment raw-segment))))
 
-(add-to-list 'org-link-parameters '("gist" :follow (lambda (ref) (org-gist-link-follow ref))))
-(add-to-list 'org-link-parameters '("gist+raw" :follow (lambda (ref) (org-gist-link-follow ref 'raw))))
+(org-link-set-parameters "gist" :follow #'(lambda (ref _) (org-gist-link-follow ref)))
+(org-link-set-parameters "gist+raw" :follow #'(lambda (ref _) (org-gist-link-follow ref 'raw)))
 #+END_SRC
 
 hacky way of using org tables for markdown tables [[http://stackoverflow.com/questions/14275122/editing-markdown-pipe-tables-in-emacs/26297700#26297700][copied from stackoverflow]]
