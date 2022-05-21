@@ -426,7 +426,7 @@ mode line
   (let* ((b (current-buffer))
          (buffer-name (buffer-name b))
          (file-name (buffer-file-name b))
-         (pwd (jw--pwd))
+         (pwd (abbreviate-file-name (jw--pwd)))
          (process-name (get-buffer-process b))
          (process-id (when process-name (process-id process-name)))
          (projectile-project-raw (projectile-project-name))
