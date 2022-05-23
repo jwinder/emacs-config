@@ -1686,28 +1686,6 @@ support =gist= and =gist+raw= org links
 (org-link-set-parameters "gist+raw" :follow #'(lambda (ref _) (org-gist-link-follow ref 'raw)))
 #+END_SRC
 
-hacky way of using org tables for markdown tables [[http://stackoverflow.com/questions/14275122/editing-markdown-pipe-tables-in-emacs/26297700#26297700][copied from stackoverflow]]
-#+BEGIN_SRC emacs-lisp
-(require 'org-table)
-
-(defun markdown-cleanup-org-tables ()
-  (interactive)
-  (when (or (eq major-mode 'markdown-mode) (eq major-mode 'gfm-mode))
-    (save-excursion
-      (goto-char (point-min))
-      (while (search-forward "-+-" nil t) (replace-match "-|-")))))
-
-(add-hook 'markdown-mode-hook 'turn-on-orgtbl)
-(advice-add 'org-table-align :after 'markdown-cleanup-org-tables)
-
-(defalias 'markdown-table-create 'org-table-create)
-(defalias 'markdown-table-insert-column 'org-table-insert-column)
-(defalias 'markdown-table-delete-column 'org-table-delete-column)
-(defalias 'markdown-table-insert-row 'org-table-insert-row)
-(defalias 'markdown-table-delete-row 'org-table-delete-row)
-
-#+END_SRC
-
 ** ivy counsel
 
 #+BEGIN_SRC emacs-lisp
