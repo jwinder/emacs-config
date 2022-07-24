@@ -63,8 +63,6 @@ Now, start emacs.
 
 (use-package browse-at-remote)
 
-(use-package gist)
-
 (use-package expand-region)
 
 (use-package multiple-cursors
@@ -1349,42 +1347,6 @@ eshell prompt
 
 #+END_SRC
 
-** gist
-
-#+BEGIN_SRC emacs-lisp
-(setq gist-view-gist t)
-
-(defun gist-dwim (&optional arg)
-  "Gist region or buffer, private. With a prefix arg, create a public gist."
-  (interactive "P")
-  (gist-region-or-buffer (not arg)))
-
-(defun dired-do-gist-dwim (&optional arg)
-  "Rewrite of dired-do-gist to default to private gists. With a prefix arg, create public gists."
-  (interactive "P")
-  (dired-do-gist (not arg)))
-
-(defalias 'gist 'gist-dwim) ;; gist package doesn't create its own gist function.
-
-(defun gist-menu--gist-public () (interactive) (gist-dwim t))
-(defun gist-menu--gist-private () (interactive) (gist-dwim))
-(defun gist-menu--dired-do-gist-public () (interactive) (dired-do-gist-dwim t))
-(defun gist-menu--dired-do-gist-private () (interactive) (dired-do-gist-dwim))
-
-(transient-define-prefix gist-menu ()
-  ["Gist"
-   ("l" "gist-list"                                      gist-list)
-   ("g" "gist-dwim            private"                   gist-menu--gist-private)
-   ("G" "gist-dwim            public"                    gist-menu--gist-public)
-   ("2" "dired-do-gist-dwim   private   @ in dired"      gist-menu--dired-do-gist-private)
-   ("@" "dired-do-gist-dwim   public    C-u @ in dired"  gist-menu--dired-do-gist-public)
-   ])
-
-(define-key jw-keymap "p" 'gist-menu) ;; p = paste, in case more paste services are added to gist-menu
-(define-key dired-mode-map "@" 'dired-do-gist-dwim)
-
-#+END_SRC
-
 ** rcirc
 
 #+BEGIN_SRC emacs-lisp
@@ -1790,12 +1752,13 @@ support =gist= and =gist+raw= org links
    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
    ))
 
-(defun counsel-projectile--filter-out-action-keys (actions keys)
-  (let ((-compare-fn (lambda (a b) (string= (car-safe a) b))))
-    (-difference actions keys)))
+(defun counsel-projectile--filter-out-action-keys (actions keys-to-filter)
+  (-filter (lambda (action) (not (-contains? keys-to-filter (car action)))) actions))
 
-(setq counsel-projectile-switch-project-action
-      (counsel-projectile--filter-out-action-keys counsel-projectile-switch-project-action (list "c" "C" "E" "Oc" "Oa" "v" "xs" "xv")))
+(let* ((head (car counsel-projectile-switch-project-action))
+       (original-actions (cdr counsel-projectile-switch-project-action))
+       (fixed-actions (counsel-projectile--filter-out-action-keys original-actions (list "c" "C" "E" "Oc" "Oa" "v" "xs" "xv"))))
+  (setq counsel-projectile-switch-project-action (cons head fixed-actions)))
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
 (defalias 'projectile-purge-everything 'projectile-clear-known-projects)
