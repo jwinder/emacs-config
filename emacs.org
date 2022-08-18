@@ -58,6 +58,9 @@ Now, start emacs.
             (fset 'describe-variable 'helpful-variable)
             (fset 'describe-symbol 'helpful-symbol)))
 
+(use-package which-key
+  :config (which-key-mode))
+
 (use-package magit) ;; brings in transient
 (use-package transient)
 
