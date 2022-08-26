@@ -1,5 +1,4 @@
 * introduction
-** getting started
 
 I prefer to clone this repository as =$HOME/emacs-config= and symlink it to =$HOME/.emacs.d=:
 #+BEGIN_SRC sh :tangle no
@@ -15,18 +14,12 @@ $ ln -s /custom/path/private.org $HOME/emacs-config/private.org # file containin
 
 Now, start emacs.
 
-** org configs
-
 #+TITLE: jwinder emacs config
-
 #+AUTHOR: jwinder
-
 #+LANGUAGE: en
-
 #+SEQ_TODO: ⚑ ⚐ | ✔
 
-* dependencies
-** packages
+* packages
 
 #+BEGIN_SRC emacs-lisp
 (use-package gnu-elpa-keyring-update)
@@ -141,7 +134,7 @@ Now, start emacs.
   :mode ("\\.libsonnet\\'" . jsonnet-mode))
 #+END_SRC
 
-** helper functions
+* helper functions
 
 These are non-interactive library functions useful in other parts of this config
 #+BEGIN_SRC emacs-lisp
@@ -346,8 +339,7 @@ For long running processes, this will always toggle back and forth between the p
 (defun jw--cache-get (sym) (pcache-get jw--cache-repo sym))
 #+END_SRC
 
-* customization
-** env
+* env
 
 #+BEGIN_SRC emacs-lisp
 (require 'eshell)
@@ -374,7 +366,7 @@ For long running processes, this will always toggle back and forth between the p
 
 #+END_SRC
 
-** style
+* style
 
 #+BEGIN_SRC emacs-lisp
 (tool-bar-mode -1)
@@ -471,7 +463,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 (add-hook 'after-make-frame-functions 'fix-colors-for-emacs-clients)
 #+END_SRC
 
-** settings
+* settings
 
 #+BEGIN_SRC emacs-lisp
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -638,8 +630,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
         browse-url-generic-program "open"))
 #+END_SRC
 
-** functions
-*** common
+* functions
 
 #+BEGIN_SRC emacs-lisp
 (require 'url-util)
@@ -1048,7 +1039,7 @@ argument makes the windows rotate backwards."
   (mode-line-pwd-off))
 #+END_SRC
 
-*** emacs
+* emacs functions
 
 #+BEGIN_SRC emacs-lisp
 (defun emacs-config ()
@@ -1088,7 +1079,7 @@ argument makes the windows rotate backwards."
   (byte-recompile-directory package-user-dir 0 'force))
 #+END_SRC
 
-** key bindings
+* key bindings
 
 #+BEGIN_SRC emacs-lisp
 ;; remove bindings for functions I don't regularly use
@@ -1175,7 +1166,7 @@ argument makes the windows rotate backwards."
 (jw--global-set-visual-area-key "<C-wheel-left>" 'transparency-alpha-decrease)
 #+END_SRC
 
-** eshell
+* eshell
 
 #+BEGIN_SRC emacs-lisp
 (defun eshell-dwim (arg)
@@ -1292,7 +1283,7 @@ eshell prompt
 
 #+END_SRC
 
-** yasnippet
+* yasnippet
 
 #+BEGIN_SRC emacs-lisp
 (defun yas-dwim (arg)
@@ -1318,7 +1309,7 @@ eshell prompt
     (jw--file-write file-contents file-location)))
 #+END_SRC
 
-** magit
+* magit
 
 #+BEGIN_SRC emacs-lisp
 (defalias 'git-browse-at-remote 'browse-at-remote)
@@ -1350,7 +1341,7 @@ eshell prompt
 
 #+END_SRC
 
-** rcirc
+* rcirc
 
 #+BEGIN_SRC emacs-lisp
 (require 'rcirc)
@@ -1411,7 +1402,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 (advice-add 'rcirc-handler-NOTICE :around 'rcirc-handler-NOTICE--advice--ignore-KEEPALIVE)
 #+END_SRC
 
-** org
+* org
 
 #+BEGIN_SRC emacs-lisp
 (require 'org)
@@ -1646,7 +1637,7 @@ support =gist= and =gist+raw= org links
 (org-link-set-parameters "gist+raw" :follow #'(lambda (ref _) (org-gist-link-follow ref 'raw)))
 #+END_SRC
 
-** ivy counsel
+* ivy counsel
 
 #+BEGIN_SRC emacs-lisp
 (ivy-mode 1)
@@ -1732,7 +1723,7 @@ support =gist= and =gist+raw= org links
 (define-key help-map (kbd "a") 'counsel-apropos)
 #+END_SRC
 
-** projectile
+* projectile
 
 #+BEGIN_SRC emacs-lisp
 (setq projectile-completion-system 'ivy)
@@ -1774,7 +1765,7 @@ support =gist= and =gist+raw= org links
 (advice-add 'projectile-clear-known-projects :around 'projectile-clear-known-projects--advice--ask-y-or-n)
 #+END_SRC
 
-** runbook
+* runbook
 
 very opinionated project development lifecycle commands, an alternative to projectile's compile/configure/package/etc commands.
 #+BEGIN_SRC emacs-lisp
@@ -1942,7 +1933,7 @@ very opinionated project development lifecycle commands, an alternative to proje
 (defun jw-runbook-run-cleanup:default (arg) (projectile-kill-buffers))
 #+END_SRC
 
-** scala
+* scala
 
 #+BEGIN_SRC emacs-lisp
 (defun jw-sbt ()
@@ -2028,7 +2019,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (org-babel-src-yasnippet 'scala 'ammonite) ;; default ob-scala requires brew scala & ensime, which I don't use.
 #+END_SRC
 
-** javascript
+* javascript
 
 #+BEGIN_SRC emacs-lisp
 (require 'js)
@@ -2145,7 +2136,7 @@ support typescript in org babel
 (setq org-babel-default-header-args:typescript '((:results . "output")))
 #+END_SRC
 
-* private
+* private config
 
 load the =private= directory and the =private.org= file if they exist
 #+BEGIN_SRC emacs-lisp
@@ -2157,7 +2148,7 @@ load the =private= directory and the =private.org= file if they exist
   (org-babel-load-file jw--init-private-org-file))
 #+END_SRC
 
-* finally
+* final settings
 
 #+BEGIN_SRC emacs-lisp
 (when (get-buffer "*scratch*") (kill-buffer "*scratch*"))
