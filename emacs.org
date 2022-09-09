@@ -320,7 +320,10 @@ For long running processes, this will always toggle back and forth between the p
                                                                  (when ,kill-process-buffer (jw--kill-buffer ,process-buffer))
                                                                  (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force))))))))
             (switch-to-buffer process-buffer)
-            (if tail-output (funcall run-cmd) (save-excursion (funcall run-cmd)))))))))
+            (if tail-output (funcall run-cmd)
+              (save-excursion (funcall run-cmd))
+              (next-line) ;; put cursor on the next line to help prevent accidentally running the command again
+              )))))))
 
 (defun jw--run-cmd-tmux (command tmux-session)
   "Create session `tmux-session' if needed, and send `command' to it."
@@ -852,6 +855,7 @@ Interactively:
                                     (if (s-starts-with? "$" (s-trim (or (thing-at-point 'line t) "")))
                                         (s-trim-left (s-chop-prefix "$" (s-trim (thing-at-point 'line t))))
                                       (read-shell-command "Command: "))))))
+    (deactivate-mark) ;; don't leave an region active on the previous buffer, to prevent accidentally running the command twice.
     (pcase (prefix-numeric-value arg)
       (16 (save-excursion (open-line-next) (insert (s-trim (shell-command-to-string prepared-cmd)))))
       (64 (cmd-tmux prepared-cmd))
