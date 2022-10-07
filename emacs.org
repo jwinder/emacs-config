@@ -1308,8 +1308,8 @@ eshell prompt
   (let* ((mode-string (jw--symbol-name mode))
          (shortcut-string (jw--symbol-name shortcut))
          (file-location (f-expand (format "%s/%s" mode-string shortcut-string) yas-dynamic-snippets-dir))
-         (file-contents-format-string "# -*- mode: snippet -*-\n# name: %s\n# key: %s\n# --\n%s")
-         (file-contents (format file-contents-format-string shortcut-string shortcut-string contents)))
+         (file-contents-format-string "# -*- mode: snippet -*-\n# name: %s\n# --\n%s")
+         (file-contents (format file-contents-format-string shortcut-string contents)))
     (jw--file-write file-contents file-location)))
 #+END_SRC
 

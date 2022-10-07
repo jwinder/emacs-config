@@ -1,5 +1,4 @@
 # -*- mode: snippet -*-
 # name: header
-# key: header
 # --
 #+HEADER: $0

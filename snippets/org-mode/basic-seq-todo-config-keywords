@@ -1,5 +1,4 @@
 # -*- mode: snippet -*-
 # name: basic-seq-todo-config-keywords
-# key: basic-seq-todo-config-keywords
 # --
 #+SEQ_TODO: todo doing | done

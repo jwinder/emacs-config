@@ -1,5 +1,4 @@
 # -*- mode: snippet -*-
 # name: property
-# key: property
 # --
 #+PROPERTY: $0
