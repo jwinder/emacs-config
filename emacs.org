@@ -119,6 +119,8 @@ Now, start emacs.
 
 (use-package ob-mongo)
 
+(use-package ob-http)
+
 (use-package coffee-mode
   :config (setq coffee-tab-width 2))
 
@@ -1589,6 +1591,7 @@ org-babel languages & automatic yasnippet creation
 (org-babel-src-yasnippet 'nodejs 'js)
 (org-babel-src-yasnippet 'html)
 (org-babel-src-yasnippet 'xml)
+(org-babel-src-yasnippet 'http)
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
