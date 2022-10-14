@@ -57,6 +57,8 @@ Now, start emacs.
 (use-package magit) ;; brings in transient
 (use-package transient)
 
+(use-package verb)
+
 (use-package browse-at-remote)
 
 (use-package expand-region)
@@ -118,8 +120,6 @@ Now, start emacs.
 (use-package ob-go)
 
 (use-package ob-mongo)
-
-(use-package ob-http)
 
 (use-package coffee-mode
   :config (setq coffee-tab-width 2))
@@ -1412,6 +1412,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 
 #+BEGIN_SRC emacs-lisp
 (require 'org)
+(require 'verb)
 
 (unless (boundp 'jw-org-todo-file)
   (setq jw-org-todo-file (f-expand "todo.org" user-emacs-directory)))
@@ -1506,6 +1507,8 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 (define-key jw-keymap (kbd "A") 'jw-org-agenda)
 (define-key ctl-x-4-map (kbd "'") 'jw-toggle-org-src-window-setup)
 (add-hook 'org-mode-hook (lambda ()
+                           (local-set-key (kbd "C-c r") 'org-reveal)
+                           (local-set-key (kbd "C-c C-r") verb-command-map)
                            (local-set-key (kbd "C-c C-x g") 'jw-org-feed-update-all-or-one)))
 
 (defun org--color-red-box-state (s) `(,s :background "DarkRed" :foreground "LightGrey" :box (:style released-button)))
@@ -1572,7 +1575,8 @@ org-babel languages & automatic yasnippet creation
 
 (org-babel-support-langs
  (list 'awk 'emacs-lisp 'lisp 'eshell 'shell 'calc
-       'C 'java 'js 'latex 'makefile 'org 'perl 'python 'R 'ruby 'scheme 'sql 'go 'mongo))
+       'C 'java 'js 'latex 'makefile 'org 'perl 'python 'R 'ruby 'scheme 'sql 'go 'mongo
+       'verb))
 
 (add-to-list 'org-src-lang-modes '("elisp" . emacs-lisp))
 (org-babel-src-yasnippet 'elisp 'emacs-lisp)
@@ -1591,7 +1595,7 @@ org-babel languages & automatic yasnippet creation
 (org-babel-src-yasnippet 'nodejs 'js)
 (org-babel-src-yasnippet 'html)
 (org-babel-src-yasnippet 'xml)
-(org-babel-src-yasnippet 'http)
+(org-babel-src-yasnippet 'http 'verb)
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
