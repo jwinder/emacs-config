@@ -506,6 +506,9 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq kill-whole-line t)
 
+(setq dabbrev-case-replace nil
+      dabbrev-case-distinction nil)
+
 (global-auto-revert-mode 1)
 
 (setq global-auto-revert-non-file-buffers t
