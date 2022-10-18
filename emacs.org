@@ -57,7 +57,11 @@ Now, start emacs.
 (use-package magit) ;; brings in transient
 (use-package transient)
 
-(use-package verb)
+(use-package verb
+  :config (progn
+            (define-key verb-command-map (kbd "C-r") #'verb-send-request-on-point)
+            (define-key verb-command-map (kbd "C-s") #'verb-send-request-on-point-other-window-stay)
+            (define-key verb-command-map (kbd "C-f") #'verb-send-request-on-point-other-window)))
 
 (use-package browse-at-remote)
 
