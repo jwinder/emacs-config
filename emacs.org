@@ -837,6 +837,12 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
       (jw--sql-pretty-print (region-beginning) (region-end))
     (jw--sql-pretty-print (point-min) (point-max))))
 
+(defun xml-prettify ()
+  (interactive)
+  (if (region-active-p)
+      (sgml-pretty-print (region-beginning) (region-end))
+    (sgml-pretty-print (point-min) (point-max))))
+
 (defun cmd (command)
   (interactive "sCommand: ")
   (jw--run-cmd command))
