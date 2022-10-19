@@ -2106,7 +2106,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   :run (lambda (arg) (jw-js-run arg))
   :compile (lambda (arg) (jw-js--run-first-command arg (list "rebuild" "build")))
   :test (lambda (arg) (jw-js-command arg "test")) ;; todojoe -- compilation mode
-  :test-only nil
+  :test-only (lambda (arg) (jw-js-command arg "test")) ;; not doing anything automatic for test-only here ;; todojoe -- compilation mode
   :lint (lambda (arg) (jw-js-command arg "lint"))
   :command (lambda (arg) (jw-js-command arg))
   :last-command (lambda (arg) (jw-js-run-raw-command arg jw-js--last-command-global))
