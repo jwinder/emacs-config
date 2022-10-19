@@ -61,7 +61,9 @@ Now, start emacs.
   :config (progn
             (define-key verb-command-map (kbd "C-r") #'verb-send-request-on-point)
             (define-key verb-command-map (kbd "C-s") #'verb-send-request-on-point-other-window-stay)
-            (define-key verb-command-map (kbd "C-f") #'verb-send-request-on-point-other-window)))
+            (define-key verb-command-map (kbd "C-f") #'verb-send-request-on-point-other-window)
+            (define-key verb-response-body-mode-map (kbd "C-c C-r C-r") #'verb-re-send-request)
+            (define-key verb-response-body-mode-map (kbd "C-c C-r C-h") #'verb-toggle-show-headers)))
 
 (use-package browse-at-remote)
 
