@@ -344,6 +344,11 @@ For long running processes, this will always toggle back and forth between the p
       (shell-command-on-region begin end "sql-formatter" nil 'replace)
     (message "Required: https://www.npmjs.com/package/sql-formatter -- npm install -g sql-formatter")))
 
+(defun jw--xml-pretty-print (begin end)
+  (if (executable-find "xmllint")
+      (shell-command-on-region begin end "xmllint --format -" nil 'replace)
+    (message "Required: xmllint")))
+
 (setq jw--cache-repo (pcache-repository "jw-cache"))
 (defun jw--cache-delete (sym) (pcache-invalidate jw--cache-repo sym))
 (defun jw--cache-set (sym &optional value) (if value (pcache-put jw--cache-repo sym value) (jw--cache-delete sym)))
@@ -840,8 +845,8 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
 (defun xml-prettify ()
   (interactive)
   (if (region-active-p)
-      (sgml-pretty-print (region-beginning) (region-end))
-    (sgml-pretty-print (point-min) (point-max))))
+      (jw--xml-pretty-print (region-beginning) (region-end))
+    (jw--xml-pretty-print (point-min) (point-max))))
 
 (defun cmd (command)
   (interactive "sCommand: ")
