@@ -22,124 +22,117 @@ Now, start emacs.
 * packages
 
 #+BEGIN_SRC emacs-lisp
-(use-package gnu-elpa-keyring-update)
+(pkg 'gnu-elpa-keyring-update)
 
-(use-package afternoon-theme)
+(pkg 'afternoon-theme)
 
-(use-package beacon
-  :config (progn
-            (beacon-mode 1)
-            (setq beacon-blink-when-window-scrolls nil)
-            (setq beacon-blink-when-window-changes t)
-            (setq beacon-blink-when-buffer-changes t)))
+(pkg 'beacon)
+(beacon-mode 1)
+(setq beacon-blink-when-window-scrolls nil)
+(setq beacon-blink-when-window-changes t)
+(setq beacon-blink-when-buffer-changes t)
 
-(use-package dash)
-(use-package pcache)
-(use-package f)
-(use-package s
-  :config (progn
-            (defalias 's-empty? 's-blank?)
-            (defalias 's-nonempty? 's-present?)
-            (defalias 's-nonempty-or-nil 's-presence)))
+(pkg 'dash)
+(pkg 'pcache)
+(pkg 'f)
+(pkg 's)
+(defalias 's-empty? 's-blank?)
+(defalias 's-nonempty? 's-present?)
+(defalias 's-nonempty-or-nil 's-presence)
 
-(use-package yaml)
+(pkg 'yaml)
 
-(use-package helpful
-  :config (progn
-            (fset 'describe-key 'helpful-key)
-            (fset 'describe-function 'helpful-callable)
-            (fset 'describe-variable 'helpful-variable)
-            (fset 'describe-symbol 'helpful-symbol)))
+(pkg 'helpful)
+(fset 'describe-key 'helpful-key)
+(fset 'describe-function 'helpful-callable)
+(fset 'describe-variable 'helpful-variable)
+(fset 'describe-symbol 'helpful-symbol)
 
-(use-package which-key
-  :config (which-key-mode))
+(pkg 'which-key)
+(which-key-mode)
 
-(use-package magit) ;; brings in transient
-(use-package transient)
+(pkg 'magit) ;; brings in transient
+(pkg 'transient)
 
-(use-package verb
-  :config (progn
-            (define-key verb-command-map (kbd "C-r") #'verb-send-request-on-point)
-            (define-key verb-command-map (kbd "C-s") #'verb-send-request-on-point-other-window-stay)
-            (define-key verb-command-map (kbd "C-f") #'verb-send-request-on-point-other-window)
-            (define-key verb-response-body-mode-map (kbd "C-c C-r C-r") #'verb-re-send-request)
-            (define-key verb-response-body-mode-map (kbd "C-c C-r C-h") #'verb-toggle-show-headers)))
+(pkg 'verb)
+(define-key verb-command-map (kbd "C-r") #'verb-send-request-on-point)
+(define-key verb-command-map (kbd "C-s") #'verb-send-request-on-point-other-window-stay)
+(define-key verb-command-map (kbd "C-f") #'verb-send-request-on-point-other-window)
+(define-key verb-response-body-mode-map (kbd "C-c C-r C-r") #'verb-re-send-request)
+(define-key verb-response-body-mode-map (kbd "C-c C-r C-h") #'verb-toggle-show-headers)
 
-(use-package browse-at-remote)
+(pkg 'browse-at-remote)
 
-(use-package expand-region)
+(pkg 'expand-region)
 
-(use-package multiple-cursors
-  :config (progn
-            (defun mc/prompt-for-inclusion-in-whitelist (original-command)
-              "Rewrite of `mc/prompt-for-inclusion-in-whitelist' to not ask yes/no for every newly seen command."
-              (add-to-list 'mc/cmds-to-run-for-all original-command)
-              (mc/save-lists)
-              t)))
+(pkg 'multiple-cursors)
+(defun mc/prompt-for-inclusion-in-whitelist (original-command)
+  "Rewrite of `mc/prompt-for-inclusion-in-whitelist' to not ask yes/no for every newly seen command."
+  (add-to-list 'mc/cmds-to-run-for-all original-command)
+  (mc/save-lists)
+  t)
 
-(use-package smartparens
-  :config (progn
-            (require 'smartparens-config)
-            (smartparens-global-mode t)))
+(pkg 'smartparens)
+(require 'smartparens-config)
+(smartparens-global-mode t)
 
-(use-package yasnippet)
-(use-package yasnippet-snippets)
+(pkg 'yasnippet)
+(pkg 'yasnippet-snippets)
 
-(use-package counsel) ;; brings in ivy & swiper
-(use-package counsel-projectile)
+(pkg 'counsel) ;; brings in ivy & swiper
+(pkg 'counsel-projectile)
 
-(use-package wgrep
-  :config (setq wgrep-auto-save-buffer t))
+(pkg 'wgrep)
+(setq wgrep-auto-save-buffer t)
 
-(use-package undo-tree
-  :config (global-undo-tree-mode))
+(pkg 'undo-tree)
+(global-undo-tree-mode)
 
-(use-package dumb-jump
-  :config (setq dumb-jump-prefer-searcher 'rg)
-  ;; todo emacs 28.1 -- dumb-jump xref backend and use M-. instead of M-s j
-  ;; :config (lambda ()
-  ;;           (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-  ;;           (setq xref-show-definitions-function #'xref-show-definitions-completing-read) ;; requires xref 1.1.0 on emacs 28.1
-  ;;           )
-  )
+(pkg 'dumb-jump)
+(setq dumb-jump-prefer-searcher 'rg)
+;; todo emacs 28.1 -- dumb-jump xref backend and use M-. instead of M-s j -- I can install an updated xref from elpa, but I'm too lazy to switch this now.
+;; :config (lambda ()
+;;           (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+;;           (setq xref-show-definitions-function #'xref-show-definitions-completing-read) ;; requires xref 1.1.0 on emacs 28.1
+;;           )
 
-(use-package editorconfig
-  :config (editorconfig-mode 1))
+(pkg 'editorconfig)
+(editorconfig-mode 1)
 
-(use-package nodejs-repl)
+(pkg 'nodejs-repl)
 
-(use-package yaml-mode)
+(pkg 'yaml-mode)
 
-(use-package markdown-mode
-  :mode (("\\.md$" . gfm-mode)
-         ("\\.markdown$" . gfm-mode)))
+(pkg 'markdown-mode)
+(add-to-list 'auto-mode-alist '("\\.md$" . gfm-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown$" . gfm-mode))
 
-(use-package dockerfile-mode)
+(pkg 'dockerfile-mode)
 
-(use-package scala-mode)
-(use-package sbt-mode)
+(pkg 'scala-mode)
+(pkg 'sbt-mode)
 
-(use-package typescript-mode)
+(pkg 'typescript-mode)
 
-(use-package go-mode
-  :config (add-hook 'before-save-hook 'gofmt-before-save))
-(use-package ob-go)
+(pkg 'go-mode)
+(pkg 'ob-go)
+(add-hook 'before-save-hook 'gofmt-before-save)
 
-(use-package ob-mongo)
+(pkg 'ob-mongo)
 
-(use-package coffee-mode
-  :config (setq coffee-tab-width 2))
+(pkg 'coffee-mode)
+(setq coffee-tab-width 2)
 
-(use-package terraform-mode
-  :mode ("\\.tfstate$" . js-mode))
+(pkg 'terraform-mode)
+(add-to-list 'auto-mode-alist '("\\.tfstate$" . js-mode))
 
-(use-package protobuf-mode)
+(pkg 'protobuf-mode)
 
-(use-package groovy-mode
-  :mode ("Jenkinsfile$" . groovy-mode))
+(pkg 'groovy-mode)
+(add-to-list 'auto-mode-alist '("Jenkinsfile$" . groovy-mode))
 
-(use-package jsonnet-mode
-  :mode ("\\.libsonnet\\'" . jsonnet-mode))
+(pkg 'jsonnet-mode)
+(add-to-list 'auto-mode-alist '("\\.libsonnet\\'" . jsonnet-mode))
 #+END_SRC
 
 * helper functions
