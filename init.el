@@ -4,15 +4,10 @@
 (package-initialize)
 
 (unless (file-exists-p package-user-dir) (package-refresh-contents))
+(unless (package-installed-p 'use-package) (package-install 'use-package))
 
-(defun pkg (name)
-  (message "Installing %s..." name)
-  (if (package-installed-p name)
-      (message "%s already installed." name)
-    (package-install name)
-    (message "Finished installing %s." name))
-  (require name))
-
-(pkg 'org)
+(require 'use-package)
+(setq use-package-always-ensure t)
+(use-package org)
 
 (org-babel-load-file (expand-file-name "emacs.org" user-emacs-directory))
