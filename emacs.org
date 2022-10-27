@@ -55,12 +55,6 @@ Now, start emacs.
 (use-package transient)
 
 (use-package verb)
-(define-key verb-command-map (kbd "C-r") #'verb-send-request-on-point)
-(define-key verb-command-map (kbd "C-s") #'verb-send-request-on-point-other-window-stay)
-(define-key verb-command-map (kbd "C-f") #'verb-send-request-on-point-other-window)
-(define-key verb-response-body-mode-map (kbd "C-c C-r C-r") #'verb-re-send-request)
-(define-key verb-response-body-mode-map (kbd "C-c C-r C-h") #'verb-toggle-show-headers)
-
 (use-package curl-to-elisp)
 
 (use-package browse-at-remote)
@@ -892,14 +886,15 @@ Interactively:
    ("b" "eval-buffer" eval-buffer)
    ])
 
-(defun jw-curl-to-verb ()
+(defun jw-curl-to-verb-dwim ()
   (interactive)
   (if (region-active-p)
-      (let* ((curl (buffer-substring-no-properties (region-beginning) (region-end)))
-             (verb (curl-to-elisp-verb curl nil)))
-        (kill-region (region-beginning) (region-end))
-        (insert verb))
-    (curl-to-elisp-verb)))
+      (save-excursion
+        (let* ((curl (buffer-substring-no-properties (region-beginning) (region-end)))
+               (verb (curl-to-elisp-verb curl nil)))
+          (delete-region (region-beginning) (region-end))
+          (insert verb)))
+    (call-interactively 'curl-to-elisp-verb)))
 
 (defface jw-pulse-text-face '((t :background "#75C1FA")) "Face used to pulse text.")
 (defun jw-pulse-text (arg)
@@ -1177,6 +1172,13 @@ argument makes the windows rotate backwards."
 ;; todo emacs 28.1 -- remove these and use the default xref keybindings
 (global-set-key (kbd "M-s j") 'dumb-jump-go)
 (global-set-key (kbd "M-s J") 'dumb-jump-go-other-window)
+
+(define-key verb-command-map (kbd "C-r") 'verb-send-request-on-point)
+(define-key verb-command-map (kbd "C-s") 'verb-send-request-on-point-other-window-stay)
+(define-key verb-command-map (kbd "C-f") 'verb-send-request-on-point-other-window)
+(define-key verb-command-map (kbd "C-o") 'jw-curl-to-verb-dwim)
+(define-key verb-response-body-mode-map (kbd "C-c C-r C-r") 'verb-re-send-request)
+(define-key verb-response-body-mode-map (kbd "C-c C-r C-h") 'verb-toggle-show-headers)
 
 (define-key ctl-x-5-map (kbd "<return>") 'toggle-frame-maximized)
 (define-key ctl-x-5-map (kbd "S-<return>") 'toggle-frame-fullscreen)
