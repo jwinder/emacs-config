@@ -61,6 +61,8 @@ Now, start emacs.
 (define-key verb-response-body-mode-map (kbd "C-c C-r C-r") #'verb-re-send-request)
 (define-key verb-response-body-mode-map (kbd "C-c C-r C-h") #'verb-toggle-show-headers)
 
+(use-package curl-to-elisp)
+
 (use-package browse-at-remote)
 
 (use-package expand-region)
@@ -888,6 +890,15 @@ Interactively:
    ("r" "eval-region" eval-region)
    ("b" "eval-buffer" eval-buffer)
    ])
+
+(defun jw-curl-to-verb ()
+  (interactive)
+  (if (region-active-p)
+      (let* ((curl (buffer-substring-no-properties (region-beginning) (region-end)))
+             (verb (curl-to-elisp-verb curl nil)))
+        (kill-region (region-beginning) (region-end))
+        (insert verb))
+    (curl-to-elisp-verb)))
 
 (defface jw-pulse-text-face '((t :background "#75C1FA")) "Face used to pulse text.")
 (defun jw-pulse-text (arg)
