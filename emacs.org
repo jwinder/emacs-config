@@ -1169,6 +1169,9 @@ argument makes the windows rotate backwards."
 (define-key help-map (kbd "h") 'cheat-sh)
 (define-key search-map (kbd "M-w") 'web-search-dwim)
 
+;; bind C-<backspace> and s-<backspace> both to the same command, to match some other apps
+(global-set-key (kbd "s-<backspace>") 'backward-kill-word)
+
 ;; todo emacs 28.1 -- remove these and use the default xref keybindings
 (global-set-key (kbd "M-s j") 'dumb-jump-go)
 (global-set-key (kbd "M-s J") 'dumb-jump-go-other-window)
