@@ -640,6 +640,7 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (when (eq system-type 'darwin)
   (setq ns-command-modifier 'meta
+        ns-option-modifier 'super
         browse-url-browser-function 'browse-url-default-macosx-browser
         browse-url-generic-program "open"))
 #+END_SRC
