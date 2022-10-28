@@ -886,15 +886,26 @@ Interactively:
    ("b" "eval-buffer" eval-buffer)
    ])
 
+(defun jw-curl-to-elisp-dwim ()
+  (interactive)
+  (jw--save-current-message
+    (save-excursion
+      (let* ((curl (if (region-active-p)
+                       (buffer-substring-no-properties (region-beginning) (region-end))
+                     (read-string "curl command: ")))
+             (elisp (curl-to-elisp curl nil)))
+        (when (region-active-p) (delete-region (region-beginning) (region-end)))
+        (insert (pp elisp))))))
+
 (defun jw-curl-to-verb-dwim ()
   (interactive)
-  (if (region-active-p)
-      (save-excursion
-        (let* ((curl (buffer-substring-no-properties (region-beginning) (region-end)))
-               (verb (curl-to-elisp-verb curl nil)))
-          (delete-region (region-beginning) (region-end))
-          (insert verb)))
-    (call-interactively 'curl-to-elisp-verb)))
+  (save-excursion
+    (let* ((curl (if (region-active-p)
+                     (buffer-substring-no-properties (region-beginning) (region-end))
+                   (read-string "curl command: ")))
+           (verb (curl-to-elisp-verb curl nil)))
+      (when (region-active-p) (delete-region (region-beginning) (region-end)))
+      (insert verb))))
 
 (defface jw-pulse-text-face '((t :background "#75C1FA")) "Face used to pulse text.")
 (defun jw-pulse-text (arg)
@@ -1179,7 +1190,7 @@ argument makes the windows rotate backwards."
 (define-key verb-command-map (kbd "C-r") 'verb-send-request-on-point)
 (define-key verb-command-map (kbd "C-s") 'verb-send-request-on-point-other-window-stay)
 (define-key verb-command-map (kbd "C-f") 'verb-send-request-on-point-other-window)
-(define-key verb-command-map (kbd "C-o") 'jw-curl-to-verb-dwim)
+(define-key verb-command-map (kbd "C-i") 'jw-curl-to-verb-dwim)
 (define-key verb-response-body-mode-map (kbd "C-c C-r C-r") 'verb-re-send-request)
 (define-key verb-response-body-mode-map (kbd "C-c C-r C-h") 'verb-toggle-show-headers)
 
