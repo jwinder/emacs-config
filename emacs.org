@@ -1065,6 +1065,36 @@ argument makes the windows rotate backwards."
         ((org-at-block-p) (org-narrow-to-block))
         (t (narrow-to-defun))))
 
+(defun jw-gist (arg)
+  "Simple function to create single-file gists, from a marked region or entire buffer."
+  (interactive "P")
+  (if (not (executable-find "hub"))
+      (message "Executable hub required to create gists: https://hub.github.com/")
+    (let* ((content (if (region-active-p)
+                        (buffer-substring-no-properties (region-beginning) (region-end))
+                      (buffer-substring-no-properties (point-min) (point-max))))
+           (gist-file-name (if (buffer-file-name)
+                               (file-name-nondirectory (buffer-file-name))
+                             (read-string "Gist filename, including extension: ")))
+           (public-flag (if arg "--public=true" "--public=false"))
+           (tmp-gist-dir "/tmp/emacs-tmp-gists")
+           (tmp-gist-file (format "%s/%s" tmp-gist-dir gist-file-name))
+           (default-directory tmp-gist-dir))
+      (jw--file-write content tmp-gist-file)
+      (jw--run-cmd (format "hub gist create %s %s" public-flag gist-file-name)))))
+
+(defun jw-gist-dired-files (arg)
+  "Create a single gist from either the marked dired files, or the current file if none are marked."
+  (interactive "P")
+  (if (not (executable-find "hub"))
+      (message "Executable hub required to create gists: https://hub.github.com/")
+    (let* ((files-list (dired-get-marked-files))
+           (files-str (mapconcat 'identity files-list " "))
+           (public-flag (if arg "--public=true" "--public=false")))
+      (if files-list
+          (jw--run-cmd (format "hub gist create %s %s" public-flag files-str))
+        (message "Cannot find files to gist. Either mark files or hover a file with the cursor.")))))
+
 (defun jw-pair-programming-on ()
   (interactive)
   (mode-line-on)
