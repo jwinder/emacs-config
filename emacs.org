@@ -573,6 +573,14 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq tramp-default-method "ssh")
 
+(setq zoneinfo-style-world-list
+      '(("UTC" "UTC")
+        ("US/Central" "US Central") ("US/Eastern" "US Eastern")
+        ("US/Mountain" "US Mountain") ("US/Pacific" "US Pacific")
+        ("US/Hawaii" "US Hawaii")
+        ("Europe/London" "Europe London") ("Europe/Paris" "Europe Paris")
+        ("Asia/Tokyo" "Asia Tokyo")))
+
 ;; bug: ccrypt prompt for encryption key does not match password input regexp
 ;; crypt prompts to match: "Enter encryption key:", "Enter encryption key: (repeat)", and "Enter decryption key:"
 (setq comint-password-prompt-regexp (concat comint-password-prompt-regexp "\\|^Enter \\(en\\|de\\)cryption key:.*\\s *\\'"))
@@ -1166,6 +1174,7 @@ argument makes the windows rotate backwards."
 (define-key jw-keymap (kbd "&") 'cmd-menu)
 (define-key jw-keymap (kbd "q") 'emacs-configs-toggle)
 (define-key jw-keymap (kbd "d") 'date)
+(define-key jw-keymap (kbd "D") 'display-time-world)
 (define-key jw-keymap (kbd "w") 'weather)
 (define-key jw-keymap (kbd "i") 'toggle-scratch-buffer)
 (define-key jw-keymap (kbd "I") 'scratch-buffer-remember)
