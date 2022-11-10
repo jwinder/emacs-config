@@ -1448,7 +1448,9 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
                   (switch-to-buffer (process-buffer existing-sp))
                   (call-interactively 'rcirc-cmd-msg))
               (switch-to-buffer (process-buffer existing-sp)))
-          (rcirc-connect server port nick user-name full-name startup-channels password encryption)))
+          (let* ((proc (rcirc-connect server port nick user-name full-name startup-channels password encryption))
+                 (buffer (process-buffer proc)))
+            (switch-to-buffer buffer))))
     (rcirc t)))
 
 (setq rcirc-buffer-maximum-lines 2000)
