@@ -490,7 +490,8 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (show-paren-mode 1)
 
-(fset 'yes-or-no-p 'y-or-n-p)
+(setq use-short-answers t)
+
 (setq use-dialog-box nil)
 
 (fset 'linum-mode 'display-line-numbers-mode)
@@ -1174,7 +1175,7 @@ argument makes the windows rotate backwards."
 (define-key jw-keymap (kbd "&") 'cmd-menu)
 (define-key jw-keymap (kbd "q") 'emacs-configs-toggle)
 (define-key jw-keymap (kbd "d") 'date)
-(define-key jw-keymap (kbd "D") 'display-time-world)
+(define-key jw-keymap (kbd "D") 'world-clock)
 (define-key jw-keymap (kbd "w") 'weather)
 (define-key jw-keymap (kbd "i") 'toggle-scratch-buffer)
 (define-key jw-keymap (kbd "I") 'scratch-buffer-remember)
@@ -1778,7 +1779,7 @@ support =gist= and =gist+raw= org links
    ("C-csc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
 
 (global-set-key (kbd "M-x") 'counsel-M-x)
-(global-set-key (kbd "M-X") 'ivy-resume)
+(global-set-key (kbd "C-M-x") 'ivy-resume)
 (define-key ivy-minibuffer-map (kbd "C-o") 'ivy-dispatching-done)
 (define-key ivy-minibuffer-map (kbd "M-o") 'ivy-dispatching-done-ivy)
 (global-set-key (kbd "C-x C-f") 'counsel-find-file-dwim)
