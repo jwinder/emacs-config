@@ -86,11 +86,8 @@ Now, start emacs.
 
 (use-package dumb-jump)
 (setq dumb-jump-prefer-searcher 'rg)
-;; todo emacs 28.1 -- dumb-jump xref backend and use M-. instead of M-s j
-;; :config (lambda ()
-;;           (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-;;           (setq xref-show-definitions-function #'xref-show-definitions-completing-read) ;; requires xref 1.1.0 on emacs 28.1
-;;           )
+(add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+(setq xref-show-definitions-function #'xref-show-definitions-completing-read)
 
 (use-package editorconfig)
 (editorconfig-mode 1)
@@ -1223,10 +1220,6 @@ argument makes the windows rotate backwards."
 ;; bind C-<backspace> and s-<backspace> both to the same command, to match some other apps
 (global-set-key (kbd "s-<backspace>") 'backward-kill-word)
 
-;; todo emacs 28.1 -- remove these and use the default xref keybindings
-(global-set-key (kbd "M-s j") 'dumb-jump-go)
-(global-set-key (kbd "M-s J") 'dumb-jump-go-other-window)
-
 (define-key verb-command-map (kbd "C-r") 'verb-send-request-on-point)
 (define-key verb-command-map (kbd "C-s") 'verb-send-request-on-point-other-window-stay)
 (define-key verb-command-map (kbd "C-f") 'verb-send-request-on-point-other-window)
@@ -2196,6 +2189,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (define-key js-mode-map (kbd "C-c M-:") nil) ;; remove default js-eval
 (define-key js-mode-map (kbd "C-M-x") nil) ;; remove default js-eval-defun
 (define-key js-mode-map (kbd "C-c C-j") nil) ;; remove js-set-js-context
+(define-key js-mode-map (kbd "M-.") nil) ;; remove js-find-symbol -- the built-in xref-find-definitions works better for me
 
 (define-key js-mode-map (kbd "C-x C-e") 'nodejs-repl-send-last-expression)
 (define-key js-mode-map (kbd "C-c C-j") 'nodejs-repl-send-line)
