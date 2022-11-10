@@ -1749,6 +1749,11 @@ support =gist= and =gist+raw= org links
   (let ((ivy-read-action-function #'ivy-read-action-ivy))
     (ivy-dispatching-done)))
 
+(defun ivy-resume-or-else-counsel-M-x ()
+  (interactive)
+  (when (not (ignore-errors (call-interactively 'ivy-resume)))
+    (call-interactively 'counsel-M-x)))
+
 (defun counsel-emacs-processes-dwim (arg)
   (interactive "P")
   (if arg (list-processes) (counsel-list-processes)))
@@ -1774,7 +1779,7 @@ support =gist= and =gist+raw= org links
    ("C-csc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
 
 (global-set-key (kbd "M-x") 'counsel-M-x)
-(global-set-key (kbd "M-z") 'ivy-resume)
+(global-set-key (kbd "M-z") 'ivy-resume-or-else-counsel-M-x)
 (define-key ivy-minibuffer-map (kbd "C-o") 'ivy-dispatching-done)
 (define-key ivy-minibuffer-map (kbd "M-o") 'ivy-dispatching-done-ivy)
 (global-set-key (kbd "C-x C-f") 'counsel-find-file-dwim)
