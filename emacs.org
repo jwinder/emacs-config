@@ -72,6 +72,9 @@ Now, start emacs.
 (require 'smartparens-config)
 (smartparens-global-mode t)
 
+(use-package rainbow-delimiters)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+
 (use-package yasnippet)
 (use-package yasnippet-snippets)
 
