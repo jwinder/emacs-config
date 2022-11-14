@@ -1249,26 +1249,6 @@ argument makes the windows rotate backwards."
 (jw--global-set-visual-area-key "<C-wheel-left>" 'transparency-alpha-decrease)
 #+END_SRC
 
-* log commands
-
-#+BEGIN_SRC emacs-lisp
-(setq log-this-command--last-log nil)
-
-(defun log-this-command (&rest _)
-  (let* ((keys (key-description (this-command-keys)))
-         (cmd (jw--symbol-name this-command))
-         (log (concat (s-pad-right 24 "\s" keys) cmd))
-         (buffer (get-buffer-create "*command-log*")))
-    (unless (equal log-this-command--last-log log)
-      (setq log-this-command--last-log log)
-      (with-current-buffer buffer
-        (save-excursion
-          (end-of-buffer)
-          (insert "\n" log))))))
-
-(add-hook 'pre-command-hook 'log-this-command)
-#+END_SRC
-
 * eshell
 
 #+BEGIN_SRC emacs-lisp
