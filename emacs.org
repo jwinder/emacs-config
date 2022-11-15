@@ -1547,6 +1547,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
       org-enforce-todo-checkbox-dependencies t
       org-return-follows-link t
       org-tags-column -100
+      org-adapt-indentation t
       org-src-preserve-indentation t
       org-cycle-open-archived-trees t
       org-todo-keywords '((sequence "⚑" "⚐" "|" "✔" "✘"))
