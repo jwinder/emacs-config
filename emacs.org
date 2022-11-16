@@ -1206,6 +1206,7 @@ argument makes the windows rotate backwards."
 (define-key sp-keymap (kbd "M-<backspace>") nil)
 (define-key sp-keymap (kbd "C-M-p") nil)
 (define-key sp-keymap (kbd "C-M-n") nil)
+(global-set-key (kbd "C-x C-d") 'dired)
 (define-key dired-mode-map (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
 (define-key dired-mode-map (kbd "w") 'wdired-change-to-wdired-mode)
 (define-key dired-mode-map (kbd "<tab>") 'dired-hide-subdir-dwim)
@@ -1777,7 +1778,7 @@ support =gist= and =gist+raw= org links
    ("g" counsel-find-file--magit-status-action "magit-status in pwd")
    ("ss" counsel-find-file--counsel-ag-action "ag in pwd")
    ("sr" counsel-find-file--counsel-rg-action "rg in pwd")
-   ("C-xd" counsel-find-file--dired-action "dired in pwd")
+   ("C-xC-d" counsel-find-file--dired-action "dired in pwd")
    ("C-cme" counsel-find-file--eshell-action "eshell in pwd")
    ("C-css" counsel-find-file--jw-sbt-action "sbt in pwd")
    ("C-csc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
@@ -1834,7 +1835,7 @@ support =gist= and =gist+raw= org links
  'counsel-projectile-switch-project
  '(("!" counsel-projectile-switch-project--cmd-dwim-action "cmd-dwim in project root")
    ("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
-   ("C-xd" counsel-projectile-switch-project-action-dired "open project in dired")
+   ("C-xC-d" counsel-projectile-switch-project-action-dired "open project in dired")
    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
    ))
 
