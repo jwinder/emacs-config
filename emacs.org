@@ -762,7 +762,7 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
             (4 (read-string "Weather for city/state/country/zip/latlong/:help/etc - curl wttr.in/"))
             (_ "")))
          (query (url-encode-url (s-replace "\s" "+" (s-trim raw-query)))))
-    (jw--run-cmd (format "curl http://wttr.in/%s" query))))
+    (jw--run-cmd (format "curl http://wttr.in/%s?FT" query))))
 
 (setq cheat-sh-candidates nil)
 (defun cheat-sh (&optional arg)
