@@ -75,6 +75,8 @@ Now, start emacs.
 (use-package rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
+(use-package rainbow-mode)
+
 (use-package yasnippet)
 (use-package yasnippet-snippets)
 
