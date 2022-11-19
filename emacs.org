@@ -25,6 +25,7 @@ Now, start emacs.
 (use-package gnu-elpa-keyring-update)
 
 (use-package afternoon-theme)
+(use-package xterm-color)
 
 (use-package beacon)
 (beacon-mode 1)
@@ -366,7 +367,8 @@ For long running processes, this will always toggle back and forth between the p
           (when (string= name "PATH")
             (setq exec-path (split-string value ":"))
             (setq eshell-path-env value))))))
-  (setenv "EDITOR" "emacsclient"))
+  (setenv "EDITOR" "emacsclient")
+  (setenv "TERM" "xterm-256color"))
 
 (jw-env-set)
 (add-to-list 'eshell-mode-hook 'jw-env-set)
@@ -460,6 +462,7 @@ mode line
 #+END_SRC
 
 fix for cursor color in clients falling back to the default theme [[http:emacs.stackexchange.com/a/14575][copied from stackoverflow]]
+todo - these might go away after custom theme is done
 #+BEGIN_SRC emacs-lisp
 (require 'frame)
 
@@ -488,7 +491,19 @@ fix for cursor color in clients falling back to the default theme [[http:emacs.s
 
 (setq vc-follow-symlinks t)
 
-(ansi-color-for-comint-mode-on)
+;; colors for comint
+(ansi-color-for-comint-mode-off)
+(setq comint-output-filter-functions (remove 'ansi-color-process-output comint-output-filter-functions))
+(add-hook 'comint-preoutput-filter-functions 'xterm-color-filter)
+
+;; colors for compilation-mode
+(setq compilation-environment '("TERM=xterm-256color"))
+(advice-add 'compilation-filter :around '(lambda (f proc str) (funcall f proc (xterm-color-filter str))))
+
+;; colors for eshell
+(add-hook 'eshell-before-prompt-hook '(lambda () (setq xterm-color-preserve-properties t)))
+(add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
+(setq eshell-output-filter-functions (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
 
 (show-paren-mode 1)
 
@@ -764,7 +779,7 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
             (4 (read-string "Weather for city/state/country/zip/latlong/:help/etc - curl wttr.in/"))
             (_ "")))
          (query (url-encode-url (s-replace "\s" "+" (s-trim raw-query)))))
-    (jw--run-cmd (format "curl http://wttr.in/%s?FT" query))))
+    (jw--run-cmd (format "curl http://wttr.in/%s?F" query))))
 
 (setq cheat-sh-candidates nil)
 (defun cheat-sh (&optional arg)
@@ -2077,7 +2092,6 @@ very opinionated project development lifecycle commands, an alternative to proje
   (apply original-function args))
 (advice-add 'sbt:command :around 'sbt:command--advice--message-command) ;; sbt-command delegates to sbt:command
 
-(add-to-list 'sbt:program-options "-no-colors") ;; remove a lot of extra spacing with new sbt prompt changes
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
 (add-to-list 'auto-mode-alist '("\\.sbt$" . scala-mode))
 
