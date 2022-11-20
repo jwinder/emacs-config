@@ -1225,6 +1225,7 @@ argument makes the windows rotate backwards."
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-x r t") 'mc/edit-lines)
+(global-set-key (kbd "C-c i") 'imenu) ;; todojoe semantic
 (define-key sp-keymap (kbd "M-<backspace>") nil)
 (define-key sp-keymap (kbd "C-M-p") nil)
 (define-key sp-keymap (kbd "C-M-n") nil)
@@ -1818,6 +1819,7 @@ support =gist= and =gist+raw= org links
 (global-set-key (kbd "C-x E") 'counsel-kmacro)
 (global-set-key (kbd "C-x p") 'counsel-emacs-processes-dwim)
 (global-set-key (kbd "C-x P") 'proced)
+(global-set-key (kbd "C-c i") 'counsel-imenu)
 (global-set-key (kbd "M-s o") 'swiper-thing-at-point)
 (global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-r") 'swiper-backward)
@@ -2232,7 +2234,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (define-key js2-mode-map (kbd "C-c C-t") nil)
 
 ;; todojoe - turn off for now, toggling warnings & errors
-;; not sure which binding i want for this
+;; not sure which binding i want for this. maybe put it in runbook menu.
 (define-key js2-mode-map (kbd "C-c C-w") nil)
 
 (define-key js-mode-map (kbd "C-x C-e") 'nodejs-repl-send-last-expression)
