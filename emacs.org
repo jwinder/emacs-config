@@ -1839,6 +1839,7 @@ support =gist= and =gist+raw= org links
 (define-key help-map (kbd "v") 'counsel-describe-variable)
 (define-key help-map (kbd "S") 'counsel-info-lookup-symbol)
 (define-key help-map (kbd "a") 'counsel-apropos)
+(define-key help-map (kbd "c") 'counsel-describe-face)
 #+END_SRC
 
 * projectile
