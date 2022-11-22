@@ -658,6 +658,14 @@ todo - these might go away after custom theme is done
 
 (setq kill-ring-max 1000)
 
+(require 'rcirc)
+(require 'erc)
+(setq erc-header-line-format nil)
+(defun irc-hook--span-window-width ()
+  (setq rcirc-fill-column (- (window-width) 2))
+  (setq erc-fill-column (- (window-width) 2)))
+(add-hook 'window-configuration-change-hook 'irc-hook--span-window-width)
+
 (when (eq system-type 'gnu/linux)
   (setq interprogram-paste-function 'x-cut-buffer-or-selection-value
         browse-url-browser-function 'browse-url-generic
@@ -1447,69 +1455,6 @@ eshell prompt
 (define-key jw-magit-map (kbd "f") 'magit-file-dispatch)
 (define-key jw-magit-map (kbd "M-w") 'browse-at-remote)
 
-#+END_SRC
-
-* rcirc
-
-#+BEGIN_SRC emacs-lisp
-(require 'rcirc)
-
-(defun rcirc-connect-dwim (&optional server port nick user-name full-name startup-channels password encryption)
-  "Alternative to `rcirc-connect'.
-If the server is not connected, then connect to it.
-If no server is provided, then a prompt will ask the user for a server.
-If the server is connected, then toggle to it's process buffer.
-If the server is connected and a prefix arg is provided, then invoke a quick /msg on the server and toggle back to the other-buffer."
-  (interactive)
-  (if server
-      (let ((existing-sp (get-process server)))
-        (if (process-live-p existing-sp)
-            (if current-prefix-arg
-                (save-window-excursion
-                  (switch-to-buffer (process-buffer existing-sp))
-                  (call-interactively 'rcirc-cmd-msg))
-              (switch-to-buffer (process-buffer existing-sp)))
-          (let* ((proc (rcirc-connect server port nick user-name full-name startup-channels password encryption))
-                 (buffer (process-buffer proc)))
-            (switch-to-buffer buffer))))
-    (rcirc t)))
-
-(setq rcirc-buffer-maximum-lines 2000)
-
-(add-to-list 'rcirc-omit-responses "MODE")
-
-(custom-set-faces '(rcirc-my-nick ((t (:foreground "#00ffff"))))
-                  '(rcirc-other-nick ((t (:foreground "#90ee90"))))
-                  '(rcirc-server ((t (:foreground "#a2b5cd"))))
-                  '(rcirc-server-prefix ((t (:foreground "#00bfff"))))
-                  '(rcirc-timestamp ((t (:foreground "#7d7d7d"))))
-                  '(rcirc-nick-in-message ((t (:foreground "#00ffff"))))
-                  '(rcirc-prompt ((t (:foreground "#00bfff"))))
-                  '(rcirc-keyword ((t :foreground "#00ffff")))
-                  '(rcirc-nick-in-message-full-line ((t ())))
-                  '(rcirc-track-nick ((t (:foreground "#00ffff"))))
-                  '(rcirc-track-keyword ((t (:foreground "#00ffff")))))
-
-(defun rcirc-hook--initial-config ()
-  (jw--save-current-message
-    (rcirc-track-minor-mode t)
-    (rcirc-omit-mode)
-    (cd (getenv "HOME"))))
-
-(add-hook 'rcirc-mode-hook 'rcirc-hook--initial-config)
-
-(defun rcirc-hook--span-window-width ()
-  (setq rcirc-fill-column (- (window-width) 2)))
-
-(add-hook 'window-configuration-change-hook 'rcirc-hook--span-window-width)
-
-(defun rcirc-handler-NOTICE--advice--ignore-KEEPALIVE (original-function &rest args)
-  (let* ((function-args (nth 2 args))
-         (msg (cadr function-args)))
-    (unless (string-match "keepalive" msg)
-      (apply original-function args))))
-
-(advice-add 'rcirc-handler-NOTICE :around 'rcirc-handler-NOTICE--advice--ignore-KEEPALIVE)
 #+END_SRC
 
 * org
