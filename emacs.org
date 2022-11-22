@@ -667,6 +667,9 @@ todo - these might go away after custom theme is done
   (setq erc-fill-column (- (window-width) 2)))
 (add-hook 'window-configuration-change-hook 'irc-hook--span-window-width)
 
+;; erc: stop from scrolling too far up on new messages, and keep the cursor at the bottom of the buffer.
+(add-to-list 'erc-mode-hook (lambda () (set (make-local-variable 'scroll-conservatively) 100)))
+
 (when (eq system-type 'gnu/linux)
   (setq interprogram-paste-function 'x-cut-buffer-or-selection-value
         browse-url-browser-function 'browse-url-generic
