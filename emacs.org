@@ -661,7 +661,10 @@ todo - these might go away after custom theme is done
 (require 'rcirc)
 (require 'erc)
 (setq erc-header-line-format nil
-      erc-prompt ">")
+      erc-prompt ">"
+      erc-hide-list '("JOIN" "PART" "QUIT"))
+
+;; make rcirc & erc buffers span width of window
 (defun irc-hook--span-window-width ()
   (setq rcirc-fill-column (- (window-width) 2))
   (setq erc-fill-column (- (window-width) 2)))
