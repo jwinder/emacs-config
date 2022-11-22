@@ -660,7 +660,8 @@ todo - these might go away after custom theme is done
 
 (require 'rcirc)
 (require 'erc)
-(setq erc-header-line-format nil)
+(setq erc-header-line-format nil
+      erc-prompt ">")
 (defun irc-hook--span-window-width ()
   (setq rcirc-fill-column (- (window-width) 2))
   (setq erc-fill-column (- (window-width) 2)))
