@@ -668,8 +668,9 @@ theme
 (require 'rcirc)
 (require 'erc)
 (setq erc-header-line-format nil
-      erc-prompt ">"
       erc-hide-list '("JOIN" "PART" "QUIT"))
+
+(setq erc-prompt (lambda () (concat (buffer-name) " >")))
 
 ;; make rcirc & erc buffers span width of window
 (defun irc-hook--span-window-width ()
