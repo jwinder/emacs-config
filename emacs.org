@@ -459,8 +459,8 @@ theme
        (background "black")
        (foreground "#eaeaea")
        (cursor "dark gray")
-       (highlight-dark "#14151E")
-       (highlight-bright "#103050")
+       (selection "#103050")
+       (secondary-selection "#305010")
        (comment "#969896")
        (red "#d54e53")
        (orange "goldenrod")
@@ -480,12 +480,12 @@ theme
    `(link ((,class (:foreground ,foreground :underline t))))
    `(link-visited ((,class (:foreground ,foreground :underline t))))
    `(linum ((,class (:background nil :foreground ,green))))
-   `(border ((,class (:background ,highlight-dark))))
-   `(highlight ((,class (:inverse-video nil :background ,highlight-dark))))
+   `(border ((,class (:background ,selection))))
+   `(highlight ((,class (:inverse-video nil :background ,background)))) ;; match bg. i never rely on this face.
 
    `(minibuffer-prompt ((,class (:foreground ,blue))))
-   `(region ((,class (:background ,highlight-bright))))
-   `(secondary-selection ((,class (:background ,highlight-dark))))
+   `(region ((,class (:background ,selection))))
+   `(secondary-selection ((,class (:background ,secondary-selection))))
 
    `(trailing-whitespace ((,class (:foreground ,red :inverse-video t :underline nil))))
 
@@ -553,7 +553,7 @@ theme
    `(org-agenda-dimmed-todo-face ((,class (:foreground ,comment))))
    `(org-block ((,class (:foreground ,foreground))))
    `(org-code ((,class (:foreground ,yellow))))
-   `(org-column ((,class (:background ,highlight-dark))))
+   `(org-column ((,class (:background ,comment))))
    `(org-column-title ((,class (:inherit org-column :weight bold :underline t))))
    `(org-document-info ((,class (:foreground ,cyan))))
    `(org-document-info-keyword ((,class (:foreground ,green))))
@@ -577,7 +577,7 @@ theme
 
    `(erc-direct-msg-face ((,class (:foreground ,orange))))
    `(erc-error-face ((,class (:foreground ,red))))
-   `(erc-header-face ((,class (:foreground ,foreground :background ,highlight-bright))))
+   `(erc-header-face ((,class (:foreground ,foreground :background ,selection))))
    `(erc-input-face ((,class (:foreground ,green))))
    `(erc-keyword-face ((,class (:foreground ,yellow))))
    `(erc-current-nick-face ((,class (:foreground ,green))))
@@ -623,7 +623,7 @@ theme
 
   (custom-theme-set-variables
    'jw
-   `(fci-rule-color ,highlight-bright)
+   `(fci-rule-color ,selection)
    `(vc-annotate-color-map
      '((20  . ,red)
        (40  . ,orange)
