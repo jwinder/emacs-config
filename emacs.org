@@ -573,8 +573,6 @@ theme
 
    `(magit-log-author ((,class (:foreground ,cyan))))
 
-   `(ivy-virtual ((,class (:foreground ,comment))))
-
    `(erc-direct-msg-face ((,class (:foreground ,orange))))
    `(erc-error-face ((,class (:foreground ,red))))
    `(erc-header-face ((,class (:foreground ,foreground :background ,selection))))
