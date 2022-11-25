@@ -454,7 +454,7 @@ theme
 #+BEGIN_SRC emacs-lisp :tangle jw-theme.el
 (deftheme jw)
 
-(let* ((class '((class color) (min-colors 89)))
+(let* ((class t) ;; don't worry about different classes yet
        (font-name (jw--font-name jw--default-font-size))
        (background "black")
        (foreground "#eaeaea")
