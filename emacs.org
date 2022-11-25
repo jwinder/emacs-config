@@ -539,7 +539,7 @@ theme
    `(outline-4 ((,class (:inherit nil :foreground ,cyan))))
    `(outline-5 ((,class (:inherit nil :foreground ,orange))))
    `(outline-6 ((,class (:inherit nil :foreground "CadetBlue1"))))
-   `(outline-7 ((,class (:inherit nil :foreground "cyanmarine1"))))
+   `(outline-7 ((,class (:inherit nil :foreground "DarkSeaGreen"))))
    `(outline-8 ((,class (:inherit nil :foreground "turquoise2"))))
    `(outline-9 ((,class (:inherit nil :foreground "LightSteelBlue1"))))
 
