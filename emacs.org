@@ -553,7 +553,7 @@ theme
    `(org-agenda-dimmed-todo-face ((,class (:foreground ,comment))))
    `(org-block ((,class (:foreground ,foreground))))
    `(org-code ((,class (:foreground ,yellow))))
-   `(org-column ((,class (:background ,comment))))
+   `(org-column ((,class (:background nil))))
    `(org-column-title ((,class (:inherit org-column :weight bold :underline t))))
    `(org-document-info ((,class (:foreground ,cyan))))
    `(org-document-info-keyword ((,class (:foreground ,green))))
