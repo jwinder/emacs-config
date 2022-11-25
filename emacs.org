@@ -573,6 +573,12 @@ theme
 
    `(magit-log-author ((,class (:foreground ,cyan))))
 
+   `(transient-red ((,class (:foreground ,red))))
+   `(transient-amaranth ((,class (:foreground ,yellow))))
+   `(transient-blue ((,class (:foreground ,blue))))
+   `(transient-purple ((,class (:foreground ,magenta))))
+   `(transient-pink ((,class (:foreground ,orange))))
+
    `(erc-direct-msg-face ((,class (:foreground ,orange))))
    `(erc-error-face ((,class (:foreground ,red))))
    `(erc-header-face ((,class (:foreground ,foreground :background ,selection))))
