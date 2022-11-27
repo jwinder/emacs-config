@@ -2301,6 +2301,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   (let ((cmd (or command (read-shell-command "Run: "))))
     (message cmd)
     (setq jw-js--last-command-global cmd)
+    ;; todojoe - compile/compilation-mode instead of just dispatching a shell command
     (jw--run-cmd cmd :process-name (jw-js--make-process-name cmd) :tail-output t)))
 
 (defun jw-js-command (arg &optional command)
