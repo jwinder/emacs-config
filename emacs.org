@@ -2014,7 +2014,7 @@ support =gist= and =gist+raw= org links
 
 * runbook
 
-very opinionated project development lifecycle commands, an alternative to projectile's compile/configure/package/etc commands.
+opinionated compile/test/etc. commands that depend on the project type, inspired by org-babel-execute implementations
 #+BEGIN_SRC emacs-lisp
 ;; do not auto-generate this. priority can be easily controlled via the order of the list. for now, this is good enough for me.
 (setq jw-runbook-support-project-types '(("build.sbt" . "scala") ("package.json" . "js")))
@@ -2063,11 +2063,6 @@ very opinionated project development lifecycle commands, an alternative to proje
 (defun jw-runbook-run-shell-command (arg) (interactive "P") (jw-runbook--find-and-run-function "shell-command" arg))
 (defun jw-runbook-run-eshell (arg) (interactive "P") (jw-runbook--find-and-run-function "eshell" arg))
 
-(defun jw-runbook-run-open-jenkins (arg) (interactive "P") (jw-runbook--find-and-run-function "open-jenkins" arg))
-(defun jw-runbook-run-env-stage (arg) (interactive "P") (jw-runbook--find-and-run-function "env-stage" arg))
-(defun jw-runbook-run-env-uat (arg) (interactive "P") (jw-runbook--find-and-run-function "env-uat" arg))
-(defun jw-runbook-run-env-prod (arg) (interactive "P") (jw-runbook--find-and-run-function "env-prod" arg))
-
 (setq jw-runbook-keymap (make-sparse-keymap))
 
 (defun jw-runbook-command (arg)
@@ -2094,11 +2089,6 @@ very opinionated project development lifecycle commands, an alternative to proje
 (define-key jw-runbook-keymap (kbd "!") 'jw-runbook-run-shell-command)
 (define-key jw-runbook-keymap (kbd "e") 'jw-runbook-run-eshell)
 
-(define-key jw-runbook-keymap (kbd "jj") 'jw-runbook-run-open-jenkins)
-(define-key jw-runbook-keymap (kbd "j1") 'jw-runbook-run-env-stage)
-(define-key jw-runbook-keymap (kbd "j2") 'jw-runbook-run-env-uat)
-(define-key jw-runbook-keymap (kbd "j3") 'jw-runbook-run-env-prod)
-
 ;; NOTE: prefix args in magit/transient menus are voided out for multi-key shortcuts. :-(
 (transient-define-prefix jw-runbook-menu ()
   ["Runbook"
@@ -2118,12 +2108,6 @@ very opinionated project development lifecycle commands, an alternative to proje
   ["Shell"
    ("!" "cmd-dwim        shell command in project root" jw-runbook-run-shell-command)
    ("e" "eshell          eshell in project root" jw-runbook-run-eshell)
-   ]
-  ["Deployment"
-   ("jj" "open-jenkins   open jenkins job in web browser" jw-runbook-run-open-jenkins)
-   ("j1" "env-stage      open dev/stage app environment" jw-runbook-run-env-stage)
-   ("j2" "env-uat        open uat/qa app environment" jw-runbook-run-env-uat)
-   ("j3" "env-prod       open prod app environment" jw-runbook-run-env-prod)
    ])
 
 (defun jw-runbook-menu-open (&optional dir)
@@ -2168,11 +2152,6 @@ very opinionated project development lifecycle commands, an alternative to proje
 
       (when shell-command (fset (intern (format "jw-runbook-run-shell-command:%s:%s" namespace func-name-suffix)) shell-command))
       (when eshell (fset (intern (format "jw-runbook-run-eshell:%s:%s" namespace func-name-suffix)) eshell))
-
-      (when open-jenkins (fset (intern (format "jw-runbook-run-open-jenkins:%s:%s" namespace func-name-suffix)) open-jenkins))
-      (when env-stage (fset (intern (format "jw-runbook-run-env-stage:%s:%s" namespace func-name-suffix)) env-stage))
-      (when env-uat (fset (intern (format "jw-runbook-run-env-uat:%s:%s" namespace func-name-suffix)) env-uat))
-      (when env-prod (fset (intern (format "jw-runbook-run-env-prod:%s:%s" namespace func-name-suffix)) env-prod))
       )))
 
 (defun jw-runbook-run-shell-command:default (arg) (cmd-dwim arg))
