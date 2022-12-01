@@ -1980,6 +1980,7 @@ support =gist= and =gist+raw= org links
 
 (setq projectile-sort-order 'recently-active)
 (setq projectile-enable-caching t)
+(setq projectile-ignored-projects '("~/"))
 
 (defun counsel-projectile-switch-project--cmd-dwim-action (project)
   (let ((projectile-switch-project-action (lambda () (cmd-dwim ivy-current-prefix-arg))))
