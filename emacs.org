@@ -1714,6 +1714,7 @@ eshell prompt
       org-pretty-entities nil ;; do not use this, it causes _ subscripts, which interfere with pg table names and such
       org-hide-emphasis-markers nil ;; do not use this, interferes with things like example URLs being made italic
       org-fontify-done-headline t
+      org-log-repeat nil ;; don't add a state-change timestamp everytime a recurring task repeats
       org-confirm-babel-evaluate nil
       org-link-shell-confirm-function nil
       org-link-elisp-confirm-function nil
