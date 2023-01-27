@@ -2253,6 +2253,8 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (require 'json)
 (require 'yaml)
 
+(add-to-list 'js2-ignored-warnings "msg.missing.semi")
+
 (defun jw-js--binci-p () (and (executable-find "binci") (f-exists? "binci.yml")))
 (defun jw-js--get-project-name () (projectile-project-name))
 (defun jw-js--npm-run-command () (if (executable-find "yarn") "yarn" "npm run"))
