@@ -876,6 +876,8 @@ theme
 (defalias 'filter-out-lines 'flush-lines)
 (defalias 'elisp-shell 'ielm)
 
+(defalias 'times-timezones 'world-clock)
+
 (defun sudo-su ()
   (interactive)
   (let ((goto (or (buffer-file-name) (jw--pwd))))
