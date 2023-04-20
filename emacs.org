@@ -2405,8 +2405,6 @@ load the =private= directory and the =private.org= file if they exist
 
 (unless (eq (frame-parameter nil 'fullscreen) 'maximized) (toggle-frame-maximized))
 
-(mode-line-off)
-
 (unless (server-running-p) (server-start))
 
 (cd (getenv "HOME"))
