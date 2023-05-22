@@ -91,6 +91,7 @@ Now, start emacs.
 
 (use-package dumb-jump)
 (setq dumb-jump-prefer-searcher 'rg)
+(setq dumb-jump-force-searcher 'rg) ;; for some reason, dumb-jump xref broke recently so this is needed too
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
 
