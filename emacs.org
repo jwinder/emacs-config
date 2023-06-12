@@ -722,6 +722,7 @@ theme
 
 (setq tab-width 2)
 (setq js-indent-level 2)
+(setq typescript-indent-level 2)
 
 (delete-selection-mode 1)
 
