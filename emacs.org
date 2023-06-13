@@ -2095,7 +2095,7 @@ support =gist= and =gist+raw= org links
 (define-key sbt-keymap (kbd "s") 'jw-sbt)
 (define-key sbt-keymap (kbd "c") 'jw-sbt-compile)
 (define-key sbt-keymap (kbd "t") 'jw-sbt-test)
-(define-key sbt-keymap (kbd "l") 'sbt-run-previous-command)
+(define-key sbt-keymap (kbd "g") 'sbt-run-previous-command)
 #+END_SRC
 
 support ammonite repl in org babel, requires `amm` command, or ammonite-repl
