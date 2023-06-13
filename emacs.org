@@ -1991,12 +1991,22 @@ support =gist= and =gist+raw= org links
   (let ((projectile-switch-project-action (lambda () (cmd-dwim ivy-current-prefix-arg))))
     (counsel-projectile-switch-project-by-name project)))
 
+(defun counsel-projectile-switch-project--jw-sbt-action (project)
+  (let ((projectile-switch-project-action 'jw-sbt))
+    (counsel-projectile-switch-project-by-name project)))
+
+(defun counsel-projectile-switch-project--sbt-compile-action (project)
+  (let ((projectile-switch-project-action (lambda () (jw-sbt-compile ivy-current-prefix-arg))))
+    (counsel-projectile-switch-project-by-name project)))
+
 (ivy-add-actions
  'counsel-projectile-switch-project
  '(("!" counsel-projectile-switch-project--cmd-dwim-action "cmd-dwim in project root")
    ("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
    ("C-xC-d" counsel-projectile-switch-project-action-dired "open project in dired")
    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
+   ("C-css" counsel-projectile-switch-project--jw-sbt-action "sbt")
+   ("C-csc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")
    ))
 
 (defun counsel-projectile--filter-out-action-keys (actions keys-to-filter)
@@ -2004,7 +2014,7 @@ support =gist= and =gist+raw= org links
 
 (let* ((head (car counsel-projectile-switch-project-action))
        (original-actions (cdr counsel-projectile-switch-project-action))
-       (fixed-actions (counsel-projectile--filter-out-action-keys original-actions (list "c" "C" "E" "Oc" "Oa" "v" "xs" "xv"))))
+       (fixed-actions (counsel-projectile--filter-out-action-keys original-actions (list "E" "Oc" "Oa" "v" "xs" "xv"))))
   (setq counsel-projectile-switch-project-action (cons head fixed-actions)))
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
@@ -2016,153 +2026,6 @@ support =gist= and =gist+raw= org links
     (message "Did NOT clear the projectile projects.")))
 
 (advice-add 'projectile-clear-known-projects :around 'projectile-clear-known-projects--advice--ask-y-or-n)
-#+END_SRC
-
-* runbook
-
-opinionated compile/test/etc. commands that depend on the project type, inspired by org-babel-execute implementations
-#+BEGIN_SRC emacs-lisp
-;; do not auto-generate this. priority can be easily controlled via the order of the list. for now, this is good enough for me.
-(setq jw-runbook-support-project-types '(("build.sbt" . "scala") ("package.json" . "js")))
-
-;; jank cache to help with magit/transient & also manually setting transient-map.
-;; there is an edge case where exiting a transient by cancelling might leave this variable set. but the keymap command & transient clear it.
-(setq jw-runbook--target-location nil)
-(setq jw-runbook--current-prefix-arg nil)
-
-(defun jw-runbook--find-root () (projectile-project-root))
-(defun jw-runbook--find-project-name (&optional d) (let ((n (projectile-project-name d))) (unless (string= n "-") n)))
-
-(defun jw-runbook--find-and-run-function (name arg)
-  (let* ((root-dir (or jw-runbook--target-location (jw-runbook--find-root)))
-         (proj-name (jw-runbook--find-project-name root-dir))
-         (a (or jw-runbook--current-prefix-arg arg))
-         (_ (setq jw-runbook--target-location nil
-                  jw-runbook--current-prefix-arg nil))
-         (proj-func-name (when proj-name (format "jw-runbook-run-%s:name:%s" name proj-name)))
-         (proj-func (when proj-name (intern proj-func-name)))
-         (type (cdr-safe (-find (lambda (pair) (f-exists? (f-expand (car pair) root-dir))) jw-runbook-support-project-types)))
-         (type-func-name (when type (format "jw-runbook-run-%s:type:%s" name type)))
-         (type-func (when type (intern type-func-name)))
-         (default-func-name (format "jw-runbook-run-%s:default" name))
-         (default-func (intern default-func-name)))
-    (cond
-     ((and proj-name (fboundp proj-func)) (let ((default-directory root-dir)) (funcall proj-func a)))
-     ((not type) (message "jw-runbook - could not find project type for jw-runbook"))
-     ((fboundp type-func) (let ((default-directory root-dir)) (funcall type-func a)))
-     ((fboundp default-func) (let ((default-directory root-dir)) (funcall default-func a)))
-     (t (message "jw-runbook - could not find any bound function: %s %s %s" proj-func-name type-func-name default-func-name)))))
-
-(defun jw-runbook-run-install (arg) (interactive "P") (jw-runbook--find-and-run-function "install" arg))
-(defun jw-runbook-run-start (arg) (interactive "P") (jw-runbook--find-and-run-function "start" arg))
-(defun jw-runbook-run-run (arg) (interactive "P") (jw-runbook--find-and-run-function "run" arg))
-(defun jw-runbook-run-compile (arg) (interactive "P") (jw-runbook--find-and-run-function "compile" arg))
-(defun jw-runbook-run-test-compile (arg) (interactive "P") (jw-runbook--find-and-run-function "test-compile" arg))
-(defun jw-runbook-run-test (arg) (interactive "P") (jw-runbook--find-and-run-function "test" arg))
-(defun jw-runbook-run-test-only (arg) (interactive "P") (jw-runbook--find-and-run-function "test-only" arg))
-(defun jw-runbook-run-lint (arg) (interactive "P") (jw-runbook--find-and-run-function "lint" arg))
-(defun jw-runbook-run-command (arg) (interactive "P") (jw-runbook--find-and-run-function "command" arg))
-(defun jw-runbook-run-last-command (arg) (interactive "P") (jw-runbook--find-and-run-function "last-command" arg))
-(defun jw-runbook-run-repl (arg) (interactive "P") (jw-runbook--find-and-run-function "repl" arg))
-(defun jw-runbook-run-cleanup (arg) (interactive "P") (jw-runbook--find-and-run-function "cleanup" arg))
-
-(defun jw-runbook-run-shell-command (arg) (interactive "P") (jw-runbook--find-and-run-function "shell-command" arg))
-(defun jw-runbook-run-eshell (arg) (interactive "P") (jw-runbook--find-and-run-function "eshell" arg))
-
-(setq jw-runbook-keymap (make-sparse-keymap))
-
-(defun jw-runbook-command (arg)
-  (interactive "P")
-  (setq jw-runbook--target-location nil)
-  (setq jw-runbook--current-prefix-arg arg)
-  (set-transient-map jw-runbook-keymap))
-
-(global-set-key (kbd "C-c s") 'jw-runbook-command)
-
-(define-key jw-runbook-keymap (kbd "I") 'jw-runbook-run-install)
-(define-key jw-runbook-keymap (kbd "s") 'jw-runbook-run-start)
-(define-key jw-runbook-keymap (kbd "r") 'jw-runbook-run-run)
-(define-key jw-runbook-keymap (kbd "c") 'jw-runbook-run-compile)
-(define-key jw-runbook-keymap (kbd "C") 'jw-runbook-run-test-compile)
-(define-key jw-runbook-keymap (kbd "t") 'jw-runbook-run-test)
-(define-key jw-runbook-keymap (kbd "o") 'jw-runbook-run-test-only)
-(define-key jw-runbook-keymap (kbd "L") 'jw-runbook-run-lint)
-(define-key jw-runbook-keymap (kbd ":") 'jw-runbook-run-command)
-(define-key jw-runbook-keymap (kbd "l") 'jw-runbook-run-last-command)
-(define-key jw-runbook-keymap (kbd "$") 'jw-runbook-run-repl)
-(define-key jw-runbook-keymap (kbd "K") 'jw-runbook-run-cleanup)
-
-(define-key jw-runbook-keymap (kbd "!") 'jw-runbook-run-shell-command)
-(define-key jw-runbook-keymap (kbd "e") 'jw-runbook-run-eshell)
-
-;; NOTE: prefix args in magit/transient menus are voided out for multi-key shortcuts. :-(
-(transient-define-prefix jw-runbook-menu ()
-  ["Runbook"
-   ("I" "install         install development dependencies" jw-runbook-run-install)
-   ("s" "start           start development dependencies & server locally" jw-runbook-run-start)
-   ("r" "run             run app locally" jw-runbook-run-run)
-   ("c" "compile         run compile function" jw-runbook-run-compile)
-   ("C" "test-compile    run test-compile function" jw-runbook-run-test-compile)
-   ("t" "test            run all tests" jw-runbook-run-test)
-   ("o" "test-only       run specific test" jw-runbook-run-test-only)
-   ("L" "lint            run lint" jw-runbook-run-lint)
-   (":" "command         arbitrary build command" jw-runbook-run-command)
-   ("l" "last-command    run the last command" jw-runbook-run-last-command)
-   ("K" "cleanup         kill project dev & process buffers" jw-runbook-run-cleanup)
-   ("$" "repl            open project language's repl" jw-runbook-run-repl)
-   ]
-  ["Shell"
-   ("!" "cmd-dwim        shell command in project root" jw-runbook-run-shell-command)
-   ("e" "eshell          eshell in project root" jw-runbook-run-eshell)
-   ])
-
-(defun jw-runbook-menu-open (&optional dir)
-  (interactive)
-  (setq jw-runbook--target-location dir)
-  (setq jw-runbook--current-prefix-arg nil)
-  (jw-runbook-menu))
-
-(global-set-key (kbd "C-c S") 'jw-runbook-menu-open)
-(define-key jw-runbook-keymap (kbd "?") 'jw-runbook-menu-open)
-
-(defun counsel-projectile-switch-project--jw-runbook-menu-action (project)
-  (let ((projectile-switch-project-action (lambda () (jw-runbook-menu-open project))))
-    (counsel-projectile-switch-project-by-name project)))
-
-(ivy-add-actions
- 'counsel-projectile-switch-project
- '(("C-cs" counsel-projectile-switch-project--jw-runbook-menu-action "jw-runbook")))
-
-(cl-defun jw-runbook-setup (&key runbook-type runbook-name install start run compile test-compile test test-only lint command last-command repl
-                                 shell-command eshell cleanup
-                                 open-jenkins env-stage env-uat env-prod)
-  (declare (indent defun))
-  (if (and (not runbook-type) (not runbook-name))
-      (message "jw-runbook-setup called without neither type nor name configuration")
-    (let ((namespace (if runbook-name "name" "type"))
-          (func-name-suffix (or runbook-name runbook-type)))
-
-      (when install (fset (intern (format "jw-runbook-run-install:%s:%s" namespace func-name-suffix)) install))
-      (when start (fset (intern (format "jw-runbook-run-start:%s:%s" namespace func-name-suffix)) start))
-      (when run (fset (intern (format "jw-runbook-run-run:%s:%s" namespace func-name-suffix)) run))
-      (when compile (fset (intern (format "jw-runbook-run-compile:%s:%s" namespace func-name-suffix)) compile))
-      (when test-compile (fset (intern (format "jw-runbook-run-test-compile:%s:%s" namespace func-name-suffix)) test-compile))
-      (when test (fset (intern (format "jw-runbook-run-test:%s:%s" namespace func-name-suffix)) test))
-      (when test-only (fset (intern (format "jw-runbook-run-test-only:%s:%s" namespace func-name-suffix)) test-only))
-      (when lint (fset (intern (format "jw-runbook-run-lint:%s:%s" namespace func-name-suffix)) lint))
-      (when start (fset (intern (format "jw-runbook-run-start:%s:%s" namespace func-name-suffix)) start))
-      (when command (fset (intern (format "jw-runbook-run-command:%s:%s" namespace func-name-suffix)) command))
-      (when last-command (fset (intern (format "jw-runbook-run-last-command:%s:%s" namespace func-name-suffix)) last-command))
-      (when repl (fset (intern (format "jw-runbook-run-repl:%s:%s" namespace func-name-suffix)) repl))
-      (when cleanup (fset (intern (format "jw-runbook-run-cleanup:%s:%s" namespace func-name-suffix)) cleanup))
-
-      (when shell-command (fset (intern (format "jw-runbook-run-shell-command:%s:%s" namespace func-name-suffix)) shell-command))
-      (when eshell (fset (intern (format "jw-runbook-run-eshell:%s:%s" namespace func-name-suffix)) eshell))
-      )))
-
-(defun jw-runbook-run-shell-command:default (arg) (cmd-dwim arg))
-(defun jw-runbook-run-eshell:default (arg) (eshell-dwim nil))
-(defun jw-runbook-run-cleanup:default (arg) (projectile-kill-buffers))
 #+END_SRC
 
 * scala
@@ -2202,11 +2065,18 @@ opinionated compile/test/etc. commands that depend on the project type, inspired
              (full-test-names-str (string-join full-test-names " ")))
         full-test-names-str))))
 
-(defun sbt-test-only (arg)
+(defun jw-sbt-compile (test-compile)
   (interactive "P")
-  (if arg
-      (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz"))
-    (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer)))))
+  (if test-compile
+      (sbt-command "test:compile")
+    (sbt-command "compile")))
+
+(defun jw-sbt-test (arg)
+  (interactive "P")
+  (pcase (prefix-numeric-value arg)
+    (4 (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz")))
+    (16 (sbt-command "test"))
+    (_ (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer))))))
 
 (defun sbt:command--advice--message-command (original-function &rest args)
   (message "sbt %s" (car args))
@@ -2219,20 +2089,13 @@ opinionated compile/test/etc. commands that depend on the project type, inspired
 (setq scala-indent:align-forms t
       scala-indent:align-parameters t)
 
-(jw-runbook-setup :runbook-type "scala"
-  :install (lambda (arg) (jw-sbt))
-  :start (lambda (arg) (jw-sbt))
-  :run (lambda (arg) (sbt-command "run"))
-  :compile (lambda (arg) (sbt-command "compile"))
-  :test-compile (lambda (arg) (sbt-command "Test / compile"))
-  :test (lambda (arg) (sbt-command "test"))
-  :test-only 'sbt-test-only
-  :command (lambda (arg) (call-interactively 'sbt-command))
-  :last-command (lambda (arg) (sbt-run-previous-command))
-  :repl (lambda (arg) (sbt-command "console"))
-  :cleanup (lambda (arg)
-             (jw--run-cmd "docker compose stop"
-                          :after-process-finish (lambda (arg) (projectile-kill-buffers)))))
+(define-prefix-command 'sbt-keymap)
+(global-set-key (kbd "C-c s") 'sbt-keymap)
+
+(define-key sbt-keymap (kbd "s") 'jw-sbt)
+(define-key sbt-keymap (kbd "c") 'jw-sbt-compile)
+(define-key sbt-keymap (kbd "t") 'jw-sbt-test)
+(define-key sbt-keymap (kbd "l") 'sbt-run-previous-command)
 #+END_SRC
 
 support ammonite repl in org babel, requires `amm` command, or ammonite-repl
@@ -2254,82 +2117,8 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 
 #+BEGIN_SRC emacs-lisp
 (require 'js)
-(require 'json)
-(require 'yaml)
 
 (add-to-list 'js2-ignored-warnings "msg.missing.semi")
-
-(defun jw-js--binci-p () (and (executable-find "binci") (f-exists? "binci.yml")))
-(defun jw-js--get-project-name () (projectile-project-name))
-(defun jw-js--npm-run-command () (if (executable-find "yarn") "yarn" "npm run"))
-(defun jw-js--binci-run-command () "binci")
-(defun jw-js--make-process-name (process-name) (format "*%s*<%s>" process-name (jw-js--get-project-name)))
-
-(defun jw-js--package-json-scripts-alist ()
-  (alist-get 'scripts (json-parse-string (f-read-text "package.json") :object-type 'alist)))
-
-(defun jw-js--binci-yml-tasks-alist ()
-  (alist-get 'tasks (yaml-parse-string (f-read-text "binci.yml") :object-type 'alist)))
-
-(defun jw-js--force-package-json (&optional current-arg)
-  (or current-arg (not (jw-js--binci-p))))
-
-(defun jw-js--get-scripts (&optional current-arg)
-  (if (jw-js--force-package-json current-arg) (jw-js--package-json-scripts-alist) (jw-js--binci-yml-tasks-alist)))
-
-(defun jw-js--find-command (commands &optional current-arg)
-  (let ((scripts (jw-js--get-scripts current-arg )))
-    (-find (lambda (command) (alist-get (if (stringp command) (intern command) command) scripts))
-           commands)))
-
-(setq jw-js--last-command-global nil)
-(defun jw-js-run-raw-command (arg &optional command)
-  (interactive "P")
-  (let ((cmd (or command (read-shell-command "Run: "))))
-    (message cmd)
-    (setq jw-js--last-command-global cmd)
-    ;; todojoe - compile/compilation-mode instead of just dispatching a shell command
-    (jw--run-cmd cmd :process-name (jw-js--make-process-name cmd) :tail-output t)))
-
-(defun jw-js-command (arg &optional command)
-  (interactive "P")
-  (let* ((cmd-start (if (jw-js--force-package-json arg) (jw-js--npm-run-command) (jw-js--binci-run-command)))
-         (cmd (if command (concat cmd-start " " command) (read-shell-command "Run: " (concat cmd-start " ")))))
-    (jw-js-run-raw-command arg cmd)))
-
-(defun jw-js--run-first-command (arg commands)
-  (let ((command (jw-js--find-command commands arg)))
-    (if command (jw-js-command arg command) (message "Could not find command to run in %S" commands))))
-
-(defun jw-js--find-entrypoint ()
-  (-find 'f-exists? (list "index.js" "server.js" "app.js" "main.js" "src/index.js" "src/server.js" "src/app.js" "src/main.js")))
-
-;; todojoe -- elgot/lsp
-(defun jw-js-start (arg)
-  (interactive "P")
-  (jw-js--run-first-command arg (list "dev" "start")))
-
-(defun jw-js-run (arg)
-  (interactive "P")
-  (let ((entrypoint (jw-js--find-entrypoint)))
-    (if entrypoint (jw-js-run-raw-command arg (format "node %s" entrypoint)) (jw-js-start arg))))
-
-(jw-runbook-setup :runbook-type "js"
-  :install (lambda (arg) (jw-js-command arg "install"))
-  :start (lambda (arg) (jw-js-start arg))
-  :run (lambda (arg) (jw-js-run arg))
-  :compile (lambda (arg) (jw-js--run-first-command arg (list "rebuild" "build")))
-  :test (lambda (arg) (jw-js-command arg "test")) ;; todojoe -- compilation mode
-  :test-only (lambda (arg) (jw-js-command arg "test")) ;; not doing anything automatic for test-only here ;; todojoe -- compilation mode
-  :lint (lambda (arg) (jw-js-command arg "lint"))
-  :command (lambda (arg) (jw-js-command arg))
-  :last-command (lambda (arg) (jw-js-run-raw-command arg jw-js--last-command-global))
-  :repl (lambda (arg) (nodejs-repl))
-  :cleanup (lambda (arg)
-             (if (jw-js--binci-p)
-                 (jw--run-cmd "binci --cleanup"
-                              :after-process-finish (lambda (arg) (projectile-kill-buffers)))
-               (projectile-kill-buffers))))
 
 (defun nodejs-repl-send-region-or-buffer ()
   (interactive)
@@ -2337,8 +2126,6 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
       (nodejs-repl-send-region (region-beginning) (region-end))
     (nodejs-repl-send-buffer)))
 
-(define-key js-mode-map (kbd "C-c M-:") nil) ;; remove default js-eval
-(define-key js-mode-map (kbd "C-M-x") nil) ;; remove default js-eval-defun
 (define-key js-mode-map (kbd "C-c C-j") nil) ;; remove js-set-js-context
 (define-key js-mode-map (kbd "M-.") nil) ;; remove js-find-symbol -- the built-in xref-find-definitions works better for me
 
@@ -2349,10 +2136,6 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (define-key js2-mode-map (kbd "C-c C-o") nil)
 (define-key js2-mode-map (kbd "C-c C-s") nil)
 (define-key js2-mode-map (kbd "C-c C-t") nil)
-
-;; todojoe - turn off for now, toggling warnings & errors
-;; not sure which binding i want for this. maybe put it in runbook menu.
-(define-key js2-mode-map (kbd "C-c C-w") nil)
 
 (define-key js-mode-map (kbd "C-x C-e") 'nodejs-repl-send-last-expression)
 (define-key js-mode-map (kbd "C-c C-j") 'nodejs-repl-send-line)
