@@ -677,6 +677,8 @@ theme
 
 (setq vc-follow-symlinks t)
 
+(setq compilation-scroll-output 'first-error)
+
 ;; colors for comint
 (ansi-color-for-comint-mode-off)
 (setq comint-output-filter-functions (remove 'ansi-color-process-output comint-output-filter-functions))
