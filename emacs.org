@@ -1997,8 +1997,16 @@ support =gist= and =gist+raw= org links
   (let ((projectile-switch-project-action 'jw-sbt))
     (counsel-projectile-switch-project-by-name project)))
 
-(defun counsel-projectile-switch-project--sbt-compile-action (project)
+(defun counsel-projectile-switch-project--jw-sbt-compile-action (project)
   (let ((projectile-switch-project-action (lambda () (jw-sbt-compile ivy-current-prefix-arg))))
+    (counsel-projectile-switch-project-by-name project)))
+
+(defun counsel-projectile-switch-project--jw-sbt-test-action (project)
+  (let ((projectile-switch-project-action (lambda () (jw-sbt-test ivy-current-prefix-arg))))
+    (counsel-projectile-switch-project-by-name project)))
+
+(defun counsel-projectile-switch-project--sbt-run-previous-command-action (project)
+  (let ((projectile-switch-project-action (lambda () (sbt-run-previous-command))))
     (counsel-projectile-switch-project-by-name project)))
 
 (ivy-add-actions
@@ -2008,7 +2016,9 @@ support =gist= and =gist+raw= org links
    ("C-xC-d" counsel-projectile-switch-project-action-dired "open project in dired")
    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
    ("C-css" counsel-projectile-switch-project--jw-sbt-action "sbt")
-   ("C-csc" counsel-projectile-switch-project--sbt-compile-action "sbt compile")
+   ("C-csc" counsel-projectile-switch-project--jw-sbt-compile-action "sbt compile")
+   ("C-cst" counsel-projectile-switch-project--jw-sbt-test-action "sbt test")
+   ("C-csg" counsel-projectile-switch-project--sbt-run-previous-command-action "sbt run previous command")
    ))
 
 (defun counsel-projectile--filter-out-action-keys (actions keys-to-filter)
