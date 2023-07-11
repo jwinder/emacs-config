@@ -106,6 +106,8 @@ Now, start emacs.
 (add-to-list 'auto-mode-alist '("\\.md$" . gfm-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown$" . gfm-mode))
 
+(use-package cmake-mode)
+
 (use-package dockerfile-mode)
 
 (use-package scala-mode)
