@@ -730,6 +730,15 @@ theme
 
 (delete-selection-mode 1)
 
+(defun cc-mode-electric-parens-fix-delete-selection ()
+  "Fixes a weird behavior in cc-mode where typing a paren or brace causes some nasty hard-deletion of more than whitespace from the file.
+  It also messes with undo/undo-tree history, making it hard to revert."
+  (put 'c-electric-paren 'delete-selection nil)
+  (put 'c-electric-brace 'delete-selection nil)
+  (put 'c-electric-lt-gt 'delete-selection nil))
+(add-hook 'c++-mode-hook 'cc-mode-electric-parens-fix-delete-selection)
+(add-hook 'c-mode-hook 'cc-mode-electric-parens-fix-delete-selection)
+
 (winner-mode 1)
 
 (recentf-mode 1)
