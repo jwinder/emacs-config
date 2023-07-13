@@ -1832,8 +1832,10 @@ org-babel languages & automatic yasnippet creation
 (add-to-list 'org-src-lang-modes '("elisp" . emacs-lisp))
 (org-babel-src-yasnippet 'elisp 'emacs-lisp)
 
-;; org-babel-execute:bash already exists and there is no ob-bash file, only need the yasnippet
+;; org-babel-execute:bash/cpp/C++ exists and there is no ob-bash file, only need the yasnippet
 (org-babel-src-yasnippet 'bash)
+(org-babel-src-yasnippet 'cpp)
+(org-babel-src-yasnippet 'C++)
 
 ;; yasnippets for modes that don't need an org-babel-execute function
 (org-babel-src-yasnippet 'markdown)
