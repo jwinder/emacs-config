@@ -739,6 +739,8 @@ theme
 (add-hook 'c++-mode-hook 'cc-mode-electric-parens-fix-delete-selection)
 (add-hook 'c-mode-hook 'cc-mode-electric-parens-fix-delete-selection)
 
+(c-set-offset 'case-label '+) ;; https://www.gnu.org/software/emacs/manual/html_node/efaq/Indenting-switch-statements.html
+
 (winner-mode 1)
 
 (recentf-mode 1)
