@@ -1862,6 +1862,11 @@ org-babel languages & automatic yasnippet creation
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
       org-babel-default-header-args:bash '((:results . "output")))
+
+(let ((c-compiler (executable-find "clang"))
+      (cpp-compiler (executable-find "clang++")))
+  (when c-compiler (setq org-babel-C-compiler c-compiler))
+  (when cpp-compiler (setq org-babel-C++-compiler cpp-compiler)))
 #+END_SRC
 
 support =cmd= function in org-babel and =cmd= org link
