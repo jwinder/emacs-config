@@ -1645,6 +1645,8 @@ eshell prompt
 (defalias 'git-browse-at-remote 'browse-at-remote)
 (defalias 'github-browse-file 'browse-at-remote)
 
+(setq browse-at-remote-add-line-number-if-no-region-selected nil)
+
 (setq transient-enable-popup-navigation t)
 (setq transient-display-buffer-action '(display-buffer-below-selected))
 
