@@ -1697,19 +1697,6 @@ eshell prompt
   (interactive "P")
   (if arg (jw-org-capture) (jw-todo)))
 
-(defun jw-todo-backup (arg)
-  (interactive "P")
-  (jw--run-cmd "todo-backup"
-               :after-process-finish `(lambda (proc) (when ,(not arg) (jw--kill-process-buffer proc)))))
-
-(setq jw-org-agenda-pre-hook nil)
-
-(defun jw-org-agenda (arg)
-  "Enriched `org-agenda' that runs `jw-org-agenda-pre-hook' before `org-agenda' is opened. `org-agenda-mode-hook' can be used for a post-hook"
-  (interactive "P")
-  (run-hooks 'jw-org-agenda-pre-hook)
-  (org-agenda arg))
-
 (defun jw-org-feed-update-all-or-one (arg)
   "When called with a prefix argument, interactively call `org-feed-update'. Otherwise call `org-feed-update-all'."
   (interactive "P")
@@ -1769,9 +1756,7 @@ eshell prompt
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
 (define-key jw-keymap (kbd "o") 'jw-todo-or-catpure)
-(define-key jw-keymap (kbd "O") 'jw-todo-backup)
 (define-key jw-keymap (kbd "a") 'org-agenda)
-(define-key jw-keymap (kbd "A") 'jw-org-agenda)
 (define-key ctl-x-4-map (kbd "'") 'jw-toggle-org-src-window-setup)
 (add-hook 'org-mode-hook (lambda ()
                            (local-set-key (kbd "C-c r") 'org-reveal)
