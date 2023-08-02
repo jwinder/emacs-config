@@ -1,7 +1,6 @@
 /*
 !.gitignore
 !emacs.org
-!early-init.el
 !init.el
 !README.org
 !snippets/
