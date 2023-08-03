@@ -416,6 +416,11 @@ For long running processes, this will always toggle back and forth between the p
   (setq ns-use-proxy-icon nil)
   (setq ns-auto-hide-menu-bar t))
 
+;; these can cause issues with toggling full screen causing TAB to not work
+;; TAB only seems to work in fullscreen when the titlebar is on
+(defun titlebar-on () (interactive) (set-frame-parameter nil 'undecorated nil))
+(defun titlebar-off () (interactive) (set-frame-parameter nil 'undecorated t))
+
 (defvar jw-mode-line-config-show-pwd nil)
 (defun mode-line-pwd-on () (interactive) (setq jw-mode-line-config-show-pwd t))
 (defun mode-line-pwd-off () (interactive) (setq jw-mode-line-config-show-pwd nil))
@@ -2227,6 +2232,8 @@ load the =private= directory and the =private.org= file if they exist
 (scratch-buffer)
 
 (yas-reload-all)
+
+(titlebar-off)
 
 (font-size-transparency-alpha-default)
 
