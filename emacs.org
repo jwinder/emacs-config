@@ -35,12 +35,6 @@ Now, start emacs.
 
 (use-package xterm-color)
 
-(use-package beacon)
-(beacon-mode 1)
-(setq beacon-blink-when-window-scrolls nil
-      beacon-blink-when-window-changes t
-      beacon-blink-when-buffer-changes t)
-
 (use-package dash)
 (use-package pcache)
 (use-package f)
@@ -56,9 +50,6 @@ Now, start emacs.
 (fset 'describe-function 'helpful-callable)
 (fset 'describe-variable 'helpful-variable)
 (fset 'describe-symbol 'helpful-symbol)
-
-(use-package which-key)
-(which-key-mode)
 
 (use-package magit) ;; brings in transient
 (use-package transient)
