@@ -22,6 +22,15 @@ Now, start emacs.
 * packages
 
 #+BEGIN_SRC emacs-lisp
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(package-initialize)
+(unless (file-exists-p package-user-dir) (package-refresh-contents))
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+
 (use-package gnu-elpa-keyring-update)
 
 (use-package xterm-color)
@@ -397,6 +406,11 @@ For long running processes, this will always toggle back and forth between the p
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
   (setq ns-use-proxy-icon nil)
   (setq ns-auto-hide-menu-bar t))
+
+;; these can cause issues with toggling full screen causing TAB to not work
+;; TAB only seems to work in fullscreen when the titlebar is on
+(defun titlebar-on () (interactive) (set-frame-parameter nil 'undecorated nil))
+(defun titlebar-off () (interactive) (set-frame-parameter nil 'undecorated t))
 
 (defvar jw-mode-line-config-show-pwd nil)
 (defun mode-line-pwd-on () (interactive) (setq jw-mode-line-config-show-pwd t))
@@ -2208,6 +2222,8 @@ load the =private= directory and the =private.org= file if they exist
 (scratch-buffer)
 
 (yas-reload-all)
+
+(titlebar-off)
 
 (font-size-transparency-alpha-default)
 
