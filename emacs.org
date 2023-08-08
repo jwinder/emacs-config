@@ -1430,7 +1430,6 @@ argument makes the windows rotate backwards."
 (global-set-key (kbd "C-j") 'newline-and-open-line-previous)
 (global-set-key (kbd "C-<tab>") 'indent-region-or-buffer)
 (global-set-key (kbd "C-M-<tab>") 'jw-pulse-text)
-(global-set-key (kbd "C-M-S-<tab>") 'beacon-blink)
 (global-set-key (kbd "C-M-;") 'cycle-spacing) ;; just-one-space is at S-M-<space>
 (global-set-key (kbd "M-;") 'comment-dwim-dwim)
 (global-set-key (kbd "C-=") 'er/expand-region)
