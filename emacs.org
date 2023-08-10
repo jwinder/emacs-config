@@ -667,6 +667,8 @@ theme
 * settings
 
 #+BEGIN_SRC emacs-lisp
+(add-hook 'focus-out-hook 'garbage-collect)
+
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror)
 
