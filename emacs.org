@@ -676,6 +676,9 @@ theme
 * settings
 
 #+BEGIN_SRC emacs-lisp
+(setq gc-cons-threshold 100000000)
+(add-function :after after-focus-change-function (lambda () (unless (frame-focus-state) (garbage-collect))))
+
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror)
 
