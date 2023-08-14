@@ -1917,7 +1917,7 @@ support =cmd= function in org-babel and =cmd= org link
 (org-link-set-parameters "cmd+tmux" :follow #'(lambda (path _) (cmd-tmux path)))
 #+END_SRC
 
-support =gist= and =gist+raw= org links
+support =gist=, =gist+raw=, =jira= org links
 #+BEGIN_SRC emacs-lisp
 (defun org-gist-link-follow (ref &optional raw)
   (let ((url-segment (if (s-contains? "/" ref) ref
@@ -1927,6 +1927,8 @@ support =gist= and =gist+raw= org links
 
 (org-link-set-parameters "gist" :follow #'(lambda (ref _) (org-gist-link-follow ref)))
 (org-link-set-parameters "gist+raw" :follow #'(lambda (ref _) (org-gist-link-follow ref 'raw)))
+
+(org-link-set-parameters "jira" :follow #'(lambda (issue _) (browse-url (format "https://banno-jha.atlassian.net/browse/%s" issue))))
 #+END_SRC
 
 * ivy counsel
