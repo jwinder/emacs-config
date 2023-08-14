@@ -22,6 +22,15 @@ Now, start emacs.
 * packages
 
 #+BEGIN_SRC emacs-lisp
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(package-initialize)
+(unless (file-exists-p package-user-dir) (package-refresh-contents))
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+
 (use-package gnu-elpa-keyring-update)
 
 (use-package xterm-color)
@@ -681,6 +690,8 @@ theme
 
 (setq help-window-select t)
 
+(pixel-scroll-precision-mode 1)
+
 (setq enable-local-variables :all)
 
 (setq vc-follow-symlinks t)
@@ -900,6 +911,9 @@ theme
 (defalias 'elisp-shell 'ielm)
 
 (defalias 'times-timezones 'world-clock)
+
+(defun jw-nothing (&rest args)
+  (interactive "P"))
 
 (defun sudo-su ()
   (interactive)
@@ -1483,15 +1497,26 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-4-map (kbd "1") 'rotate-windows)
 (define-key ctl-x-4-map (kbd "g") 'font-size-transparency-alpha-default)
 
-(define-key ctl-x-4-map (kbd "<up>") 'font-size-increase)
-(define-key ctl-x-4-map (kbd "<down>") 'font-size-decrease)
-(define-key ctl-x-4-map (kbd "<right>") 'transparency-alpha-increase)
-(define-key ctl-x-4-map (kbd "<left>") 'transparency-alpha-decrease)
+;; text-scale-adjust is still accessible via C-x C-=/-/0
+(global-set-key (kbd "s-=") 'font-size-increase)
+(global-set-key (kbd "s--") 'font-size-decrease)
+(global-set-key (kbd "s-0") 'font-size-default)
+
+(global-set-key (kbd "s-+") 'transparency-alpha-decrease)
+(global-set-key (kbd "s-_") 'transparency-alpha-increase)
+(global-set-key (kbd "s-)") 'transparency-alpha-default)
 
 (jw--global-set-visual-area-key "<C-wheel-up>" 'font-size-increase)
 (jw--global-set-visual-area-key "<C-wheel-down>" 'font-size-decrease)
-(jw--global-set-visual-area-key "<C-wheel-right>" 'transparency-alpha-increase)
-(jw--global-set-visual-area-key "<C-wheel-left>" 'transparency-alpha-decrease)
+(jw--global-set-visual-area-key "<C-S-wheel-up>" 'transparency-alpha-decrease)
+(jw--global-set-visual-area-key "<C-S-wheel-down>" 'transparency-alpha-increase)
+
+;; suppress undefined binding messages when accidentally hitting left or right.
+;; this happens too easily with pixel-scroll-precision-mode.
+(jw--global-set-visual-area-key "<C-wheel-right>" 'jw-nothing)
+(jw--global-set-visual-area-key "<C-wheel-left>" 'jw-nothing)
+(jw--global-set-visual-area-key "<C-S-wheel-right>" 'jw-nothing)
+(jw--global-set-visual-area-key "<C-S-wheel-left>" 'jw-nothing)
 #+END_SRC
 
 * eshell
