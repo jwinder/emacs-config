@@ -1402,10 +1402,6 @@ argument makes the windows rotate backwards."
   (interactive)
   (emacs-archive-packages)
   (life-is-too-much))
-
-(defun emacs-byte-compile-elpa-package-files ()
-  (interactive)
-  (byte-recompile-directory package-user-dir 0 'force))
 #+END_SRC
 
 * key bindings
