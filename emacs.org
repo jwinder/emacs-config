@@ -1721,19 +1721,18 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 (cl-defun jw-irc-connect (&key server port nick user-name full-name startup-channels password encryption)
   (jw-irc server port nick user-name full-name startup-channels password encryption))
 
-(setq rcirc-buffer-maximum-lines 2000)
-
+(setq rcirc-buffer-maximum-lines 5000)
 (add-to-list 'rcirc-omit-responses "MODE")
 
 (defun rcirc-hook--initial-config ()
   (jw--save-current-message
+    (set (make-local-variable 'scroll-conservatively) 8192)
     (rcirc-track-minor-mode t)
     (rcirc-omit-mode)
     (cd (getenv "HOME"))))
 
 (add-hook 'rcirc-mode-hook 'rcirc-hook--initial-config)
 
-;; make rcirc & erc buffers span width of window
 (defun irc-hook--span-window-width ()
   (setq rcirc-fill-column (- (window-width) 2))
   (setq erc-fill-column (- (window-width) 2)))
@@ -1749,12 +1748,10 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 (advice-add 'rcirc-handler-NOTICE :around 'rcirc-handler-NOTICE--advice--ignore-KEEPALIVE)
 
 (setq erc-header-line-format nil
-      erc-hide-list '("JOIN" "PART" "QUIT"))
+      erc-hide-list '("JOIN" "PART" "QUIT")
+      erc-prompt (lambda () (concat (buffer-name) " >")))
 
-(setq erc-prompt (lambda () (concat (buffer-name) " >")))
-
-;; erc: stop from scrolling too far up on new messages, and keep the cursor at the bottom of the buffer.
-(add-to-list 'erc-mode-hook (lambda () (set (make-local-variable 'scroll-conservatively) 100)))
+(add-to-list 'erc-mode-hook (lambda () (set (make-local-variable 'scroll-conservatively) 8192)))
 #+END_SRC
 
 * org
