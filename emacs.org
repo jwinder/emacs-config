@@ -1695,9 +1695,9 @@ eshell prompt
 (require 'erc)
 
 (defun jw-irc (&optional server port nick user-name full-name startup-channels password encryption)
-  "Alternative to `rcirc-connect'.
+  "Wrapper for `rcirc' and `rcirc-connect'.
+If no server is provided, then prompt for server & connection details.
 If the server is not connected, then connect to it.
-If no server is provided, then a prompt will ask the user for a server.
 If the server is connected, then toggle to it's process buffer.
 If the server is connected and a prefix arg is provided, then invoke a quick /msg on the server and toggle back to the other-buffer."
   (interactive)
@@ -1713,6 +1713,8 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
                  (buffer (process-buffer proc)))
             (switch-to-buffer buffer))))
     (rcirc t)))
+
+(defalias 'irc 'jw-irc)
 
 (cl-defun jw-irc-connect (&key server port nick user-name full-name startup-channels password encryption)
   (jw-irc server port nick user-name full-name startup-channels password encryption))
