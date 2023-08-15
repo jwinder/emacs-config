@@ -1925,6 +1925,7 @@ org-babel languages & automatic yasnippet creation
   (fset (intern (format "org-babel-execute:%s" (or ob-src-header-override ob-lang)))
         `(lambda (body params) (interactive) body)))
 
+(org-babel-format-lang 'fundamental)
 (org-babel-format-lang 'markdown)
 (org-babel-format-lang 'gfm)
 (org-babel-format-lang 'conf)
