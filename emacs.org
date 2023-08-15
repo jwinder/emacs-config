@@ -1698,7 +1698,7 @@ eshell prompt
 (require 'rcirc)
 (require 'erc)
 
-(defun rcirc-connect-dwim (&optional server port nick user-name full-name startup-channels password encryption)
+(defun jw-irc (&optional server port nick user-name full-name startup-channels password encryption)
   "Alternative to `rcirc-connect'.
 If the server is not connected, then connect to it.
 If no server is provided, then a prompt will ask the user for a server.
@@ -1717,6 +1717,9 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
                  (buffer (process-buffer proc)))
             (switch-to-buffer buffer))))
     (rcirc t)))
+
+(cl-defun jw-irc-connect (&key server port nick user-name full-name startup-channels password encryption)
+  (jw-irc server port nick user-name full-name startup-channels password encryption))
 
 (setq rcirc-buffer-maximum-lines 2000)
 
