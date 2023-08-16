@@ -1975,7 +1975,7 @@ support =cmd= function in org-babel and =cmd= org link
 (org-link-set-parameters "cmd+tmux" :follow #'(lambda (path _) (cmd-tmux path)))
 #+END_SRC
 
-support =gist=, =gist+raw=, =jira= org links
+support =gist= & =gist+raw= org links
 #+BEGIN_SRC emacs-lisp
 (defun org-gist-link-follow (ref &optional raw)
   (let ((url-segment (if (s-contains? "/" ref) ref
