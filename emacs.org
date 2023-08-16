@@ -1985,8 +1985,6 @@ support =gist=, =gist+raw=, =jira= org links
 
 (org-link-set-parameters "gist" :follow #'(lambda (ref _) (org-gist-link-follow ref)))
 (org-link-set-parameters "gist+raw" :follow #'(lambda (ref _) (org-gist-link-follow ref 'raw)))
-
-(org-link-set-parameters "jira" :follow #'(lambda (issue _) (browse-url (format "https://banno-jha.atlassian.net/browse/%s" issue))))
 #+END_SRC
 
 * ivy counsel
