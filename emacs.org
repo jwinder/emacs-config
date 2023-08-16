@@ -1488,6 +1488,7 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-4-map (kbd "3") 'toggle-window-split)
 (define-key ctl-x-4-map (kbd "1") 'rotate-windows)
 (define-key ctl-x-4-map (kbd "g") 'font-size-transparency-alpha-default)
+(define-key ctl-x-4-map (kbd "SPC") 'mode-line-toggle-visibility)
 
 ;; text-scale-adjust is still accessible via C-x C-=/-/0
 (global-set-key (kbd "s-=") 'font-size-increase)
