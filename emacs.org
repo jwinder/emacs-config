@@ -35,6 +35,12 @@ Now, start emacs.
 
 (use-package xterm-color)
 
+(use-package beacon)
+(beacon-mode 1)
+(setq beacon-blink-when-window-scrolls nil
+      beacon-blink-when-window-changes t
+      beacon-blink-when-buffer-changes t)
+
 (use-package dash)
 (use-package pcache)
 (use-package f)
