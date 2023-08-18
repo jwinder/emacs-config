@@ -2274,12 +2274,19 @@ support typescript in org babel
 
 (defun org-babel-execute:typescript (body params)
   (let* ((run-js-option (assoc :run-js params))
-         (run-js (and run-js-option (string= (cdr run-js-option) "true"))))
-    (jw--file-write body "/tmp/ob-typescript-tsc-input.ts")
-    (shell-command-to-string "tsc /tmp/ob-typescript-tsc-input.ts --outFile /tmp/ob-typescript-tsc-output.js")
-    (if run-js
-        (org-babel-execute:js (f-read "/tmp/ob-typescript-tsc-output.js") params)
-      (f-read "/tmp/ob-typescript-tsc-output.js"))))
+         (run-js (and run-js-option (string= (cdr run-js-option) "true")))
+         (input-ts-file "/tmp/ob-typescript-tsc-input.ts")
+         (output-js-file "/tmp/ob-typescript-tsc-output.js"))
+    (delete-file output-js-file)
+    (jw--file-write body input-ts-file)
+    (message "Running tsc on %s" input-ts-file)
+    (shell-command (format "tsc %s --outFile %s" input-ts-file output-js-file))
+    (if (not (file-exists-p output-js-file)) "Error running tsc, check messages buffer"
+      (message "Output of tsc in %s" output-js-file)
+      (if (not run-js)
+          (f-read output-js-file)
+        (message "Executing js %s" output-js-file)
+        (org-babel-execute:js (f-read output-js-file) params)))))
 
 (org-babel-src-yasnippet 'typescript nil ":run-js true")
 (org-babel-src-yasnippet 'ts 'typescript ":run-js true")
