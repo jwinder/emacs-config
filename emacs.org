@@ -109,8 +109,8 @@ Now, start emacs.
 (use-package yaml-mode)
 
 (use-package markdown-mode)
-(add-to-list 'auto-mode-alist '("\\.md$" . gfm-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown$" . gfm-mode))
+;; (add-to-list 'auto-mode-alist '("\\.md$" . gfm-mode))
+;; (add-to-list 'auto-mode-alist '("\\.markdown$" . gfm-mode))
 
 (use-package cmake-mode)
 
@@ -152,6 +152,26 @@ Now, start emacs.
 (use-package jsonnet-mode)
 (add-to-list 'auto-mode-alist '("\\.libsonnet\\'" . jsonnet-mode))
 
+;; eventually replace with built-in treesit support
+(use-package tree-sitter)
+(use-package tree-sitter-langs)
+(add-hook 'tree-sitter-after-on-hook '(lambda () (tree-sitter-hl-mode 1)))
+(add-hook 'c-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'sh-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'ruby-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'python-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'java-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'scala-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'js-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'js2-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'typescript-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'css-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'html-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'markdown-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'json-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'yaml-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'go-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'terraform-mode-hook '(lambda () (tree-sitter-mode 1)))
 #+END_SRC
 
 * helper functions
