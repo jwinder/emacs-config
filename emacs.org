@@ -89,6 +89,11 @@ Now, start emacs.
 (use-package counsel) ;; brings in ivy & swiper
 (use-package counsel-projectile)
 
+(use-package company)
+(setq company-idle-delay nil)
+(setq company-format-margin-function nil)
+(global-company-mode 1)
+
 (use-package wgrep)
 (setq wgrep-auto-save-buffer t)
 
@@ -1460,6 +1465,7 @@ argument makes the windows rotate backwards."
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 (global-set-key (kbd "M-s i") 'imenu)
+(global-set-key (kbd "C-M-/") 'counsel-company)
 (global-set-key (kbd "C-M-g") 'goto-line)
 (global-set-key (kbd "C-M-9") 'winner-undo)
 (global-set-key (kbd "C-M-0") 'winner-redo)
