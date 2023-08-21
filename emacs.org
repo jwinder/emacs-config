@@ -1870,7 +1870,6 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 
 (define-key jw-keymap (kbd "o") 'jw-todo-or-catpure)
 (define-key jw-keymap (kbd "a") 'org-agenda)
-(define-key jw-keymap (kbd "A") 'org-agenda-list)
 (define-key ctl-x-4-map (kbd "'") 'jw-toggle-org-src-window-setup)
 (add-hook 'org-mode-hook (lambda ()
                            (local-set-key (kbd "C-c r") 'org-reveal)
