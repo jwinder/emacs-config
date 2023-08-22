@@ -124,11 +124,6 @@ Now, start emacs.
 (use-package scala-mode)
 (use-package sbt-mode)
 
-(use-package js2-mode)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.json$'" . js2-mode))
-(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
-
 (use-package typescript-mode)
 
 (use-package go-mode)
@@ -160,7 +155,9 @@ Now, start emacs.
 ;; eventually replace with built-in treesit support
 (use-package tree-sitter)
 (use-package tree-sitter-langs)
+(add-to-list 'tree-sitter-major-mode-language-alist '(js-json-mode . json))
 (add-hook 'tree-sitter-after-on-hook '(lambda () (tree-sitter-hl-mode 1)))
+
 (add-hook 'c-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'c++-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'sh-mode-hook '(lambda () (tree-sitter-mode 1)))
@@ -169,12 +166,11 @@ Now, start emacs.
 (add-hook 'java-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'scala-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'js-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'js2-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'js-json-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'typescript-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'css-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'html-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'markdown-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'json-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'yaml-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'go-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'terraform-mode-hook '(lambda () (tree-sitter-mode 1)))
@@ -2277,8 +2273,6 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 #+BEGIN_SRC emacs-lisp
 (require 'js)
 
-(add-to-list 'js2-ignored-warnings "msg.missing.semi")
-
 (defun nodejs-repl-send-region-or-buffer ()
   (interactive)
   (if (region-active-p)
@@ -2287,14 +2281,6 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 
 (define-key js-mode-map (kbd "C-c C-j") nil) ;; remove js-set-js-context
 (define-key js-mode-map (kbd "M-.") nil) ;; remove js-find-symbol -- the built-in xref-find-definitions works better for me
-
-;; turn off all custom hide/show bindings, hs-minor-mode is good enough
-(define-key js2-mode-map (kbd "C-c C-a") nil)
-(define-key js2-mode-map (kbd "C-c C-e") nil)
-(define-key js2-mode-map (kbd "C-c C-f") nil)
-(define-key js2-mode-map (kbd "C-c C-o") nil)
-(define-key js2-mode-map (kbd "C-c C-s") nil)
-(define-key js2-mode-map (kbd "C-c C-t") nil)
 
 (define-key js-mode-map (kbd "C-x C-e") 'nodejs-repl-send-last-expression)
 (define-key js-mode-map (kbd "C-c C-j") 'nodejs-repl-send-line)
