@@ -1947,8 +1947,9 @@ org-babel languages & automatic yasnippet creation
 (org-babel-format-lang 'yaml)
 (org-babel-format-lang 'html)
 (org-babel-format-lang 'xml)
-(org-babel-format-lang 'js-json)
-(org-babel-format-lang 'json 'js-json)
+
+(org-babel-format-lang 'json)
+(add-to-list 'org-src-lang-modes '("json" . js-json))
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
