@@ -158,24 +158,7 @@ Now, start emacs.
 (add-to-list 'tree-sitter-major-mode-language-alist '(js-json-mode . json))
 (add-to-list 'tree-sitter-major-mode-language-alist '(gfm-mode . markdown))
 (add-hook 'tree-sitter-after-on-hook '(lambda () (tree-sitter-hl-mode 1)))
-
-(add-hook 'c-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'c++-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'sh-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'ruby-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'python-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'java-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'scala-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'js-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'js-json-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'typescript-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'css-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'html-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'markdown-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'gfm-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'yaml-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'go-mode-hook '(lambda () (tree-sitter-mode 1)))
-(add-hook 'terraform-mode-hook '(lambda () (tree-sitter-mode 1)))
+(global-tree-sitter-mode 1)
 #+END_SRC
 
 * helper functions
