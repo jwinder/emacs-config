@@ -172,6 +172,7 @@ Now, start emacs.
 (add-hook 'css-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'html-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'markdown-mode-hook '(lambda () (tree-sitter-mode 1)))
+(add-hook 'gfm-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'yaml-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'go-mode-hook '(lambda () (tree-sitter-mode 1)))
 (add-hook 'terraform-mode-hook '(lambda () (tree-sitter-mode 1)))
