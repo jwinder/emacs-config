@@ -1514,13 +1514,24 @@ argument makes the windows rotate backwards."
 (global-set-key (kbd "s-_") 'transparency-alpha-increase)
 (global-set-key (kbd "s-)") 'transparency-alpha-default)
 
+;; doubling these up between super & control for now, to align with above bindings. might re-purpose one set later.
+(jw--global-set-visual-area-key "<s-wheel-up>" 'font-size-increase)
+(jw--global-set-visual-area-key "<s-wheel-down>" 'font-size-decrease)
+(jw--global-set-visual-area-key "<s-S-wheel-up>" 'transparency-alpha-decrease)
+(jw--global-set-visual-area-key "<s-S-wheel-down>" 'transparency-alpha-increase)
+
 (jw--global-set-visual-area-key "<C-wheel-up>" 'font-size-increase)
 (jw--global-set-visual-area-key "<C-wheel-down>" 'font-size-decrease)
 (jw--global-set-visual-area-key "<C-S-wheel-up>" 'transparency-alpha-decrease)
 (jw--global-set-visual-area-key "<C-S-wheel-down>" 'transparency-alpha-increase)
 
-;; suppress undefined binding messages when accidentally hitting left or right.
+;; suppress undefined binding messages for the following wheel gestures.
 ;; this happens too easily with pixel-scroll-precision-mode.
+(jw--global-set-visual-area-key "<s-wheel-right>" 'jw-nothing)
+(jw--global-set-visual-area-key "<s-wheel-left>" 'jw-nothing)
+(jw--global-set-visual-area-key "<s-S-wheel-right>" 'jw-nothing)
+(jw--global-set-visual-area-key "<s-S-wheel-left>" 'jw-nothing)
+
 (jw--global-set-visual-area-key "<C-wheel-right>" 'jw-nothing)
 (jw--global-set-visual-area-key "<C-wheel-left>" 'jw-nothing)
 (jw--global-set-visual-area-key "<C-S-wheel-right>" 'jw-nothing)
