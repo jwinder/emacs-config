@@ -1462,7 +1462,6 @@ argument makes the windows rotate backwards."
 (global-set-key (kbd "C-M-;") 'cycle-spacing) ;; just-one-space is at S-M-<space>
 (global-set-key (kbd "M-;") 'comment-dwim-dwim)
 (global-set-key (kbd "C-=") 'er/expand-region)
-(global-set-key (kbd "C-+") 'er/contract-region)
 (global-set-key (kbd "C-*") 'mc/mark-all-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
