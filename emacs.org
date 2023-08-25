@@ -146,7 +146,7 @@ Now, start emacs.
 ;; eventually replace with built-in treesit support
 (use-package tree-sitter)
 (use-package tree-sitter-langs)
-(add-to-list 'tree-sitter-major-mode-language-alist '(js-json-mode . json))
+;; (add-to-list 'tree-sitter-major-mode-language-alist '(js-json-mode . json))
 (add-to-list 'tree-sitter-major-mode-language-alist '(gfm-mode . markdown))
 (add-hook 'tree-sitter-after-on-hook '(lambda () (tree-sitter-hl-mode 1)))
 (global-tree-sitter-mode 1)
@@ -1950,7 +1950,8 @@ org-babel languages & automatic yasnippet creation
 (org-babel-format-lang 'xml)
 
 (org-babel-format-lang 'json)
-(add-to-list 'org-src-lang-modes '("json" . js-json))
+;; (add-to-list 'org-src-lang-modes '("json" . js-json))
+(add-to-list 'org-src-lang-modes '("json" . js))
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
