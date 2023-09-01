@@ -74,6 +74,8 @@ Now, start emacs.
 
 (use-package rainbow-mode)
 
+(use-package edit-indirect)
+
 (use-package yasnippet)
 (use-package yasnippet-snippets)
 
@@ -1332,6 +1334,18 @@ argument makes the windows rotate backwards."
         ((org-at-block-p) (org-narrow-to-block))
         (t (narrow-to-defun))))
 
+(defun edit-indirect-region-css ()
+  (interactive)
+  (call-interactively 'edit-indirect-region)
+  (css-mode)
+  (rename-buffer (format "%s-css" (buffer-name))))
+
+(defun edit-indirect-region-html ()
+  (interactive)
+  (call-interactively 'edit-indirect-region)
+  (html-mode)
+  (rename-buffer (format "%s-html" (buffer-name))))
+
 (defun jw-gist (arg)
   "Simple function to create single-file gists, from a marked region or entire buffer."
   (interactive "P")
@@ -1472,6 +1486,9 @@ argument makes the windows rotate backwards."
 (define-key dired-mode-map (kbd "e") 'dired-find-file-external)
 (define-key narrow-map (kbd "r") 'narrow-to-region)
 (define-key narrow-map (kbd "n") 'jw-narrow-dwim)
+(define-key narrow-map (kbd "' '") 'edit-indirect-region)
+(define-key narrow-map (kbd "' c") 'edit-indirect-region-css)
+(define-key narrow-map (kbd "' h") 'edit-indirect-region-html)
 (define-key help-map (kbd "M-n") 'helpful-at-point)
 (define-key help-map (kbd "H") 'info-apropos)
 (define-key help-map (kbd "h") 'cheat-sh)
