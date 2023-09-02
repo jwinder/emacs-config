@@ -1362,7 +1362,7 @@ argument makes the windows rotate backwards."
            (tmp-gist-file (format "%s/%s" tmp-gist-dir gist-file-name))
            (default-directory tmp-gist-dir))
       (jw--file-write content tmp-gist-file)
-      (jw--run-cmd (format "hub gist create %s %s" public-flag gist-file-name)))))
+      (jw--run-cmd (format "hub gist create %s %s" public-flag (shell-quote-argument gist-file-name))))))
 
 (defun jw-gist-dired-files (arg)
   "Create a single gist from either the marked dired files, or the current file if none are marked."
