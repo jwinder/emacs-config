@@ -1370,7 +1370,7 @@ argument makes the windows rotate backwards."
   (if (not (executable-find "hub"))
       (message "Executable hub required to create gists: https://hub.github.com/")
     (let* ((files-list (dired-get-marked-files))
-           (files-str (mapconcat 'identity files-list " "))
+           (files-str (mapconcat 'shell-quote-argument files-list " "))
            (public-flag (if arg "--public=true" "--public=false")))
       (if files-list
           (jw--run-cmd (format "hub gist create %s %s" public-flag files-str))
