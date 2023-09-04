@@ -882,14 +882,14 @@ theme
 
 (setq savehist-file (expand-file-name "savehist" user-emacs-directory))
 (savehist-mode 1)
-(setq history-length 1000)
+(setq history-length 5000)
 (add-to-list 'savehist-additional-variables 'kill-ring)
 (add-to-list 'savehist-additional-variables 'search-ring)
 (add-to-list 'savehist-additional-variables 'regexp-search-ring)
 
 (setq undo-tree-auto-save-history nil) ;; saving the undo-tree acts weird on startup, don't use it.
 
-(setq kill-ring-max 1000)
+(setq kill-ring-max 10000)
 
 (when (eq system-type 'gnu/linux)
   (setq interprogram-paste-function 'x-cut-buffer-or-selection-value
