@@ -2063,12 +2063,19 @@ support =gist= & =gist+raw= org links
   (interactive "P")
   (if arg (list-processes) (counsel-list-processes)))
 
+(defun counsel-grep-switch-to-grep ()
+  "Switch interactive counsel-grep/rg minibuffer to opening a good old grep buffer."
+  (interactive)
+  (let ((d (or ivy--directory (jw--pwd)))
+        (cmd (concat grep-command (shell-quote-argument ivy-text))))
+    (ivy-exit-with-action `(lambda (_) (let ((default-directory ,d)) (grep ,cmd))))))
+
 (defun counsel-find-file--cmd-dwim-action (file) (let ((default-directory ivy--directory)) (cmd-dwim ivy-current-prefix-arg)))
 (defun counsel-find-file--magit-status-action (file) (let ((default-directory ivy--directory)) (magit-status)))
 (defun counsel-find-file--eshell-action (file) (let ((default-directory ivy--directory)) (eshell)))
 (defun counsel-find-file--dired-action (file) (dired ivy--directory))
-(defun counsel-find-file--counsel-ag-action (file) (counsel-ag nil ivy--directory))
 (defun counsel-find-file--counsel-rg-action (file) (counsel-rg nil ivy--directory))
+(defun counsel-find-file--counsel-grep-action (file) (let ((default-directory ivy--directory)) (counsel-grep nil)))
 (defun counsel-find-file--jw-sbt-action (file) (let ((default-directory ivy--directory)) (jw-sbt)))
 (defun counsel-find-file--sbt-compile-action (file) (let ((default-directory ivy--directory)) (sbt-compile ivy-current-prefix-arg)))
 
@@ -2076,8 +2083,8 @@ support =gist= & =gist+raw= org links
  'counsel-find-file
  '(("!" counsel-find-file--cmd-dwim-action "cmd-dwim in pwd")
    ("g" counsel-find-file--magit-status-action "magit-status in pwd")
-   ("ss" counsel-find-file--counsel-ag-action "ag in pwd")
-   ("sr" counsel-find-file--counsel-rg-action "rg in pwd")
+   ("ss" counsel-find-file--counsel-rg-action "rg in pwd")
+   ("sg" counsel-find-file--counsel-grep-action "grep in pwd")
    ("C-xC-d" counsel-find-file--dired-action "dired in pwd")
    ("C-cme" counsel-find-file--eshell-action "eshell in pwd")
    ("C-css" counsel-find-file--jw-sbt-action "sbt in pwd")
@@ -2101,14 +2108,20 @@ support =gist= & =gist+raw= org links
 (global-set-key (kbd "M-s i") 'counsel-imenu)
 (define-key swiper-map (kbd "C-s") 'ivy-next-line)
 (define-key swiper-map (kbd "C-r") 'ivy-previous-line)
+(global-set-key (kbd "M-s s") 'counsel-rg)
 (global-set-key (kbd "M-s g") 'counsel-grep)
-(global-set-key (kbd "M-s s") 'counsel-ag)
-(global-set-key (kbd "M-s r") 'counsel-rg)
+(global-set-key (kbd "M-s S") 'grep)
+(global-set-key (kbd "M-s G") 'grep)
 (global-set-key (kbd "C-M-y") 'counsel-yank-pop)
 (define-key counsel-find-file-map (kbd "C-l") 'counsel-up-directory)
 (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 (define-key org-mode-map (kbd "C-c C-j") 'counsel-outline) ;; counsel-org-goto
 (add-hook 'eshell-mode-hook (lambda () (define-key eshell-mode-map (kbd "M-p") 'counsel-esh-history)))
+
+(define-key counsel-grep-map (kbd "M-s S") 'counsel-grep-switch-to-grep)
+(define-key counsel-grep-map (kbd "M-s G") 'counsel-grep-switch-to-grep)
+(define-key counsel-ag-map (kbd "M-s S") 'counsel-grep-switch-to-grep)
+(define-key counsel-ag-map (kbd "M-s G") 'counsel-grep-switch-to-grep)
 
 (define-key help-map (kbd "b") 'counsel-descbinds)
 (define-key help-map (kbd "f") 'counsel-describe-function)
@@ -2162,9 +2175,19 @@ support =gist= & =gist+raw= org links
   (let ((projectile-switch-project-action (lambda () (sbt-run-previous-command))))
     (counsel-projectile-switch-project-by-name project)))
 
+(defun counsel-projectile--filter-out-action-keys (actions keys-to-filter)
+  (-filter (lambda (action) (not (-contains? keys-to-filter (car action)))) actions))
+
+(let* ((head (car counsel-projectile-switch-project-action))
+       (original-actions (cdr counsel-projectile-switch-project-action))
+       (fixed-actions (counsel-projectile--filter-out-action-keys original-actions (list "E" "Oc" "Oa" "v" "xs" "xv" "si" "ss" "sr" "sg"))))
+  (setq counsel-projectile-switch-project-action (cons head fixed-actions)))
+
 (ivy-add-actions
  'counsel-projectile-switch-project
- '(("P" counsel-projectile-switch-project-action-test "run project test command")
+ '(("ss" counsel-projectile-switch-project-action-rg "run rg in project root")
+   ("sg" counsel-projectile-switch-project-action-grep "run grep in project root")
+   ("P" counsel-projectile-switch-project-action-test "run project test command")
    ("!" counsel-projectile-switch-project--cmd-dwim-action "cmd-dwim in project root")
    ("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
    ("C-xC-d" counsel-projectile-switch-project-action-dired "open project in dired")
@@ -2175,13 +2198,7 @@ support =gist= & =gist+raw= org links
    ("C-csg" counsel-projectile-switch-project--sbt-run-previous-command-action "sbt run previous command")
    ))
 
-(defun counsel-projectile--filter-out-action-keys (actions keys-to-filter)
-  (-filter (lambda (action) (not (-contains? keys-to-filter (car action)))) actions))
-
-(let* ((head (car counsel-projectile-switch-project-action))
-       (original-actions (cdr counsel-projectile-switch-project-action))
-       (fixed-actions (counsel-projectile--filter-out-action-keys original-actions (list "E" "Oc" "Oa" "v" "xs" "xv"))))
-  (setq counsel-projectile-switch-project-action (cons head fixed-actions)))
+(define-key projectile-mode-map (kbd "C-c p s s") 'counsel-projectile-rg)
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
 (defalias 'projectile-purge-everything 'projectile-clear-known-projects)
