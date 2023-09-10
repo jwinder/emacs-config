@@ -777,6 +777,10 @@ theme
 (when (executable-find "rg")
   (setq grep-command "rg --with-filename --no-heading --line-number --ignore-case "))
 
+(defun grep--advice--focus-grep-buffer (&rest args)
+  (when-let ((b (get-buffer "*grep*"))) (pop-to-buffer b)))
+(advice-add 'grep :after 'grep--advice--focus-grep-buffer)
+
 (winner-mode 1)
 
 (recentf-mode 1)
