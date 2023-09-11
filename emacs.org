@@ -2078,8 +2078,6 @@ support =gist= & =gist+raw= org links
 (defun counsel-find-file--magit-status-action (file) (let ((default-directory ivy--directory)) (magit-status)))
 (defun counsel-find-file--eshell-action (file) (let ((default-directory ivy--directory)) (eshell)))
 (defun counsel-find-file--dired-action (file) (dired ivy--directory))
-(defun counsel-find-file--counsel-rg-action (file) (counsel-rg nil ivy--directory))
-(defun counsel-find-file--counsel-grep-action (file) (let ((default-directory ivy--directory)) (counsel-grep nil)))
 (defun counsel-find-file--jw-sbt-action (file) (let ((default-directory ivy--directory)) (jw-sbt)))
 (defun counsel-find-file--sbt-compile-action (file) (let ((default-directory ivy--directory)) (sbt-compile ivy-current-prefix-arg)))
 
@@ -2087,8 +2085,6 @@ support =gist= & =gist+raw= org links
  'counsel-find-file
  '(("!" counsel-find-file--cmd-dwim-action "cmd-dwim in pwd")
    ("g" counsel-find-file--magit-status-action "magit-status in pwd")
-   ("ss" counsel-find-file--counsel-rg-action "rg in pwd")
-   ("sg" counsel-find-file--counsel-grep-action "grep in pwd")
    ("C-xC-d" counsel-find-file--dired-action "dired in pwd")
    ("C-cme" counsel-find-file--eshell-action "eshell in pwd")
    ("C-css" counsel-find-file--jw-sbt-action "sbt in pwd")
