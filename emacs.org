@@ -842,10 +842,6 @@ theme
         ("Europe/London" "Europe London") ("Europe/Paris" "Europe Paris")
         ("Asia/Tokyo" "Asia Tokyo")))
 
-;; bug: ccrypt prompt for encryption key does not match password input regexp
-;; crypt prompts to match: "Enter encryption key:", "Enter encryption key: (repeat)", and "Enter decryption key:"
-(setq comint-password-prompt-regexp (concat comint-password-prompt-regexp "\\|^Enter \\(en\\|de\\)cryption key:.*\\s *\\'"))
-
 (defun save-buffers-kill-terminal--advice--ask-yes-or-no (original-function &rest args)
   (if (yes-or-no-p "Is life too much? ") (apply original-function args) (message "Keep up the good fight!")))
 (advice-add 'save-buffers-kill-terminal :around 'save-buffers-kill-terminal--advice--ask-yes-or-no)
