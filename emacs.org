@@ -2140,7 +2140,6 @@ support =gist= & =gist+raw= org links
 (setq projectile-sort-order 'recently-active)
 (setq projectile-enable-caching t)
 (setq projectile-ignored-projects '("~/"))
-(setq projectile-compile-use-comint-mode t)
 
 ;; default node projects to yarn instead of npm
 (projectile-register-project-type 'npm '("package.json")
