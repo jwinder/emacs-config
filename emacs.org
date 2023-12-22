@@ -104,6 +104,8 @@ Now, start emacs.
 
 (use-package nodejs-repl)
 
+(use-package json-navigator)
+
 (use-package yaml-mode)
 
 (use-package markdown-mode)
