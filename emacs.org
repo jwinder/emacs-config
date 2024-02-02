@@ -2375,7 +2375,7 @@ load the =private= directory and the =private.org= file if they exist
 
 (yas-reload-all)
 
-(titlebar-off)
+;; (titlebar-off)
 
 (font-size-transparency-alpha-default)
 
