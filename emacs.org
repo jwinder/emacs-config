@@ -31,7 +31,10 @@ Now, start emacs.
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+
+(setq package-check-signature nil)
 (use-package gnu-elpa-keyring-update)
+(setq package-check-signature 'allow-unsigned)
 
 (use-package xterm-color)
 
