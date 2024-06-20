@@ -1575,25 +1575,16 @@ Negative prefix arg C--: Similar behavior to no prefix argument, except the cycl
 "
   (interactive "P")
   (pcase (prefix-numeric-value arg)
-    (4 (eshell--dwim-exec arg nil))
-    (-1 (eshell--dwim-exec nil t))
-    (_ (eshell--dwim-exec nil nil))))
+    (4 (eshell arg))
+    (-1 (eshell--cycle-to-next t))
+    (_ (eshell--cycle-to-next nil))))
 
-(defun eshell-kill-eshells (arg)
-  "Kill all eshells. If a prefix arg is provided, then leave the original eshell buffer alive."
-  (interactive "P")
-  (-each (eshell--buffers-list)
-    (lambda (buffer)
-      (unless (and arg (s-equals? "*eshell*" (buffer-name buffer)))
-        (kill-buffer buffer)))))
+(defun eshell-kill-eshells ()
+  (interactive)
+  (-each (eshell--buffers-list) (lambda (b) (kill-buffer b))))
 
 (define-key jw-keymap (kbd "e") 'eshell-dwim)
 (define-key jw-keymap (kbd "E") 'eshell-kill-eshells)
-
-(defun eshell--dwim-exec (prefix-arg cycle-backward)
-  (if prefix-arg
-      (eshell prefix-arg)
-    (eshell--cycle-to-next (eshell--buffer-names-list) cycle-backward)))
 
 (defun eshell--extract-buffer-name-digit (buffer)
   (string-to-number (or (car (s-match "[[:digit:]]+" (buffer-name buffer))) "-1")))
@@ -1607,14 +1598,15 @@ Negative prefix arg C--: Similar behavior to no prefix argument, except the cycl
 (defun eshell--buffer-names-list ()
   (-map (lambda (b) (buffer-name b)) (eshell--buffers-list)))
 
-(defun eshell--cycle-to-next (eshells cycle-backward)
-  (if (or (not (eq major-mode 'eshell-mode)) (not eshells))
-      (eshell nil) ;; switch to or create the first eshell if we're not in an eshell or if no eshells exist
-    (let* ((num-eshells (length eshells))
-           (idx (or (-elem-index (buffer-name) eshells) num-eshells))
-           (next-idx (mod (if cycle-backward (- idx 1) (+ idx 1)) num-eshells))
-           (next-eshell (nth next-idx eshells)))
-      (switch-to-buffer next-eshell))))
+(defun eshell--cycle-to-next (cycle-backward)
+  (let ((eshells (eshell--buffer-names-list)))
+    (if (or (not (eq major-mode 'eshell-mode)) (not eshells))
+        (eshell nil) ;; switch to or create the first eshell if we're not in an eshell or if no eshells exist
+      (let* ((num-eshells (length eshells))
+             (idx (or (-elem-index (buffer-name) eshells) num-eshells))
+             (next-idx (mod (if cycle-backward (- idx 1) (+ idx 1)) num-eshells))
+             (next-eshell (nth next-idx eshells)))
+        (switch-to-buffer next-eshell)))))
 
 (require 'em-alias)
 (eshell/alias "l" "ls -alh")
