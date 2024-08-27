@@ -121,8 +121,6 @@ Now, start emacs.
 (use-package yaml-mode)
 
 (use-package markdown-mode)
-(add-to-list 'auto-mode-alist '("\\.md$" . gfm-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown$" . gfm-mode))
 
 (use-package cmake-mode)
 
@@ -163,7 +161,6 @@ Now, start emacs.
 (use-package tree-sitter)
 (use-package tree-sitter-langs)
 (add-to-list 'tree-sitter-major-mode-language-alist '(js-json-mode . json))
-(add-to-list 'tree-sitter-major-mode-language-alist '(gfm-mode . markdown))
 (add-hook 'tree-sitter-after-on-hook '(lambda () (tree-sitter-hl-mode 1)))
 (global-tree-sitter-mode 1)
 #+END_SRC
