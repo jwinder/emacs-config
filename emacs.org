@@ -91,6 +91,10 @@ Now, start emacs.
 (use-package yasnippet)
 (use-package yasnippet-snippets)
 
+;; using only for eglot typescript right now right now. maybe setup with certain checkers/linters in the future
+(use-package flycheck)
+(use-package flycheck-eglot)
+
 (use-package counsel) ;; brings in ivy & swiper
 (use-package counsel-projectile)
 
@@ -1667,6 +1671,20 @@ eshell prompt
 (setq eshell-prompt-function 'eshell--prompt-function)
 (setq eshell-prompt-regexp "^[^#$»\n]* [#$»] ")
 
+#+END_SRC
+
+* eglot lsp
+
+#+BEGIN_SRC emacs-lisp
+(global-flycheck-eglot-mode)
+
+(setq eglot-confirm-server-initiated-edits nil)
+
+(global-set-key (kbd "C-c l l") 'eglot)
+(define-key eglot-mode-map (kbd "C-c l L") 'eglot-shutdown)
+(define-key eglot-mode-map (kbd "C-c l a") 'eglot-code-actions) ;; should other specific code actions have their own bindings?
+(define-key eglot-mode-map (kbd "C-c l R") 'eglot-rename)
+(define-key eglot-mode-map (kbd "C-c l <TAB>") 'eglot-format)
 #+END_SRC
 
 * yasnippet
