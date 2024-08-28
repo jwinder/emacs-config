@@ -1676,7 +1676,9 @@ eshell prompt
 * eglot lsp
 
 #+BEGIN_SRC emacs-lisp
-(global-flycheck-eglot-mode)
+(require 'eglot)
+
+(global-flycheck-eglot-mode 1)
 
 (setq eglot-confirm-server-initiated-edits nil)
 
