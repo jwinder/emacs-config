@@ -173,7 +173,8 @@ Now, start emacs.
 
 (when (executable-find "kubectl")
   (use-package kubel)
-  (kubel-vterm-setup))
+  (kubel-vterm-setup)
+  (defalias 'k8s 'kubel))
 #+END_SRC
 
 * helper functions
