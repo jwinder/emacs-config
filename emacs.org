@@ -2204,7 +2204,7 @@ support =gist= & =gist+raw= org links
 
 (let* ((head (car counsel-projectile-switch-project-action))
        (original-actions (cdr counsel-projectile-switch-project-action))
-       (fixed-actions (counsel-projectile--filter-out-action-keys original-actions (list "E" "Oc" "Oa" "v" "xs" "xv" "si" "ss" "sr" "sg"))))
+       (fixed-actions (counsel-projectile--filter-out-action-keys original-actions (list "E" "Oc" "Oa" "si" "ss" "sr" "sg"))))
   (setq counsel-projectile-switch-project-action (cons head fixed-actions)))
 
 (ivy-add-actions
