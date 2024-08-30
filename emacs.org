@@ -170,6 +170,10 @@ Now, start emacs.
 (add-to-list 'tree-sitter-major-mode-language-alist '(js-json-mode . json))
 (add-hook 'tree-sitter-after-on-hook '(lambda () (tree-sitter-hl-mode 1)))
 (global-tree-sitter-mode 1)
+
+(when (executable-find "kubectl")
+  (use-package kubel)
+  (kubel-vterm-setup))
 #+END_SRC
 
 * helper functions
