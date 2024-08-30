@@ -171,6 +171,10 @@ Now, start emacs.
 (add-hook 'tree-sitter-after-on-hook '(lambda () (tree-sitter-hl-mode 1)))
 (global-tree-sitter-mode 1)
 
+(when (executable-find "docker")
+  (use-package docker)
+  (global-set-key (kbd "C-c d") 'docker))
+
 (when (executable-find "kubectl")
   (use-package kubel)
   (kubel-vterm-setup)
