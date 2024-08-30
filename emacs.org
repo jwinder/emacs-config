@@ -63,6 +63,9 @@ Now, start emacs.
 (use-package magit) ;; brings in transient
 (use-package transient)
 
+(when (and (executable-find "cmake") (executable-find "libtool") (executable-find "vterm-ctrl"))
+  (use-package vterm))
+
 (use-package verb)
 (use-package curl-to-elisp)
 
