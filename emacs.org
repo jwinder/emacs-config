@@ -165,6 +165,7 @@ Now, start emacs.
 (add-to-list 'auto-mode-alist '("\\.libsonnet\\'" . jsonnet-mode))
 
 ;; eventually replace with built-in treesit support, maybe https://github.com/renzmann/treesit-auto
+;; or wait for emacs 30+ and see how treesit evolves: https://github.com/renzmann/treesit-auto?tab=readme-ov-file#caveats
 (use-package tree-sitter)
 (use-package tree-sitter-langs)
 (add-to-list 'tree-sitter-major-mode-language-alist '(js-json-mode . json))
