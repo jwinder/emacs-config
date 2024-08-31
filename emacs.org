@@ -227,10 +227,10 @@ These are non-interactive library functions useful in other parts of this config
   (file-name-nondirectory (getenv "SHELL")))
 
 (defun jw--all-minor-modes ()
-  (sort minor-mode-list 's-less-p))
+  (-sort 's-less-p minor-mode-list))
 
 (defun jw--all-major-modes ()
-  (sort (-distinct (mapcar 'cdr (-filter '(lambda (entry) (and (cdr entry) (atom (cdr entry)))) auto-mode-alist))) 's-less-p))
+  (-sort 's-less-p (-distinct (mapcar 'cdr (-filter '(lambda (entry) (and (cdr entry) (atom (cdr entry)))) auto-mode-alist)))))
 
 (defmacro jw--save-current-message (&rest body)
   "Saves `current-message', executes the body, then `message' the saved message to the echo area. Any `message' calls within the body will likely not be seen."
@@ -315,6 +315,17 @@ These are non-interactive library functions useful in other parts of this config
   "Kill the buffers associated with each process in `processes'."
   (dolist (process processes)
     (jw--kill-buffer (process-buffer process))))
+
+(defun jw--buffers-list-using-major-mode (mode)
+  (-sort (lambda (b1 b2) (s-less-p (buffer-name b1) (buffer-name b2)))
+         (-filter (lambda (buffer) (equal (buffer-local-value 'major-mode buffer) mode)) (buffer-list))))
+
+(defun jw--buffer-names-list-using-major-mode (mode)
+  (-map (lambda (b) (buffer-name b)) (jw--buffers-list-using-major-mode mode)))
+
+(defun jw--kill-buffers-using-major-mode (mode)
+  (when-let (buffers (jw--buffers-list-using-major-mode mode))
+    (-each buffers (lambda (b) (kill-buffer b)))))
 
 (setq jw--run-cmd-shell "bash")
 (setq jw--run-cmd-script-dir "/tmp/emacs-jw-run-cmd/")
@@ -1592,7 +1603,7 @@ argument makes the windows rotate backwards."
 
 (defun eshell-kill-all ()
   (interactive)
-  (jw--shells-kill-buffers 'eshell-mode))
+  (jw--kill-buffers-using-major-mode 'eshell-mode))
 
 (define-key jw-keymap (kbd "e") 'eshell-dwim)
 (define-key jw-keymap (kbd "E") 'eshell-kill-all)
@@ -1605,14 +1616,14 @@ argument makes the windows rotate backwards."
   ;; not the most optimal way to exit vterm since it has functions it runs on exit
   (defun vterm-kill-all ()
     (interactive)
-    (jw--shells-kill-buffers 'vterm-mode))
+    (jw--kill-buffers-using-major-mode 'vterm-mode))
 
   (define-key jw-keymap (kbd "v") 'vterm-dwim)
   (define-key jw-keymap (kbd "V") 'vterm-kill-all)
   )
 
 (defun jw--shells-dwim-gen (mode arg create-new)
-"A wrapper for `eshell' and `vterm', except that this function provides ordered cycling through all shells creating using prefix arguments.
+  "A wrapper for `eshell' and `vterm', except that this function provides ordered cycling through all shells creating using prefix arguments.
 No prefix argument: Create a new shell or switch to an existing shell. If multiple shell buffers exist, then cycle through them in their buffer number order.
 Single prefix arg C-u: Create an additional shell: *eshell*, *eshell*<2>, *eshell*<3>, etc.
 Negative prefix arg C--: Similar behavior to no prefix argument, except the cycling behavior is in reverse."
@@ -1621,30 +1632,16 @@ Negative prefix arg C--: Similar behavior to no prefix argument, except the cycl
     (-1 (jw--shells-cycle-to-next mode t create-new))
     (_ (jw--shells-cycle-to-next mode nil create-new))))
 
-(defun jw--shells-kill-buffers (mode)
-  (-each (jw--shells-buffer-list mode) (lambda (b) (kill-buffer b))))
-
-(defun jw--shells-extract-buffer-name-digit (buffer)
-  (string-to-number (or (car (s-match "[[:digit:]]+" (buffer-name buffer))) "-1")))
-
-(defun jw--shells-buffers-list-ordering (b1 b2)
-  (< (jw--shells-extract-buffer-name-digit b1) (jw--shells-extract-buffer-name-digit b2)))
-
-(defun jw--shells-buffer-list (mode)
-  (-sort 'jw--shells-buffers-list-ordering (-filter (lambda (buffer) (eq (buffer-local-value 'major-mode buffer) mode)) (buffer-list))))
-
-(defun jw--shells-buffer-names-list (mode)
-  (-map (lambda (b) (buffer-name b)) (jw--shells-buffer-list mode)))
-
 (defun jw--shells-cycle-to-next (mode cycle-backward create-new)
-  (let ((shells (jw--shells-buffer-names-list mode)))
-    (if (or (not (eq major-mode mode)) (not shells))
+  "This function switches to the next buffer from all buffers using the provided major mode. The ordering of the buffers is determined by name, alphabetically sorted. If there are no buffers using the major mode, then a new one is created using the `create-new' argument."
+  (let ((buffers (jw--buffer-names-list-using-major-mode mode)))
+    (if (or (not (eq major-mode mode)) (not buffers))
         (funcall-interactively create-new nil) ;; switch to or create the first shell/term if none exist
-      (let* ((num-shells (length shells))
-             (idx (or (-elem-index (buffer-name) shells) num-shells))
-             (next-idx (mod (if cycle-backward (- idx 1) (+ idx 1)) num-shells))
-             (next-shell (nth next-idx shells)))
-        (switch-to-buffer next-shell)))))
+      (let* ((num-buffers (length buffers))
+             (idx (or (-elem-index (buffer-name) buffers) num-buffers))
+             (next-idx (mod (if cycle-backward (- idx 1) (+ idx 1)) num-buffers))
+             (next-buffer (nth next-idx buffers)))
+        (switch-to-buffer next-buffer)))))
 
 (require 'em-alias)
 (eshell/alias "l" "ls -alh")
