@@ -323,6 +323,17 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--buffer-names-list-using-major-mode (mode)
   (-map (lambda (b) (buffer-name b)) (jw--buffers-list-using-major-mode mode)))
 
+(defun jw--buffers-cycle-to-next (mode cycle-backward &optional create-new args-list)
+  "This function switches to the next buffer from all buffers using the provided major mode. The ordering of the buffers is determined by name, alphabetically sorted. If there are no buffers using the major mode, then a new one is created using the `create-new' argument."
+  (let ((buffers (jw--buffer-names-list-using-major-mode mode)))
+    (if (or (not (eq major-mode mode)) (not buffers))
+        (when create-new (apply create-new args-list))
+      (let* ((num-buffers (length buffers))
+             (idx (or (-elem-index (buffer-name) buffers) num-buffers))
+             (next-idx (mod (if cycle-backward (- idx 1) (+ idx 1)) num-buffers))
+             (next-buffer (nth next-idx buffers)))
+        (switch-to-buffer next-buffer)))))
+
 (defun jw--kill-buffers-using-major-mode (mode)
   (when-let (buffers (jw--buffers-list-using-major-mode mode))
     (-each buffers (lambda (b) (kill-buffer b)))))
@@ -1628,20 +1639,9 @@ No prefix argument: Create a new shell or switch to an existing shell. If multip
 Single prefix arg C-u: Create an additional shell: *eshell*, *eshell*<2>, *eshell*<3>, etc.
 Negative prefix arg C--: Similar behavior to no prefix argument, except the cycling behavior is in reverse."
   (pcase (prefix-numeric-value arg)
-    (4 (funcall-interactively create-new arg))
-    (-1 (jw--shells-cycle-to-next mode t create-new))
-    (_ (jw--shells-cycle-to-next mode nil create-new))))
-
-(defun jw--shells-cycle-to-next (mode cycle-backward create-new)
-  "This function switches to the next buffer from all buffers using the provided major mode. The ordering of the buffers is determined by name, alphabetically sorted. If there are no buffers using the major mode, then a new one is created using the `create-new' argument."
-  (let ((buffers (jw--buffer-names-list-using-major-mode mode)))
-    (if (or (not (eq major-mode mode)) (not buffers))
-        (funcall-interactively create-new nil) ;; switch to or create the first shell/term if none exist
-      (let* ((num-buffers (length buffers))
-             (idx (or (-elem-index (buffer-name) buffers) num-buffers))
-             (next-idx (mod (if cycle-backward (- idx 1) (+ idx 1)) num-buffers))
-             (next-buffer (nth next-idx buffers)))
-        (switch-to-buffer next-buffer)))))
+    (4 (funcall create-new t))
+    (-1 (jw--buffers-cycle-to-next mode t create-new nil))
+    (_ (jw--buffers-cycle-to-next mode nil create-new nil))))
 
 (require 'em-alias)
 (eshell/alias "l" "ls -alh")
