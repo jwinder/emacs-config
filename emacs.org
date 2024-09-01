@@ -323,7 +323,7 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--buffer-names-list-using-major-mode (mode)
   (-map (lambda (b) (buffer-name b)) (jw--buffers-list-using-major-mode mode)))
 
-(defun jw--buffers-cycle-to-next (mode cycle-backward &optional create-new args-list)
+(defun jw--buffers-cycle-to-next-using-major-mode (mode cycle-backward &optional create-new args-list)
   "This function switches to the next buffer from all buffers using the provided major mode. The ordering of the buffers is determined by name, alphabetically sorted. If there are no buffers using the major mode, then a new one is created using the `create-new' argument."
   (let ((buffers (jw--buffer-names-list-using-major-mode mode)))
     (if (or (not (eq major-mode mode)) (not buffers))
@@ -1640,8 +1640,8 @@ Single prefix arg C-u: Create an additional shell: *eshell*, *eshell*<2>, *eshel
 Negative prefix arg C--: Similar behavior to no prefix argument, except the cycling behavior is in reverse."
   (pcase (prefix-numeric-value arg)
     (4 (funcall create-new t))
-    (-1 (jw--buffers-cycle-to-next mode t create-new nil))
-    (_ (jw--buffers-cycle-to-next mode nil create-new nil))))
+    (-1 (jw--buffers-cycle-to-next-using-major-mode mode t create-new nil))
+    (_ (jw--buffers-cycle-to-next-using-major-mode mode nil create-new nil))))
 
 (require 'em-alias)
 (eshell/alias "l" "ls -alh")
