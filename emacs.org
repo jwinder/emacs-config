@@ -97,6 +97,7 @@ Now, start emacs.
 ;; using only for eglot typescript right now right now. maybe setup with certain checkers/linters in the future
 (use-package flycheck)
 (use-package flycheck-eglot)
+(add-hook 'js-json-mode-hook 'flycheck-mode)
 
 (use-package counsel) ;; brings in ivy & swiper
 (use-package counsel-projectile)
@@ -2029,8 +2030,7 @@ org-babel languages & automatic yasnippet creation
 (org-babel-format-lang 'css)
 
 (org-babel-format-lang 'json)
-;; (add-to-list 'org-src-lang-modes '("json" . js-json))
-(add-to-list 'org-src-lang-modes '("json" . js))
+(add-to-list 'org-src-lang-modes '("json" . js-json))
 
 (setq org-babel-default-header-args:sh '((:results . "output"))
       org-babel-default-header-args:shell '((:results . "output"))
