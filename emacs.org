@@ -94,7 +94,6 @@ Now, start emacs.
 (use-package yasnippet)
 (use-package yasnippet-snippets)
 
-;; using only for eglot typescript right now right now. maybe setup with certain checkers/linters in the future
 (use-package flycheck)
 (use-package flycheck-eglot)
 (add-hook 'js-json-mode-hook 'flycheck-mode)
