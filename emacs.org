@@ -178,8 +178,10 @@ Now, start emacs.
 
 (when (executable-find "kubectl")
   (use-package kubel)
+  (defalias 'k8s 'kubel)
   (kubel-vterm-setup)
-  (defalias 'k8s 'kubel))
+  (setq kubel-list-wide t)
+  (advice-add 'kubel-kill-buffer :after 'delete-window))
 #+END_SRC
 
 * helper functions
