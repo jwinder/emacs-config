@@ -177,11 +177,7 @@ Now, start emacs.
   (global-set-key (kbd "C-c d") 'docker))
 
 (when (executable-find "kubectl")
-  (use-package kubel)
-  (defalias 'k8s 'kubel)
-  (kubel-vterm-setup)
-  (setq kubel-list-wide t)
-  (advice-add 'kubel-kill-buffer :after 'delete-window))
+  (use-package kubel))
 #+END_SRC
 
 * helper functions
@@ -2265,6 +2261,53 @@ support =gist= & =gist+raw= org links
     (message "Did NOT clear the projectile projects.")))
 
 (advice-add 'projectile-clear-known-projects :around 'projectile-clear-known-projects--advice--ask-y-or-n)
+#+END_SRC
+
+* kubel
+
+#+BEGIN_SRC emacs-lisp
+(when (package-installed-p 'kubel)
+  (require 'kubel)
+
+  (defalias 'k8s 'kubel)
+
+  (kubel-vterm-setup)
+
+  (setq kubel-list-wide t)
+
+  (advice-add 'kubel-kill-buffer :after 'delete-window) ;; kubel-kill-buffer leaves the frame split into two windows from pop-to-buffer, when it was originally just one window.
+
+  (defun jw-kubel--run-via-cmd (command context namespace k8s-resource selected-resource)
+    (let ((command-str (format "%s --context %s -n %s %s %s %s" kubel-kubectl context namespace command k8s-resource selected-resource)))
+      (kubel--log-command "jw-kubel-command" command-str)
+      (jw--run-cmd command-str)
+      ))
+
+  (defun jw-kubel-edit-resource-at-point ()
+    (interactive)
+    (jw-kubel--run-via-cmd "edit" kubel-context kubel-namespace kubel-resource (kubel--get-resource-under-cursor))
+    )
+
+  (defun jw-kubel-read-and-edit-resource ()
+    (interactive)
+    (let* ((k8s-resource (completing-read "Select resource: " (kubel--kubernetes-resources-list)))
+           (selected-resource (kubel--select-resource k8s-resource)))
+      (jw-kubel--run-via-cmd "edit" kubel-context kubel-namespace k8s-resource selected-resource)))
+
+  ;; update kubel edit functions bound to RET and E to use kubectl-edit via jw--run-cmd when C-u is used. any other prefix arg goes back to the original function.
+  ;; easier via advice since the functions are not only bound both by a mode map and in the magit/transient help menu macro.
+
+  (advice-add 'kubel-get-resource-details :around (lambda (f &rest args)
+                                                    (if (equal (prefix-numeric-value (car args)) 4) (jw-kubel-edit-resource-at-point) (apply f args))
+                                                    ))
+
+
+
+  (advice-add 'kubel-quick-edit :around (lambda (f &rest args)
+                                          (if current-prefix-arg (jw-kubel-read-and-edit-resource) (apply f args))
+                                          ))
+  )
+
 #+END_SRC
 
 * scala
