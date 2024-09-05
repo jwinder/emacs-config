@@ -2304,7 +2304,7 @@ support =gist= & =gist+raw= org links
 
 
   (advice-add 'kubel-quick-edit :around (lambda (f &rest args)
-                                          (if current-prefix-arg (jw-kubel-read-and-edit-resource) (apply f args))
+                                          (if (equal (prefix-numeric-value current-prefix-arg) 4) (jw-kubel-read-and-edit-resource) (apply f args))
                                           ))
   )
 
