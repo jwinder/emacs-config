@@ -2211,6 +2211,10 @@ support =gist= & =gist+raw= org links
   (let ((projectile-switch-project-action (lambda () (cmd-dwim ivy-current-prefix-arg))))
     (counsel-projectile-switch-project-by-name project)))
 
+(defun counsel-projectile-switch-project--basic-grep-action (project)
+  (let ((default-directory project))
+    (call-interactively 'grep)))
+
 (defun counsel-projectile-switch-project--jw-sbt-action (project)
   (let ((projectile-switch-project-action 'jw-sbt))
     (counsel-projectile-switch-project-by-name project)))
@@ -2239,6 +2243,8 @@ support =gist= & =gist+raw= org links
  'counsel-projectile-switch-project
  '(("ss" counsel-projectile-switch-project-action-rg "run rg in project root")
    ("sg" counsel-projectile-switch-project-action-grep "run grep in project root")
+   ("sS" counsel-projectile-switch-project--basic-grep-action "run basic grep in project root")
+   ("sG" counsel-projectile-switch-project--basic-grep-action "run basic grep in project root")
    ("P" counsel-projectile-switch-project-action-test "run project test command")
    ("!" counsel-projectile-switch-project--cmd-dwim-action "cmd-dwim in project root")
    ("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
@@ -2250,7 +2256,15 @@ support =gist= & =gist+raw= org links
    ("C-csg" counsel-projectile-switch-project--sbt-run-previous-command-action "sbt run previous command")
    ))
 
+(defun projectile-basic-grep ()
+  (interactive)
+  (let ((default-directory (projectile-project-root)))
+    (call-interactively 'grep)))
+
+(define-key projectile-mode-map (kbd "C-c p s r") nil) ;; remove original rg keybinding. only use s & g for grepping.
 (define-key projectile-mode-map (kbd "C-c p s s") 'counsel-projectile-rg)
+(define-key projectile-mode-map (kbd "C-c p s S") 'projectile-basic-grep)
+(define-key projectile-mode-map (kbd "C-c p s G") 'projectile-basic-grep)
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
 (defalias 'projectile-purge-everything 'projectile-clear-known-projects)
