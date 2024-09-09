@@ -2212,7 +2212,7 @@ support =gist= & =gist+raw= org links
     (counsel-projectile-switch-project-by-name project)))
 
 (defun counsel-projectile-switch-project--basic-grep-action (project)
-  (let ((default-directory project))
+  (projectile-with-default-dir project
     (call-interactively 'grep)))
 
 (defun counsel-projectile-switch-project--jw-sbt-action (project)
@@ -2258,13 +2258,20 @@ support =gist= & =gist+raw= org links
 
 (defun projectile-basic-grep ()
   (interactive)
-  (let ((default-directory (projectile-project-root)))
+  (projectile-with-default-dir (projectile-acquire-root)
     (call-interactively 'grep)))
 
-(define-key projectile-mode-map (kbd "C-c p s r") nil) ;; remove original rg keybinding. only use s & g for grepping.
-(define-key projectile-mode-map (kbd "C-c p s s") 'counsel-projectile-rg)
-(define-key projectile-mode-map (kbd "C-c p s S") 'projectile-basic-grep)
-(define-key projectile-mode-map (kbd "C-c p s G") 'projectile-basic-grep)
+(defun projectile-cmd-dwim ()
+  (interactive)
+  (projectile-with-default-dir (projectile-acquire-root)
+    (call-interactively 'cmd-dwim)))
+
+(define-key projectile-command-map (kbd "s r") nil) ;; remove original rg keybinding. only use s & g for grepping.
+(define-key projectile-command-map (kbd "s s") 'counsel-projectile-rg)
+(define-key projectile-command-map (kbd "s S") 'projectile-basic-grep)
+(define-key projectile-command-map (kbd "s G") 'projectile-basic-grep)
+(define-key projectile-command-map (kbd "!") 'projectile-cmd-dwim)
+(define-key projectile-command-map (kbd "&") 'projectile-cmd-dwim)
 
 (defalias 'projectile-empty-garbage 'projectile-cleanup-known-projects)
 (defalias 'projectile-purge-everything 'projectile-clear-known-projects)
