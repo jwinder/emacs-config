@@ -106,6 +106,8 @@ Now, start emacs.
 (setq company-format-margin-function nil)
 (global-company-mode 1)
 
+(use-package dape)
+
 (use-package wgrep)
 (setq wgrep-auto-save-buffer t)
 
@@ -1705,10 +1707,11 @@ eshell prompt
 
 #+END_SRC
 
-* eglot lsp
+* eglot and dape
 
 #+BEGIN_SRC emacs-lisp
 (require 'eglot)
+(require 'dape)
 
 (global-flycheck-eglot-mode 1)
 
@@ -1719,6 +1722,11 @@ eshell prompt
 (define-key eglot-mode-map (kbd "C-c l a") 'eglot-code-actions) ;; should other specific code actions have their own bindings?
 (define-key eglot-mode-map (kbd "C-c l R") 'eglot-rename)
 (define-key eglot-mode-map (kbd "C-c l <TAB>") 'eglot-format)
+
+(setq dape-buffer-window-arrangement 'right)
+(setq dape-cwd-fn 'projectile-project-root)
+
+(defalias 'dape-shutdown 'dape-quit)
 #+END_SRC
 
 * yasnippet
