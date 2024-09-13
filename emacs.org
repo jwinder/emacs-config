@@ -863,6 +863,8 @@ theme
 
 (setq enable-recursive-minibuffers t)
 
+(setq bookmark-fringe-mark nil) ;; don't show red icon in left fringe for bookmarks
+
 (add-to-list 'auto-mode-alist '("\\.jsonc$" . js-mode))
 (add-to-list 'auto-mode-alist '("\\.scss$" . css-mode))
 (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
@@ -1920,7 +1922,9 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
       org-refile-targets '((org-agenda-files :maxlevel . 10))
       org-refile-use-outline-path t
       org-refile-allow-creating-parent-nodes 'confirm
-      org-id-link-to-org-use-id 'create-if-interactive)
+      org-id-link-to-org-use-id 'create-if-interactive
+      org-capture-bookmark nil ;; org variant of bookmark-fringe-mark
+      )
 
 (defun jw-toggle-org-src-window-setup ()
   (interactive)
@@ -2245,7 +2249,7 @@ support =gist= & =gist+raw= org links
 
 (let* ((head (car counsel-projectile-switch-project-action))
        (original-actions (cdr counsel-projectile-switch-project-action))
-       (fixed-actions (counsel-projectile--filter-out-action-keys original-actions (list "E" "Oc" "Oa" "si" "ss" "sr" "sg"))))
+       (fixed-actions (counsel-projectile--filter-out-action-keys original-actions (list "si" "ss" "sr" "sg"))))
   (setq counsel-projectile-switch-project-action (cons head fixed-actions)))
 
 (ivy-add-actions
