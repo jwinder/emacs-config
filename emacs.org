@@ -919,6 +919,23 @@ theme
     (apply original-function args)))
 (advice-add 'kmacro-end-and-call-macro :around 'kmacro-end-and-call-macro--advice--ask-for-repeat-number-instead-of-using-prefix-numeric-arg)
 
+(defun compile--advice--rename-buffer-and-toggle-to-process-buffer-if-active (original-function &rest args)
+  (let* ((command (car args))
+         (buffer-name (format "*compilation: %s*" command))
+         (buffer (get-buffer buffer-name)))
+    (when buffer
+      (switch-to-buffer buffer)
+      (unless (get-buffer-process buffer-name) (recompile)))
+
+    (when (not buffer)
+      (save-window-excursion
+        (apply original-function args))
+      (switch-to-buffer "*compilation*")
+      (rename-buffer buffer-name)
+      )
+    ))
+(advice-add 'compile :around 'compile--advice--rename-buffer-and-toggle-to-process-buffer-if-active)
+
 (setq user-auto-save-directory (expand-file-name "auto-saves/" user-emacs-directory ))
 (unless (file-exists-p user-auto-save-directory) (make-directory user-auto-save-directory)) ;; auto-save won't create directories
 (setq auto-save-file-name-transforms `((".*" ,user-auto-save-directory t)))
@@ -2473,7 +2490,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
                           )
                  (interactive "P")
                  (let ((default-directory ,default-directory))
-                   (message "Running %s [%s]" ,command-name ,command-impl)
+                   (message "Compile: %s [%s]" ,command-name ,command-impl)
                    (pcase (prefix-numeric-value arg)
                      (16 (cmd ,command-name))
                      (_ (compile ,command-name (not (null arg))))
