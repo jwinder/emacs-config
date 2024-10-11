@@ -31,7 +31,6 @@ Now, start emacs.
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-
 (setq package-check-signature nil)
 (use-package gnu-elpa-keyring-update)
 (setq package-check-signature 'allow-unsigned)
@@ -59,6 +58,9 @@ Now, start emacs.
 (fset 'describe-function 'helpful-callable)
 (fset 'describe-variable 'helpful-variable)
 (fset 'describe-symbol 'helpful-symbol)
+
+(use-package golden-ratio)
+(golden-ratio-mode 1)
 
 (use-package magit) ;; brings in transient
 (use-package transient)
