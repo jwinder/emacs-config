@@ -1809,8 +1809,8 @@ eshell prompt
 (define-key jw-magit-map (kbd "g") 'magit-status)
 (define-key jw-magit-map (kbd "d") 'magit-dispatch)
 (define-key jw-magit-map (kbd "f") 'magit-file-dispatch)
+(define-key jw-magit-map (kbd "C-x C-f") 'magit-find-file)
 (define-key jw-magit-map (kbd "M-w") 'browse-at-remote)
-
 #+END_SRC
 
 * irc
