@@ -768,6 +768,8 @@ theme
 
 (setq vc-follow-symlinks t)
 
+(setq-default truncate-lines t) ;; do not wrap long lines by default
+
 ;; colors for comint
 (ansi-color-for-comint-mode-off)
 (setq comint-output-filter-functions (remove 'ansi-color-process-output comint-output-filter-functions))
