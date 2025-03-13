@@ -1917,7 +1917,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
       org-special-ctrl-o t
       org-startup-folded t
       org-startup-with-inline-images t
-      org-hide-block-startup t
+      org-cycle-hide-block-startup t ;; todo -- this doesn't work anymore in emacs 30, it should fold all code blocks when opening an org file
       org-enforce-todo-dependencies t
       org-enforce-todo-checkbox-dependencies t
       org-return-follows-link t
