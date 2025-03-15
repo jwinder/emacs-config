@@ -168,13 +168,8 @@ Now, start emacs.
 (use-package jsonnet-mode)
 (add-to-list 'auto-mode-alist '("\\.libsonnet\\'" . jsonnet-mode))
 
-;; eventually replace with built-in treesit support, maybe https://github.com/renzmann/treesit-auto
-;; or wait for emacs 30+ and see how treesit evolves: https://github.com/renzmann/treesit-auto?tab=readme-ov-file#caveats
-(use-package tree-sitter)
-(use-package tree-sitter-langs)
-(add-to-list 'tree-sitter-major-mode-language-alist '(js-json-mode . json))
-(add-hook 'tree-sitter-after-on-hook '(lambda () (tree-sitter-hl-mode 1)))
-(global-tree-sitter-mode 1)
+;; todo - treesit grammars: https://www.masteringemacs.org/article/how-to-get-started-tree-sitter OR https://github.com/renzmann/treesit-auto
+;; didn't seem that impressive the last time I tried these...
 
 (when (executable-find "docker")
   (use-package docker)
