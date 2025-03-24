@@ -1555,6 +1555,7 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-4-map (kbd "C-d") 'dired-other-window)
 (define-key grep-mode-map (kbd "w") 'wgrep-change-to-wgrep-mode)
 (define-key dired-mode-map (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
+(define-key dired-mode-map (kbd "e") 'dired-do-open) ;; dired-find-file was mapped to: e, f, and RET. use dired-do-open for both e and E.
 (define-key dired-mode-map (kbd "w") 'wdired-change-to-wdired-mode)
 (define-key dired-mode-map (kbd "<tab>") 'dired-hide-subdir-dwim)
 (define-key dired-mode-map (kbd "$") 'dired-hide-subdir-dwim)
