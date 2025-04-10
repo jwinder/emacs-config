@@ -915,7 +915,7 @@ theme
 (add-hook 'term-mode-hook 'term--kill-buffer-on-exit)
 
 (defun kmacro-end-and-call-macro--advice--ask-for-repeat-number-instead-of-using-prefix-numeric-arg (original-function &rest args)
-  (if (car args)
+  (if (not (equal 1 (car args))) ;; in emacs 30, (car args) started having a 1 being passed in as the prefix arg, instead of nil.
       (let* ((repeat-times-string (read-string "How many times to repeat kmacro? "))
              (repeat-times (string-to-number repeat-times-string)))
         (apply original-function (cons repeat-times (cdr args))))
