@@ -1784,9 +1784,10 @@ eshell prompt
 (setq transient-enable-popup-navigation t)
 (setq transient-display-buffer-action '(display-buffer-below-selected))
 
+;; transient removed C-p and C-n (opting for up/down instead) for navigating transient menus since they could be used for items in the transient.
+;; this introduces them back in.
 ;; https://github.com/magit/transient/commit/bb056e7156b3d88f42770ec55e1a7447a95aca96
 ;; https://github.com/magit/transient/commit/98d502023817aa06f3046ba89c7c5a856ed88c35
-;; todo revisit this after more transient changes hapen & the feature is more settled
 (define-key transient-popup-navigation-map (kbd "C-p") #'transient-backward-button)
 (define-key transient-popup-navigation-map (kbd "C-n") #'transient-forward-button)
 (define-key transient-popup-navigation-map (kbd "RET") #'transient-push-button)
