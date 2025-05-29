@@ -2042,8 +2042,10 @@ org-babel languages & automatic yasnippet creation
 ;; ob/yasnippets for modes that don't need an org-babel-execute function, just give them a dummy execute function that returns the body
 (defun org-babel-format-lang (ob-lang &optional ob-src-header-override)
   (org-babel-src-yasnippet ob-lang ob-src-header-override)
-  (fset (intern (format "org-babel-execute:%s" (or ob-src-header-override ob-lang)))
-        `(lambda (body params) (interactive) body)))
+  (let ((lang (or ob-src-header-override ob-lang)))
+    (fset (intern (format "org-babel-execute:%s" lang)) `(lambda (body params) (interactive) body))
+    (set (intern (format "org-babel-default-header-args:%s" lang)) `((:wrap . ,(format "src %s" lang))))
+    ))
 
 (org-babel-format-lang 'fundamental)
 (org-babel-format-lang 'markdown)
