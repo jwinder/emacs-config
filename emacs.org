@@ -2227,6 +2227,20 @@ support =gist= & =gist+raw= org links
 (setq projectile-enable-caching t)
 (setq projectile-ignored-projects '("~/"))
 
+(defun projectile-add-dot-projectile-current-directory ()
+  (interactive)
+  (f-touch ".projectile")
+  (message "Created .projectile here"))
+
+(defun projectile-add-dot-projectile-in-subdirs ()
+  (interactive)
+  (let ((dirs (f-entries (jw--pwd) 'f-directory?)))
+    (if (null dirs)
+        (message "No subdirectories, doing nothing")
+      (-each dirs (lambda (d) (f-touch (f-join d ".projectile"))))
+      (message "Created .projectile in %s" (s-join ", " dirs))
+      )))
+
 (defun counsel-projectile-switch-project-action-test (project)
   (let ((projectile-switch-project-action (lambda () (projectile-test-project ivy-current-prefix-arg))))
     (counsel-projectile-switch-project-by-name project)))
