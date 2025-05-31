@@ -1943,12 +1943,31 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
       org-capture-bookmark nil ;; org variant of bookmark-fringe-mark
       )
 
-;; org-startup-folded no longer folds src blocks, this hides blocks everytime a heading is cycled.
+;; emacs 30 changed the behavior of org-startup-folded so that src blocks are no longer folded when opening a file, even if the headings are folded.
+(defun jw-org-fold-all-blocks ()
+  (interactive)
+  (save-excursion
+    (org-fold-show-all)
+    (org-fold-hide-block-all)
+    (org-overview)))
+(add-hook 'org-mode-hook 'jw-org-fold-all-blocks 100) ;; this needs to be the last hook (keep the 100), when run first, the mode screws up.
+
+(defun jw-org--beg-of-subtree-pos-or-point-min ()
+  (if (org-before-first-heading-p)
+      (point-min)
+    (org-entry-beginning-position) ;; throws error if before first heading
+    ))
+
+(defun jw-org--end-of-subtree-pos-or-point-max ()
+  (save-excursion
+    (org-end-of-subtree t t) ;; goes to point-max if the point is before the first heading
+    (point)))
+
 (defun org-cycle--advice--hide-subtree-blocks (&rest args)
   (when (org-at-heading-p)
     (org-block-map (apply-partially 'org-fold-hide-block-toggle 'hide)
-                   (org-entry-beginning-position)
-                   (org-entry-end-position))))
+                   (jw-org--beg-of-subtree-pos-or-point-min)
+                   (jw-org--end-of-subtree-pos-or-point-max))))
 (advice-add 'org-cycle :after 'org-cycle--advice--hide-subtree-blocks)
 
 (defun jw-toggle-org-src-window-setup ()
