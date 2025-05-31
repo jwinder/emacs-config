@@ -1943,6 +1943,14 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
       org-capture-bookmark nil ;; org variant of bookmark-fringe-mark
       )
 
+;; org-startup-folded no longer folds src blocks, this hides blocks everytime a heading is cycled.
+(defun org-cycle--advice--hide-subtree-blocks (&rest args)
+  (when (org-at-heading-p)
+    (org-block-map (apply-partially 'org-fold-hide-block-toggle 'hide)
+                   (org-entry-beginning-position)
+                   (org-entry-end-position))))
+(advice-add 'org-cycle :after 'org-cycle--advice--hide-subtree-blocks)
+
 (defun jw-toggle-org-src-window-setup ()
   (interactive)
   (pcase org-src-window-setup
