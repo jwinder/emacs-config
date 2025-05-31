@@ -1949,6 +1949,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
   (save-excursion
     (org-fold-show-all)
     (org-fold-hide-block-all)
+    (org-fold-hide-drawer-all)
     (org-overview)))
 (add-hook 'org-mode-hook 'jw-org-fold-all-blocks 100) ;; this needs to be the last hook (keep the 100), when run first, the mode screws up.
 
@@ -1965,9 +1966,12 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 
 (defun org-cycle--advice--hide-subtree-blocks (&rest args)
   (when (org-at-heading-p)
-    (org-block-map (apply-partially 'org-fold-hide-block-toggle 'hide)
-                   (jw-org--beg-of-subtree-pos-or-point-min)
-                   (jw-org--end-of-subtree-pos-or-point-max))))
+    (let ((beg (jw-org--beg-of-subtree-pos-or-point-min))
+          (end (jw-org--end-of-subtree-pos-or-point-max)))
+      (org-block-map (apply-partially 'org-fold-hide-block-toggle 'hide) beg end)
+      (org-fold--hide-drawers beg end)
+    )
+  ))
 (advice-add 'org-cycle :after 'org-cycle--advice--hide-subtree-blocks)
 
 (defun jw-toggle-org-src-window-setup ()
