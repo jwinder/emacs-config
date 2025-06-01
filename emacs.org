@@ -1964,15 +1964,15 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
     (org-end-of-subtree t t) ;; goes to point-max if the point is before the first heading
     (point)))
 
-(defun org-cycle--advice--hide-subtree-blocks (&rest args)
-  (when (org-at-heading-p)
+(defun org-cycle--advice--hide-subtree-blocks-before-folding (&rest args)
+  (when (and (org-at-heading-p)
+             (not (invisible-p (point-at-eol))) ;; not invisible = unfolded
+             )
     (let ((beg (jw-org--beg-of-subtree-pos-or-point-min))
           (end (jw-org--end-of-subtree-pos-or-point-max)))
       (org-block-map (apply-partially 'org-fold-hide-block-toggle 'hide) beg end)
-      (org-fold--hide-drawers beg end)
-    )
-  ))
-(advice-add 'org-cycle :after 'org-cycle--advice--hide-subtree-blocks)
+      (org-fold--hide-drawers beg end))))
+(advice-add 'org-cycle :before 'org-cycle--advice--hide-subtree-blocks-before-folding)
 
 (defun jw-toggle-org-src-window-setup ()
   (interactive)
