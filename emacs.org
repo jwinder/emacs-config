@@ -991,9 +991,6 @@ theme
 
 (defalias 'times-timezones 'world-clock)
 
-(defun jw-nothing (&rest args)
-  (interactive "P"))
-
 (defun sudo-su ()
   (interactive)
   (let ((goto (or (buffer-file-name) (jw--pwd))))
@@ -1612,15 +1609,15 @@ argument makes the windows rotate backwards."
 
 ;; suppress undefined binding messages for the following wheel gestures.
 ;; this happens too easily with pixel-scroll-precision-mode.
-(jw--global-set-visual-area-key "<s-wheel-right>" 'jw-nothing)
-(jw--global-set-visual-area-key "<s-wheel-left>" 'jw-nothing)
-(jw--global-set-visual-area-key "<s-S-wheel-right>" 'jw-nothing)
-(jw--global-set-visual-area-key "<s-S-wheel-left>" 'jw-nothing)
+(jw--global-set-visual-area-key "<s-wheel-right>" 'ignore)
+(jw--global-set-visual-area-key "<s-wheel-left>" 'ignore)
+(jw--global-set-visual-area-key "<s-S-wheel-right>" 'ignore)
+(jw--global-set-visual-area-key "<s-S-wheel-left>" 'ignore)
 
-(jw--global-set-visual-area-key "<C-wheel-right>" 'jw-nothing)
-(jw--global-set-visual-area-key "<C-wheel-left>" 'jw-nothing)
-(jw--global-set-visual-area-key "<C-S-wheel-right>" 'jw-nothing)
-(jw--global-set-visual-area-key "<C-S-wheel-left>" 'jw-nothing)
+(jw--global-set-visual-area-key "<C-wheel-right>" 'ignore)
+(jw--global-set-visual-area-key "<C-wheel-left>" 'ignore)
+(jw--global-set-visual-area-key "<C-S-wheel-right>" 'ignore)
+(jw--global-set-visual-area-key "<C-S-wheel-left>" 'ignore)
 #+END_SRC
 
 * eshell and vterm
