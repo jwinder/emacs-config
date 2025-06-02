@@ -2515,7 +2515,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
   (if (f-exists? "pnpm-lock.yaml") "pnpm"
     (if (f-exists? "yarn.lock") "yarn"
       (if (f-exists? "package-lock.json") "npm"
-        (error "Could not figure out package manager script runner")))))
+        (read-string "Could not figure out package manager. Pick one (pnpm, npm, yarn, etc...): " "pnpm")))))
 
 (defun jw-js-package-json-scripts ()
   "Function that autogenerates interactive functions for each package.json script in either the current projectile project or else the pwd."
