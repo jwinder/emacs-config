@@ -1952,11 +1952,12 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
 ;; emacs 30 changed the behavior of org-startup-folded so that src blocks are no longer folded when opening a file, even if the headings are folded.
 (defun jw-org-fold-all-blocks ()
   (interactive)
-  (save-excursion
-    (org-fold-show-all)
-    (org-fold-hide-block-all)
-    (org-fold-hide-drawer-all)
-    (org-overview)))
+  (unless (equal org-startup-folded 'showeverything)
+    (save-excursion
+      (org-fold-show-all)
+      (org-fold-hide-block-all)
+      (org-fold-hide-drawer-all)
+      (org-overview))))
 (add-hook 'org-mode-hook 'jw-org-fold-all-blocks 100) ;; this needs to be the last hook (keep the 100), when run first, the mode screws up.
 
 (defun jw-org--beg-of-subtree-pos-or-point-min ()
