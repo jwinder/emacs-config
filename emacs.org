@@ -1087,16 +1087,6 @@ With extra prefix arg (C-u C-u M-x date), prompt for year & month for calendar."
   (interactive "P")
   (insert (jw--current-date-string utc)))
 
-(defun weather (&optional arg)
-  (interactive "P")
-  (let* ((raw-query
-          (pcase (prefix-numeric-value arg)
-            (16 ":help")
-            (4 (read-string "Weather for city/state/country/zip/latlong/:help/etc - curl wttr.in/"))
-            (_ "")))
-         (query (url-encode-url (s-replace "\s" "+" (s-trim raw-query)))))
-    (jw--run-cmd (format "curl http://wttr.in/%s?F" query))))
-
 (setq cheat-sh-candidates nil)
 (defun cheat-sh (&optional arg)
   (interactive "P")
@@ -1521,7 +1511,6 @@ argument makes the windows rotate backwards."
 (define-key jw-keymap (kbd "q") 'emacs-configs-toggle)
 (define-key jw-keymap (kbd "d") 'date)
 (define-key jw-keymap (kbd "D") 'world-clock)
-(define-key jw-keymap (kbd "w") 'weather)
 (define-key jw-keymap (kbd "i") 'toggle-scratch-buffer)
 (define-key jw-keymap (kbd "I") 'scratch-buffer-remember)
 
