@@ -2567,6 +2567,64 @@ support typescript in org babel
 (org-babel-src-yasnippet 'ts 'typescript ":run-js true")
 #+END_SRC
 
+* jupyter
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.ipynb$" . js-json-mode))
+
+(defun jw-jupyter-open-notebook (arg)
+  (interactive "P")
+  (let ((dir (if arg (read-directory-name "Notebook directory: ") (jw--pwd))))
+    (jw--run-cmd (format "jupyter-notebook --notebook-dir %s" dir))
+    ))
+
+(defun jw-jupyter-open-lab (arg)
+  (interactive "P")
+  (let ((dir (if arg (read-directory-name "Notebook directory: ") (jw--pwd))))
+    (jw--run-cmd (format "jupyter-lab --notebook-dir %s" dir))
+    ))
+
+(defun jw-jupyter--get-current-paired-files ()
+  "Returns a cons cell: car = ipynb, cdr = md."
+  (let ((f buffer-file-name))
+    (when (or (not f) (not (s-matches? "\\(\\.ipynb\\|\\.md\\)$" f)))
+      (setq f (read-file-name "Notebook ipynb or paired md file: ")))
+    (if (s-ends-with? ".ipynb" f)
+        (cons f (s-replace-regexp "\\.ipynb$" ".md" f))
+      (if (s-ends-with? ".md" f)
+          (cons (s-replace-regexp "\\.md$" ".ipynb" f) f)
+        nil))))
+
+(defun jw-jupyter-pair-ipynb-md-files ()
+  (interactive)
+  (let ((files (jw-jupyter--get-current-paired-files)))
+    (if (null files)
+        (message "Invalid files, skipping.")
+      (shell-command (format "jupytext --set-formats ipynb,md %s" (car files)))
+      (find-file (cdr files))
+      (revert-buffer t t)
+      (add-hook 'after-save-hook 'jw-jupyter-sync-current-paired-file nil t)
+      )))
+
+(defun jw-jupyter-sync-current-paired-file ()
+  (interactive)
+  (shell-command (format "jupytext --sync %s" buffer-file-name)))
+
+(defun jw-jupyter-unpair-and-cleanup-files ()
+  (interactive)
+  (jw-jupyter-sync-current-paired-file)
+  (let ((files (jw-jupyter--get-current-paired-files)))
+    (if (null files)
+        (message "Invalid files, skipping.")
+      (find-file (cdr files))
+      (revert-buffer t t)
+      (kill-buffer)
+      (delete-file (cdr files))
+      (find-file (car files))
+    )))
+
+#+END_SRC
+
 * private config
 
 load the =private= directory and the =private.org= file if they exist
