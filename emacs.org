@@ -896,7 +896,7 @@ theme
         ("US/Central" "US Central") ("US/Eastern" "US Eastern")
         ("US/Mountain" "US Mountain") ("US/Pacific" "US Pacific")
         ("US/Hawaii" "US Hawaii")
-        ("Europe/London" "Europe London") ("Europe/Paris" "Europe Paris")
+        ("Europe/Madrid" "Europe Madrid") ("Europe/London" "Europe London") ("Europe/Paris" "Europe Paris")
         ("Asia/Tokyo" "Asia Tokyo")))
 
 (defun save-buffers-kill-terminal--advice--ask-yes-or-no (original-function &rest args)
