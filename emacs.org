@@ -345,9 +345,9 @@ For commands that have already finished, this will clean up the process buffer a
 For long running processes, this will always toggle back and forth between the process buffer and the other buffer as long as the process is alive.
 
 `:process-name' can be used to override the automatic naming of the process & buffer (from the `command').
-`:before-process-creation' is an optional zero-arg function that is run before the process is started.
-`:after-process-creation' is an optional one-arg function (providing the process an arg) that is run after the process is started.
-`:after-process-finish' is an optional one-arg function (providing the process as an arg) that is run after the process finishes.
+`:before-process-creation' is an optional one-arg function (buffer) that is run before the process is started.
+`:after-process-creation' is an optional two-arg function (buffer proc) that is run after the process is started.
+`:after-process-finish' is an optional two-arg function (buffer proc) that is run after the process finishes.
 `:tail-output' t will direct the cursor to tail the output in the emacs buffer, instead of leaving it at the top of the buffer.
 `:kill-process-buffer' t will kill the buffer when the process finishes or exits.
 `:delete-tmp-script' t will remove the underlying shell script, instead of leaving it in the tmp directory.
@@ -374,16 +374,16 @@ For long running processes, this will always toggle back and forth between the p
                    (after-process-creation-func (jw--as-function after-process-creation))
                    (after-process-finish-func (jw--as-function after-process-finish))
                    (run-cmd (lambda ()
-                              (when before-process-creation-func (funcall before-process-creation-func))
+                              (when before-process-creation-func (funcall before-process-creation-func process-buffer))
                               (insert "$ " prepared-cmd "\n\n")
                               (message cmd-process-name)
                               (apply 'make-comint-in-buffer cmd-process-name process-buffer tmp-script-abs-filename nil nil)
                               (let ((proc (get-buffer-process process-buffer)))
-                                (when after-process-creation-func (funcall after-process-creation-func proc))
-                                (jw--do-when-process-finishes (get-buffer-process process-buffer)
+                                (when after-process-creation-func (funcall after-process-creation-func process-buffer proc))
+                                (jw--do-when-process-finishes proc
                                                               `(lambda (proc)
                                                                  (message "%s finished" ,cmd-process-name)
-                                                                 (when ,after-process-finish-func (funcall ,after-process-finish-func proc))
+                                                                 (when ,after-process-finish-func (funcall ,after-process-finish-func ,process-buffer proc))
                                                                  (when ,kill-process-buffer (jw--kill-buffer ,process-buffer))
                                                                  (when ,delete-tmp-script (f-delete ,tmp-script-abs-filename 'force))))))))
             (switch-to-buffer process-buffer)
@@ -1441,7 +1441,7 @@ argument makes the windows rotate backwards."
     (let ((f (buffer-file-name)))
       (if (null f) (message "Buffer not visiting a file")
         (let* ((command (format "redocly preview-docs -p 8888 %s" f)))
-          (jw--run-cmd command :after-process-creation (lambda (p) (browse-url "http://127.0.0.1:8888"))))))))
+          (jw--run-cmd command :after-process-creation (lambda (b p) (browse-url "http://127.0.0.1:8888"))))))))
 
 (defun jw-pair-programming-on ()
   (interactive)
