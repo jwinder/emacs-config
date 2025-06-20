@@ -1447,6 +1447,13 @@ argument makes the windows rotate backwards."
         (let* ((command (format "redocly preview-docs -p 8888 %s" f)))
           (jw--run-cmd command :after-process-creation (lambda (b p) (browse-url "http://127.0.0.1:8888"))))))))
 
+(defun jw-conventional-commits-insert-type ()
+  "Inserts a commit type at point: https://www.conventionalcommits.org"
+  (interactive)
+  (insert (completing-read "Commit type: "
+                           (list "feat" "fix" "test" "refactor" "chore" "docs" "build" "ci" "style" "perf" )
+                           nil nil nil nil)))
+
 (defun jw-pair-programming-on ()
   (interactive)
   (mode-line-on)
