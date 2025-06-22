@@ -2277,6 +2277,18 @@ support =gist= & =gist+raw= org links
       (message "Created .projectile in %s" (s-join ", " dirs))
       )))
 
+(defun projectile-open-jw-project-org-file ()
+  (interactive)
+  (let* ((filename ".jw-project.org")
+         (file-exists (file-exists-p filename)))
+    (find-file filename)
+    (when (not file-exists)
+      (insert (projectile-project-name)
+              "\n\n"
+              "[[elisp:(progn (open-line-next) (newline) (jw-js-insert-package-json-scripts-as-org-links))][jw-js-insert-package-json-scripts-as-org-links]]"
+              "\n"))
+    (save-buffer)))
+
 (defun counsel-projectile-switch-project-action-test (project)
   (let ((projectile-switch-project-action (lambda () (projectile-test-project ivy-current-prefix-arg))))
     (counsel-projectile-switch-project-by-name project)))
@@ -2288,6 +2300,10 @@ support =gist= & =gist+raw= org links
 (defun counsel-projectile-switch-project--basic-grep-action (project)
   (projectile-with-default-dir project
     (call-interactively 'grep)))
+
+(defun counsel-projectile-switch-project--jw-project-org (project)
+  (projectile-with-default-dir project
+    (call-interactively 'projectile-open-jw-project-org-file)))
 
 (defun counsel-projectile-switch-project--jw-sbt-action (project)
   (let ((projectile-switch-project-action 'jw-sbt))
@@ -2319,6 +2335,7 @@ support =gist= & =gist+raw= org links
    ("sg" counsel-projectile-switch-project-action-grep "run grep in project root")
    ("sS" counsel-projectile-switch-project--basic-grep-action "run basic grep in project root")
    ("sG" counsel-projectile-switch-project--basic-grep-action "run basic grep in project root")
+   ("Oo" counsel-projectile-switch-project--jw-project-org "open .jw-project.org")
    ("P" counsel-projectile-switch-project-action-test "run project test command")
    ("!" counsel-projectile-switch-project--cmd-dwim-action "cmd-dwim in project root")
    ("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
@@ -2340,10 +2357,16 @@ support =gist= & =gist+raw= org links
   (projectile-with-default-dir (projectile-acquire-root)
     (call-interactively 'cmd-dwim)))
 
+(defun projectile-jw-project-org ()
+  (interactive)
+  (projectile-with-default-dir (projectile-acquire-root)
+    (call-interactively 'projectile-open-jw-project-org-file)))
+
 (define-key projectile-command-map (kbd "s r") nil) ;; remove original rg keybinding. only use s & g for grepping.
 (define-key projectile-command-map (kbd "s s") 'counsel-projectile-rg)
 (define-key projectile-command-map (kbd "s S") 'projectile-basic-grep)
 (define-key projectile-command-map (kbd "s G") 'projectile-basic-grep)
+(define-key projectile-command-map (kbd "O o") 'projectile-jw-project-org)
 (define-key projectile-command-map (kbd "!") 'projectile-cmd-dwim)
 (define-key projectile-command-map (kbd "&") 'projectile-cmd-dwim)
 
@@ -2551,6 +2574,14 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
             (command-impl (cdr scripts-alist)))
         (funcall make-fn command-name command-impl)))
     (counsel-M-x (format "package-json--%s" dir-name))))
+
+(defun jw-js-insert-package-json-scripts-as-org-links ()
+  (interactive)
+  (let ((script-runner (jw-js--get-script-runner)))
+    (insert (format "- [[elisp:(compile \"%s %s\")][%s %s]]\n" script-runner "install" script-runner "install"))
+    (dolist (script-pair (jw-js--package-json-scripts-alist))
+      (insert (format "- [[elisp:(compile \"%s run %s\")][%s run %s]] - %s\n" script-runner (car script-pair) script-runner (car script-pair) (cdr script-pair)))
+      )))
 #+END_SRC
 
 support typescript in org babel
