@@ -2540,7 +2540,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (require 'projectile)
 
 (defun jw-js--package-json-scripts-alist ()
-  (alist-get 'scripts (json-parse-string (f-read-text "package.json") :object-type 'alist)))
+  (if (file-exists-p "package.json") (alist-get 'scripts (json-parse-string (f-read-text "package.json") :object-type 'alist)) nil))
 
 (defun jw-js--get-script-runner ()
   (if (f-exists? "pnpm-lock.yaml") "pnpm"
@@ -2577,10 +2577,19 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 
 (defun jw-js-insert-package-json-scripts-as-org-links ()
   (interactive)
-  (let ((script-runner (jw-js--get-script-runner)))
+  (let* ((script-runner (jw-js--get-script-runner))
+         (script-pairs (jw-js--package-json-scripts-alist))
+         (max-script-length 0))
+
+    (dolist (script-pair script-pairs)
+      (setq max-script-length (max max-script-length (length (format "%s" (car script-pair))))))
+
     (insert (format "- [[elisp:(compile \"%s %s\")][%s %s]]\n" script-runner "install" script-runner "install"))
-    (dolist (script-pair (jw-js--package-json-scripts-alist))
-      (insert (format "- [[elisp:(compile \"%s run %s\")][%s run %s]] - %s\n" script-runner (car script-pair) script-runner (car script-pair) (cdr script-pair)))
+    (dolist (script-pair script-pairs)
+      (insert (format "- [[elisp:(compile \"%s run %s\")][%s run %s]] %s- %s\n"
+                      script-runner (car script-pair) script-runner (car script-pair)
+                      (s-repeat (- max-script-length (length (format "%s" (car script-pair)))) " ")
+                      (cdr script-pair)))
       )))
 #+END_SRC
 
