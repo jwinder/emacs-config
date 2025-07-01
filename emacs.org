@@ -1053,14 +1053,17 @@ theme
       (progn (beginning-of-line) (kill-line)))
     (when cleanup-kill (kill-ring-cleanup-last-kill major-mode))))
 
-(defun kill-save-file-or-buffer-name (arg)
-  "Kill ring save the current file name. With prefix arg, save the fully qualified path + file name. If the buffer is not visiting a file, use the buffer name."
+(defun jw-kill-file-name (arg)
+  "Kill the current file name, or nil if not visiting a file. By default, only use the relative file name. With prefix arg, save the fully qualified path + file name."
   (interactive "P")
   (if buffer-file-name
-      (if arg
-          (kill-new buffer-file-name)
-        (kill-new (f-filename buffer-file-name)))
-    (kill-new (buffer-name))))
+      (if arg (kill-new buffer-file-name) (kill-new (f-filename buffer-file-name)))
+    nil))
+
+(defun jw-kill-buffer-name ()
+  "Kill current buffer name."
+  (interactive)
+  (kill-new (buffer-name)))
 
 (defun unique-lines ()
   (interactive)
