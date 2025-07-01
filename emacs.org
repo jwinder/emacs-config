@@ -1631,6 +1631,29 @@ argument makes the windows rotate backwards."
 (jw--global-set-visual-area-key "<C-S-wheel-left>" 'ignore)
 #+END_SRC
 
+* char insert
+
+#+BEGIN_SRC emacs-lisp
+(defun jw-char-insert--set-insert-functions (name-char-pairs)
+  (declare (indent defun))
+  (dolist (pair name-char-pairs)
+    (let* ((name (car pair))
+           (char (cdr pair))
+           (func-name (intern (format "jw-char-insert--%s" (downcase (s-replace " " "-" name))))))
+      (fset func-name
+            `(lambda (arg)
+               (interactive "P")
+               (if arg (kill-new ,char) (insert ,char))
+               (message "%s %s %s" (if arg "Killed" "Inserted") ,name ,char))))))
+
+;; add more as needed
+(jw-char-insert--set-insert-functions
+  '(("small bullet" . "·")
+    ("big ellipses" . "•")
+    ("ellipsis" . "…"))
+  )
+#+END_SRC
+
 * eshell and vterm
 
 #+BEGIN_SRC emacs-lisp
