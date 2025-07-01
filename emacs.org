@@ -1057,8 +1057,7 @@ theme
   "Kill the current file name, or nil if not visiting a file. By default, only use the relative file name. With prefix arg, save the fully qualified path + file name."
   (interactive "P")
   (if buffer-file-name
-      (if arg (kill-new buffer-file-name) (kill-new (f-filename buffer-file-name)))
-    nil))
+      (if arg (kill-new buffer-file-name) (kill-new (f-filename buffer-file-name)))))
 
 (defun jw-kill-buffer-name ()
   "Kill current buffer name."
