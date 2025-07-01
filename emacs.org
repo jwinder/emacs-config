@@ -1440,15 +1440,6 @@ argument makes the windows rotate backwards."
           (jw--run-cmd (format "hub gist create %s %s" public-flag files-str))
         (message "Cannot find files to gist. Either mark files or hover a file with the cursor.")))))
 
-(defun jw-openapi-swagger-preview-file ()
-  (interactive)
-  (if (not (executable-find "redocly"))
-      (message "Executable @redocly/cli required: https://redocly.com/docs/cli")
-    (let ((f (buffer-file-name)))
-      (if (null f) (message "Buffer not visiting a file")
-        (let* ((command (format "redocly preview-docs -p 8888 %s" f)))
-          (jw--run-cmd command :after-process-creation (lambda (b p) (browse-url "http://127.0.0.1:8888"))))))))
-
 (defun jw-conventional-commits-insert-type ()
   "Inserts a commit type at point: https://www.conventionalcommits.org"
   (interactive)
