@@ -1640,7 +1640,7 @@ argument makes the windows rotate backwards."
 ;; add more as needed
 (jw-char-insert--set-insert-functions
   '(("small bullet" . "·")
-    ("big ellipses" . "•")
+    ("big bullet" . "•")
     ("ellipsis" . "…"))
   )
 #+END_SRC
