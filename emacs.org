@@ -277,6 +277,10 @@ These are non-interactive library functions useful in other parts of this config
       (format-time-string "%Y-%m-%d" nil t)
     (format-time-string "%Y-%m-%d")))
 
+;; this is a lot faster than using emacs make-network-process and then async awaiting it.
+(defun jw--get-free-port ()
+  (string-trim (shell-command-to-string "python -c 'import socket; s = socket.socket(socket.AF_INET, socket.SOCK_STREAM); s.bind((\"\", 0)); port = s.getsockname()[1]; s.close(); print(port)'")))
+
 (defun jw--symbol-name (symbol-or-string)
   (if (symbolp symbol-or-string) (symbol-name symbol-or-string) symbol-or-string))
 
