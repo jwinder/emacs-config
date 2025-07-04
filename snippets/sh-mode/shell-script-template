@@ -13,11 +13,11 @@ IFS=$'\n\t'
 #/ Examples:
 #/
 #/ Options:
-#/   --help: Display this help message
+#/   --help or -h: Display this help message
 #/
 
 usage() { grep '^#/' "\$0" | cut -c4- ; exit 0 ; }
-expr "$*" : ".*--help" > /dev/null && usage
+expr "$*" : '.*--help\|.*-h' > /dev/null && usage
 
 log_debug_on=true
 
