@@ -773,7 +773,8 @@ theme
 
 (setq vc-follow-symlinks t)
 
-(setq-default truncate-lines t) ;; do not wrap long lines by default
+(setq-default truncate-lines t)
+;; (global-visual-line-mode) ;; visual-line-mode sets truncate-lines to nil, for now I'd prefer the default to be: truncate-lines t
 
 ;; colors for comint
 (ansi-color-for-comint-mode-off)
@@ -1555,6 +1556,7 @@ argument makes the windows rotate backwards."
 (define-key sp-keymap (kbd "C-M-n") nil)
 (global-set-key (kbd "C-x C-d") 'dired)
 (global-set-key (kbd "C-x d") 'cd)
+(define-key ctl-x-x-map (kbd "v") 'visual-line-mode)
 (define-key ctl-x-4-map (kbd "C-d") 'dired-other-window)
 (define-key grep-mode-map (kbd "w") 'wgrep-change-to-wgrep-mode)
 (define-key dired-mode-map (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
@@ -1804,6 +1806,8 @@ eshell prompt
 #+BEGIN_SRC emacs-lisp
 (defalias 'git-browse-at-remote 'browse-at-remote)
 (defalias 'github-browse-file 'browse-at-remote)
+
+(setq git-commit-summary-max-length 9999) ;; stop the red text warning in magit COMMIT_MSG buffers after 68 chars
 
 (setq browse-at-remote-add-line-number-if-no-region-selected nil)
 
