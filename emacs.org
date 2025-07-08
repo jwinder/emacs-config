@@ -146,8 +146,6 @@ Now, start emacs.
 
 (use-package typescript-mode)
 
-(use-package handlebars-mode)
-
 (use-package go-mode)
 (use-package ob-go)
 (add-hook 'before-save-hook 'gofmt-before-save)
