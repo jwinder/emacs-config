@@ -1,0 +1,20 @@
+#/
+#/ Usage: script-name [OPTIONS] <ARG1> [ARG2]
+#/
+#/ Description: Brief description
+#/
+#/ Examples:
+#/
+#/ Options:
+#/   --help or -h: Display this help message
+#/
+#/ Arguments:
+#/   <ARG1>: Description of first required argument
+#/   [ARG1]: Description of second optional argument
+#/
+
+def print_usage
+  File.open(__FILE__, 'r') { |f| f.each_line { |line| puts line[3..-1] if line.start_with?('#/') } }
+  exit(0)
+end
+print_usage if ARGV.include?('--help') || ARGV.include?('-h') || ARGV.include?('help') || ARGV.empty? # may need to adjust this

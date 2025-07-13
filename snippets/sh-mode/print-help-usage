@@ -1,0 +1,17 @@
+#/
+#/ Usage: script-name [OPTIONS] <ARG1> [ARG2]
+#/
+#/ Description: Brief description
+#/
+#/ Examples:
+#/
+#/ Options:
+#/   --help or -h: Display this help message
+#/
+#/ Arguments:
+#/   <ARG1>: Description of first required argument
+#/   [ARG1]: Description of second optional argument
+#/
+
+usage() { grep '^#/' "\$0" | cut -c4- ; exit 0 ; }
+expr "$*" : '.*--help\|.*-h' > /dev/null && usage
