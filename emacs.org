@@ -1828,6 +1828,8 @@ eshell prompt
 (setq magit-git-executable (executable-find "git"))
 (setq magit-define-global-key-bindings nil)
 
+(setq magit-save-repository-buffers 'dontask)
+
 (define-prefix-command 'jw-magit-map)
 (global-set-key (kbd "M-g") 'jw-magit-map)
 (global-set-key (kbd "M-G") goto-map) ;; move old M-g (goto-map) to capital G since I'm hijacking it for magit
