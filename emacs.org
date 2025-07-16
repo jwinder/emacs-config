@@ -2312,6 +2312,8 @@ support =gist= & =gist+raw= org links
     (when (not file-exists)
       (insert (projectile-project-name)
               "\n\n"
+              "elisp:magit-status"
+              "\n\n"
               "[[elisp:(progn (open-line-next) (newline) (jw-js-insert-package-json-scripts-as-org-links))][jw-js-insert-package-json-scripts-as-org-links]]"
               "\n"))
     (save-buffer)))
