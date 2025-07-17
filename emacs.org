@@ -369,7 +369,7 @@ For long running processes, this will always toggle back and forth between the p
         (message "Empty command! Doing nothing.")
       (if (process-live-p (get-process cmd-process-name))
           (if (string= (buffer-name) cmd-buffer-name) (switch-to-buffer (other-buffer)) (switch-to-buffer cmd-buffer-name))
-        (let* ((tmp-script-rel-filename (replace-regexp-in-string "[^a-zA-Z0-9]+" "-" cmd-process-name))
+        (let* ((tmp-script-rel-filename (replace-regexp-in-string "[^a-zA-Z0-9]+" "-" prepared-cmd-readable))
                (tmp-script-abs-filename (concat jw--run-cmd-script-dir tmp-script-rel-filename))
                (tmp-script-sh-executable (or (ignore-errors (executable-find jw--run-cmd-shell))
                                              (executable-find (jw--login-shell))))
