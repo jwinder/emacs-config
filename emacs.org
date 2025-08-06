@@ -2547,6 +2547,17 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 #+BEGIN_SRC emacs-lisp
 (require 'js)
 
+;; additional error regex for tsc projects. the built-in typescript-tsc one captured the line prefix before the filename as part of the filename
+(add-to-list 'compilation-error-regexp-alist 'typescript-tsc--jw-custom)
+(add-to-list 'compilation-error-regexp-alist-alist
+             '(typescript-tsc--jw-custom
+              ;; group 1 (optional): Captures the "[build:...] " prefix types. We don't use its content.
+              ;; group 2: filename
+              ;; group 3: line number
+              ;; group 4:  column number
+              "^\\(\\[[^]]+\\][[:blank:]]+\\)?\\([^(\n)]+\\)(\\([0-9]+\\),\\([0-9]+\\)):[[:blank:]]+error [[:alnum:]]+: [^\n]+$"
+              2 3 4 nil))
+
 (defun nodejs-repl-send-region-or-buffer ()
   (interactive)
   (if (region-active-p)
@@ -2620,6 +2631,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
                       (s-repeat (- max-script-length (length (format "%s" (car script-pair)))) " ")
                       (cdr script-pair)))
       )))
+
 #+END_SRC
 
 support typescript in org babel
