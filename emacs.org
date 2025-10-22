@@ -2126,6 +2126,7 @@ org-babel languages & automatic yasnippet creation
 (add-to-list 'org-src-lang-modes '("json" . js-json))
 
 (add-to-list 'org-babel-default-header-args '(:results . "output"))
+(add-to-list 'org-babel-default-header-args:sql '(:results . "table"))
 
 (let ((c-compiler (executable-find "clang"))
       (cpp-compiler (executable-find "clang++")))
