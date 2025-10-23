@@ -821,7 +821,7 @@ theme
 
 (setq-default indent-tabs-mode nil)
 
-(setq tab-width 2)
+(setq-default tab-width 4)
 (setq js-indent-level 2)
 (setq typescript-indent-level 2)
 
