@@ -2512,7 +2512,7 @@ support =gist= & =gist+raw= org links
   (interactive)
   (sbt-command "bloopInstall"))
 
-(defun jw-sbt-metals-bloop-doc ()
+(defun jw-sbt-doc ()
   (interactive)
   (sbt-command "doc"))
 
