@@ -2508,6 +2508,14 @@ support =gist= & =gist+raw= org links
     (16 (sbt-command "test"))
     (_ (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer))))))
 
+(defun jw-sbt-metals-bloop-install ()
+  (interactive)
+  (sbt-command "bloopInstall"))
+
+(defun jw-sbt-metals-bloop-doc ()
+  (interactive)
+  (sbt-command "doc"))
+
 (defun sbt:command--advice--message-command (original-function &rest args)
   (message "sbt %s" (car args))
   (apply original-function args))
