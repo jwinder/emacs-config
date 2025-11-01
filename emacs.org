@@ -2336,20 +2336,23 @@ support =gist= & =gist+raw= org links
       (message "Created .projectile in %s" (s-join ", " dirs))
       )))
 
+(defun projectile-add-jw-project-org-link-creators ()
+  (interactive)
+  (when (file-exists-p "package.json")
+    (insert "\n\n" "[[elisp:(progn (open-line-next) (newline) (jw-js-insert-package-json-scripts-as-org-links))][jw-js-insert-package-json-scripts-as-org-links]]"))
+  (when (file-exists-p "Makefile")
+    (insert "\n\n" "[[elisp:(progn (open-line-next) (newline) (jw-make-insert-makefile-targets-as-org-links))][jw-make-insert-makefile-targets-as-org-links]]"))
+  )
+
 (defun projectile-open-jw-project-org-file ()
   (interactive)
   (let* ((filename ".jw-project.org")
          (file-exists (file-exists-p filename)))
     (find-file filename)
     (when (not file-exists)
-      (insert (projectile-project-name)
-              "\n\n"
-              "elisp:magit-status"
-              "\n\n"
-              "[[elisp:(progn (open-line-next) (newline) (jw-js-insert-package-json-scripts-as-org-links))][jw-js-insert-package-json-scripts-as-org-links]]"
-              "\n\n"
-              "[[elisp:(progn (open-line-next) (newline) (jw-make-insert-makefile-targets-as-org-links))][jw-make-insert-makefile-targets-as-org-links]]"
-              "\n"))
+      (insert (projectile-project-name) "\n\n" "elisp:magit-status")
+      (projectile-add-jw-project-org-link-creators)
+      (insert "\n"))
     (save-buffer)))
 
 (defun counsel-projectile-switch-project-action-test (project)
