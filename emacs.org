@@ -2481,18 +2481,20 @@ support =gist= & =gist+raw= org links
              (full-test-names-str (string-join full-test-names " ")))
         full-test-names-str))))
 
-(defun jw-sbt-compile (test-compile)
+(defun jw-sbt-compile (&optional test-compile)
   (interactive "P")
   (if test-compile
-      (sbt-command "test:compile")
+      (sbt-command "Test / compile")
     (sbt-command "compile")))
 
-(defun jw-sbt-test (arg)
+(defun jw-sbt-test (&optional arg)
   (interactive "P")
-  (pcase (prefix-numeric-value arg)
-    (4 (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz")))
-    (16 (sbt-command "test"))
-    (_ (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer))))))
+  (if (equal arg 'all)
+      (sbt-command "test")
+    (pcase (prefix-numeric-value arg)
+      (4 (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer) " -- ex zzz")))
+      (16 (sbt-command "test"))
+      (_ (sbt-command (concat "testOnly " (sbt-current-tests-in-buffer)))))))
 
 (defun jw-sbt-metals-bloop-install ()
   (interactive)
@@ -2747,6 +2749,11 @@ support typescript in org babel
                           (cdr script-pair)))
           )))))
 
+(defun jw-project-insert-sbt-commands-as-org-links ()
+  (interactive)
+  (dolist (command '("jw-sbt" "jw-sbt-compile" "jw-sbt-compile 'test" "jw-sbt-test 'all" "sbt-command \"projects\"" "sbt-run-previous-command" "jw-sbt-doc" "jw-sbt-metals-bloop-install"))
+    (insert (format "- [[elisp:(%s)][%s]]\n" command command))))
+
 (defun jw-project-add-org-links-inserter-link ()
   (interactive)
   (let ((inserter-link-fmt-string "\n\n[[elisp:(progn (open-line-next) (newline) (%s))][%s]]"))
@@ -2754,6 +2761,8 @@ support typescript in org babel
       (insert (format inserter-link-fmt-string "jw-project-insert-package-json-scripts-as-org-links" "jw-project-insert-package-json-scripts-as-org-links")))
     (when (file-exists-p "Makefile")
       (insert (format inserter-link-fmt-string "jw-project-insert-makefile-targets-as-org-links" "jw-project-insert-makefile-targets-as-org-links")))
+    (when (file-exists-p "build.sbt")
+      (insert (format inserter-link-fmt-string "jw-project-insert-sbt-commands-as-org-links" "jw-project-insert-sbt-commands-as-org-links")))
     ))
 
 (defun jw-project-org-file ()
