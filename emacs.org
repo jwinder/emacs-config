@@ -1452,37 +1452,6 @@ argument makes the windows rotate backwards."
                            (list "feat" "fix" "test" "refactor" "chore" "docs" "build" "ci" "style" "perf" )
                            nil nil nil nil)))
 
-
-
-(require 'cl-lib)
-(defun jw-make--get-targets-list ()
-  "Reads Makefile in the current directory and returns a list of primary targets.
-It looks for lines starting with alphanumeric characters followed by a colon,
-and filters out special targets starting with a dot (like .PHONY)."
-  (when (file-exists-p "Makefile")
-    (with-temp-buffer
-      (insert-file-contents "Makefile")
-      (goto-char (point-min))
-      (let (targets)
-        ;; not perfect, tries to get each make target, skips = assignments
-        (while (re-search-forward "^\\([a-zA-Z0-9_-]+\\):[ \t]*\\([^=]\\|$\\)" nil t)
-          (let ((target (match-string 1)))
-            (unless (string-prefix-p "." target)
-              (cl-pushnew target targets :test 'equal))))
-        (nreverse targets) ;; return targets in the order they appeared in the Makefile
-        ))))
-
-(defun jw-make-insert-makefile-targets-as-org-links ()
-  (interactive)
-  (let* ((targets (jw-make--get-targets-list))
-         (runner "make"))
-    (if (null targets)
-        (message "Could not find 'Makefile' or extract any executable targets in %s." (file-name-directory (buffer-file-name)))
-      (progn
-        (insert (format "- [[elisp:(compile \"%s\")][%s]]\n" runner runner)) ;; default make command
-        (dolist (target targets)
-          (insert (format "- [[elisp:(compile \"%s %s\")][%s %s]]\n" runner target runner target)))))))
-
 (defun jw-pair-programming-on ()
   (interactive)
   (mode-line-on)
@@ -2336,25 +2305,6 @@ support =gist= & =gist+raw= org links
       (message "Created .projectile in %s" (s-join ", " dirs))
       )))
 
-(defun projectile-add-jw-project-org-link-creators ()
-  (interactive)
-  (when (file-exists-p "package.json")
-    (insert "\n\n" "[[elisp:(progn (open-line-next) (newline) (jw-js-insert-package-json-scripts-as-org-links))][jw-js-insert-package-json-scripts-as-org-links]]"))
-  (when (file-exists-p "Makefile")
-    (insert "\n\n" "[[elisp:(progn (open-line-next) (newline) (jw-make-insert-makefile-targets-as-org-links))][jw-make-insert-makefile-targets-as-org-links]]"))
-  )
-
-(defun projectile-open-jw-project-org-file ()
-  (interactive)
-  (let* ((filename ".jw-project.org")
-         (file-exists (file-exists-p filename)))
-    (find-file filename)
-    (when (not file-exists)
-      (insert (projectile-project-name) "\n\n" "elisp:magit-status")
-      (projectile-add-jw-project-org-link-creators)
-      (insert "\n"))
-    (save-buffer)))
-
 (defun counsel-projectile-switch-project-action-test (project)
   (let ((projectile-switch-project-action (lambda () (projectile-test-project ivy-current-prefix-arg))))
     (counsel-projectile-switch-project-by-name project)))
@@ -2369,7 +2319,7 @@ support =gist= & =gist+raw= org links
 
 (defun counsel-projectile-switch-project--jw-project-org (project)
   (projectile-with-default-dir project
-    (call-interactively 'projectile-open-jw-project-org-file)))
+    (call-interactively 'jw-project-org-file)))
 
 (defun counsel-projectile-switch-project--jw-sbt-action (project)
   (let ((projectile-switch-project-action 'jw-sbt))
@@ -2426,7 +2376,7 @@ support =gist= & =gist+raw= org links
 (defun projectile-jw-project-org ()
   (interactive)
   (projectile-with-default-dir (projectile-acquire-root)
-    (call-interactively 'projectile-open-jw-project-org-file)))
+    (call-interactively 'jw-project-org-file)))
 
 (define-key projectile-command-map (kbd "s r") nil) ;; remove original rg keybinding. only use s & g for grepping.
 (define-key projectile-command-map (kbd "s s") 'counsel-projectile-rg)
@@ -2633,6 +2583,7 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
       (if (f-exists? "package-lock.json") "npm"
         (read-string "Could not figure out package manager. Pick one (pnpm, npm, yarn, etc...): " "pnpm")))))
 
+;; todojoe -- maybe abstract this away so that it can be reused between package.json, Makefile, etc put it as part of jw-project- functions
 (defun jw-js-package-json-scripts ()
   "Function that autogenerates interactive functions for each package.json script in either the current projectile project or else the pwd."
   (interactive)
@@ -2660,22 +2611,6 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
         (funcall make-fn command-name command-impl)))
     (counsel-M-x (format "package-json--%s" dir-name))))
 
-(defun jw-js-insert-package-json-scripts-as-org-links ()
-  (interactive)
-  (let* ((script-runner (jw-js--get-script-runner))
-         (script-pairs (jw-js--package-json-scripts-alist))
-         (max-script-length 0))
-
-    (dolist (script-pair script-pairs)
-      (setq max-script-length (max max-script-length (length (format "%s" (car script-pair))))))
-
-    (insert (format "- [[elisp:(compile \"%s %s\")][%s %s]]\n" script-runner "install" script-runner "install"))
-    (dolist (script-pair script-pairs)
-      (insert (format "- [[elisp:(compile \"%s run %s\")][%s run %s]] %s- %s\n"
-                      script-runner (car script-pair) script-runner (car script-pair)
-                      (s-repeat (- max-script-length (length (format "%s" (car script-pair)))) " ")
-                      (cdr script-pair)))
-      )))
 
 #+END_SRC
 
@@ -2760,6 +2695,77 @@ support typescript in org babel
       (find-file (car files))
     )))
 
+#+END_SRC
+
+* jw-project
+
+#+BEGIN_SRC emacs-lisp
+(require 'cl-lib)
+
+(defun jw-make--get-targets-list ()
+  (when (file-exists-p "Makefile")
+    (with-temp-buffer
+      (insert-file-contents "Makefile")
+      (goto-char (point-min))
+      (let (targets)
+        ;; not perfect, tries to get each make target, skips = assignments, dot targets like .PHONY
+        (while (re-search-forward "^\\([a-zA-Z0-9_-]+\\):[ \t]*\\([^=]\\|$\\)" nil t)
+          (let ((target (match-string 1)))
+            (unless (string-prefix-p "." target)
+              (cl-pushnew target targets :test 'equal))))
+        (nreverse targets)
+        ))))
+
+(defun jw-project-insert-makefile-targets-as-org-links ()
+  (interactive)
+  (let* ((targets (jw-make--get-targets-list))
+         (runner "make"))
+    (if (null targets)
+        (message "Could not find Makefile or extract any executable targets in %s." (file-name-directory (buffer-file-name)))
+      (progn
+        (insert (format "- [[elisp:(compile \"%s\")][%s]] · [[elisp:(compile \"%s --just-print\")][--just-print]]\n" runner runner runner)) ;; default make command
+        (dolist (target targets)
+          (insert (format "- [[elisp:(compile \"%s %s\")][%s %s]] · [[elisp:(compile \"%s %s --just-print\")][--just-print]]\n" runner target runner target runner target)))))))
+
+
+(defun jw-project-insert-package-json-scripts-as-org-links ()
+  (interactive)
+  (let* ((script-runner (jw-js--get-script-runner))
+         (script-pairs (jw-js--package-json-scripts-alist))
+         (max-script-length 0))
+    (if (null script-pairs)
+        (message "Could not find package.json or extract any executable targets in %s." (file-name-directory (buffer-file-name)))
+      (progn
+        (dolist (script-pair script-pairs)
+          (setq max-script-length (max max-script-length (length (format "%s" (car script-pair))))))
+
+        (insert (format "- [[elisp:(compile \"%s %s\")][%s %s]]\n" script-runner "install" script-runner "install"))
+        (dolist (script-pair script-pairs)
+          (insert (format "- [[elisp:(compile \"%s run %s\")][%s run %s]] %s- %s\n"
+                          script-runner (car script-pair) script-runner (car script-pair)
+                          (s-repeat (- max-script-length (length (format "%s" (car script-pair)))) " ")
+                          (cdr script-pair)))
+          )))))
+
+(defun jw-project-add-org-links-inserter-link ()
+  (interactive)
+  (let ((inserter-link-fmt-string "\n\n[[elisp:(progn (open-line-next) (newline) (%s))][%s]]"))
+    (when (file-exists-p "package.json")
+      (insert (format inserter-link-fmt-string "jw-project-insert-package-json-scripts-as-org-links" "jw-project-insert-package-json-scripts-as-org-links")))
+    (when (file-exists-p "Makefile")
+      (insert (format inserter-link-fmt-string "jw-project-insert-makefile-targets-as-org-links" "jw-project-insert-makefile-targets-as-org-links")))
+    ))
+
+(defun jw-project-org-file ()
+  (interactive)
+  (let* ((filename ".jw-project.org")
+         (file-exists (file-exists-p filename)))
+    (find-file filename)
+    (when (not file-exists)
+      (insert (projectile-project-name) "\n\n" "elisp:magit-status")
+      (jw-project-add-org-links-inserter-link)
+      (insert "\n"))
+    (save-buffer)))
 #+END_SRC
 
 * private config
