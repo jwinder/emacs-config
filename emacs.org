@@ -2531,7 +2531,9 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 
 (defun org-babel-execute:ammonite (body params)
   (jw--file-write body "/tmp/ob-ammonite-input.scala")
-  (shell-command-to-string "amm --silent /tmp/ob-ammonite-input.scala"))
+  ;; (shell-command-to-string "cd /tmp/ && amm --silent ob-ammonite-input.scala")
+  (shell-command-to-string "cd /tmp/ && amm --silent ob-ammonite-input.scala 2>&1 | grep -v '^WARNING:'") ;; grep out lines starting with WARNING: for now, can't seem to fix them with jvm flags
+  )
 
 (add-to-list 'org-src-lang-modes '("ammonite" . scala))
 
