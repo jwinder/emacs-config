@@ -891,6 +891,14 @@ theme
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
+;; expand ibuffer filename column to be longer for longer buffer names
+(setq ibuffer-formats
+      '((mark modified read-only " "
+              (name 56 56 :left :elide)
+              " " (size 9 -1 :right) " "
+              (mode 16 16 :left :elide) " " filename-and-process)
+        (mark " " (name 16 -1) " " filename)))
+
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
 (put 'set-goal-column 'disabled nil)
