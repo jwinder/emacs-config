@@ -2764,8 +2764,11 @@ support typescript in org babel
 
 (defun jw-project-insert-sbt-commands-as-org-links ()
   (interactive)
-  (dolist (command '("jw-sbt" "jw-sbt-compile" "jw-sbt-compile 'test" "jw-sbt-test 'all" "sbt-command \"scalafix\"" "sbt-command \"projects\"" "sbt-run-previous-command" "jw-sbt-doc" "jw-sbt-metals-bloop-install"))
-    (insert (format "- [[elisp:(%s)][%s]]\n" command command))))
+  (dolist (command
+           '(("sbt" . "jw-sbt") ("compile main" . "jw-sbt-compile") ("compile test" . "jw-sbt-compile 'test") ("test all" . "jw-sbt-test 'all")
+             ("scalafix" . "sbt-command \"scalafix\"") ("list projects" . "sbt-command \"projects\"") ("last command" . "sbt-run-previous-command")
+             ("doc" . "jw-sbt-doc") ("bloop install" . "jw-sbt-metals-bloop-install")))
+    (insert (format "- [[elisp:(%s)][%s · %s]]\n" (cdr command) (s-pad-right 16 " " (car command)) (cdr command)))))
 
 (defun jw-project-add-org-links-inserter-link ()
   (interactive)
