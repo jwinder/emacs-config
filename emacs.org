@@ -2743,7 +2743,8 @@ support typescript in org babel
   (interactive)
   (dolist (command
            '(("sbt" . "jw-sbt") ("compile main" . "jw-sbt-compile") ("compile test" . "jw-sbt-compile 'test") ("test all" . "jw-sbt-test 'all")
-             ("scalafix" . "sbt-command \"scalafix\"") ("list projects" . "sbt-command \"projects\"") ("last command" . "sbt-run-previous-command")
+             ("scalafmtAll" . "sbt-command \"scalafmtAll\"") ("scalafmt" . "sbt-command \"scalafmt\"") ("scalafix" . "sbt-command \"scalafix\"")
+             ("list projects" . "sbt-command \"projects\"") ("last command" . "sbt-run-previous-command")
              ("doc" . "jw-sbt-doc") ("bloop install" . "jw-sbt-metals-bloop-install")))
     (insert (format "- [[elisp:(%s)][%s · %s]]\n" (cdr command) (s-pad-right 16 " " (car command)) (cdr command)))))
 
