@@ -1749,6 +1749,7 @@ eshell prompt
 (setq eglot-confirm-server-initiated-edits nil)
 
 (global-set-key (kbd "C-c l l") 'eglot)
+(global-set-key (kbd "C-c l L") 'eglot-shutdown-all)
 (define-key eglot-mode-map (kbd "C-c l L") 'eglot-shutdown)
 (define-key eglot-mode-map (kbd "C-c l a") 'eglot-code-actions) ;; should other specific code actions have their own bindings?
 (define-key eglot-mode-map (kbd "C-c l R") 'eglot-rename)
