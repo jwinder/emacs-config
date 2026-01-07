@@ -1816,6 +1816,11 @@ eshell prompt
 
 (setq magit-save-repository-buffers 'dontask)
 
+;; in staged files, by default RET goes to a read-only index instead of the file on the worktree. C-RET goes to the file.
+;; this overrides that behavior so that both RET and C-RET go to the file if it's in the worktree.
+;; i've never had a case over the years where i wish i went to the index instead of the file itself.
+(setq magit-diff-visit-prefer-worktree t)
+
 (define-prefix-command 'jw-magit-map)
 (global-set-key (kbd "M-g") 'jw-magit-map)
 (global-set-key (kbd "M-G") goto-map) ;; move old M-g (goto-map) to capital G since I'm hijacking it for magit
