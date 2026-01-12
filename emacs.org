@@ -126,6 +126,8 @@ Now, start emacs.
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
 
+(use-package which-key)
+
 (use-package editorconfig)
 (editorconfig-mode 1)
 
