@@ -203,6 +203,20 @@ These are non-interactive library functions useful in other parts of this config
 
 (defconst jw--emacs-visual-areas '(nil right-fringe left-fringe right-margin left-margin header-line tab-line tab-bar vertical-line vertical-scroll-bar mode-line menu-bar))
 
+(defun jw--is-linux ()
+  "Check if running on linux"
+  (and (eq system-type 'gnu/linux)
+       (not (getenv "WSL_DISTRO_NAME"))))
+
+(defun jw--is-macos ()
+  "Check if running on macOS"
+  (eq system-type 'darwin))
+
+(defun jw--is-wsl-linux ()
+  "Check if running on linux in WSL (windows subsystem for linux)"
+  (and (eq system-type 'gnu/linux)
+       (getenv "WSL_DISTRO_NAME")))
+
 (defun jw--font-name (&optional size)
   (if size (format "Monaco %s" size) "Monaco"))
 
@@ -224,7 +238,19 @@ These are non-interactive library functions useful in other parts of this config
   (let ((v (or value jw--default-transparency-alpha)))
     (when (and (numberp v) (>= v 0) (<= v 100))
       (setq jw--current-transparency-alpha v)
-      (set-frame-parameter (selected-frame) 'alpha v))))
+      (cond
+       ((jw--is-wsl-linux)
+        ;; does not work in wsl, just override to be 100
+        (set-frame-parameter (selected-frame) 'alpha-background 100)
+        (set-frame-parameter (selected-frame) 'alpha 100))
+
+       ((jw--is-macos)
+        (set-frame-parameter (selected-frame) 'alpha v))
+
+       ((jw--is-linux)
+        (if (boundp 'alpha-background)
+            (set-frame-parameter (selected-frame) 'alpha-background v)
+          (set-frame-parameter (selected-frame) 'alpha v)))))))
 
 (defun jw--login-shell ()
   (file-name-nondirectory (getenv "SHELL")))
@@ -422,6 +448,7 @@ For long running processes, this will always toggle back and forth between the p
 (defun jw--cache-delete (sym) (pcache-invalidate jw--cache-repo sym))
 (defun jw--cache-set (sym &optional value) (if value (pcache-put jw--cache-repo sym value) (jw--cache-delete sym)))
 (defun jw--cache-get (sym) (pcache-get jw--cache-repo sym))
+
 #+END_SRC
 
 * env
@@ -464,7 +491,7 @@ For long running processes, this will always toggle back and forth between the p
       initial-scratch-message ""
       initial-major-mode 'org-mode)
 
-(when (eq system-type 'darwin)
+(when (jw--is-macos)
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
   (add-to-list 'default-frame-alist '(ns-appearance . dark))
   (setq ns-use-proxy-icon nil)
@@ -986,16 +1013,21 @@ theme
 
 (setq kill-ring-max 10000)
 
-(when (eq system-type 'gnu/linux)
+(when (jw--is-linux)
   (setq interprogram-paste-function 'x-cut-buffer-or-selection-value
         browse-url-browser-function 'browse-url-generic
         browse-url-generic-program "google-chrome"))
 
-(when (eq system-type 'darwin)
+(when (jw--is-macos)
   (setq ns-command-modifier 'meta
         ns-option-modifier 'super
         browse-url-browser-function 'browse-url-default-macosx-browser
         browse-url-generic-program "open"))
+
+(when (jw--is-wsl-linux)
+  (setq browse-url-generic-program "/mnt/c/Windows/System32/cmd.exe"
+        browse-url-generic-args '("/c" "start")
+        browse-url-browser-function 'browse-url-generic))
 #+END_SRC
 
 * functions
