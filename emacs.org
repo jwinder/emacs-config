@@ -203,9 +203,9 @@ These are non-interactive library functions useful in other parts of this config
 
 (defconst jw--emacs-visual-areas '(nil right-fringe left-fringe right-margin left-margin header-line tab-line tab-bar vertical-line vertical-scroll-bar mode-line menu-bar))
 
-(defun jw--is-linux () (and (eq system-type 'gnu/linux) (not (getenv "WSL_DISTRO_NAME"))))
 (defun jw--is-macos () (eq system-type 'darwin))
-(defun jw--is-wsl-linux () (and (eq system-type 'gnu/linux) (getenv "WSL_DISTRO_NAME")))
+(defun jw--is-linux () (and (not (getenv "WSL_DISTRO_NAME")) (eq system-type 'gnu/linux)))
+(defun jw--is-wsl-linux () (and (getenv "WSL_DISTRO_NAME") (eq system-type 'gnu/linux)))
 
 ;; functions used to conditionally eval ob src blocks in my private configs (:eval and :tangle are ignored by C-c C-c and org-babel-tangle-file when set to "no")
 ;; e.g. #BEGIN_SRC emacs-lisp :eval (jw--personal-computer-yn) :tangle (jw--personal-computer-yn)
