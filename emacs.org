@@ -207,13 +207,6 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--is-linux () (and (not (getenv "WSL_DISTRO_NAME")) (eq system-type 'gnu/linux)))
 (defun jw--is-wsl-linux () (and (getenv "WSL_DISTRO_NAME") (eq system-type 'gnu/linux)))
 
-;; functions used to conditionally eval ob src blocks in my private configs (:eval and :tangle are ignored by C-c C-c and org-babel-tangle-file when set to "no")
-;; e.g. #BEGIN_SRC emacs-lisp :eval (jw--personal-computer-yn) :tangle (jw--personal-computer-yn)
-;; these have to be loaded here before loading private.org
-(defun jw--computer-personal-yn () (if (string= (getenv "WHICH_COMPUTER") "personal") "yes" "no"))
-(defun jw--computer-gaming-yn () (if (string= (getenv "WHICH_COMPUTER") "gaming") "yes" "no"))
-(defun jw--computer-work-yn () (if (string= (getenv "WHICH_COMPUTER") "work") "yes" "no"))
-
 (defun jw--font-name (&optional size)
   (if size (format "Monaco %s" size) "Monaco"))
 
