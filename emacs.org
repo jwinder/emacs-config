@@ -210,7 +210,8 @@ These are non-interactive library functions useful in other parts of this config
 (defun jw--font-name (&optional size)
   (if size (format "Monaco %s" size) "Monaco"))
 
-(defconst jw--default-font-size 14)
+(setq jw--default-font-size 14)
+(when (jw--is-wsl-linux) (setq jw--default-font-size 18)) ;; screen is too big
 (setq jw--current-font-size jw--default-font-size)
 (defun jw--get-font-size () jw--current-font-size)
 
