@@ -2327,6 +2327,10 @@ support =gist= & =gist+raw= org links
 (setq projectile-enable-caching t)
 (setq projectile-ignored-projects '("~/"))
 
+;; fix for navigating to projectile projects from wsl linux in windows directories
+(when (jw--is-wsl-linux)
+  (setq projectile-indexing-method 'native))
+
 (defun projectile-add-dot-projectile-current-directory ()
   (interactive)
   (f-touch ".projectile")
