@@ -165,6 +165,8 @@ Now, start emacs.
 (use-package groovy-mode)
 (add-to-list 'auto-mode-alist '("Jenkinsfile$" . groovy-mode))
 
+(use-package gdscript-mode)
+
 (use-package glsl-mode)
 (add-to-list 'auto-mode-alist '("\\.vert$" . glsl-mode))
 (add-to-list 'auto-mode-alist '("\\.frag$" . glsl-mode))
@@ -440,6 +442,10 @@ For long running processes, this will always toggle back and forth between the p
 (defun jw--cache-set (sym &optional value) (if value (pcache-put jw--cache-repo sym value) (jw--cache-delete sym)))
 (defun jw--cache-get (sym) (pcache-get jw--cache-repo sym))
 
+(when (jw--is-wsl-linux)
+  (defun jw--get-wsl-linux-bridge-ip ()
+    "Get the actual WSL bridge IP (vEthernet) from the route table."
+    (string-trim (shell-command-to-string "ip route show | grep default | awk '{print $3}'"))))
 #+END_SRC
 
 * env
