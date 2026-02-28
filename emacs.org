@@ -1994,7 +1994,6 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
       org-enforce-todo-checkbox-dependencies t
       org-return-follows-link t
       org-tags-column -100
-      org-adapt-indentation t
       org-src-preserve-indentation t
       org-cycle-open-archived-trees t
       org-todo-keywords '((sequence "⚑" "⚐" "|" "✔" "✘"))
@@ -2011,12 +2010,20 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
       org-src-tab-acts-natively nil ;; do not use this, it interferes with newlines
       org-agenda-todo-list-sublevels nil
       org-agenda-window-setup 'only-window
-      org-refile-targets '((org-agenda-files :maxlevel . 10))
       org-refile-use-outline-path t
       org-refile-allow-creating-parent-nodes 'confirm
       org-id-link-to-org-use-id 'create-if-interactive
       org-capture-bookmark nil ;; org variant of bookmark-fringe-mark
       )
+
+;; these are important for maintaining good performance in large org files
+(setq org-adapt-indentation nil ;; causes scans to make sure text is aligned correctly. i don't use this anyway b/c i like to type fully left-justified after headings.
+      org-fontify-emphasized-text nil ;; can cause high performance hit, only used for fontifying bold & italic.
+      org-fontify-whole-heading-line nil ;; this can cause performance issues and doesn't do anything with my current color theme.
+      org-refile-targets '((org-agenda-files :maxlevel . 5))
+      )
+
+;; use org-indent-mode via hook
 
 ;; emacs 30 changed the behavior of org-startup-folded so that src blocks are no longer folded when opening a file, even if the headings are folded.
 (defun jw-org-fold-all-blocks ()
