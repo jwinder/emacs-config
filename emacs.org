@@ -815,6 +815,8 @@ theme
 
 (pixel-scroll-precision-mode 1)
 
+(setq-default font-lock-multiline t) ;; supposedly faster, enables caching of batches of lines instead of font-locking line by line.
+
 (setq enable-local-variables :all)
 
 (setq vc-follow-symlinks t)
