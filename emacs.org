@@ -1522,6 +1522,11 @@ argument makes the windows rotate backwards."
   (interactive)
   (mode-line-off)
   (mode-line-pwd-off))
+
+;; old interactive functions to kill
+(fmakunbound 'woman)
+(fmakunbound 'woman-find-file)
+(fmakunbound 'woman-dired-find-file)
 #+END_SRC
 
 * emacs functions
