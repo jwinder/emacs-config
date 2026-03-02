@@ -138,7 +138,6 @@ Now, start emacs.
 (use-package yaml-mode)
 
 (use-package markdown-mode)
-(add-hook 'markdown-mode-hook 'turn-on-orgtbl) ;; markdown-mode's table editor is slow/clunky
 
 (use-package cmake-mode)
 
