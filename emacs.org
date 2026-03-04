@@ -2232,6 +2232,31 @@ support =gist= & =gist+raw= org links
 (org-link-set-parameters "gist+raw" :follow #'(lambda (ref _) (org-gist-link-follow ref 'raw)))
 #+END_SRC
 
+use org-mode tables in markdown-mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'markdown-mode-hook 'turn-on-orgtbl)
+
+(defun jw-markdown-org-table-fix ()
+  "Convert org-mode table intersections (+) to markdown table pipes (|)"
+  (interactive)
+  (when (derived-mode-p 'markdown-mode)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^\\s-*|[-+]+|$" nil t)
+        (let ((beg (match-beginning 0))
+              (end (match-end 0)))
+          (save-restriction
+            (narrow-to-region beg end)
+            (goto-char (point-min))
+            (while (search-forward "+" nil t)
+              (replace-match "|"))
+            (goto-char (point-max))))))))
+
+(add-hook 'markdown-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook 'jw-markdown-org-table-fix nil t)))
+#+END_SRC
+
 * ivy counsel
 
 #+BEGIN_SRC emacs-lisp
