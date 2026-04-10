@@ -2154,6 +2154,7 @@ org-babel languages & automatic yasnippet creation
 (org-babel-src-yasnippet 'bash)
 (org-babel-src-yasnippet 'cpp)
 (org-babel-src-yasnippet 'C++)
+(org-babel-src-yasnippet 'gdscript)
 
 ;; alias yasnippets to other ob-* blocks
 (org-babel-src-yasnippet 'javascript 'js)
