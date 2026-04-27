@@ -2805,6 +2805,24 @@ support typescript in org babel
   (-map (lambda (target) (cons target (s-trim (shell-command-to-string (format "make --just-print %s" target)))))
         (jw-make--get-targets-list)))
 
+(defun jw-project-insert-golang-commands-as-org-links ()
+  (interactive)
+  (let ((commands
+         '(("go mod tidy" . "Remove unused modules and add missing ones")
+           ("go mod download" . "Download modules to local cache")
+           ("go mod graph" . "Print the module dependency graph")
+           ("go fmt ./..." . "Format all code in the project")
+           ("go vet ./..." . "Report suspicious constructs (static analysis)")
+           ("go build ./..." . "Compile packages to check for errors")
+           ("go test -v ./..." . "Run all tests with verbose output")
+           ("go test -race ./..." . "Run tests with the data race detector")
+           ("go clean -testcache" . "Force re-running of cached tests"))))
+    (dolist (pair commands)
+      (let ((cmd (car pair))
+            (desc (cdr pair)))
+        (insert (format "- [[elisp:(compile \"%s\")][%s]] -- %s\n"
+                        cmd cmd desc))))))
+
 (defun jw-project-insert-makefile-targets-as-org-links ()
   (interactive)
   (let* ((targets (jw-make--get-targets-list))
@@ -2851,6 +2869,8 @@ support typescript in org babel
   (let ((inserter-link-fmt-string "\n\n[[elisp:(progn (open-line-next) (newline) (%s))][%s]]"))
     (when (file-exists-p "package.json")
       (insert (format inserter-link-fmt-string "jw-project-insert-package-json-scripts-as-org-links" "jw-project-insert-package-json-scripts-as-org-links")))
+    (when (file-exists-p "go.mod")
+      (insert (format inserter-link-fmt-string "jw-project-insert-golang-commands-as-org-links" "jw-project-insert-golang-commands-as-org-links")))
     (when (file-exists-p "Makefile")
       (insert (format inserter-link-fmt-string "jw-project-insert-makefile-targets-as-org-links" "jw-project-insert-makefile-targets-as-org-links")))
     (when (file-exists-p "build.sbt")
