@@ -2816,12 +2816,17 @@ support typescript in org babel
            ("go build ./..." . "Compile packages to check for errors")
            ("go test -v ./..." . "Run all tests with verbose output")
            ("go test -race ./..." . "Run tests with the data race detector")
-           ("go clean -testcache" . "Force re-running of cached tests"))))
+           ("go clean -testcache" . "Force re-running of cached tests")
+           ("$ go test ./dir -count=1 -v" . "Test specific directory")
+           ("$ go get github.com/org/repo@latest" . "Update single dependency"))))
     (dolist (pair commands)
-      (let ((cmd (car pair))
-            (desc (cdr pair)))
-        (insert (format "- [[elisp:(compile \"%s\")][%s]] -- %s\n"
-                        cmd cmd desc))))))
+      (let* ((raw-cmd (car pair))
+             (desc (cdr pair))
+             (is-text-only (string-prefix-p "$" raw-cmd)))
+        (if is-text-only
+            (insert (format "%s # %s\n" raw-cmd desc))
+          (insert (format "- [[elisp:(compile \"%s\")][%s]] -- %s\n"
+                          raw-cmd raw-cmd desc)))))))
 
 (defun jw-project-insert-makefile-targets-as-org-links ()
   (interactive)
