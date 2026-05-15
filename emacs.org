@@ -1967,8 +1967,7 @@ If the server is connected and a prefix arg is provided, then invoke a quick /ms
   (interactive)
   (if (s-equals? (buffer-name) (f-filename jw-org-todo-file))
       (switch-to-buffer (other-buffer))
-    (find-file jw-org-todo-file)
-    (cd (getenv "HOME"))))
+    (find-file jw-org-todo-file)))
 
 (defun jw-org-capture ()
   (interactive)
