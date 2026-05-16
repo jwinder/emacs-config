@@ -2622,6 +2622,28 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 (org-babel-src-yasnippet 'scala 'ammonite) ;; default ob-scala requires brew scala & ensime, which I don't use.
 #+END_SRC
 
+scala3 hack to revert to basic indent
+#+BEGIN_SRC emacs-lisp
+(defun jw--scala-mode--simplify-indent-for-scala3 ()
+  "Revert to basic previous non-blank line relative indent for scala3.
+For scala projects, this checks for \"scalaVersion := 3\" patterns in build.sbt.
+For non-scala projects (scripts), this only loads when there is a \"// scala3\" in the file/buffer."
+  (interactive)
+  (let ((root (and (fboundp 'projectile-project-root) (projectile-project-root))))
+      (when (or (save-excursion (goto-char (point-min)) (re-search-forward "scalaVersion\\|scala3" 2000 t))
+                (and root (file-exists-p (expand-file-name "build.sbt" root))
+                     (with-temp-buffer
+                       (insert-file-contents (expand-file-name "build.sbt" root) nil 0 2000)
+                       (goto-char (point-min))
+                       (re-search-forward "scalaVersion\\s-*:=\\s-*\"?3" nil t))))
+        ;; The Hack: Lobotomize scala-mode's indentation entirely
+        (setq-local indent-line-function 'indent-relative-first-indent-point)
+        (setq-local electric-indent-chars nil)
+        (local-set-key (kbd "RET") 'newline-and-open-line-previous))))
+
+(add-hook 'scala-mode-hook 'jw--scala-mode--simplify-indent-for-scala3)
+#+END_SRC
+
 * javascript
 
 #+BEGIN_SRC emacs-lisp
