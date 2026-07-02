@@ -104,8 +104,8 @@ Now, start emacs.
 (use-package counsel-projectile)
 
 (use-package hydra)
-(use-package treemacs)
-(setq treemacs-show-cursor t)
+
+(use-package dired-subtree) ;; other possibly useful extensions: https://github.com/Fuco1/dired-hacks
 
 (use-package company)
 (setq company-idle-delay nil)
@@ -901,16 +901,6 @@ theme
 
 (save-place-mode 1)
 
-(require 'dired-x)
-
-(put 'dired-find-alternate-file 'disabled nil)
-
-(setq wdired-allow-to-change-permissions 'advanced)
-
-(setq dired-listing-switches "-alh")
-
-(setq dired-dwim-target t)
-
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -1442,19 +1432,6 @@ argument makes the windows rotate backwards."
 
 (defalias 'find-file-external 'counsel-find-file-extern) ;; no need to re-invent the wheel here
 
-(defun dired-hide-subdir-dwim (arg)
-  (interactive "P")
-  (save-excursion (if arg (dired-hide-all) (dired-hide-subdir 1))))
-
-(defun dired-do-kill-line-dwim (arg)
-  (interactive "P")
-  (when arg (dired-tree-up 0))
-  (dired-do-kill-lines 1 ""))
-
-(defun dired-do-kill-subdir-dwim ()
-  (interactive)
-  (dired-do-kill-line-dwim 1))
-
 (defun jw-narrow-dwim (arg)
   (interactive "P")
   (cond (arg (widen))
@@ -1493,18 +1470,6 @@ argument makes the windows rotate backwards."
            (default-directory tmp-gist-dir))
       (jw--file-write content tmp-gist-file)
       (jw--run-cmd (format "hub gist create %s %s" public-flag (shell-quote-argument gist-file-name))))))
-
-(defun jw-gist-dired-files (arg)
-  "Create a single gist from either the marked dired files, or the current file if none are marked."
-  (interactive "P")
-  (if (not (executable-find "hub"))
-      (message "Executable hub required to create gists: https://hub.github.com/")
-    (let* ((files-list (dired-get-marked-files))
-           (files-str (mapconcat 'shell-quote-argument files-list " "))
-           (public-flag (if arg "--public=true" "--public=false")))
-      (if files-list
-          (jw--run-cmd (format "hub gist create %s %s" public-flag files-str))
-        (message "Cannot find files to gist. Either mark files or hover a file with the cursor.")))))
 
 (defun jw-conventional-commits-insert-type ()
   "Inserts a commit type at point: https://www.conventionalcommits.org"
@@ -1625,13 +1590,6 @@ argument makes the windows rotate backwards."
 (define-key ctl-x-x-map (kbd "v") 'visual-line-mode)
 (define-key ctl-x-4-map (kbd "C-d") 'dired-other-window)
 (define-key grep-mode-map (kbd "w") 'wgrep-change-to-wgrep-mode)
-(define-key dired-mode-map (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
-(define-key dired-mode-map (kbd "e") 'dired-do-open) ;; dired-find-file was mapped to: e, f, and RET. use dired-do-open for both e and E.
-(define-key dired-mode-map (kbd "w") 'wdired-change-to-wdired-mode)
-(define-key dired-mode-map (kbd "<tab>") 'dired-hide-subdir-dwim)
-(define-key dired-mode-map (kbd "$") 'dired-hide-subdir-dwim)
-(define-key dired-mode-map (kbd "k") 'dired-do-kill-line-dwim)
-(define-key dired-mode-map (kbd "K") 'dired-do-kill-subdir-dwim)
 (define-key narrow-map (kbd "r") 'narrow-to-region)
 (define-key narrow-map (kbd "n") 'jw-narrow-dwim)
 (define-key narrow-map (kbd "' '") 'edit-indirect-region)
@@ -1692,6 +1650,59 @@ argument makes the windows rotate backwards."
 (jw--global-set-visual-area-key "<C-wheel-left>" 'ignore)
 (jw--global-set-visual-area-key "<C-S-wheel-right>" 'ignore)
 (jw--global-set-visual-area-key "<C-S-wheel-left>" 'ignore)
+#+END_SRC
+
+* dired
+
+#+BEGIN_SRC emacs-lisp
+(require 'dired-x)
+(require 'dired-subtree)
+
+(put 'dired-find-alternate-file 'disabled nil)
+(setq wdired-allow-to-change-permissions 'advanced)
+(setq dired-listing-switches "-alh")
+(setq dired-dwim-target t)
+
+(setq dired-subtree-use-backgrounds nil) ;; do not highlight background
+
+(defun dired-hide-subdir-dwim (arg)
+  (interactive "P")
+  (save-excursion (if arg (dired-hide-all) (dired-hide-subdir 1))))
+
+(defun dired-do-kill-line-dwim (arg)
+  (interactive "P")
+  (when arg (dired-tree-up 0))
+  (dired-do-kill-lines 1 ""))
+
+(defun dired-do-kill-subdir-dwim ()
+  (interactive)
+  (dired-do-kill-line-dwim 1))
+
+(defun jw-gist-dired-files (arg)
+  "Create a single gist from either the marked dired files, or the current file if none are marked."
+  (interactive "P")
+  (if (not (executable-find "hub"))
+      (message "Executable hub required to create gists: https://hub.github.com/")
+    (let* ((files-list (dired-get-marked-files))
+           (files-str (mapconcat 'shell-quote-argument files-list " "))
+           (public-flag (if arg "--public=true" "--public=false")))
+      (if files-list
+          (jw--run-cmd (format "hub gist create %s %s" public-flag files-str))
+        (message "Cannot find files to gist. Either mark files or hover a file with the cursor.")))))
+
+(define-key dired-mode-map (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
+(define-key dired-mode-map (kbd "e") 'dired-do-open) ;; dired-find-file was mapped to: e, f, and RET. use dired-do-open for both e and E.
+(define-key dired-mode-map (kbd "w") 'wdired-change-to-wdired-mode)
+(define-key dired-mode-map (kbd "<tab>") 'dired-hide-subdir-dwim)
+(define-key dired-mode-map (kbd "$") 'dired-hide-subdir-dwim)
+(define-key dired-mode-map (kbd "k") 'dired-do-kill-line-dwim)
+(define-key dired-mode-map (kbd "K") 'dired-do-kill-subdir-dwim)
+
+;; (define-key dired-mode-map (kbd "C-c i") 'dired-subtree-insert)
+(define-key dired-mode-map (kbd "C-c i") 'dired-subtree-toggle)
+(define-key dired-mode-map (kbd "C-c ^") 'dired-subtree-remove)
+(define-key dired-mode-map (kbd "C-c m") 'dired-subtree-mark-subtree)
+(define-key dired-mode-map (kbd "C-c u") 'dired-subtree-unmark-subtree)
 #+END_SRC
 
 * eshell and vterm
