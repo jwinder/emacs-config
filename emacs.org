@@ -103,7 +103,12 @@ Now, start emacs.
 (use-package counsel) ;; brings in ivy & swiper
 (use-package counsel-projectile)
 
-(use-package hydra)
+(use-package vertico) ;; replaces ivy
+(use-package orderless) ;; search engine in ivy
+(use-package marginalia) ;; annotations in ivy
+(use-package consult) ;; replaces swiper, counsel search, etc
+
+;; (use-package hydra) ;; todojoe -- this may have been required by treemacs, but i don't think i need it anymore since switching to dired-subtree
 
 (use-package dired-subtree) ;; other possibly useful extensions: https://github.com/Fuco1/dired-hacks
 
@@ -1558,7 +1563,7 @@ argument makes the windows rotate backwards."
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 (global-set-key (kbd "M-s i") 'imenu)
-(global-set-key (kbd "C-M-/") 'counsel-company)
+;; (global-set-key (kbd "C-M-/") 'counsel-company) ;; todojoe
 (global-set-key (kbd "C-M-g") 'goto-line)
 (global-set-key (kbd "C-M-9") 'winner-undo)
 (global-set-key (kbd "C-M-0") 'winner-redo)
@@ -2268,114 +2273,154 @@ use org-mode tables in markdown-mode
             (add-hook 'before-save-hook 'jw-markdown-org-table-fix nil t)))
 #+END_SRC
 
+* vertico+ stack
+
+#+BEGIN_SRC emacs-lisp
+(vertico-mode 1)
+(marginalia-mode 1)
+
+(setq ;;vertico-count-format '("%d/%d " . "%d/%d ")
+      vertico-resize t)
+
+(setq completion-styles '(orderless basic)
+      completion-category-defaults nil
+      completion-category-overrides '((file (styles partial-completion))))
+
+(set-face-attribute 'vertico-current nil  :background "#3e4451"  :foreground 'unspecified)
+
+(global-set-key (kbd "C-x b") 'consult-buffer)
+(global-set-key (kbd "C-s") 'consult-line)
+(global-set-key (kbd "C-r") 'consult-line)
+(global-set-key (kbd "M-s i") 'consult-imenu)
+(global-set-key (kbd "M-s s") 'consult-ripgrep)
+(global-set-key (kbd "M-s g") 'consult-grep)
+(global-set-key (kbd "M-M-y") 'consult-yank-pop)
+(global-set-key (kbd "C-M-y") 'consult-yank-pop)
+(global-set-key (kbd "C-c C-j") 'consult-org-heading)
+
+;; ("C-x b" . consult-buffer)           ;; Replaces counsel-switch-buffer (handles virtuals natively)
+;;          ("C-x p" . list-processes)           ;; You can write a DWIM for this later if needed
+
+;;          ;; Search / Swiper replacements
+;;          ("C-s"   . consult-line)             ;; Replaces swiper
+;;          ("C-r"   . consult-line)             ;; (Can also just be consult-line, it searches whole buffer)
+;;          ("M-s i" . consult-imenu)            ;; Replaces counsel-imenu
+;;          ("M-s s" . consult-ripgrep)          ;; Replaces counsel-rg
+;;          ("M-s g" . consult-grep)             ;; Replaces counsel-grep
+
+;;          ;; Misc
+;;          ("C-M-y"   . consult-yank-pop)       ;; Replaces counsel-yank-pop
+;;          ("C-c C-j" . consult-org-heading)
+#+END_SRC
+
 * ivy counsel
 
 #+BEGIN_SRC emacs-lisp
-(ivy-mode 1)
+;; (ivy-mode 1)
 
-(setq ivy-use-virtual-buffers t
-      ivy-count-format "%d/%d "
-      ivy-initial-inputs-alist nil
-      ivy-use-selectable-prompt t
-      ivy-magic-tilde nil
-      ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
+;; (setq ivy-use-virtual-buffers t
+;;       ivy-count-format "%d/%d "
+;;       ivy-initial-inputs-alist nil
+;;       ivy-use-selectable-prompt t
+;;       ivy-magic-tilde nil
+;;       ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
 
-(setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
+;; (setq max-mini-window-height 0.90) ;; fix for https://github.com/abo-abo/swiper/issues/2397
 
-(setq counsel-switch-buffer-preview-virtual-buffers nil) ;; performance increase to main switch-buffer function
+;; (setq counsel-switch-buffer-preview-virtual-buffers nil) ;; performance increase to main switch-buffer function
 
-(defun counsel-find-file-dwim (arg)
-  (interactive "P")
-  (let ((initial-input (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end)) nil)))
-    (pcase (prefix-numeric-value arg)
-      (16 (counsel-file-jump initial-input))
-      (4 (counsel-recentf))
-      (_ (counsel-find-file initial-input)))))
+;; (defun counsel-find-file-dwim (arg)
+;;   (interactive "P")
+;;   (let ((initial-input (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end)) nil)))
+;;     (pcase (prefix-numeric-value arg)
+;;       (16 (counsel-file-jump initial-input))
+;;       (4 (counsel-recentf))
+;;       (_ (counsel-find-file initial-input)))))
 
-(defun ivy-dispatching-done-ivy ()
-  (interactive)
-  (let ((ivy-read-action-function #'ivy-read-action-ivy))
-    (ivy-dispatching-done)))
+;; (defun ivy-dispatching-done-ivy ()
+;;   (interactive)
+;;   (let ((ivy-read-action-function #'ivy-read-action-ivy))
+;;     (ivy-dispatching-done)))
 
-(defun ivy-resume-or-else-counsel-M-x ()
-  (interactive)
-  (when (not (ignore-errors (call-interactively 'ivy-resume)))
-    (call-interactively 'counsel-M-x)))
+;; (defun ivy-resume-or-else-counsel-M-x ()
+;;   (interactive)
+;;   (when (not (ignore-errors (call-interactively 'ivy-resume)))
+;;     (call-interactively 'counsel-M-x)))
 
-(defun counsel-emacs-processes-dwim (arg)
-  (interactive "P")
-  (if arg (list-processes) (counsel-list-processes)))
+;; (defun counsel-emacs-processes-dwim (arg)
+;;   (interactive "P")
+;;   (if arg (list-processes) (counsel-list-processes)))
 
-(defun counsel-grep-switch-to-grep ()
-  "Switch interactive counsel-grep/rg minibuffer to opening a good old grep buffer."
-  (interactive)
-  (let ((d (or ivy--directory (jw--pwd)))
-        (cmd (concat grep-command (shell-quote-argument ivy-text))))
-    (ivy-exit-with-action `(lambda (_) (let ((default-directory ,d)) (grep ,cmd))))))
+;; (defun counsel-grep-switch-to-grep ()
+;;   "Switch interactive counsel-grep/rg minibuffer to opening a good old grep buffer."
+;;   (interactive)
+;;   (let ((d (or ivy--directory (jw--pwd)))
+;;         (cmd (concat grep-command (shell-quote-argument ivy-text))))
+;;     (ivy-exit-with-action `(lambda (_) (let ((default-directory ,d)) (grep ,cmd))))))
 
-(defun counsel-find-file--cmd-dwim-action (file) (let ((default-directory ivy--directory)) (cmd-dwim ivy-current-prefix-arg)))
-(defun counsel-find-file--magit-status-action (file) (let ((default-directory ivy--directory)) (magit-status)))
-(defun counsel-find-file--eshell-action (file) (let ((default-directory ivy--directory)) (eshell)))
-(defun counsel-find-file--dired-action (file) (dired ivy--directory))
-(defun counsel-find-file--jw-sbt-action (file) (let ((default-directory ivy--directory)) (jw-sbt)))
-(defun counsel-find-file--sbt-compile-action (file) (let ((default-directory ivy--directory)) (sbt-compile ivy-current-prefix-arg)))
+;; (defun counsel-find-file--cmd-dwim-action (file) (let ((default-directory ivy--directory)) (cmd-dwim ivy-current-prefix-arg)))
+;; (defun counsel-find-file--magit-status-action (file) (let ((default-directory ivy--directory)) (magit-status)))
+;; (defun counsel-find-file--eshell-action (file) (let ((default-directory ivy--directory)) (eshell)))
+;; (defun counsel-find-file--dired-action (file) (dired ivy--directory))
+;; (defun counsel-find-file--jw-sbt-action (file) (let ((default-directory ivy--directory)) (jw-sbt)))
+;; (defun counsel-find-file--sbt-compile-action (file) (let ((default-directory ivy--directory)) (sbt-compile ivy-current-prefix-arg)))
 
-(ivy-add-actions
- 'counsel-find-file
- '(("!" counsel-find-file--cmd-dwim-action "cmd-dwim in pwd")
-   ("g" counsel-find-file--magit-status-action "magit-status in pwd")
-   ("C-xC-d" counsel-find-file--dired-action "dired in pwd")
-   ("C-cme" counsel-find-file--eshell-action "eshell in pwd")
-   ("C-css" counsel-find-file--jw-sbt-action "sbt in pwd")
-   ("C-csc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
+;; (ivy-add-actions
+;;  'counsel-find-file
+;;  '(("!" counsel-find-file--cmd-dwim-action "cmd-dwim in pwd")
+;;    ("g" counsel-find-file--magit-status-action "magit-status in pwd")
+;;    ("C-xC-d" counsel-find-file--dired-action "dired in pwd")
+;;    ("C-cme" counsel-find-file--eshell-action "eshell in pwd")
+;;    ("C-css" counsel-find-file--jw-sbt-action "sbt in pwd")
+;;    ("C-csc" counsel-find-file--sbt-compile-action "sbt compile in pwd")))
 
-(global-set-key (kbd "M-x") 'counsel-M-x)
-(global-set-key (kbd "M-z") 'ivy-resume-or-else-counsel-M-x)
-(define-key ivy-minibuffer-map (kbd "C-o") 'ivy-dispatching-done)
-(define-key ivy-minibuffer-map (kbd "M-o") 'ivy-dispatching-done-ivy)
-(global-set-key (kbd "C-x C-f") 'counsel-find-file-dwim)
-(global-set-key (kbd "C-x f") 'pop-to-buffer)
-(global-set-key (kbd "C-x F") 'find-file-external)
-(global-set-key (kbd "C-x b") 'counsel-switch-buffer)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-(global-set-key (kbd "C-x E") 'counsel-kmacro)
-(global-set-key (kbd "C-x p") 'counsel-emacs-processes-dwim)
-(global-set-key (kbd "C-x P") 'proced)
-(global-set-key (kbd "M-s o") 'swiper-thing-at-point)
-(global-set-key (kbd "M-s O") 'swiper-all-thing-at-point)
-(global-set-key (kbd "C-s") 'swiper)
-(global-set-key (kbd "C-r") 'swiper-backward)
-(global-set-key (kbd "M-s i") 'counsel-imenu)
-(define-key swiper-map (kbd "C-s") 'ivy-next-line)
-(define-key swiper-map (kbd "C-r") 'ivy-previous-line)
-(global-set-key (kbd "M-s s") 'counsel-rg)
-(global-set-key (kbd "M-s g") 'counsel-grep)
-(global-set-key (kbd "M-s S") 'grep)
-(global-set-key (kbd "M-s G") 'grep)
-(global-set-key (kbd "C-M-y") 'counsel-yank-pop)
-(define-key counsel-find-file-map (kbd "C-l") 'counsel-up-directory)
-(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-(define-key org-mode-map (kbd "C-c C-j") 'counsel-outline) ;; counsel-org-goto
-(add-hook 'eshell-mode-hook (lambda () (define-key eshell-mode-map (kbd "M-p") 'counsel-esh-history)))
+;; (global-set-key (kbd "M-x") 'counsel-M-x)
+;; (global-set-key (kbd "M-z") 'ivy-resume-or-else-counsel-M-x)
+;; (define-key ivy-minibuffer-map (kbd "C-o") 'ivy-dispatching-done)
+;; (define-key ivy-minibuffer-map (kbd "M-o") 'ivy-dispatching-done-ivy)
+;; (global-set-key (kbd "C-x C-f") 'counsel-find-file-dwim)
+;; (global-set-key (kbd "C-x f") 'pop-to-buffer)
+;; (global-set-key (kbd "C-x F") 'find-file-external)
+;; (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
+;; (global-set-key (kbd "C-x C-b") 'ibuffer)
+;; (global-set-key (kbd "C-x E") 'counsel-kmacro)
+;; (global-set-key (kbd "C-x p") 'counsel-emacs-processes-dwim)
+;; (global-set-key (kbd "C-x P") 'proced)
+;; (global-set-key (kbd "M-s o") 'swiper-thing-at-point)
+;; (global-set-key (kbd "M-s O") 'swiper-all-thing-at-point)
+;; (global-set-key (kbd "C-s") 'swiper)
+;; (global-set-key (kbd "C-r") 'swiper-backward)
+;; (global-set-key (kbd "M-s i") 'counsel-imenu)
+;; (define-key swiper-map (kbd "C-s") 'ivy-next-line)
+;; (define-key swiper-map (kbd "C-r") 'ivy-previous-line)
+;; (global-set-key (kbd "M-s s") 'counsel-rg)
+;; (global-set-key (kbd "M-s g") 'counsel-grep)
+;; (global-set-key (kbd "M-s S") 'grep)
+;; (global-set-key (kbd "M-s G") 'grep)
+;; (global-set-key (kbd "C-M-y") 'counsel-yank-pop)
+;; (define-key counsel-find-file-map (kbd "C-l") 'counsel-up-directory)
+;; (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+;; (define-key org-mode-map (kbd "C-c C-j") 'counsel-outline) ;; counsel-org-goto
+;; (add-hook 'eshell-mode-hook (lambda () (define-key eshell-mode-map (kbd "M-p") 'counsel-esh-history)))
 
-(define-key counsel-grep-map (kbd "M-s S") 'counsel-grep-switch-to-grep)
-(define-key counsel-grep-map (kbd "M-s G") 'counsel-grep-switch-to-grep)
-(define-key counsel-ag-map (kbd "M-s S") 'counsel-grep-switch-to-grep)
-(define-key counsel-ag-map (kbd "M-s G") 'counsel-grep-switch-to-grep)
+;; (define-key counsel-grep-map (kbd "M-s S") 'counsel-grep-switch-to-grep)
+;; (define-key counsel-grep-map (kbd "M-s G") 'counsel-grep-switch-to-grep)
+;; (define-key counsel-ag-map (kbd "M-s S") 'counsel-grep-switch-to-grep)
+;; (define-key counsel-ag-map (kbd "M-s G") 'counsel-grep-switch-to-grep)
 
-(define-key help-map (kbd "b") 'counsel-descbinds)
-(define-key help-map (kbd "f") 'counsel-describe-function)
-(define-key help-map (kbd "v") 'counsel-describe-variable)
-(define-key help-map (kbd "S") 'counsel-info-lookup-symbol)
-(define-key help-map (kbd "a") 'counsel-apropos)
-(define-key help-map (kbd "c") 'counsel-describe-face)
+;; (define-key help-map (kbd "b") 'counsel-descbinds)
+;; (define-key help-map (kbd "f") 'counsel-describe-function)
+;; (define-key help-map (kbd "v") 'counsel-describe-variable)
+;; (define-key help-map (kbd "S") 'counsel-info-lookup-symbol)
+;; (define-key help-map (kbd "a") 'counsel-apropos)
+;; (define-key help-map (kbd "c") 'counsel-describe-face)
 #+END_SRC
 
 * projectile
 
 #+BEGIN_SRC emacs-lisp
-(setq projectile-completion-system 'ivy)
-(counsel-projectile-mode)
+;; (setq projectile-completion-system 'ivy)
+;; (counsel-projectile-mode)
 
 (global-set-key (kbd "C-c p") 'projectile-command-map)
 
@@ -2397,43 +2442,45 @@ use org-mode tables in markdown-mode
       (message "Created .projectile in %s" (s-join ", " dirs))
       )))
 
-(defun counsel-projectile-switch-project-action-test (project)
-  (let ((projectile-switch-project-action (lambda () (projectile-test-project ivy-current-prefix-arg))))
-    (counsel-projectile-switch-project-by-name project)))
+;; todojoe
 
-(defun counsel-projectile-switch-project--cmd-dwim-action (project)
-  (let ((projectile-switch-project-action (lambda () (cmd-dwim ivy-current-prefix-arg))))
-    (counsel-projectile-switch-project-by-name project)))
+;; (defun counsel-projectile-switch-project-action-test (project)
+;;   (let ((projectile-switch-project-action (lambda () (projectile-test-project ivy-current-prefix-arg))))
+;;     (counsel-projectile-switch-project-by-name project)))
 
-(defun counsel-projectile-switch-project--basic-grep-action (project)
-  (projectile-with-default-dir project
-    (call-interactively 'grep)))
+;; (defun counsel-projectile-switch-project--cmd-dwim-action (project)
+;;   (let ((projectile-switch-project-action (lambda () (cmd-dwim ivy-current-prefix-arg))))
+;;     (counsel-projectile-switch-project-by-name project)))
 
-(defun counsel-projectile-switch-project--jw-project-org (project)
-  (projectile-with-default-dir project
-    (call-interactively 'jw-project-org-file)))
+;; (defun counsel-projectile-switch-project--basic-grep-action (project)
+;;   (projectile-with-default-dir project
+;;     (call-interactively 'grep)))
 
-(defun counsel-projectile--filter-out-action-keys (actions keys-to-filter)
-  (-filter (lambda (action) (not (-contains? keys-to-filter (car action)))) actions))
+;; (defun counsel-projectile-switch-project--jw-project-org (project)
+;;   (projectile-with-default-dir project
+;;     (call-interactively 'jw-project-org-file)))
 
-(let* ((head (car counsel-projectile-switch-project-action))
-       (original-actions (cdr counsel-projectile-switch-project-action))
-       (fixed-actions (counsel-projectile--filter-out-action-keys original-actions (list "si" "ss" "sr" "sg"))))
-  (setq counsel-projectile-switch-project-action (cons head fixed-actions)))
+;; (defun counsel-projectile--filter-out-action-keys (actions keys-to-filter)
+;;   (-filter (lambda (action) (not (-contains? keys-to-filter (car action)))) actions))
 
-(ivy-add-actions
- 'counsel-projectile-switch-project
- '(("ss" counsel-projectile-switch-project-action-rg "run rg in project root")
-   ("sg" counsel-projectile-switch-project-action-grep "run grep in project root")
-   ("sS" counsel-projectile-switch-project--basic-grep-action "run basic grep in project root")
-   ("sG" counsel-projectile-switch-project--basic-grep-action "run basic grep in project root")
-   ("Oo" counsel-projectile-switch-project--jw-project-org "open .jw-project.org")
-   ("P" counsel-projectile-switch-project-action-test "run project test command")
-   ("!" counsel-projectile-switch-project--cmd-dwim-action "cmd-dwim in project root")
-   ("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
-   ("C-xC-d" counsel-projectile-switch-project-action-dired "open project in dired")
-   ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
-   ))
+;; (let* ((head (car counsel-projectile-switch-project-action))
+;;        (original-actions (cdr counsel-projectile-switch-project-action))
+;;        (fixed-actions (counsel-projectile--filter-out-action-keys original-actions (list "si" "ss" "sr" "sg"))))
+;;   (setq counsel-projectile-switch-project-action (cons head fixed-actions)))
+
+;; (ivy-add-actions
+;;  'counsel-projectile-switch-project
+;;  '(("ss" counsel-projectile-switch-project-action-rg "run rg in project root")
+;;    ("sg" counsel-projectile-switch-project-action-grep "run grep in project root")
+;;    ("sS" counsel-projectile-switch-project--basic-grep-action "run basic grep in project root")
+;;    ("sG" counsel-projectile-switch-project--basic-grep-action "run basic grep in project root")
+;;    ("Oo" counsel-projectile-switch-project--jw-project-org "open .jw-project.org")
+;;    ("P" counsel-projectile-switch-project-action-test "run project test command")
+;;    ("!" counsel-projectile-switch-project--cmd-dwim-action "cmd-dwim in project root")
+;;    ("g" counsel-projectile-switch-project-action-vc "open project in vc-dir / magit / monky")
+;;    ("C-xC-d" counsel-projectile-switch-project-action-dired "open project in dired")
+;;    ("C-cme" counsel-projectile-switch-project-action-run-eshell "invoke eshell from project root")
+;;    ))
 
 (defun projectile-basic-grep ()
   (interactive)
@@ -2706,7 +2753,8 @@ For non-scala projects (scripts), this only loads when there is a \"// scala3\" 
       (let ((command-name (format "%s run %s" script-runner (jw--symbol-name (car scripts-alist))))
             (command-impl (cdr scripts-alist)))
         (funcall make-fn command-name command-impl)))
-    (counsel-M-x (format "package-json--%s" dir-name))))
+    ;; (counsel-M-x (format "package-json--%s" dir-name)) ;; todojoe maybe execute-extended-command
+    ))
 
 
 #+END_SRC
@@ -2932,7 +2980,8 @@ support typescript in org babel
       (let ((command-name (format "%s %s" script-runner (car targets-and-impls)))
             (command-impl (cdr targets-and-impls)))
         (funcall make-fn command-name command-impl)))
-    (counsel-M-x (format "makefile--%s" dir-name))))
+    ;; (counsel-M-x (format "makefile--%s" dir-name)) ;; todojoe maybe execute-extended-command
+    ))
 #+END_SRC
 
 * private config
