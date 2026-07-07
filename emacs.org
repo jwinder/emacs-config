@@ -102,7 +102,7 @@ Now, start emacs.
 
 (use-package counsel) ;; brings in ivy & swiper
 (use-package counsel-projectile)
-(use-package marginalia)
+;; (use-package marginalia)
 
 (use-package hydra)
 
@@ -2273,7 +2273,7 @@ use org-mode tables in markdown-mode
 
 #+BEGIN_SRC emacs-lisp
 (ivy-mode 1)
-(marginalia-mode 1)
+;; (marginalia-mode 1)
 
 (setq ivy-use-virtual-buffers t
       ivy-count-format "%d/%d "
