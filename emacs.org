@@ -2822,7 +2822,8 @@ support typescript in org babel
 (defun jw-project-insert-golang-commands-as-org-links ()
   (interactive)
   (let ((commands
-         '(("go mod tidy" . "Remove unused modules and add missing ones")
+         '(("go get -u ./..." . "Update all dependencies")
+           ("go mod tidy" . "Remove unused modules and add missing ones")
            ("go mod download" . "Download modules to local cache")
            ("go mod graph" . "Print the module dependency graph")
            ("go fmt ./..." . "Format all code in the project")
