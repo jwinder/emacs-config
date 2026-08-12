@@ -1702,8 +1702,9 @@ argument makes the windows rotate backwards."
 ;; (define-key dired-mode-map (kbd "C-c i") 'dired-subtree-insert)
 (define-key dired-mode-map (kbd "C-c i") 'dired-subtree-toggle)
 (define-key dired-mode-map (kbd "C-c ^") 'dired-subtree-remove)
-(define-key dired-mode-map (kbd "C-c m") 'dired-subtree-mark-subtree)
-(define-key dired-mode-map (kbd "C-c u") 'dired-subtree-unmark-subtree)
+;; don't use these, and C-c m interferes with jw-keymap
+;; (define-key dired-mode-map (kbd "C-c m") 'dired-subtree-mark-subtree)
+;; (define-key dired-mode-map (kbd "C-c u") 'dired-subtree-unmark-subtree)
 #+END_SRC
 
 * eshell and vterm
