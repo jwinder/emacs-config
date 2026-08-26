@@ -2618,6 +2618,8 @@ support ammonite repl in org babel, requires `amm` command, or ammonite-repl
 
 scala3 hack to revert to basic indent
 #+BEGIN_SRC emacs-lisp
+;; todojoe -- this is broken. it enables if there is a 3 in the minor or bugfix version of a scala 2 project.
+
 (defun jw--scala-mode--simplify-indent-for-scala3 ()
   "Revert to basic previous non-blank line relative indent for scala3.
 For scala projects, this checks for \"scalaVersion := 3\" patterns in build.sbt.
@@ -2635,7 +2637,7 @@ For non-scala projects (scripts), this only loads when there is a \"// scala3\" 
         (setq-local electric-indent-chars nil)
         (local-set-key (kbd "RET") 'newline-and-open-line-previous))))
 
-(add-hook 'scala-mode-hook 'jw--scala-mode--simplify-indent-for-scala3)
+;; (add-hook 'scala-mode-hook 'jw--scala-mode--simplify-indent-for-scala3)
 #+END_SRC
 
 * javascript
